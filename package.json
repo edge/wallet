@@ -1,0 +1,23 @@
+{
+  "name": "wallet",
+  "version": "0.0.1",
+  "description": "Web wallet for managing XE coin",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "DEBUG=edge:* nodemon server/index.js"
+  },
+  "author": "Edge Network <core@edge.network>",
+  "contributors": [
+    "Adam K Dean <adam@edge.network>"
+  ],
+  "license": "unlicensed",
+  "private": true,
+  "dependencies": {
+    "debug": "^4.3.1",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
