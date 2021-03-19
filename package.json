@@ -14,8 +14,10 @@
   "license": "unlicensed",
   "private": true,
   "dependencies": {
-    "debug": "^4.3.1",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "flat": "^5.0.2",
+    "morgan": "^1.10.0",
+    "path": "^0.12.7"
   },
   "devDependencies": {
     "nodemon": "^2.0.7"
