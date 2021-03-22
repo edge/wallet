@@ -5,6 +5,10 @@
 </template>
 
 <style>
+* {
+  box-sizing: border-box;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -17,6 +21,7 @@ a, a:visited, a:active {
   text-decoration: none;
   color: black;
 }
+
 a:hover {
   text-decoration: underline;
 }

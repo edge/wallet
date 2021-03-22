@@ -1,10 +1,8 @@
 <template>
   <div class="index">
     <h1>Create wallet or restore existing</h1>
-
-    <router-link to="Create">Create</router-link> |
+    <router-link to="create">Create</router-link> |
     <router-link to="restore">Restore</router-link>
-
   </div>
 </template>
 

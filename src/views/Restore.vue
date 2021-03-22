@@ -1,6 +1,7 @@
 <template>
   <div class="restore">
     <h1>Restore wallet</h1>
+    <router-link to="/">Back</router-link>
     <RestoreWallet />
   </div>
 </template>

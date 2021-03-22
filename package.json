@@ -16,8 +16,11 @@
   "private": true,
   "dependencies": {
     "core-js": "^3.6.5",
+    "crypto-js": "^4.0.0",
+    "elliptic": "^6.5.4",
     "express": "^4.17.1",
     "flat": "^5.0.2",
+    "js-sha3": "^0.8.0",
     "morgan": "^1.10.0",
     "path": "^0.12.7",
     "vue": "^2.6.11",

@@ -1,6 +1,7 @@
 <template>
   <div class="create">
     <h1>Create wallet</h1>
+    <router-link to="/">Back</router-link>
     <CreateWallet />
   </div>
 </template>
