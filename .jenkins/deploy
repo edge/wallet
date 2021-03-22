@@ -39,7 +39,6 @@ def deployScript() {
     --env VIRTUAL_HOST=$DOMAIN \
     --env LETSENCRYPT_HOST=$DOMAIN \
     --env LETSENCRYPT_EMAIL="adam@edge.network" \
-    --volume blockchain-data:$STORAGE_DIRECTORY \
     $IMAGE
   ''')
 }
