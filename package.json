@@ -5,7 +5,8 @@
   "main": "server/index.js",
   "scripts": {
     "start": "node server/index.js",
-    "dev": "DEBUG=edge:* nodemon server/index.js"
+    "dev": "vue-cli-service --port 8000 serve",
+    "build": "vue-cli-service build"
   },
   "author": "Edge Network <core@edge.network>",
   "contributors": [
@@ -14,12 +15,25 @@
   "license": "unlicensed",
   "private": true,
   "dependencies": {
+    "core-js": "^3.6.5",
     "express": "^4.17.1",
     "flat": "^5.0.2",
     "morgan": "^1.10.0",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "vue": "^2.6.11",
+    "vue-meta": "^2.4.0",
+    "vue-router": "^3.2.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.7"
-  }
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "nodemon": "^2.0.7",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
 }
