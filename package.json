@@ -15,7 +15,7 @@
   "license": "unlicensed",
   "private": true,
   "dependencies": {
-    "@edge/wallet-utils": "^0.1.0",
+    "@edge/wallet-utils": "^0.1.1",
     "core-js": "^3.6.5",
     "crypto-js": "^4.0.0",
     "elliptic": "^6.5.4",
