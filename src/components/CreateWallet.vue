@@ -45,7 +45,7 @@ const {
   publicKeyToChecksumAddress,
   generateChecksumAddress,
   privateKeyToPublicKey
-} = require('../utils')
+} = require('@edge/wallet-utils')
 
 export default {
   name: 'CreateWallet',
