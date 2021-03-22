@@ -10,4 +10,6 @@
 // © 2021 Edge Network  \$$$$$$  |
 //   Technologies Ltd.   \______/
 
-module.exports = {}
+module.exports = {
+  assetsDir: 'assets/'
+}
