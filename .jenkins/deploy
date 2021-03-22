@@ -36,8 +36,8 @@ def deployScript() {
     --env NETWORK_ACCESS=$NETWORK_ACCESS \
     --env DEBUG=$DEBUG \
     --env API_HOST=$API_HOST \
-    --env VIRTUAL_HOST=$VIRTUAL_HOST \
-    --env LETSENCRYPT_HOST=$LETSENCRYPT_HOST \
+    --env VIRTUAL_HOST=$DOMAIN \
+    --env LETSENCRYPT_HOST=$DOMAIN \
     --env LETSENCRYPT_EMAIL="adam@edge.network" \
     --volume blockchain-data:$STORAGE_DIRECTORY \
     $IMAGE
@@ -78,8 +78,7 @@ pipeline {
               DEBUG=$DEBUG \
               API_HOST=$API_HOST \
               HTTP_PORT=$HTTP_PORT \
-              VIRTUAL_HOST=$VIRTUAL_HOST \
-              LETSENCRYPT_HOST=$LETSENCRYPT_HOST \
+              DOMAIN=$DOMAIN \
                 bash -x ./${filename} && \
               rm ${filename}'"
           }
