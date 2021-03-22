@@ -16,7 +16,8 @@
 FROM node:lts AS build
 MAINTAINER Adam K Dean <adam@edge.network>
 
-COPY package*.json ./
+COPY *.config.js .
+COPY package*.json .
 RUN npm install
 
 COPY src src/
