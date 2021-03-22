@@ -13,8 +13,5 @@
 module.exports = {
   http: {
     port: process.env.HTTP_PORT ? parseInt(process.env.HTTP_PORT) : 8000
-  },
-  website: {
-    title: 'Edge Wallet'
   }
 }
