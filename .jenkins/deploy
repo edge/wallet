@@ -1,0 +1,107 @@
+#!/usr/bin/env groovy
+//                  $$\
+//                  $$ |
+//   $$$$$$\   $$$$$$$ | $$$$$$\   $$$$$$\
+//  $$  __$$\ $$  __$$ |$$  __$$\ $$  __$$\
+//  $$$$$$$$ |$$ /  $$ |$$ /  $$ |$$$$$$$$ |
+//  $$   ____|$$ |  $$ |$$ |  $$ |$$   ____|
+//  \$$$$$$$\ \$$$$$$$ |\$$$$$$$ |\$$$$$$$\
+//   \_______| \_______| \____$$ | \_______|
+//                      $$\   $$ |
+// © 2021 Edge Network  \$$$$$$  |
+//   Technologies Ltd.   \______/
+
+def b64e(input) {
+  return input.bytes.encodeBase64().toString()
+}
+
+def deployScript() {
+  return b64e('''
+  #!/bin/bash
+
+  # Pull the latest version
+  docker pull $IMAGE
+
+  # Gracefully stop/remove existing service (if it exists)
+  docker stop $NAME 2>/dev/null
+  docker rm $NAME 2>/dev/null
+
+  # And then run it again
+  docker run \
+    --detach \
+    --restart always \
+    --name $NAME \
+    --network core-network \
+    --expose $HTTP_PORT \
+    --env NETWORK_ACCESS=$NETWORK_ACCESS \
+    --env DEBUG=$DEBUG \
+    --env API_HOST=$API_HOST \
+    --env VIRTUAL_HOST=$VIRTUAL_HOST \
+    --env LETSENCRYPT_HOST=$LETSENCRYPT_HOST \
+    --env LETSENCRYPT_EMAIL="adam@edge.network" \
+    --volume blockchain-data:$STORAGE_DIRECTORY \
+    $IMAGE
+  ''')
+}
+
+pipeline {
+  agent any
+  stages {
+    //
+    // Notify the team
+    //
+    stage('Notify') {
+      steps {
+        slackSend channel: '#edge-deployments', color: 'good', message: "${env.JOB_NAME} (#${env.BUILD_NUMBER}) has started."
+      }
+    }
+
+    //
+    // Deploy
+    //
+    stage('Deploy') {
+      steps {
+        script {
+          def ssh = "ssh -o ServerAliveInterval=120 -o ServerAliveCountMax=5 -o StrictHostKeyChecking=no jenkins@${DEPLOY_TARGET} "
+          def filename = "deploy_${UUID.randomUUID().toString()}.sh"
+          def script = deployScript()
+
+          // Using a pre-authorized key, connect to the specified server and run the deploy script.
+          sshagent(credentials : ['a687b920-fcb4-41e4-a878-5ae1f6850b26']) {
+            println "> deploying ${IMAGE} ($NAME) to ${DEPLOY_TARGET}..."
+
+            // Execute the script
+            sh "$ssh 'echo $script | base64 -d > ${filename} && \
+              chmod +x ${filename} && \
+              NAME=$NAME \
+              IMAGE=$IMAGE \
+              DEBUG=$DEBUG \
+              API_HOST=$API_HOST \
+              HTTP_PORT=$HTTP_PORT \
+              VIRTUAL_HOST=$VIRTUAL_HOST \
+              LETSENCRYPT_HOST=$LETSENCRYPT_HOST \
+                bash -x ./${filename} && \
+              rm ${filename}'"
+          }
+        }
+      }
+    }
+  }
+  post {
+    success {
+      script {
+        slackSend channel: '#edge-deployments', color: 'good', message: "${env.JOB_NAME} (#${env.BUILD_NUMBER}) has been deployed to ${DEPLOY_TARGET}"
+      }
+    }
+    failure {
+      script {
+        slackSend channel: '#edge-deployments', color: 'danger', message: "${env.JOB_NAME} (#${env.BUILD_NUMBER}) failed to deploy."
+      }
+    }
+    aborted {
+      script {
+        slackSend channel: '#edge-deployments', color: 'warning', message: "${env.JOB_NAME} (#${env.BUILD_NUMBER}) was aborted."
+      }
+    }
+  }
+}
