@@ -25,11 +25,9 @@ const html = fs.readFileSync(`${www}/index.html`, 'utf8')
 // Middleware
 app.use(morgan('dev'))
 app.use('/assets', express.static(`${www}/assets`))
-console.log(`${www}/assets`)
 
 // Return the index page everything
 app.use((req, res) => {
-  console.log(`sending html for ${req.path}`)
   res.send(html)
 })
 
