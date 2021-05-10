@@ -6,6 +6,10 @@ Web wallet for managing XE coin
 
 ## Contributor guidelines
 
+### Design
+
+For the design work, please use the `design` branch of `edge/wallet`.
+
 ### Git commit format
 
 We use semantic prefixes for commit messages. These include:
