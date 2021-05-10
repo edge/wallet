@@ -22,7 +22,7 @@ We use semantic prefixes for commit messages. These include:
 - `debug:` for debugging
 - `test:` for tests/test related commits
 
-In addition to this, we use imperitive messages, for example:
+In addition to this, we use imperative messages, for example:
 
 `feat: add create wallet functionality`
 
