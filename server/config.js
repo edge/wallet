@@ -10,6 +10,8 @@
 // © 2021 Edge Network  \$$$$$$  |
 //   Technologies Ltd.   \______/
 
+require('dotenv').config()
+
 module.exports = {
   http: {
     port: process.env.HTTP_PORT ? parseInt(process.env.HTTP_PORT) : 8000
