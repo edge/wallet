@@ -14,13 +14,13 @@ For the design work, please use the `design` branch of `edge/wallet`.
 
 We use semantic prefixes for commit messages. These include:
 
-`feat:` for features
-`fix:` for fixes
-`chore:` for chores
-`docs:` for docs
-`refactor:` for refactoring
-`debug:` for debugging
-`test:` for tests/test related commits
+- `feat:` for features
+- `fix:` for fixes
+- `chore:` for chores
+- `docs:` for docs
+- `refactor:` for refactoring
+- `debug:` for debugging
+- `test:` for tests/test related commits
 
 In addition to this, we use imperitive messages, for example:
 
