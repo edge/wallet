@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="px-8 py-8">
+  <div id="app">
     <router-view/>
   </div>
 </template>
@@ -8,6 +8,18 @@
 export default {
   title() {
     return 'XE Wallet'
-  }
+  },
+  methods: {
+    setViewHeight: function() {
+      let vh = window.innerHeight * 0.01
+      document.documentElement.style.setProperty('--vh', `${vh}px`)
+    },
+  },
+  mounted: function() {
+    this.setViewHeight()
+    window.addEventListener('resize', () => {
+      this.setViewHeight()
+    })
+  },
 }
 </script>

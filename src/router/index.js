@@ -12,12 +12,23 @@
 
 import { createRouter, createWebHistory } from 'vue-router'
 import Index from '../views/Index.vue'
+import Transactions from "@/views/Transactions";
 
 const routes = [
   {
     path: '/',
     name: 'Index',
     component: Index
+  },
+  {
+    path: '/transactions',
+    name: 'Transactions',
+    component: Transactions
+  },
+  {
+    path: '/transaction/:id',
+    name: 'Transaction',
+    component: Transactions
   }
 ]
 

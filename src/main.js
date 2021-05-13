@@ -14,9 +14,11 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import titleMixin from './mixins/titleMixin'
-import 'tailwindcss/tailwind.css'
+import './index.css'
 
 createApp(App)
   .use(router)
   .mixin(titleMixin)
   .mount('#app')
+
+

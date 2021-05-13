@@ -1,26 +1,50 @@
 <template>
-  <div class="items-center">
-    <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-      XE Wallet
-    </h2>
+  <div class="bg-black bg-center bg-no-repeat bg-cover"
+       style="background-image: url('/assets/Map-placeholder.png');">
+    <div class="container">
+      <div class="relative">
+        <div class="absolute top-64 left-0">
+          <Logo/>
+        </div>
+      </div>
+    </div>
 
-    <p class="flex items-center text-sm text-gray-500 text-center pt-2">
-      <LockOpenIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-green-400" aria-hidden="true" />
-      Heroicon example
-    </p>
-
-    <router-link to="link-here">Router link example</router-link>
+    <div class="min-h-screen py-128 flex items-center justify-center">
+      <div class="container">
+        <div class="max-w-800 mx-auto">
+          <div class="text-white md:px-6 mb-11 text-caption">
+          <h1 class="text-white mb-2">
+            Welcome to the Edge
+          </h1>
+          <p>Generate or restore an XE wallet to begin</p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-24 bg-black-100 py-5 px-6 pb-52 rounded-md">
+            <div>
+              <h3 class="text-gray mb-6">CREATE a new wallet</h3>
+              <a href="#" class="button button--success w-full">
+                Create wallet
+              </a>
+            </div>
+            <div>
+             <h3 class="text-gray mb-6">restore an existing wallet</h3>
+              <a href="#" class="button button--outline-success w-full">
+                Restore wallet
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-// import { LockOpenIcon } from '@heroicons/vue/solid'
-import { LockOpenIcon } from '@heroicons/vue/outline'
+import Logo from "@/components/Logo";
 
 export default {
   name: 'Index',
   components: {
-    LockOpenIcon
+    Logo
   },
   title() {
     return 'XE Wallet » Create or restore a wallet'
