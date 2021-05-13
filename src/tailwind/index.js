@@ -86,7 +86,11 @@ module.exports = plugin.withOptions(
                         '4xl': '60rem',
                         '5xl': '64rem',
                         '6xl': '72rem',
+                        '560': rem(560),
                         '800': rem(800),
+                    },
+                    fontSize: {
+                      half: '50%'
                     },
                     container: {
                         padding: {

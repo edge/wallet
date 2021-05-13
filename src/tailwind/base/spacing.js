@@ -23,6 +23,7 @@ const spacing = {
     180: rem(180),
     192: rem(192),
     256: rem(256),
+    560: rem(560)
 };
 
 module.exports = { spacing: spacing };

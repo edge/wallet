@@ -3,7 +3,6 @@ const { rem, media } = require('../utils');
 
 const baseTypography = {
     text: {
-        half: '50%',
         xs: rem(10),
         sm: rem(12),
         'sm2': rem(13),
