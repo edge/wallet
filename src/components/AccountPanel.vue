@@ -14,22 +14,106 @@
           </h1>
         </div>
         <div class="account-panel__buttons">
-          <a href="#" class="button button--outline-success w-full">Send</a>
-          <a href="#" class="button button--outline-success w-full">Receive</a>
-          <a href="#" class="button button--outline-success w-full">Exchange</a>
+          <Modal
+              with-close-button="true"
+          >
+            <template v-slot:opener="slotProps">
+              <a href="#" class="button button--outline-success w-full" @click="slotProps.open">
+            <span class="button__icon w-12">
+              <ArrowUpIcon/>
+            </span>
+                Send
+              </a>
+            </template>
+            <template v-slot:header>
+              This is a new modal header.
+            </template>
+
+            <template v-slot:body>
+              This is a new modal body.
+            </template>
+
+            <template v-slot:footer>
+              This is a new modal footer.
+            </template>
+          </Modal>
+          <Modal
+              with-close-button="true"
+          >
+            <template v-slot:opener="slotProps">
+              <a href="#" class="button button--outline-success w-full" @click="slotProps.open">
+            <span class="button__icon w-12">
+              <ArrowDownIcon/>
+            </span>
+                Receive
+              </a>
+            </template>
+            <template v-slot:header>
+              This is a new modal header. 2
+            </template>
+
+            <template v-slot:body>
+              This is a new modal body.2
+            </template>
+
+            <template v-slot:footer>
+              This is a new modal footer. 2
+            </template>
+          </Modal>
+          <Modal
+              with-close-button="true"
+          >
+            <template v-slot:opener="slotProps">
+              <a href="#" class="button button--outline-success w-full" @click="slotProps.open">
+            <span class="button__icon w-15">
+              <SwitchHorizontalIcon/>
+            </span>
+                Exchange
+              </a>
+            </template>
+            <template v-slot:header>
+              This is a new modal header.3
+            </template>
+
+            <template v-slot:body>
+              This is a new modal body. 3
+            </template>
+
+            <template v-slot:footer>
+              This is a new modal footer. 3
+            </template>
+          </Modal>
         </div>
       </div>
     </div>
   </div>
+
+
 </template>
 
 <script>
+import {ArrowDownIcon, ArrowUpIcon} from '@heroicons/vue/solid';
+import {SwitchHorizontalIcon} from '@heroicons/vue/outline'
+import Modal from "@/components/Modal";
+
 export default {
   name: "AccountPanel",
+  components: {
+    ArrowDownIcon,
+    ArrowUpIcon,
+    SwitchHorizontalIcon,
+    Modal
+  },
+  methods: {
+    clickHandler() {
+      console.log(this.$data)
+    }
+  },
   data: function () {
     return {
       balance: 1574.987,
-      wallet: 'xe_d4D5Fdb4d39A4c38d7Ca02b938049edA73b0fA53'
+      wallet: 'xe_d4D5Fdb4d39A4c38d7Ca02b938049edA73b0fA53',
+      isModalVisible: false
     }
   }
 }
@@ -84,6 +168,7 @@ export default {
   .account-panel__buttons {
     @apply grid-cols-3 max-w-560;
   }
+
   .account-panel__balance {
     @apply mb-0;
   }
