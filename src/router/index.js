@@ -13,6 +13,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Index from '../views/Index.vue'
 import Transactions from "@/views/Transactions";
+import Overview from "@/views/Overview";
 
 const routes = [
   {
@@ -29,6 +30,11 @@ const routes = [
     path: '/transaction/:id',
     name: 'Transaction',
     component: Transactions
+  },
+  {
+    path: '/overview',
+    name: 'Overview',
+    component: Overview
   }
 ]
 

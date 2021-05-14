@@ -31,7 +31,7 @@
 
 <style scoped>
   .header-tools {
-    @apply text-xs mt-auto px-15;
+    @apply text-xs mt-auto px-15 flex-shrink-0;
   }
 
   .header-tools__link {
