@@ -13,7 +13,7 @@
       {{ sliceString(id, 18) }}
     </router-link>
   </td>
-  <td data-title="Tempo :">
+  <td data-title="Memo :">
     {{ description }}
   </td>
   <td data-title="Amount: ">

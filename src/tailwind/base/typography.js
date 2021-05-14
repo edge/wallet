@@ -7,6 +7,7 @@ const baseTypography = {
         sm: rem(12),
         'sm2': rem(13),
         base: rem(14),
+        'base2': rem(15),
         md: rem(16),
         caption: rem(17),
         lg: rem(18),

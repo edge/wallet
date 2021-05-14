@@ -34,7 +34,7 @@ export default {
       @apply flex flex-wrap -my-20;
     }
     .main-nav__link {
-      @apply py-20 px-35;
+      @apply py-20 px-24;
     }
   }
   @screen lg {
