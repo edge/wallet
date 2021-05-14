@@ -1,10 +1,9 @@
 <template>
-    <header class="header relative z-10 py-16 md:pb-15">
-      <div class="container md:flex md:items-center md:justify-between">
+    <header class="header relative z-10 py-16 md:pb-15" :class="{'menu-open':showNav}">
+      <div class="container flex items-center justify-between">
         <Logo/>
-        <BurgerButton/>
-
-        <div class="mobile-drop absolute top-full left-0 right-0 md:static md:flex bg-black pt-12 px-15 pb-24 md:p-0">
+        <BurgerButton  @click="showNav = !showNav"/>
+        <div class="mobile-drop absolute top-full left-0 right-0 md:static flex flex-col md:flex-row bg-black pt-12 md:px-15 pb-24 md:p-0">
           <Menu :mainNav="mainNav"/>
           <HeaderTools/>
         </div>
@@ -22,25 +21,28 @@
     name: "Header",
     data: function () {
       return {
+        showNav: false,
         mainNav: [
           {
-            link: "#",
+            link: "Overview",
             text: "Overview"
           },
           {
-            link: "#",
+            link: "Transactions",
             text: "Transactions"
           },
           {
-            link: "#",
+            link: "Staking",
             text: "Staking"
           },
           {
-            link: "#",
+            link: "Governance",
             text: "Governance"
           },
         ],
       }
+    },
+    methods: {
     },
     components: {
       Logo,
@@ -53,5 +55,24 @@
 <style scoped>
   .header {
     @apply bg-black text-white;
+  }
+
+  .mobile-drop {
+    height: calc((var(--vh) * 100) - 71px);
+    transform: translateX(-100%);
+    transition: 0.3s transform cubic-bezier(.01,.1,.11,1), 0.3s opacity cubic-bezier(.01,.1,.11,1), 0.3s visibility cubic-bezier(.01,.1,.11,1);
+    @apply overflow-hidden overflow-y-auto opacity-0 invisible;
+  }
+
+  @screen md {
+    .mobile-drop {
+      transform: translateX(0);
+      @apply h-auto overflow-visible opacity-100 visible;
+    }
+  }
+
+  .menu-open .mobile-drop {
+    transform: translateX(0);
+    @apply opacity-100 visible;
   }
 </style>

@@ -17,6 +17,7 @@ const spacing = {
     24: rem(24),
     30: rem(30),
     32: rem(32),
+    35: rem(35),
     38: rem(38),
     48: rem(48),
     50: rem(50),
