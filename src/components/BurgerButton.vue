@@ -1,7 +1,7 @@
 <template>
-  <a href="#" class="nav-opener md:hidden">
+  <button type="submit" class="nav-opener md:hidden">
     <span></span>
-  </a>
+  </button>
 </template>
 
 <script>
@@ -12,21 +12,13 @@
 </script>
 <style scoped>
   .nav-opener {
-    position:relative;
-    border-radius: 3px;
-    margin: 11px 0 0;
+    @apply w-38 h-38 bg-green rounded relative focus:outline-none cursor-pointer;
   }
 
   .nav-opener:before,
   .nav-opener:after,
   .nav-opener span {
-    border-radius: 4px;
-    position: absolute;
-    top: 50%;
-    left: 25%;
-    right: 25%;
-    height: 4px;
-    margin-top: -2px;
+    @apply bg-white h-2 absolute top-1/2 left-1/4 right-1/4 transition-all;
   }
 
   .nav-opener:after,
@@ -37,5 +29,21 @@
 
   .nav-opener:after {
     top: 70%;
+  }
+
+  .menu-open .nav-opener span {
+    opacity: 0;
+  }
+
+  .menu-open .nav-opener:before,
+  .menu-open .nav-opener:after {
+    transform: rotate(45deg);
+    top: 50%;
+    left: 15%;
+    right: 15%;
+  }
+
+  .menu-open .nav-opener:after {
+    transform: rotate(-45deg);
   }
 </style>

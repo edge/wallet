@@ -31,11 +31,11 @@
 
 <style scoped>
   .header-tools {
-    @apply text-xs;
+    @apply text-xs mt-auto px-15;
   }
 
   .header-tools__link {
-    @apply flex items-center text-gray transition-colors hover:text-green p-12 block;
+    @apply flex items-center text-gray transition-colors hover:text-white p-12 block;
   }
 
   .header-tools__icon {
@@ -44,7 +44,7 @@
 
   @screen md {
     .header-tools {
-      @apply flex flex-wrap;
+      @apply flex flex-wrap mt-0 px-0;
     }
 
     .header-tools__item {
