@@ -95,11 +95,12 @@ const buttonsStyles = ({ theme }) => ({
         alignItems: 'center',
         cursor: 'pointer',
         justifyContent: 'center',
+        position: 'relative',
         fontWeight: theme('fontWeight.bold'),
         transitionProperty: theme('transitionProperty.default'),
         transitionTimingFunction: theme("transitionTimingFunction['in-out']"),
         transitionDuration: theme('transitionDuration.200'),
-        padding: `${rem(12)} ${rem(10)} ${rem(13)} ${rem(10)}`,
+        padding: `${rem(12)} ${rem(25)} ${rem(13)} ${rem(25)}`,
         fontSize: typography.text.base,
         appearance: 'none',
         borderWidth: '1px',
@@ -118,52 +119,10 @@ const buttonsStyles = ({ theme }) => ({
         },
 
         '.button__icon': {
-            fontSize: typography.icons.sm,
-            marginTop: `-0.25em`,
-            marginBottom: `-0.25em`,
-
-            '&--prepend': {
-                marginRight: theme('spacing.16'),
-            },
-
-            '&--append': {
-                marginLeft: theme('spacing.16'),
-            },
-
-            '&:only-child': {
-                margin: 0,
-            },
-        },
-    },
-    small: {
-        fontSize: typography.text.sm,
-        padding: `${rem(7)} ${theme('spacing.12')}`,
-        '.button__icon': {
-            fontSize: typography.icons.sm,
-
-            '&--prepend': {
-                marginRight: theme('spacing.12'),
-            },
-
-            '&--append': {
-                marginLeft: theme('spacing.12'),
-            },
-        },
-    },
-    large: {
-        fontSize: typography.text.md,
-        padding: `${rem(11)} ${theme('spacing.16')}`,
-
-        '.button__icon': {
-            fontSize: typography.icons.normal,
-
-            '&--prepend': {
-                marginRight: theme('spacing.12'),
-            },
-
-            '&--append': {
-                marginLeft: theme('spacing.12'),
-            },
+            position: 'absolute',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            left: rem(8)
         },
     },
     ...themeButtonStyles(),
@@ -173,8 +132,6 @@ const buttons = ({ theme }) => {
     const button = buttonsStyles({ theme });
     return {
         ['.button']: button.base,
-        ['.button--small']: button.small,
-        ['.button--large']: button.large,
         ['.button--solid']: button.solid,
         ['.button--outline']: button.outline,
         ['.button--error']: button.error,
