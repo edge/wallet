@@ -11,7 +11,7 @@ const { rem } = require('./utils')
 const {
     buttons,
     container,
-    transactionTable
+    transactionTable,
 } = require('./components');
 
 // const { input, checkbox, radio, formSwitch, select, picker } = require('./components/forms');
