@@ -135,7 +135,7 @@ export default {
   }
 
   .transaction-item__heading {
-    @apply bg-white rounded flex justify-between py-13 pl-18 pr-123 transition-all;
+    @apply bg-white rounded flex justify-between py-13 pl-18 pr-52 transition-all;
   }
 
   .transaction-item__type {
@@ -174,6 +174,12 @@ export default {
 
   td a {
     @apply text-green align-middle;
+  }
+
+  @screen md {
+    .transaction-item__heading {
+      @apply pr-123;
+    }
   }
 
   @screen lg {
