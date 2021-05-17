@@ -67,7 +67,7 @@
 
                 <template v-slot:footer="slotProps">
                   <div
-                      class="grid grid-cols-1 md:grid-cols-2 gap-24 border-t-default border-solid border-opacity-30 border-gray-500 pt-48 pb-54 px-24">
+                      class="grid grid-cols-1 md:grid-cols-2 gap-24 border-t-default border-solid border-opacity-30 border-gray-700 pt-48 pb-54 px-24">
                     <a href="#" class="button button--outline-success w-full" @click="slotProps.close">Cancel</a>
                     <a href="#" class="button button--success w-full" @click="restoreSubmit(slotProps)">Unlock</a>
                   </div>
@@ -102,7 +102,7 @@
 
                 <template v-slot:footer="slotProps">
                   <div
-                      class="grid grid-cols-1 md:grid-cols-2 gap-24 border-t-default border-solid border-opacity-30 border-gray-500 pt-48 pb-54 px-24">
+                      class="grid grid-cols-1 md:grid-cols-2 gap-24 border-t-default border-solid border-opacity-30 border-gray-700 pt-48 pb-54 px-24">
                     <a href="#" class="button button--outline-success w-full" @click="hideUnlockModal(slotProps)">Cancel</a>
                     <a href="#" class="button button--success w-full" @click="unlockSubmit(slotProps)">Unlock</a>
                   </div>
