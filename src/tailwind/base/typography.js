@@ -26,7 +26,7 @@ const baseTypography = {
     },
     lineHeight: {
         DEFAULT: '1.45',
-        headings: '1.2',
+        headings: '1.2'
     },
     headingsMarginBottom: rem(20),
     verticalSpacing: rem(20),

@@ -88,7 +88,7 @@ export default {
 }
 
 .btn-close {
-  @apply text-white w-15 top-30 absolute right-24 hover:text-green focus:outline-none;
+  @apply text-white w-32 top-20 absolute right-20 hover:text-green focus:outline-none;
 }
 
 

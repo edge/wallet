@@ -62,6 +62,7 @@ module.exports = plugin.withOptions(
                     },
                     lineHeight: {
                         normal: round(20 / 14),
+                        7: '1.7'
                     },
                     spacing: spacing,
                     borderRadius: {

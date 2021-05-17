@@ -72,15 +72,40 @@
               </a>
             </template>
             <template v-slot:header>
-              This is a new modal header.3
+              <h2>Exchange</h2>
             </template>
 
             <template v-slot:body>
-              This is a new modal body. 3
-            </template>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-24 pt-12 pb-20">
+                <div class="">
+                  <div class="text-caption leading-7 mb-65">
+                    <strong>Withdraw</strong>
+                    <p class="mb-25">Lorem ipsum dolor sit amet, consectetur adipiscing.</p>
+                    <img src="/assets/withdraw.svg" alt="image description">
 
-            <template v-slot:footer>
-              This is a new modal footer. 3
+                  </div>
+                  <a href="#" class="button--outline-success button w-full">
+                    <span class="button__icon w-12">
+                      <ArrowNarrowRightIcon/>
+                    </span>
+                    Withdraw
+                  </a>
+                </div>
+                <div class="">
+                  <div class="text-caption leading-7 mb-65">
+                    <strong>Deposit</strong>
+                    <p class="mb-25">Lorem ipsum dolor sit amet, consectetur adipiscing.</p>
+                    <img src="/assets/deposit.svg" alt="image description">
+                  </div>
+
+                  <a href="#" class="button--outline-success button w-full">
+                    <span class="button__icon w-12">
+                      <ArrowNarrowLeftIcon/>
+                    </span>
+                    Deposit
+                  </a>
+                </div>
+              </div>
             </template>
           </Modal>
         </div>
@@ -92,7 +117,7 @@
 </template>
 
 <script>
-import {ArrowDownIcon, ArrowUpIcon} from '@heroicons/vue/solid';
+import {ArrowDownIcon, ArrowUpIcon, ArrowNarrowLeftIcon, ArrowNarrowRightIcon} from '@heroicons/vue/solid';
 import {SwitchHorizontalIcon} from '@heroicons/vue/outline'
 import Modal from "@/components/Modal";
 
@@ -102,12 +127,9 @@ export default {
     ArrowDownIcon,
     ArrowUpIcon,
     SwitchHorizontalIcon,
+    ArrowNarrowLeftIcon,
+    ArrowNarrowRightIcon,
     Modal
-  },
-  methods: {
-    clickHandler() {
-      console.log(this.$data)
-    }
   },
   data: function () {
     return {
