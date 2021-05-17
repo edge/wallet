@@ -12,7 +12,8 @@ const baseTypography = {
         caption: rem(17),
         lg: rem(18),
         xl: rem(20),
-        '2xl': rem(22)
+        '2xl': rem(22),
+        '3xl': rem(30)
     },
     icons: {
         sm: rem(16),

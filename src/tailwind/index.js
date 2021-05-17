@@ -73,13 +73,17 @@ module.exports = plugin.withOptions(
                         '2xl': '1.25rem',
                     },
                     minWidth: {
-                        100: rem(100)
+                        100: rem(100),
+                        48: rem(48)
                     },
                     borderWidth: {
                         default: '1px',
                     },
                     inset: {
                         100: '100%',
+                    },
+                    letterSpacing: {
+                      DEFAULT: 0,
                     },
                     maxWidth: {
                         md: '25.25rem',
@@ -94,7 +98,9 @@ module.exports = plugin.withOptions(
                         '800': rem(800),
                     },
                     fontSize: {
-                      half: '50%'
+                      half: '50%',
+                      xs: rem(10),
+                      '3xl': rem(30)
                     },
                     container: {
                         padding: {

@@ -28,9 +28,9 @@ const formStyles = ({theme}) => ({
         marginBottom: rem(42),
         width: '100%',
 
-        '.input-wrap input:not([type=submit]):not([type=range])': {
-            paddingLeft: rem(52),
-        },
+      '.input-wrap input:not([type=submit]):not([type=range]):not([type=radio]):not([type=checkbox])': {
+        paddingLeft: rem(52),
+      },
 
         '.icon': {
             position: 'absolute',
@@ -46,6 +46,24 @@ const formStyles = ({theme}) => ({
             marginTop: rem(3)
         }
     },
+    whiteFormGroup: {
+      position: 'relative',
+
+      '.input-wrap input:not([type=submit]):not([type=range]):not([type=radio]):not([type=checkbox])': {
+        backgroundColor: 'transparent',
+        fontSize: typography.text['3xl'],
+        color: colors.white,
+        paddingLeft: 0,
+        paddingRight: rem(73),
+        height: '61px',
+        borderRadius: 0,
+        borderBottom: '1px solid #fff'
+      },
+
+      'label': {
+        marginBottom: 0
+      }
+    },
     label: {
         marginBottom: rem(10),
         textTransform: 'uppercase',
@@ -59,11 +77,12 @@ const formStyles = ({theme}) => ({
     }
 });
 
-const forms = ({theme}) => {
-    const {base, formGroup, label} = formStyles({theme});
+const forms = ({ theme }) => {
+    const {base, formGroup, whiteFormGroup, label} = formStyles({ theme });
     return {
-        ['input:not([type=submit]):not([type=range]):not([type="number"])']: base,
+        ['.input-wrap input:not([type=submit]):not([type=range]):not([type=radio]):not([type=checkbox])']: base,
         ['.form-group']: formGroup,
+        ['.lg-input-group']: whiteFormGroup,
         ['.label, label']: label,
     };
 };
