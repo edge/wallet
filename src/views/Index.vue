@@ -5,6 +5,24 @@
       <div class="relative">
         <div class="absolute top-64 left-0">
           <Logo/>
+          <div class="form-group">
+            <label for="key">ENTER private key</label>
+            <div class="input-wrap relative">
+              <span class="icon">
+                <KeyIcon/>
+              </span>
+              <input type="text" placeholder='Your private key' id="key">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="pass">ENTER PASSPHRASE</label>
+            <div class="input-wrap relative">
+              <span class="icon">
+                <LockOpenIcon/>
+              </span>
+              <input type="password" placeholder='Your passphrase' id="pass">
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -40,11 +58,14 @@
 
 <script>
 import Logo from "@/components/Logo";
+import {KeyIcon, LockOpenIcon} from "@heroicons/vue/outline"
 
 export default {
   name: 'Index',
   components: {
-    Logo
+    Logo,
+    KeyIcon,
+    LockOpenIcon
   },
   title() {
     return 'XE Wallet » Create or restore a wallet'
