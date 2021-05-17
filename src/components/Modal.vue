@@ -44,7 +44,7 @@ import vClickOutside from 'click-outside-vue3'
 import { XIcon } from '@heroicons/vue/solid';
 export default {
   name: 'Modal',
-  props: ['withCloseButton'],
+  props: ['withCloseButton', 'opened'],
   directives: {
     clickOutside: vClickOutside.directive
   },
@@ -53,7 +53,7 @@ export default {
   },
   data: function () {
     return {
-      isShow: false
+      isShow: !!this.opened
     }
   },
   methods: {
