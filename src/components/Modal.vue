@@ -71,11 +71,11 @@ export default {
 </script>
 <style scoped>
 .modal-backdrop {
-  @apply fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-50 flex items-center justify-center py-20 px-20 z-50;
+  @apply fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-50 md:flex md:items-center md:justify-center py-20 px-20 z-50 overflow-auto;
 }
 
 .modal {
-  @apply w-full bg-black-100 flex flex-col rounded-md text-white max-w-612;
+  @apply w-full bg-black-100 flex flex-col rounded-md text-white max-w-612 mx-auto;
 }
 
 .modal-header {

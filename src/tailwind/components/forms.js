@@ -1,23 +1,18 @@
 const { rem } = require('../utils');
 const colors = require('../base/colors');
 const { baseTypography: typography } = require('../base/typography');
-const { none } = require('ramda');
-const { normalize } = require('path');
 
 const formStyles = ({ theme }) => ({
     base: {
       width: '100%',
       height: '57px',
-      paddingRight: rem(15),
-      paddingLeft: rem(15),
-      paddingLeft: rem(15),
-      paddingTop: rem(3),
-      paddingBottom: rem(3),
+      padding: `${rem(3)} ${rem(15)}`,
       margin: '0',
       backgroundColor: colors.black.DEFAULT,
       borderWidth: 0,
       color: colors.gray[200],
       lineHeight: 'normal',
+      borderRadius: rem(4),
       fontSize: typography.text.base,
       '&:focus, &:focus-visible': {
         outline: 'none',
@@ -54,7 +49,7 @@ const formStyles = ({ theme }) => ({
 const forms = ({ theme }) => {
     const {base, formGroup, label} = formStyles({ theme });
     return {
-        ['input:not([type=submit]):not([type=range])']: base,
+        ['input:not([type=submit]):not([type=range]):not([type="number"])']: base,
         ['.form-group']: formGroup,
         ['.label, label']: label,
     };

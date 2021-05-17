@@ -45,9 +45,26 @@
             </div>
             <div>
              <h3 class="text-gray mb-6">restore an existing wallet</h3>
-              <a href="#" class="button button--outline-success w-full">
-                Restore wallet
-              </a>
+              <Modal
+              >
+                <template v-slot:opener="slotProps">
+                  <a href="#" class="button button--outline-success w-full" @click="slotProps.open">
+                    Restore wallet
+                  </a>
+                </template>
+                <template v-slot:header>
+                  <h2>Restore a wallet</h2>
+                </template>
+
+                <template v-slot:body>
+                  This is a new modal body.
+                </template>
+
+                <template v-slot:footer>
+                  This is a new modal footer.
+                </template>
+              </Modal>
+
             </div>
           </div>
         </div>
@@ -58,6 +75,7 @@
 
 <script>
 import Logo from "@/components/Logo";
+import Modal from '@/components/Modal';
 import {KeyIcon, LockOpenIcon} from "@heroicons/vue/outline"
 
 export default {
@@ -65,7 +83,8 @@ export default {
   components: {
     Logo,
     KeyIcon,
-    LockOpenIcon
+    LockOpenIcon,
+    Modal
   },
   title() {
     return 'XE Wallet » Create or restore a wallet'
