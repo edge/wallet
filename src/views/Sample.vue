@@ -106,7 +106,7 @@
                   <div class="lg-input-group">
                     <label for="key">AMOUNT</label>
                     <div class="input-wrap relative">
-                      <input type="text" placeholder="0.00">
+                      <input type="text" placeholder="0.00" class="placeholder-white placeholder-opacity-100">
                       <span class="curren absolute top-23 right-0 text-xl">EDGE</span>
                     </div>
                   </div>
@@ -152,6 +152,51 @@
                 </div>
               </template>
             </Modal>
+            <br>
+            <br>
+            <br>
+            <Modal
+              with-close-button="true"
+            >
+              <template v-slot:opener="slotProps">
+                <a href="#" class="button button--outline-success w-full" @click="slotProps.open">
+                  <span class="button__icon w-15">
+                    <SwitchHorizontalIcon/>
+                  </span>
+                  Deposit modal3
+                </a>
+              </template>
+              <template v-slot:header>
+                <h2 class="mb-8">Done</h2>
+              </template>
+              <template v-slot:body>
+                <div class="pb-35 min-h-410">
+                  <div class="decor-block pb-4 mb-20 border-b border-gray-700 border-opacity-30">
+                    <CheckIcon class="w-52 text-green"/>
+                  </div>
+                  <div class="form-group mb-14">
+                    <span class="label normal-case tracking text-base3 mb-4">You’ve sent</span>
+                    <div class="input-wrap relative">
+                      <span class="input-filled w-full overflow-hidden overflow-ellipsis block text-white text-caption">35 EDGE <span class="text-gray">to</span> 76290sgdjhagsdjh498gasjhdgajshdg5askdgkajsdhkaj</span>
+                    </div>
+                  </div>
+                  <div class="form-group mb-14">
+                    <span class="label normal-case tracking text-base3 mb-4">You’ve received</span>
+                    <div class="input-wrap relative">
+                      <span class="input-filled w-full overflow-hidden overflow-ellipsis block text-white text-caption">35 XE</span>
+                    </div>
+                  </div>
+                </div>
+              </template>
+
+              <template v-slot:footer="slotProps">
+                <div class="border-t border-gray-700 border-opacity-30 pt-40 px-24 pb-40">
+                  <a href="#" class="button button--success w-full" @click="slotProps.close">
+                    Close
+                  </a>
+                </div>
+              </template>
+            </Modal>
           </div>
         </div>
       </div>
@@ -163,7 +208,7 @@
 import Logo from "@/components/Logo";
 import Modal from '@/components/Modal';
 import Radio from '@/components/Radio';
-import {KeyIcon, LockOpenIcon, ArrowRightIcon, ArrowDownIcon} from "@heroicons/vue/outline"
+import {KeyIcon, LockOpenIcon, ArrowRightIcon, ArrowDownIcon, CheckIcon} from "@heroicons/vue/outline"
 
 export default {
   name: 'Sample',
@@ -173,6 +218,7 @@ export default {
     LockOpenIcon,
     ArrowRightIcon,
     ArrowDownIcon,
+    CheckIcon,
     Modal,
     Radio
   },

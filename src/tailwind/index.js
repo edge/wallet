@@ -97,9 +97,13 @@ module.exports = plugin.withOptions(
                         '612': rem(612),
                         '800': rem(800),
                     },
+                    minHeight: {
+                      410: rem(410)
+                    },
                     fontSize: {
                       half: '50%',
                       xs: rem(10),
+                      'base3': rem(14),
                       '3xl': rem(30)
                     },
                     container: {
