@@ -10,15 +10,15 @@
 // © 2021 Edge Network  \$$$$$$  |
 //   Technologies Ltd.   \______/
 
-import { createApp } from 'vue'
+import {createApp} from 'vue'
 import App from './App.vue'
 import router from './router'
 import titleMixin from './mixins/titleMixin'
 import './index.css'
 
 createApp(App)
-  .use(router)
-  .mixin(titleMixin)
-  .mount('#app')
+    .use(router)
+    .mixin(titleMixin)
+    .mount('#app')
 
 
