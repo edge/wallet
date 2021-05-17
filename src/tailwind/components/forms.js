@@ -1,6 +1,7 @@
 const { rem } = require('../utils');
 const colors = require('../base/colors');
 const { baseTypography: typography } = require('../base/typography');
+const { text } = require('express');
 
 const formStyles = ({ theme }) => ({
     base: {
@@ -23,7 +24,7 @@ const formStyles = ({ theme }) => ({
       marginBottom: rem(40),
       width: '100%',
 
-      '.input-wrap input:not([type=submit]):not([type=range])': {
+      '.input-wrap input:not([type=submit]):not([type=range]):not([type=radio]):not([type=checkbox])': {
         paddingLeft: rem(52),
       },
 
@@ -34,6 +35,24 @@ const formStyles = ({ theme }) => ({
         transform: 'translateY(-50%)',
         width: rem(24),
         color: colors.gray.DEFAULT
+      }
+    },
+    whiteFormGroup: {
+      position: 'relative',
+
+      '.input-wrap input:not([type=submit]):not([type=range]):not([type=radio]):not([type=checkbox])': {
+        backgroundColor: 'transparent',
+        fontSize: typography.text['3xl'],
+        color: colors.white,
+        paddingLeft: 0,
+        paddingRight: rem(73),
+        height: '61px',
+        borderRadius: 0,
+        borderBottom: '1px solid #fff'
+      },
+
+      'label': {
+        marginBottom: 0
       }
     },
     label: {
@@ -47,10 +66,11 @@ const formStyles = ({ theme }) => ({
 });
 
 const forms = ({ theme }) => {
-    const {base, formGroup, label} = formStyles({ theme });
+    const {base, formGroup, whiteFormGroup, label} = formStyles({ theme });
     return {
-        ['input:not([type=submit]):not([type=range]):not([type="number"])']: base,
+        ['.input-wrap input:not([type=submit]):not([type=range]):not([type=radio]):not([type=checkbox])']: base,
         ['.form-group']: formGroup,
+        ['.lg-input-group']: whiteFormGroup,
         ['.label, label']: label,
     };
 };

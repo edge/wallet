@@ -13,6 +13,7 @@ const colors = {
         200: '#f2f2f2',
         300: '#666',
         400: '#bdbdbd',
+        700: '#707070',
     },
     green: {
         DEFAULT: '#0ecc5f',

@@ -14,6 +14,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Index from '../views/Index.vue'
 import Transactions from "@/views/Transactions";
 import Overview from "@/views/Overview";
+import Sample from "@/views/Sample";
 
 const routes = [
   {
@@ -35,6 +36,11 @@ const routes = [
     path: '/overview',
     name: 'Overview',
     component: Overview
+  },
+  {
+    path: '/sample',
+    name: 'Sample',
+    component: Sample
   }
 ]
 

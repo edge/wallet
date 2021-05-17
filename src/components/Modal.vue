@@ -31,7 +31,7 @@
         </section>
 
         <footer class="modal-footer">
-          <slot name="footer">
+          <slot name="footer" :close="closeModal" :open="showModal">
           </slot>
         </footer>
       </div>
