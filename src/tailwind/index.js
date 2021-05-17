@@ -12,6 +12,7 @@ const {
     buttons,
     container,
     transactionTable,
+    forms,
 } = require('./components');
 
 // const { input, checkbox, radio, formSwitch, select, picker } = require('./components/forms');
@@ -44,6 +45,7 @@ module.exports = plugin.withOptions(
                     { source: container({theme})},
                     { source: buttons({ theme }) },
                     { source: transactionTable({ theme }) },
+                    { source: forms({ theme }) },
                 ],
                 brandOverrides,
                 addComponents,
