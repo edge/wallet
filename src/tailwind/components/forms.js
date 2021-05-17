@@ -57,6 +57,7 @@ const formStyles = ({theme}) => ({
         paddingRight: rem(73),
         height: '61px',
         borderRadius: 0,
+        borderWidth: 0,
         borderBottom: '1px solid #fff'
       },
 
@@ -80,7 +81,7 @@ const formStyles = ({theme}) => ({
 const forms = ({ theme }) => {
     const {base, formGroup, whiteFormGroup, label} = formStyles({ theme });
     return {
-        ['.input-wrap input:not([type=submit]):not([type=range]):not([type=radio]):not([type=checkbox])']: base,
+        ['input:not([type=submit]):not([type=range]):not([type=radio]):not([type=checkbox])']: base,
         ['.form-group']: formGroup,
         ['.lg-input-group']: whiteFormGroup,
         ['.label, label']: label,
