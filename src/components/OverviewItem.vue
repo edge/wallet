@@ -10,8 +10,8 @@
         <div class="transaction-item__heading relative cursor-pointer"  @click="clickHandler(index)">
           <strong class="transaction-item__type">
             <span class="icon">
-              <ArrowNarrowRightIcon v-if="item.head.type.toLowerCase() === 'received'"/>
-              <ArrowNarrowUpIcon v-if="item.head.type.toLowerCase() === 'sent'"/>
+              <ArrowRightIcon v-if="item.head.type.toLowerCase() === 'received'"/>
+              <ArrowUpIcon v-if="item.head.type.toLowerCase() === 'sent'"/>
             </span>
             {{item.head.type}}
           </strong>
@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import {ArrowNarrowRightIcon, ArrowNarrowUpIcon, ChevronDownIcon} from "@heroicons/vue/outline"
+import {ArrowRightIcon, ArrowUpIcon, ChevronDownIcon} from "@heroicons/vue/outline"
 
 export default {
   name: "OverviewItem",
@@ -105,8 +105,8 @@ export default {
     },
   },
   components: {
-    ArrowNarrowRightIcon,
-    ArrowNarrowUpIcon,
+    ArrowRightIcon,
+    ArrowUpIcon,
     ChevronDownIcon
   }
 }

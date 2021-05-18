@@ -1,8 +1,8 @@
 <template>
   <td data-title="Type :">
       <span class="icon">
-        <ArrowNarrowRightIcon v-if="type.toLowerCase() === 'received'"/>
-        <ArrowNarrowUpIcon v-if="type.toLowerCase() === 'sent'"/>
+        <ArrowRightIcon v-if="type.toLowerCase() === 'received'"/>
+        <ArrowUpIcon v-if="type.toLowerCase() === 'sent'"/>
       </span>
     {{ type }}
   </td>
@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import {ArrowNarrowRightIcon, ArrowNarrowUpIcon} from "@heroicons/vue/outline"
+import {ArrowRightIcon, ArrowUpIcon} from "@heroicons/vue/outline"
 
 export default {
   name: "TransactionsTableItem",
@@ -35,8 +35,8 @@ export default {
     }
   },
   components: {
-    ArrowNarrowRightIcon,
-    ArrowNarrowUpIcon
+    ArrowRightIcon,
+    ArrowUpIcon
   }
 }
 </script>

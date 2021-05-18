@@ -1,7 +1,7 @@
 <template>
   <Header/>
   <AccountPanel />
-  <div class="bg-gray-200 py-9">
+  <div class="bg-gray-200 py-35">
     <div class="container">
       <Overviews :overviews="overviews"/>
     </div>

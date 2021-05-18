@@ -10,6 +10,9 @@ const styles = ({ theme }) => ({
         fontSize: rem(14),
         lineHeight: theme('lineHeight.normal'),
     },
+    'html.resize-active *': {
+        transition: 'none !important'
+    }
 });
 
 module.exports = { styles };

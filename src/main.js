@@ -15,6 +15,7 @@ import App from './App.vue'
 import router from './router'
 import titleMixin from './mixins/titleMixin'
 import './index.css'
+import './utils'
 
 createApp(App)
     .use(router)

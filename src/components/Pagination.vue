@@ -41,7 +41,7 @@ export default {
 
 <style scoped>
 .pagination {
-  @apply py-6;
+  @apply py-24;
 }
 
 .pagination__list {
