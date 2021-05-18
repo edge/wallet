@@ -108,7 +108,7 @@ module.exports = plugin.withOptions(
                     },
                     container: {
                         padding: {
-                            DEFAULT: spacing[15],
+                          DEFAULT: spacing[15],
                         },
                     },
                 },
