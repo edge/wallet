@@ -10,11 +10,11 @@
 // © 2021 Edge Network  \$$$$$$  |
 //   Technologies Ltd.   \______/
 
-import { createRouter, createWebHistory } from 'vue-router'
+import Vue from 'vue'
+import VueRouter from 'vue-router'
 import Index from '../views/Index.vue'
-import Transactions from "@/views/Transactions";
-import Overview from "@/views/Overview";
-import Sample from "@/views/Sample";
+
+Vue.use(VueRouter)
 
 const routes = [
   {
@@ -23,29 +23,20 @@ const routes = [
     component: Index
   },
   {
-    path: '/transactions',
-    name: 'Transactions',
-    component: Transactions
+    path: '/create',
+    name: 'Create',
+    component: () => import('../views/Create.vue')
   },
   {
-    path: '/transaction/:id',
-    name: 'Transaction',
-    component: Transactions
-  },
-  {
-    path: '/overview',
-    name: 'Overview',
-    component: Overview
-  },
-  {
-    path: '/sample',
-    name: 'Sample',
-    component: Sample
+    path: '/restore',
+    name: 'Restore',
+    component: () => import('../views/Restore.vue')
   }
 ]
 
-const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+const router = new VueRouter({
+  mode: 'history',
+  base: process.env.BASE_URL,
   routes
 })
 

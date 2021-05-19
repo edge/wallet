@@ -10,15 +10,16 @@
 // © 2021 Edge Network  \$$$$$$  |
 //   Technologies Ltd.   \______/
 
-import Vue from 'vue'
-import VueMeta from 'vue-meta'
+import {createApp} from 'vue'
 import App from './App.vue'
 import router from './router'
+import titleMixin from './mixins/titleMixin'
+import './index.css'
+import './utils'
 
-Vue.config.productionTip = false
-Vue.use(VueMeta)
+createApp(App)
+    .use(router)
+    .mixin(titleMixin)
+    .mount('#app')
 
-new Vue({
-  router,
-  render: h => h(App)
-}).$mount('#app')
+
