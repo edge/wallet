@@ -2,7 +2,7 @@
   <div class="account-panel">
     <div class="container">
       <div class="account-panel__address">
-        Wallet address: <span>{{ wallet }}</span>
+        Wallet address: <span>{{ wallet.address }}</span>
       </div>
       <div class="account-panel__info">
         <div class="account-panel__balance">
@@ -10,49 +10,62 @@
             Balance
           </h3>
           <h1>
-            {{ balance }}<sub>XE</sub>
+            {{ fromMicroXe(wallet.balance) }}<sub>XE</sub>
           </h1>
         </div>
         <div class="account-panel__buttons">
+          <div></div>
+          <div></div>
           <div>
             <Modal
             >
               <template v-slot:opener="slotProps">
-                <a href="#" class="button button--outline-success w-full" @click="slotProps.open">
-            <span class="button__icon w-12">
-              <ArrowUpIcon/>
-            </span>
+                <button class="button button--outline-success w-full" @click="slotProps.open">
+                  <span class="button__icon w-12">
+                    <ArrowUpIcon/>
+                  </span>
                   Send
-                </a>
+                </button>
               </template>
               <template v-slot:header>
                 <h2 class="mb-8">Send XE</h2>
-                <span class="sub-heading d-block text-gray text-caption">1574.987 XE available</span>
+                <span class="sub-heading d-block text-gray text-caption">{{ fromMicroXe(wallet.balance) }} XE available</span>
               </template>
               <template v-slot:body>
                 <div class="pb-35 min-h-410">
                   <div class="form-group" :class="{'form-group__error': v$.sendAddress.$error}">
                     <label for="send-send" class="label">SEND TO</label>
-                    <input type="text" placeholder="Send to XE address" id="send-send" v-model="sendAddress">
-                    <div class="form-group__error" v-if="v$.sendAddress.$error">Name field has an error.</div>
+                    <input
+                      id="send-send"
+                      placeholder="XE address"
+                      ref="recipient"
+                      type="text"
+                      v-model="sendAddress"
+                    />
+                    <div class="form-group__error" v-if="v$.sendAddress.$error">Invalid XE wallet address.</div>
                   </div>
                   <div class="form-group" :class="{'form-group__error': v$.sendMemo.$error}">
                     <label for="memo" class="label">Memo</label>
-                    <input type="text" placeholder="Send to XE address" id="memo" v-model="sendMemo">
-                    <div class="form-group__error" v-if="v$.sendMemo.$error">Name field has an error.</div>
-
+                    <input type="text" placeholder="Enter a memo" id="memo" v-model="sendMemo">
+                    <div class="form-group__error" v-if="v$.sendMemo.$error">
+                      Memo is limited to 32 characters and should include only upper and lowercase letters, numbers, hyphens and spaces.
+                    </div>
                   </div>
-                  <div class="lg-input-group">
+                  <div
+                    class="lg-input-group"
+                    :class="{'form-group__error': v$.amount.sufficientFunds.$invalid || v$.amount.validAmount.$invalid}"
+                  >
                     <label for="amount-send">AMOUNT</label>
                     <div class="input-wrap relative">
-                      <input type="text" id="amount-send" placeholder="0.00"
-                             class="placeholder-white placeholder-opacity-100">
+                      <input type="text" id="amount-send" placeholder="0.00" v-model="amount" class="placeholder-white placeholder-opacity-100">
                       <span class="curren absolute top-23 right-0 text-xl">XE</span>
+                      <div class="mt-5 form-group__error text-green" v-if="v$.amount.sufficientFunds.$invalid">Insufficient funds.</div>
+                      <div class="mt-5 form-group__error text-green" v-if="v$.amount.validAmount.$invalid">Invalid amount.</div>
                     </div>
                   </div>
                   <div class="radio-list flex flex-wrap pt-12">
-                    <Radio name="amount-send1" id="half" label="HALF"/>
-                    <Radio name="amount-send1" id="max" label="ALL"/>
+                    <Radio name="amount-send1" id="half" label="HALF" @click="populateAmount(50)" />
+                    <Radio name="amount-send1" id="max" label="ALL" @click="populateAmount(100)" />
                   </div>
                 </div>
               </template>
@@ -60,13 +73,13 @@
               <template v-slot:footer="slotProps">
                 <div class="border-t border-gray-700 border-opacity-30 pt-32 px-24 pb-40">
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-24">
-                    <a href="#" class="button button--outline-success w-full" @click="slotProps.close()">
+                    <button class="button button--outline-success w-full" @click="slotProps.close()">
                       Cancel
-                    </a>
-                    <a href="#" class="button button--success w-full"
-                       @click="showOtherModal(slotProps, 'showSendStep2', [v$.sendMemo, v$.sendAddress])">
+                    </button>
+                    <button class="button button--success w-full"
+                       @click="showOtherModal(slotProps, 'showSendStep2', [v$.sendAddress, v$.sendMemo, v$.amount])">
                       Send
-                    </a>
+                    </button>
                   </div>
                 </div>
               </template>
@@ -77,45 +90,44 @@
             >
               <template v-slot:header>
                 <h2 class="mb-8">Send XE</h2>
-                <span class="sub-heading d-block text-gray text-caption">1574.987 XE available</span>
+                <span class="sub-heading d-block text-gray text-caption">{{ fromMicroXe(wallet.balance) }} XE available</span>
               </template>
               <template v-slot:body>
                 <div class="pb-35 min-h-410">
                   <div class="form-group mb-25">
                     <label class="label">Send to</label>
-                    <span class="break-all">hgdaiuygs7ef87wyeiuywei8yi8fm8sufsumef9uemof9uow9fu</span>
+                    <span class="break-all">{{ sendAddress }}</span>
                   </div>
                   <div class="form-group mb-25">
                     <label class="label">Memo</label>
-                    <span class="break-all">Lorem ipsum</span>
+                    <span class="break-all">{{ sendMemo || 'None' }}</span>
                   </div>
                   <div class="form-group mb-16">
                     <label>Amount</label>
-                    <Amount value="47.00" currency="XE"/>
+                    <Amount :value="formatAmount(amount)" currency="XE"/>
                   </div>
                   <div class="form-group mb-16">
                     <label>Fee</label>
-                    <Amount value="120.00" currency="XE"/>
+                    <Amount value="0.00" currency="XE"/>
                   </div>
                   <div class="form-group mb-0">
-                    <label>receiving</label>
-                    <Amount value="47.00" currency="EDGE"/>
+                    <label>Recipient receives</label>
+                    <Amount :value="formatAmount(amount)" currency="XE"/>
                   </div>
                 </div>
               </template>
 
               <template v-slot:footer="slotProps">
                 <div class="border-t border-gray-700 border-opacity-30 pt-32 px-24 pb-40">
-                  <div class="form-group" :class="{'form-group__error': v$.passphraseSend.$error}">
-                    <label for="pass-step">Enter PASSPHRASE</label>
+                  <div class="form-group" :class="{'form-group__error': v$.password.$error}">
+                    <label for="pass-step">Enter Password</label>
                     <div class="input-wrap relative">
                           <span class="icon">
                             <LockOpenIcon/>
                           </span>
-                      <input type="password" placeholder='Your passphrase' id="pass-step"
-                             v-model="passphraseSend">
+                      <input type="password" placeholder='Your password' id="pass-step" v-model="password">
                     </div>
-                    <div class="form-group__error" v-if="v$.passphraseSend.$error">Name field has an error.</div>
+                    <div class="form-group__error" v-if="v$.password.$error">Name field has an error.</div>
                   </div>
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-24">
                     <a href="#" class="button button--outline-success w-full" @click="() => {
@@ -124,17 +136,14 @@
                   }">
                       Back
                     </a>
-                    <a href="#" class="button button--success w-full"
-                       @click="showOtherModal(slotProps, 'showSendStep3', [v$.passphraseSend])">
-                      Confirm transaction
-                    </a>
+                    <button class="button button--success w-full" @click="confirmTransaction()">Confirm transaction</button>
                   </div>
                 </div>
               </template>
             </Modal>
             <Modal
                 :opened="true"
-                v-if="showSendStep3 === true"
+                v-if="showSendStep3 === true && currentTx"
             >
               <template v-slot:header>
                 <h2 class="mb-8">Done</h2>
@@ -145,28 +154,31 @@
                     <CheckIcon class="w-52 text-green"/>
                   </div>
                   <div class="form-group mb-14">
-                    <span class="label normal-case tracking text-base3 mb-4">You’ve sent</span>
+                    <span class="label normal-case tracking text-base3 mb-4">You've sent</span>
                     <div class="input-wrap relative">
                       <span
-                          class="input-filled w-full overflow-hidden overflow-ellipsis block text-white text-caption break-all">47 XE <span
-                          class="text-gray">to</span> 76290sgdjhagsdjh498gasjhdgajshdg5askdgkajsdhkaj</span>
+                        class="input-filled w-full overflow-hidden overflow-ellipsis block text-white text-caption break-all">
+                        {{ fromMicroXe(currentTx.amount) }} XE 
+                        <span class="text-gray">to</span> 
+                        {{ currentTx.recipient }}
+                      </span>
                     </div>
                   </div>
                   <div class="form-group mb-25">
                     <label class="label">Memo</label>
-                    <span class="break-all">Lorem ipsum</span>
+                    <span class="break-all">{{ currentTx.data.memo }}</span>
                   </div>
                   <div class="form-group mb-16">
                     <label>Amount</label>
-                    <Amount value="47.00" currency="XE"/>
+                    <Amount :value="fromMicroXe(currentTx.amount)" currency="XE"/>
                   </div>
                   <div class="form-group mb-16">
                     <label>Fee</label>
-                    <Amount value="120.00" currency="XE"/>
+                    <Amount value="0.00" currency="XE"/>
                   </div>
                   <div class="form-group mb-0">
-                    <label>receiving</label>
-                    <Amount value="47.00" currency="EDGE"/>
+                    <label>Recipient receives</label>
+                    <Amount :value="fromMicroXe(currentTx.amount)" currency="XE"/>
                   </div>
                 </div>
               </template>
@@ -181,6 +193,7 @@
               </template>
             </Modal>
           </div>
+          <!--
           <div>
             <a href="#" class="button button--outline-success w-full">
             <span class="button__icon w-12">
@@ -189,6 +202,8 @@
               Receive
             </a>
           </div>
+          -->
+          <!--
           <div>
             <Modal
                 with-close-button="true"
@@ -389,7 +404,7 @@
             >
               <template v-slot:header>
                 <h2 class="mb-8">Withdraw XE</h2>
-                <span class="sub-heading d-block text-gray text-caption">1574.987 XE available</span>
+                <span class="sub-heading d-block text-gray text-caption">{{ fromMicroXe(wallet.balance) }} XE available</span>
               </template>
               <template v-slot:body>
                 <div class="pb-35 min-h-410">
@@ -472,7 +487,7 @@
             >
               <template v-slot:header>
                 <h2 class="mb-8">Withdraw XE</h2>
-                <span class="sub-heading d-block text-gray text-caption">1574.987 XE available</span>
+                <span class="sub-heading d-block text-gray text-caption">{{ fromMicroXe(wallet.balance) }} XE available</span>
               </template>
               <template v-slot:body>
                 <div class="pb-35 min-h-410">
@@ -568,6 +583,7 @@
               </template>
             </Modal>
           </div>
+          -->
         </div>
       </div>
     </div>
@@ -587,13 +603,22 @@ import {
   ArrowRightIcon,
   CheckIcon,
   ShieldExclamationIcon
-} from '@heroicons/vue/solid';
+} from '@heroicons/vue/solid'
 import {SwitchHorizontalIcon} from '@heroicons/vue/outline'
-import Modal from "@/components/Modal";
-import Radio from '@/components/Radio';
-import {required, minLength} from '@vuelidate/validators'
-import useVuelidate from "@vuelidate/core";
-import Amount from "@/components/Amount";
+import Modal from "@/components/Modal"
+import Radio from '@/components/Radio'
+import {required, minLength, numeric} from '@vuelidate/validators'
+import useVuelidate from "@vuelidate/core"
+import Amount from "@/components/Amount"
+
+import { compare, decrypt } from '../utils/crypto'
+import { get } from '../utils/db'
+
+const {
+  generateSignature,
+  toMicroXe,
+  xeStringFromMicroXe
+} = require('@edge/wallet-utils')
 
 export default {
   name: "AccountPanel",
@@ -623,19 +648,116 @@ export default {
       },
       sendAddress: {
         required,
-        minLength: minLength(10)
+        validAddress: this.validAddress
       },
       sendMemo: {
+        validMemo: this.validMemo
+      },
+      password: {
         required,
         minLength: minLength(10)
       },
-      passphraseSend: {
+      amount: {
+        numeric,
         required,
-        minLength: minLength(10)
-      },
+        sufficientFunds: this.sufficientFunds,
+        validAmount: this.validAmount
+      }
     }
   },
   methods: {
+    populateAmount (percentage) {
+      this.amount = parseFloat(this.fromMicroXe(this.wallet.balance)) * (percentage / 100)
+    },
+    formatAmount (input) {
+      return xeStringFromMicroXe(toMicroXe(input))
+    },
+    validAmount (value) {
+      const enteredAmount = parseFloat(value)
+
+      // Check less than/equal to zero.
+      if (enteredAmount <= 0) {
+        return false
+      }
+
+      // Check no more than 6 decimals.
+      if (enteredAmount.toString().indexOf('.') > 0) {
+        const decimals = enteredAmount.toString().split('.')[1]
+
+        if (decimals.length > 6) {
+          return false
+        }
+      }
+      
+      return true
+    },
+    sufficientFunds (value) {
+      const enteredAmount = parseFloat(value)
+
+      // Check amount is less than the wallet balance.
+      return enteredAmount <= parseFloat(this.fromMicroXe(this.wallet.balance))
+    },
+    validAddress (value) {
+      if (value.length !== 43) {
+        return false
+      }
+
+      const regex = /^xe_[a-fA-F0-9]+$/
+      return regex.test(value)
+    },
+    validMemo (value) {
+      if (value === '') {
+        return true
+      }
+
+      if (value.length > 32) {
+        return false
+      }
+
+      const regex = /^[a-zA-Z0-9\s-]+$/
+      return regex.test(value)
+    },
+    async confirmTransaction () {
+      const [hash, salt] = await get(['h', 's'])
+     
+      if (compare(hash, salt, this.password)) {
+        // Send transaction to the blockchain.
+        // Create tx 
+        console.log('this.amount', this.amount)
+        const tx = {
+          timestamp: Date.now(),
+          sender: this.wallet.address,
+          recipient: this.sendAddress,
+          amount: toMicroXe(this.amount),
+          data: {
+            memo: this.sendMemo
+          },
+          nonce: this.wallet.nonce
+        }
+
+        const privateKey = await get('p2')
+
+        tx.signature = generateSignature(decrypt(privateKey), JSON.stringify(tx))
+
+        const postResponse = await fetch('https://xe1.test.networkinternal.com/transaction', {
+          method: 'post',
+          headers: {
+            'content-type': 'application/json'
+          },
+          body: JSON.stringify(tx, true, 2)
+        })
+
+        console.log('tx', tx, postResponse.json())
+        
+        this.currentTx = tx
+        this.amount = null
+        this.sendAddress = ''
+        this.sendMemo = ''
+        this.showSendStep3 = true
+      } else {
+        // Password incorrect.
+      }
+    },
     validateFields(fields) {
       if (fields && fields.length) {
         fields.forEach(field => {
@@ -668,12 +790,16 @@ export default {
         slotProps.close()
         this[property] = false
       })()
+    },
+    fromMicroXe (input) {
+      return xeStringFromMicroXe(input || 0)
     }
   },
   data: function () {
     return {
-      balance: 1574.987,
-      wallet: 'xe_d4D5Fdb4d39A4c38d7Ca02b938049edA73b0fA53',
+      // wallet: 'xe_d4D5Fdb4d39A4c38d7Ca02b938049edA73b0fA53',
+      amount: '0',
+      currentTx: null,
       isModalVisible: false,
       showDepositStep: false,
       showDepositStep2: false,
@@ -685,8 +811,13 @@ export default {
       showSendStep3: false,
       sendAddress: '',
       sendMemo: '',
-      passphraseSend: '',
+      password: '',
       passphraseWithdraw: ''
+    }
+  },
+  props: {
+    wallet: {
+      type: Object
     }
   }
 }
