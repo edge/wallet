@@ -18,8 +18,6 @@ import './index.css'
 import './utils'
 
 createApp(App)
-    .use(router)
-    .mixin(titleMixin)
-    .mount('#app')
-
-
+  .use(router)
+  .mixin(titleMixin)
+  .mount('#app')

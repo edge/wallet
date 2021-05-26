@@ -12,9 +12,9 @@
 
 import { createRouter, createWebHistory } from 'vue-router'
 import Index from '../views/Index.vue'
-import Transactions from "@/views/Transactions";
-import Overview from "@/views/Overview";
-import Sample from "@/views/Sample";
+import Transactions from '@/views/Transactions'
+import Overview from '@/views/Overview'
+import Sample from '@/views/Sample'
 
 const routes = [
   {
