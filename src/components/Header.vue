@@ -24,20 +24,20 @@
         showNav: false,
         mainNav: [
           {
-            link: "overview",
+            link: "/overview",
             text: "Overview"
           },
           {
-            link: "transactions",
+            link: "/transactions",
             text: "Transactions"
           },
           {
-            link: "staking",
+            link: "/staking",
             text: "Staking",
             disabled: true
           },
           {
-            link: "governance",
+            link: "/governance",
             text: "Governance",
             disabled: true
           },
