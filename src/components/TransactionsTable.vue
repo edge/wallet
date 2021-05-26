@@ -21,7 +21,7 @@
       </tr>
       </tbody>
     </table>
-    <Pagination />
+    <!-- <Pagination /> -->
   </div>
 </template>
 
