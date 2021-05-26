@@ -24,20 +24,22 @@
         showNav: false,
         mainNav: [
           {
-            link: "Overview",
+            link: "overview",
             text: "Overview"
           },
           {
-            link: "Transactions",
+            link: "transactions",
             text: "Transactions"
           },
           {
-            link: "Staking",
-            text: "Staking"
+            link: "staking",
+            text: "Staking",
+            disabled: true
           },
           {
-            link: "Governance",
-            text: "Governance"
+            link: "governance",
+            text: "Governance",
+            disabled: true
           },
         ],
       }
@@ -49,7 +51,7 @@
       Menu,
       HeaderTools,
       BurgerButton
-    },
+    }
   }
 </script>
 <style scoped>

@@ -6,7 +6,7 @@
       :key="index"
       class="main-nav__item"
     >
-      <router-link :to="item.link" class="main-nav__link">
+      <router-link :to="item.link" class="main-nav__link" :class="item.disabled ? 'disabled' : ''">
         {{item.text}}
       </router-link>
     </li>
@@ -27,6 +27,11 @@ export default {
 
   .main-nav__link.router-link-active {
     @apply bg-black-100 text-green;
+  }
+
+  .main-nav__link.disabled {
+    opacity: 0.3;
+    pointer-events: none;
   }
 
   @screen md {
