@@ -1,18 +1,18 @@
-const { rem } = require('../utils');
-const { baseTypography: typography } = require('./typography');
+const { rem } = require('../utils')
+const { baseTypography: typography } = require('./typography')
 
 const styles = ({ theme }) => ({
-    p: {
-        marginBottom: typography.verticalSpacing,
-    },
+  p: {
+    marginBottom: typography.verticalSpacing
+  },
 
-    body: {
-        fontSize: rem(14),
-        lineHeight: theme('lineHeight.normal'),
-    },
-    'html.resize-active *': {
-        transition: 'none !important'
-    }
-});
+  body: {
+    fontSize: rem(14),
+    lineHeight: theme('lineHeight.normal')
+  },
+  'html.resize-active *': {
+    transition: 'none !important'
+  }
+})
 
-module.exports = { styles };
+module.exports = { styles }

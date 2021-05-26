@@ -1,13 +1,13 @@
-const { colors } = require('./colors');
-const { spacing } = require('./spacing');
-const { styles } = require('./styles');
+const { colors } = require('./colors')
+const { spacing } = require('./spacing')
+const { styles } = require('./styles')
 
-const { baseTypography, brandTypography } = require('./typography');
+const { baseTypography, brandTypography } = require('./typography')
 
 module.exports = {
-    colors,
-    baseTypography,
-    brandTypography,
-    spacing,
-    styles,
-};
+  colors,
+  baseTypography,
+  brandTypography,
+  spacing,
+  styles
+}

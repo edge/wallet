@@ -1,29 +1,29 @@
-const { rem } = require('../utils');
+const { rem } = require('../utils')
 
 const transactionTableStyles = ({ theme }) => ({
-    base: {
-        'table': {
-            width: '100%'
+  base: {
+    'table': {
+      width: '100%'
+    },
+    'thead': {
+      'th': {
+        padding: `${rem(13)} ${rem(5)}`,
+        '&:first-of-type': {
+          paddingLeft: rem(20)
         },
-        'thead': {
-            'th': {
-                padding: `${rem(13)} ${rem(5)}`,
-                '&:first-of-type': {
-                    paddingLeft: rem(20)
-                },
-                '&:last-of-type': {
-                    paddingRight: rem(30)
-                }
-            }
+        '&:last-of-type': {
+          paddingRight: rem(30)
         }
+      }
     }
-});
+  }
+})
 
 const transactionTable = ({ theme }) => {
-    const {base} = transactionTableStyles({ theme });
-    return {
-        ['.transaction-table']: base
-    };
-};
+  const {base} = transactionTableStyles({ theme })
+  return {
+    '.transaction-table': base
+  }
+}
 
-module.exports = { transactionTable };
+module.exports = { transactionTable }
