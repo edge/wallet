@@ -10,7 +10,7 @@
         <div class="transaction-item__heading relative cursor-pointer"  @click="clickHandler(index)">
           <strong class="transaction-item__type">
             <span class="icon">
-              <ArrowRightIcon v-if="item.head.type.toLowerCase() === 'received'"/>
+              <ArrowDownIcon v-if="item.head.type.toLowerCase() === 'received'"/>
               <ArrowUpIcon v-if="item.head.type.toLowerCase() === 'sent'"/>
             </span>
             {{item.head.type}}
