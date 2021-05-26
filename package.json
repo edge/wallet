@@ -15,7 +15,7 @@
   },
   "main": "server/index.js",
   "dependencies": {
-    "@edge/wallet-utils": "^0.1.1",
+    "@edge/wallet-utils": "latest",
     "@heroicons/vue": "^1.0.1",
     "@vuelidate/core": "^2.0.0-alpha.16",
     "@vuelidate/validators": "^2.0.0-alpha.13",
@@ -23,10 +23,12 @@
     "click-outside-vue3": "^4.0.1",
     "core-js": "^3.6.5",
     "crypto-js": "^4.0.0",
+    "dayjs": "^1.10.5",
     "dotenv": "^8.2.0",
     "elliptic": "^6.5.4",
     "express": "^4.17.1",
     "flat": "^5.0.2",
+    "idb-keyval": "^5.0.5",
     "javascript-time-ago": "^2.3.4",
     "js-sha3": "^0.8.0",
     "morgan": "^1.10.0",
@@ -34,7 +36,7 @@
     "postcss": "^7.0.35",
     "ramda": "^0.27.1",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.0",
-    "vue": "^3.0.0",
+    "vue": "^3.0.11",
     "vue-router": "^4.0.0-0"
   },
   "devDependencies": {
