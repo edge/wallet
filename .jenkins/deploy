@@ -35,8 +35,8 @@ def deployScript() {
     --expose $HTTP_PORT \
     --env NETWORK_ACCESS=$NETWORK_ACCESS \
     --env DEBUG=$DEBUG \
-    --env VUE_APP_BLOCKCHAIN_API_URL=$VUE_APP_BLOCKCHAIN_API_URL \
-    --env VUE_APP_INDEX_API_URL=$VUE_APP_INDEX_API_URL \
+    --env VUE_APP_BLOCKCHAIN_API_URL=$BLOCKCHAIN_API_URL \
+    --env VUE_APP_INDEX_API_URL=$INDEX_API_URL \
     --env VIRTUAL_HOST=$DOMAIN \
     --env LETSENCRYPT_HOST=$DOMAIN \
     --env LETSENCRYPT_EMAIL="adam@edge.network" \
@@ -76,8 +76,8 @@ pipeline {
               NAME=$NAME \
               IMAGE=$IMAGE \
               DEBUG=$DEBUG \
-              VUE_APP_INDEX_API_URL=$VUE_APP_INDEX_API_URL \
-              VUE_APP_BLOCKCHAIN_API_URL=$VUE_APP_BLOCKCHAIN_API_URL \
+              INDEX_API_URL=$INDEX_API_URL \
+              BLOCKCHAIN_API_URL=$BLOCKCHAIN_API_URL \
               HTTP_PORT=$HTTP_PORT \
               NETWORK_ACCESS=$NETWORK_ACCESS \
               DOMAIN=$DOMAIN \
