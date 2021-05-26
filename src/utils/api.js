@@ -2,8 +2,8 @@ const {
   xeStringFromMicroXe
 } = require('@edge/wallet-utils')
 
-const BLOCKCHAIN_API_URL = 'https://xe1.test.networkinternal.com'
-const INDEX_API_URL = 'https://index.test.networkinternal.com'
+const BLOCKCHAIN_API_URL = process.env.VUE_APP_BLOCKCHAIN_API_URL
+const INDEX_API_URL = process.env.VUE_APP_INDEX_API_URL
 
 const fetchData = url => {
   return fetch(url, {
@@ -25,13 +25,17 @@ const fetchData = url => {
       return res.json()
     })
     .catch(err => {
-      this.error = err
-      // In case a custom JSON error response was provided
-      if (err.json) {
-        return err.json.then(json => {
-          // set the JSON response message
-          this.error.message = json.message
-        })
+      console.log(err)
+
+      // if (err.json) {
+      // return err.json.then(json => {
+      // set the JSON response message
+      // this.error.message = json.message
+      // })
+      // }
+      return {
+        results: [],
+        metdata: {}
       }
     })
 }
