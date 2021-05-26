@@ -51,7 +51,7 @@
                       {{ item.description.address }}
                     </td>
                     <td data-title="Transaction ID :">
-                      <router-link :to="{name: 'Transaction', params: {id}}">
+                      <router-link :to="{name: 'Transaction', params: { id: item.description.id }}">
                         {{ sliceString(item.description.id, 10) }}
                       </router-link>
                     </td>
@@ -93,6 +93,9 @@ export default {
     enter(el, done) {
       el.style.height = el.scrollHeight + "px";
       done();
+    },
+    beforeEnter(el) {
+
     },
     beforeLeave(el) {
       el.style.height = el.scrollHeight + "px";
