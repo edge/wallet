@@ -23,6 +23,21 @@ const routes = [
     component: Index
   },
   {
+    path: '/governance',
+    name: 'Governance',
+    component: () => {}
+  },
+  {
+    path: '/overview',
+    name: 'Overview',
+    component: Overview
+  },
+  {
+    path: '/staking',
+    name: 'Staking',
+    component: () => {}
+  },
+  {
     path: '/transactions',
     name: 'Transactions',
     component: Transactions
@@ -31,11 +46,6 @@ const routes = [
     path: '/transaction/:id',
     name: 'Transaction',
     component: Transactions
-  },
-  {
-    path: '/overview',
-    name: 'Overview',
-    component: Overview
   },
   {
     path: '/sample',
