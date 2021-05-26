@@ -36,10 +36,10 @@
               <table>
                 <thead class="hidden lg:table-header-group">
                   <tr>
-                    <th>Timestamp</th>
-                    <th>Address</th>
-                    <th>Transaction ID</th>
-                    <th>Memo</th>
+                    <th width="20%">Date</th>
+                    <th width="35%">{{ item.head.type.toLowerCase() === 'sent' ? 'Sent to' : 'Received from'}}</th>
+                    <th width="15%">Transaction ID</th>
+                    <th width="30%">Memo</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -48,11 +48,11 @@
                       {{item.description.date}}
                     </td>
                     <td data-title="Address :">
-                      {{ sliceString(item.description.address, 25) }}
+                      {{ item.description.address }}
                     </td>
                     <td data-title="Transaction ID :">
                       <router-link :to="{name: 'Transaction', params: {id}}">
-                        {{ sliceString(item.description.address, 18) }}
+                        {{ sliceString(item.description.id, 10) }}
                       </router-link>
                     </td>
                     <td data-title="Memo :">
@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import {ArrowRightIcon, ArrowUpIcon, ChevronDownIcon} from "@heroicons/vue/outline"
+import {ArrowRightIcon, ArrowDownIcon, ArrowUpIcon, ChevronDownIcon} from "@heroicons/vue/outline"
 
 export default {
   name: "OverviewItem",
@@ -105,6 +105,7 @@ export default {
     },
   },
   components: {
+    ArrowDownIcon,
     ArrowRightIcon,
     ArrowUpIcon,
     ChevronDownIcon
