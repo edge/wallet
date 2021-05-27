@@ -285,6 +285,9 @@ const {
   generateChecksumAddress
 } = require('@edge/wallet-utils')
 
+import { fetchWallet } from '../utils/api'
+import { getWalletAddress } from '../utils/wallet'
+
 export default {
   name: 'Index',
   setup() {
@@ -411,20 +414,9 @@ export default {
           return typeof publicKey !== 'undefined'
         })
     },
-    loadWallet () {
-      console.log('loadWallet')
-      get(['p1'])
-          .then(async ([p1]) => {
-            const publicKey = decrypt(p1)
-            // this.privateKey = decrypt(privateKey)
-            const address = publicKeyToChecksumAddress(publicKey)
-
-            this.wallet = {
-              address
-            }
-
-            console.log('this.wallet', this.wallet)
-        })
+    async loadWallet () {
+      const walletAddress = await getWalletAddress()
+      this.wallet = await fetchWallet(walletAddress)
     },
     async save () {
       const publicKey = this.keyPair.getPublic(true, 'hex').toString()

@@ -613,6 +613,8 @@ import Amount from "@/components/Amount"
 
 import { compare, decrypt } from '../utils/crypto'
 import { get } from '../utils/db'
+import { sendTransaction } from '../utils/api'
+import { createTransaction } from '../utils/wallet'
 
 const {
   generateSignature,
@@ -721,33 +723,13 @@ export default {
       const [hash, salt] = await get(['h', 's'])
      
       if (compare(hash, salt, this.password)) {
+        // Create tx object.
+        const tx = await createTransaction(this.amount, this.sendMemo, this.wallet.nonce, this.sendAddress)
+        console.log('tx', tx)
+
         // Send transaction to the blockchain.
-        // Create tx 
-        console.log('this.amount', this.amount)
-        const tx = {
-          timestamp: Date.now(),
-          sender: this.wallet.address,
-          recipient: this.sendAddress,
-          amount: toMicroXe(this.amount),
-          data: {
-            memo: this.sendMemo
-          },
-          nonce: this.wallet.nonce
-        }
-
-        const privateKey = await get('p2')
-
-        tx.signature = generateSignature(decrypt(privateKey), JSON.stringify(tx))
-
-        const postResponse = await fetch('https://xe1.test.networkinternal.com/transaction', {
-          method: 'post',
-          headers: {
-            'content-type': 'application/json'
-          },
-          body: JSON.stringify(tx, true, 2)
-        })
-
-        console.log('tx', tx, postResponse.json())
+        const txResponse = await sendTransaction(tx)
+        console.log('txRes', txResponse)
         
         this.currentTx = tx
         this.amount = null

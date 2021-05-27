@@ -5,13 +5,19 @@ const {
 const BLOCKCHAIN_API_URL = process.env.VUE_APP_BLOCKCHAIN_API_URL
 const INDEX_API_URL = process.env.VUE_APP_INDEX_API_URL
 
-const fetchData = url => {
-  return fetch(url, {
-    method: 'get',
+const fetchData = (url, options = {}, payload) => {
+  const fetchOptions = {
+    method: options.method || 'get',
     headers: {
       'content-type': 'application/json'
     }
-  })
+  }
+
+  if (payload) {
+    fetchOptions.body = JSON.stringify(payload, true, 2)
+  }
+
+  return fetch(url, fetchOptions)
     .then(res => {
       console.log('res', res)
       // a non-200 response code
@@ -76,7 +82,12 @@ const fetchWallet = address => {
   return fetchData(`${BLOCKCHAIN_API_URL}/wallet/${address}`)
 }
 
+const sendTransaction = tx => {
+  return fetchData(`${BLOCKCHAIN_API_URL}/transaction`, { method: 'post' }, tx)
+}
+
 export {
   fetchTransactions,
-  fetchWallet
+  fetchWallet,
+  sendTransaction
 }
