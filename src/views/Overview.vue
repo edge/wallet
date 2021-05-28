@@ -94,7 +94,7 @@ export default {
         }
       })
 
-      this.metadata = metadata  
+      this.metadata = metadata
       this.loading = false
     },
     formatTransactions (transactions) {
