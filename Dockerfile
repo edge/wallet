@@ -16,6 +16,11 @@
 FROM node:lts AS build
 MAINTAINER Adam K Dean <adam@edge.network>
 
+ARG BLOCKCHAIN_API_URL
+ARG INDEX_API_URL
+ENV VUE_APP_BLOCKCHAIN_API_URL=$BLOCKCHAIN_API_URL
+ENV VUE_APP_INDEX_API_URL=$INDEX_API_URL
+
 COPY *.config.js ./
 COPY package*.json ./
 RUN npm install
