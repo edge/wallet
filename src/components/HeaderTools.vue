@@ -2,12 +2,12 @@
 <template>
   <ul class="header-tools">
     <li class="header-tools__item">
-      <router-link to="/" class="header-tools__link">
+      <a href="https://edge.network" class="header-tools__link" target="_blank" rel="noreferrer">
         <span class="header-tools__icon">
           <SupportIcon/>
         </span>
         Support
-      </router-link>
+      </a>
     </li>
     <li class="header-tools__item">
       <router-link to="/" class="header-tools__link">
@@ -31,7 +31,7 @@
 
 <style scoped>
   .header-tools {
-    @apply text-xs mt-auto px-15 flex-shrink-0;
+    @apply mt-auto px-15 flex-shrink-0;
   }
 
   .header-tools__link {
