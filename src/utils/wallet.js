@@ -1,5 +1,5 @@
-import { decrypt } from '../utils/crypto'
-import { get } from '../utils/db'
+import { compare, decrypt, getHash, getSalt } from '../utils/crypto'
+import { get, set } from '../utils/db'
 
 const {
   generateSignature,
@@ -29,13 +29,43 @@ const createTransaction = async (amount, memo, nonce, recipient) => {
 }
 
 const getWalletAddress = async () => {
-  const [p1] = await get(['p1'])
+  const p1 = await get('p1')
+
+  if (!p1) {
+    return false
+  }
+
   const publicKey = decrypt(p1)
 
   return publicKeyToChecksumAddress(publicKey)
 }
 
+const hasExistingWallet = () => {
+  return get('p1')
+    .then(publicKey => {
+      return typeof publicKey !== 'undefined'
+    })
+}
+
+const storePassword = async input => {
+  const salt = getSalt()
+  const hash = getHash(input, salt)
+  await set('s', salt)
+  await set('h', hash)
+
+  return true
+}
+
+const validatePassword = async input => {
+  const [hash, salt] = await get(['h', 's'])
+
+  return compare(hash, salt, input)
+}
+
 export {
   createTransaction,
-  getWalletAddress
+  getWalletAddress,
+  hasExistingWallet,
+  storePassword,
+  validatePassword
 }

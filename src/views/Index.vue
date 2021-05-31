@@ -41,7 +41,7 @@
                       <div class="form-group">
                         <label>wallet address</label>
                         <span class="flex items-center">
-                          <span class="break-all">
+                          <span class="break-all font-mono">
                             {{ xeAddress }}
                           </span>
                           <button
@@ -95,30 +95,30 @@
                     <div class="form-group">
                       <label>wallet address</label>
                       <span class="flex items-center">
-                          <span class="break-all">{{ xeAddress }}</span>
-                          <button
-                            class="text-green w-24 ml-24 flex-shrink-0"
-                            v-if="canCopy"
-                            @click="copyToClipboard(xeAddress)"
-                          >
-                            <ClipboardCopyIcon/>
-                          </button>
-                        </span>
+                        <span class="break-all font-mono text-sm2">{{ xeAddress }}</span>
+                        <button
+                          class="text-green w-24 ml-24 flex-shrink-0"
+                          v-if="canCopy"
+                          @click="copyToClipboard(xeAddress)"
+                        >
+                          <ClipboardCopyIcon/>
+                        </button>
+                      </span>
                     </div>
                     <div class="form-group mb-25">
                       <label>PRIVATE KEY</label>
                       <span class="flex items-center">
-                          <span class="break-all">
-                            {{ privateKey }}
-                          </span>
-                          <button
-                            class="text-green w-24 ml-18 flex-shrink-0"
-                            v-if="canCopy"
-                            @click="copyToClipboard(privateKey)"
-                          >
-                            <ClipboardCopyIcon/>
-                          </button>
+                        <span class="break-all font-mono text-sm2">
+                          {{ privateKey }}
                         </span>
+                        <button
+                          class="text-green w-24 ml-18 flex-shrink-0"
+                          v-if="canCopy"
+                          @click="copyToClipboard(privateKey)"
+                        >
+                          <ClipboardCopyIcon/>
+                        </button>
+                      </span>
                     </div>
                   </div>
                 </template>
@@ -183,7 +183,7 @@
                         <div class="form-group__error" v-if="v$.privateKeyRestore.$error">Name field has an error.</div>
                       </div>
                       
-                      <div class="form-group" :class="{'form-group__error': v$.passphraseRestore.$error}">
+                      <!-- <div class="form-group" :class="{'form-group__error': v$.passphraseRestore.$error}">
                         <label for="pass">ENTER PASSPHRASE</label>
                         <div class="input-wrap relative">
                           <span class="icon">
@@ -192,6 +192,25 @@
                           <input type="password" placeholder='Your passphrase' id="pass" v-model="passphraseRestore">
                         </div>
                         <div class="form-group__error" v-if="v$.passphraseRestore.$error">Name field has an error.</div>
+                      </div> -->
+                      <div class="form-group" :class="{'form-group__error': v$.password.$error}">
+                        <label for="pass-create">ENTER PASSWORD</label>
+                        <div class="input-wrap relative">
+                          <span class="icon">
+                            <LockOpenIcon/>
+                          </span>
+                          <input type="password" placeholder='Choose a password' id="pass-create" v-model="password">
+                        </div>
+                        <div class="form-group__error" v-if="v$.password.$error">Must be 10 characters or more.</div>
+                        
+                        <label for="pass-create" class="mt-10">REPEAT PASSWORD</label>
+                        <div class="input-wrap relative">
+                          <span class="icon">
+                            <LockOpenIcon/>
+                          </span>
+                          <input type="password" placeholder='Repeat your password' id="pass-create-repeat" v-model="repeatPassword">
+                        </div>
+                        <div class="form-group__error" :class="{ 'form-group--error': v$.repeatPassword.$error }" v-if="v$.repeatPassword.$error">Passwords must match.</div>
                       </div>
 
                     </form>
@@ -209,7 +228,7 @@
                     </button>
                     <button
                       class="button button--success w-full"
-                      @click="restoreWallet()"
+                      @click="restoreWallet([v$.password, v$.repeatPassword])"
                     >
                       Restore
                     </button>
@@ -274,19 +293,18 @@ import {KeyIcon, LockOpenIcon, RefreshIcon, ClipboardCopyIcon} from "@heroicons/
 import {ShieldExclamationIcon} from '@heroicons/vue/solid'
 import {minLength, required, sameAs} from '@vuelidate/validators'
 import useVuelidate from "@vuelidate/core"
-import { compare, decrypt, encrypt, getHash, getSalt } from '../utils/crypto'
+import { encrypt } from '../utils/crypto'
 import { clear, get, set } from '../utils/db'
 
 const {
   generateKeyPair,
   privateKeyToChecksumAddress,
   privateKeyToPublicKey,
-  publicKeyToChecksumAddress,
-  generateChecksumAddress
+  publicKeyToChecksumAddress
 } = require('@edge/wallet-utils')
 
 import { fetchWallet } from '../utils/api'
-import { getWalletAddress } from '../utils/wallet'
+import { getWalletAddress, hasExistingWallet, storePassword, validatePassword } from '../utils/wallet'
 
 export default {
   name: 'Index',
@@ -343,7 +361,7 @@ export default {
   },
   async mounted () {
     this.canCopy = !!navigator.clipboard
-    this.hasWallet = await this.hasExistingWallet()
+    this.hasWallet = await hasExistingWallet()
     
     if (!this.hasWallet) {
       // Generates an initial wallet address. User can accept this or regenerate.
@@ -352,8 +370,6 @@ export default {
       this.loadWallet()
       this.showUnlockModal = true
     }
-
-    console.log('this', this)
   },
   methods: {
     completeModal(slotProps, property, fields) {
@@ -365,10 +381,8 @@ export default {
         this[property] = false
       })()
     },
-    async completeAccountCreate () {
-      const [salt, hash] = await get(['s', 'h'])
-      
-      if (compare(hash, salt, this.passwordConfirm)) {
+    async completeAccountCreate () {     
+      if (validatePassword(this.passwordConfirm)) {
         // Store the generated keypair.
         this.save()
 
@@ -379,22 +393,24 @@ export default {
     async copyToClipboard (input) {
       await navigator.clipboard.writeText(input)
     },
-    async unlock () {
-      const [hash, salt] = await get(['h', 's'])
-     
-      if (compare(hash, salt, this.password)) {
+    async unlock () {    
+      if (validatePassword(this.password)) {
         // Redirect to wallet overview screen.
         window.location.href = 'overview'
       }
     },
-    async restoreWallet () {
-      const publicKey = privateKeyToPublicKey(this.privateKeyRestore)
-      this.xeAddress = privateKeyToChecksumAddress(this.privateKeyRestore)
+    async restoreWallet (fields) {
+      if (this.validateFields(fields)) {
+        const publicKey = privateKeyToPublicKey(this.privateKeyRestore)
+        this.xeAddress = privateKeyToChecksumAddress(this.privateKeyRestore)
 
-      await set('p1', encrypt(publicKey))
-      await set('p2', encrypt(this.privateKeyRestore))
+        storePassword(this.password)
+
+        await set('p1', encrypt(publicKey))
+        await set('p2', encrypt(this.privateKeyRestore))
       
-      window.location.href = '/overview'
+        window.location.href = '/overview'
+      }
     },
     async forgetWallet () {
       await clear()
@@ -406,14 +422,6 @@ export default {
 
       this.xeAddress = publicKeyToChecksumAddress(this.keyPair.getPublic(true, 'hex').toString())
     },
-    hasExistingWallet () {
-      console.log('hasExistingWallet')
-      return get('p1')
-        .then(publicKey => {
-          console.log('publicKey', typeof publicKey)
-          return typeof publicKey !== 'undefined'
-        })
-    },
     async loadWallet () {
       const walletAddress = await getWalletAddress()
       this.wallet = await fetchWallet(walletAddress)
@@ -424,12 +432,6 @@ export default {
       
       await set('p1', encrypt(publicKey))
       await set('p2', encrypt(privateKey))
-    },
-    async storePassword () {
-      const salt = getSalt()
-      const hash = getHash(this.password, salt)
-      await set('s', salt)
-      await set('h', hash)
     },
     hideModal(slotProps, property) {
       return (() => {
@@ -447,7 +449,7 @@ export default {
 
         if (property === 'showCreateModal') {
           console.log('SAVE PASSWORD HERE')
-          this.storePassword()
+          storePassword(this.password)
         }
       })()
     },
