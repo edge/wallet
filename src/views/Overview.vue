@@ -107,7 +107,9 @@ export default {
           description: {
             date: new Date(tx.timestamp).toLocaleString(), //'16/04/2021 13:06',
             address: tx.address,
-            id: tx.id,
+            sender: tx.sender,
+            recipient: tx.recipient,
+            id: tx.hash,
             description: tx.description,
           }
         }
