@@ -3,21 +3,18 @@
     <table>
       <thead class="hidden lg:table-header-group">
       <tr>
-        <th>Type
-        </th>
-        <th>Time</th>
-        <th>Address</th>
-        <th>Transaction ID</th>
+        <th></th>
+        <th>Tx Hash</th>
+        <th>Date</th>
+        <th>From</th>
+        <th>To</th>
         <th>Memo</th>
-        <th>
-          Amount
-        </th>
+        <th>Amount</th>
       </tr>
       </thead>
       <tbody>
-      <tr v-for="item in transactions" :key="item.id">
-        <TransactionsTableItem :type="item.type" :date="item.date" :id="item.id" :address="item.address"
-                               :description="item.description" :amount="item.amount"/>
+      <tr v-for="item in transactions" :key="item.id" :class="item.pending ? 'italic text-gray-500' : ''">
+        <TransactionsTableItem :item="item"/>
       </tr>
       </tbody>
     </table>

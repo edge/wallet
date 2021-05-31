@@ -24,7 +24,6 @@ const fetchData = (url, options = {}, payload) => {
 
   return fetch(url, fetchOptions)
     .then(res => {
-      console.log('res', res)
       // a non-200 response code
       if (!res.ok) {
         // create error instance with HTTP status text
@@ -60,32 +59,49 @@ const fetchTransactions = async (address, options = {}) => {
     options.limit = 25
   }
 
-  const url = `${INDEX_API_URL}/transactions/${address}` // ?page=${options.page}&limit=${options.limit}
-  console.log('fetching transactions from', url)
+  const pendingTxUrl = `${BLOCKCHAIN_API_URL}/transactions/pending/${address}`
+  const txUrl = `${INDEX_API_URL}/transactions/${address}?page=${options.page}&limit=${options.limit}`
 
-  return fetchData(url)
-    .then(({ results, metadata }) => {
-      const transactions = results.map(tx => {
-        return {
-          address: tx.sender === address ? tx.recipient : tx.sender,
-          amount: xeStringFromMicroXe(tx.amount),
-          description: tx.data.memo || 'None',
-          id: tx.hash,
-          date: new Date(tx.timestamp).toLocaleString(), // '16/04/2021 13:06',
-          timestamp: tx.timestamp,
-          type: tx.sender === address ? 'Sent' : 'Received'
-        }
-      })
+  let txResults = []
 
-      return {
-        transactions,
-        metadata
-      }
+  // Fetch pending transactions first.
+  return fetchData(pendingTxUrl)
+    .then(response => {
+      txResults = txResults.concat(formatResults(address, response, true))
+
+      // Fetch confirmed transactions.
+      return fetchData(txUrl)
+        .then(response => {
+          const { results, metadata } = response
+          txResults = txResults.concat(formatResults(address, results))
+
+          return {
+            transactions: txResults,
+            metadata
+          }
+        })
     })
 }
 
 const fetchWallet = address => {
   return fetchData(`${BLOCKCHAIN_API_URL}/wallet/${address}`)
+}
+
+const formatResults = (address, data, pending) => {
+  return data.map(tx => {
+    return {
+      address: tx.sender === address ? tx.recipient : tx.sender,
+      amount: xeStringFromMicroXe(tx.amount),
+      date: new Date(tx.timestamp).toLocaleString(), // '16/04/2021 13:06',
+      description: tx.data.memo || 'None',
+      hash: tx.hash,
+      recipient: tx.recipient,
+      sender: tx.sender,
+      timestamp: tx.timestamp,
+      type: tx.sender === address ? 'Sent' : 'Received',
+      pending
+    }
+  })
 }
 
 const sendTransaction = tx => {
