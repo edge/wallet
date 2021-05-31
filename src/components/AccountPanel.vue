@@ -58,8 +58,8 @@
                     <div class="input-wrap relative">
                       <input type="text" id="amount-send" placeholder="0.00" v-model="amount" class="placeholder-white placeholder-opacity-100">
                       <span class="curren absolute top-23 right-0 text-xl">XE</span>
-                      <div class="mt-5 form-group__error" style="color: #dc4c4c" v-if="v$.amount.sufficientFunds.$invalid">Insufficient funds.</div>
-                      <div class="mt-5 form-group__error" style="color: #dc4c4c" v-if="v$.amount.validAmount.$invalid">Invalid amount.</div>
+                      <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="v$.amount.sufficientFunds.$invalid">Insufficient funds.</div>
+                      <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="v$.amount.validAmount.$invalid">Invalid amount.</div>
                     </div>
                   </div>
                   <div class="radio-list flex flex-wrap pt-12">
@@ -665,7 +665,7 @@ export default {
   },
   methods: {
     populateAmount (percentage) {
-      this.amount = parseFloat(this.fromMicroXe(this.wallet.balance)) * (percentage / 100)
+      this.amount = (parseFloat(this.fromMicroXe(this.wallet.balance)) * (percentage / 100)).toFixed(6)
     },
     formatAmount (input) {
       return xeStringFromMicroXe(toMicroXe(input))
@@ -690,6 +690,10 @@ export default {
       return true
     },
     sufficientFunds (value) {
+      if (!value || !this.wallet.balance) {
+        return true
+      }
+
       const enteredAmount = parseFloat(value)
 
       // Check amount is less than the wallet balance.

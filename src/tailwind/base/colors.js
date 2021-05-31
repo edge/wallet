@@ -22,7 +22,7 @@ const colors = {
     300: '#2b7a39'
   },
   red: {
-    DEFAULT: '#dc4c4c'
+    DEFAULT: '#CD5F4E'
   }
 }
 
