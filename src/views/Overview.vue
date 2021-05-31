@@ -131,6 +131,12 @@ export default {
       this.loading = true
 
       const walletAddress = await getWalletAddress()
+      
+      if (!walletAddress) {
+        window.location = '/'
+        return
+      }
+
       this.wallet = await this.fetchWallet(walletAddress)
       this.fetchTransactions()
     }
