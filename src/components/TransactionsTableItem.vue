@@ -1,41 +1,41 @@
 <template>
-  <td data-title="Type :">
-      <span class="icon">
-        <ArrowRightIcon v-if="type.toLowerCase() === 'received'"/>
-        <ArrowUpIcon v-if="type.toLowerCase() === 'sent'"/>
-      </span>
-    {{ type }}
+  <td>
+    <span class="icon">
+      <ArrowDownIcon v-if="item.type.toLowerCase() === 'received'"/>
+      <ArrowUpIcon v-if="item.type.toLowerCase() === 'sent'"/>
+    </span>
   </td>
-  <td data-title="Time :">{{ date }}</td>
-  <td data-title="Address :">{{ sliceString(address, 25) }}</td>
-  <td data-title="Transaction ID:">
-    <router-link :to="{name: 'Transaction', params: {id}}">
-      {{ sliceString(id, 18) }}
-    </router-link>
+  <td data-title="Tx Hash:" :title="item.hash">
+    <!-- <router-link :to="{name: 'Transaction', params: {id}}"> -->
+    {{ sliceString(item.hash, 7) }}
+    <!-- </router-link> -->
   </td>
+  <td data-title="Date :">{{ item.date }}</td>
+  <td data-title="From :" :title="item.sender">{{ sliceString(item.sender, 25) }}</td>
+  <td data-title="To :" :title="item.recipient">{{ sliceString(item.recipient, 25) }}</td>
   <td data-title="Memo :">
-    {{ description }}
+    {{ item.description }}
   </td>
   <td data-title="Amount: ">
-    <span v-if="type.toLowerCase() === 'sent'">-</span>
-    {{ amount }}
+    <span v-if="item.type.toLowerCase() === 'sent'">-</span>
+    {{ item.amount }}
     XE
   </td>
 </template>
 
 <script>
-import {ArrowRightIcon, ArrowUpIcon} from "@heroicons/vue/outline"
+import {ArrowDownIcon, ArrowUpIcon} from "@heroicons/vue/outline"
 
 export default {
   name: "TransactionsTableItem",
-  props: ['type', 'id', 'date', 'address', 'description', 'amount'],
+  props: ['item'],
   methods: {
     sliceString(string, symbols) {
       return string.length > symbols ? string.slice(0, symbols) + '...' : string;
     }
   },
   components: {
-    ArrowRightIcon,
+    ArrowDownIcon,
     ArrowUpIcon
   }
 }
@@ -43,7 +43,7 @@ export default {
 
 <style scoped>
 td {
-  @apply bg-white text-sm2 flex items-center px-5 break-all max-w-full;
+  @apply bg-white text-sm2 font-normal flex items-center px-5 break-all max-w-full;
 }
 
 td::before {
