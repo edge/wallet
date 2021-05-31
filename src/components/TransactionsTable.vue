@@ -13,7 +13,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="item in transactions" :key="item.id" :class="item.pending ? 'italic text-gray-500' : ''">
+      <tr v-for="item in transactions" :key="item.id" :class="item.pending ? 'italic text-gray-400' : ''">
         <TransactionsTableItem :item="item"/>
       </tr>
       </tbody>
