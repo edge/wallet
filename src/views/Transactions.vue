@@ -25,6 +25,7 @@ export default {
     return {
       loading: false,
       metadata: {},
+      polling: null,
       transactions: [],
       wallet: {}
     }
@@ -37,8 +38,12 @@ export default {
   },
   mounted () {
     this.loadWallet()
+    this.pollData()
   },
   methods: {
+    beforeDestroy () {
+      clearInterval(this.polling)
+    },
     async fetchTransactions () {
       const { transactions, metadata } = await fetchTransactions(this.wallet.address)
 
@@ -61,7 +66,16 @@ export default {
 
       this.wallet = await this.fetchWallet(walletAddress)
       this.fetchTransactions()
-    }
+    },
+    pollData () {
+		  this.polling = setInterval(() => {
+			  // Fetch transactions.
+        this.fetchTransactions()
+
+        // Fetch wallet details.
+        this.loadWallet()
+		  }, 10000)
+	  }
   },
   title() {
     return 'XE Wallet » Transactions'
