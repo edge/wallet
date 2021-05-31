@@ -5,12 +5,7 @@ const {
 const BLOCKCHAIN_API_URL = process.env.VUE_APP_BLOCKCHAIN_API_URL
 const INDEX_API_URL = process.env.VUE_APP_INDEX_API_URL
 
-console.log('BLOCKCHAIN_API_URL is', BLOCKCHAIN_API_URL)
-console.log('INDEX_API_URL is', INDEX_API_URL)
-
 const fetchData = (url, options = {}, payload) => {
-  console.log('url:', url)
-
   const fetchOptions = {
     method: options.method || 'get',
     headers: {
