@@ -727,10 +727,9 @@ export default {
 
         // Send transaction to the blockchain.
         const txResponse = await sendTransaction(tx)
-        console.log('txRes', txResponse)
         
         this.currentTx = tx
-        this.amount = null
+        this.amount = 0
         this.sendAddress = ''
         this.sendMemo = ''
         this.showSendStep3 = true
