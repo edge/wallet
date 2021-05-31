@@ -2,13 +2,12 @@
   <div class="account-panel">
     <div class="container">
       <div class="account-panel__address">
-        Wallet address: <span>{{ wallet.address }}</span>
+        <h3 class="mb-1">Address</h3>
+        <span>{{ wallet.address }}</span>
       </div>
       <div class="account-panel__info">
         <div class="account-panel__balance">
-          <h3>
-            Balance
-          </h3>
+          <h3 class="mb-1">Balance</h3>
           <h1>
             {{ fromMicroXe(wallet.balance) }}<sub>XE</sub>
           </h1>
@@ -45,7 +44,7 @@
                     <div class="form-group__error" v-if="v$.sendAddress.$error">Invalid XE wallet address.</div>
                   </div>
                   <div class="form-group" :class="{'form-group__error': v$.sendMemo.$error}">
-                    <label for="memo" class="label">Memo</label>
+                    <label for="memo" class="label">Memo (optional)</label>
                     <input type="text" placeholder="Enter a memo" id="memo" v-model="sendMemo">
                     <div class="form-group__error" v-if="v$.sendMemo.$error">
                       Memo is limited to 32 characters and should include only upper and lowercase letters, numbers, hyphens and spaces.
@@ -73,7 +72,7 @@
               <template v-slot:footer="slotProps">
                 <div class="border-t border-gray-700 border-opacity-30 pt-32 px-24 pb-40">
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-24">
-                    <button class="button button--outline-success w-full" @click="slotProps.close()">
+                    <button class="button button--outline-success w-full" @click="clearForm(); slotProps.close();">
                       Cancel
                     </button>
                     <button class="button button--success w-full"
@@ -130,12 +129,12 @@
                     <div class="form-group__error" v-if="v$.password.$error">Name field has an error.</div>
                   </div>
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-24">
-                    <a href="#" class="button button--outline-success w-full" @click="() => {
+                    <button class="button button--outline-success w-full" @click="() => {
                     hideModal(slotProps, 'showSendStep2')
                     showOtherModal(slotProps, 'showSendStep')
                   }">
                       Back
-                    </a>
+                    </button>
                     <button class="button button--success w-full" @click="confirmTransaction()">Confirm transaction</button>
                   </div>
                 </div>
@@ -185,10 +184,10 @@
 
               <template v-slot:footer="slotProps">
                 <div class="border-t border-gray-700 border-opacity-30 pt-40 px-24 pb-40">
-                  <a href="#" class="button button--success w-full md:w-1/2 mx-auto block text-center"
+                  <button class="button button--success w-full md:w-1/2 mx-auto block text-center"
                      @click="hideModal(slotProps, 'showSendStep3')">
                     Close
-                  </a>
+                  </button>
                 </div>
               </template>
             </Modal>
@@ -611,13 +610,10 @@ import {required, minLength, numeric} from '@vuelidate/validators'
 import useVuelidate from "@vuelidate/core"
 import Amount from "@/components/Amount"
 
-import { compare, decrypt } from '../utils/crypto'
-import { get } from '../utils/db'
 import { sendTransaction } from '../utils/api'
-import { createTransaction } from '../utils/wallet'
+import { createTransaction, validatePassword } from '../utils/wallet'
 
 const {
-  generateSignature,
   toMicroXe,
   xeStringFromMicroXe
 } = require('@edge/wallet-utils')
@@ -719,13 +715,15 @@ export default {
       const regex = /^[a-zA-Z0-9\s-]+$/
       return regex.test(value)
     },
+    clearForm () {
+      this.amount = '1'
+      this.sendAddress = ''
+      this.sendMemo = ''
+    },
     async confirmTransaction () {
-      const [hash, salt] = await get(['h', 's'])
-     
-      if (compare(hash, salt, this.password)) {
+      if (validatePassword(this.password)) {
         // Create tx object.
         const tx = await createTransaction(this.amount, this.sendMemo, this.wallet.nonce, this.sendAddress)
-        console.log('tx', tx)
 
         // Send transaction to the blockchain.
         const txResponse = await sendTransaction(tx)
@@ -780,7 +778,7 @@ export default {
   data: function () {
     return {
       // wallet: 'xe_d4D5Fdb4d39A4c38d7Ca02b938049edA73b0fA53',
-      amount: '0',
+      amount: '1',
       currentTx: null,
       isModalVisible: false,
       showDepositStep: false,
@@ -840,7 +838,7 @@ export default {
 
 @screen md {
   .account-panel__address {
-    @apply text-right pr-9 mb-12;
+    @apply pr-9 mb-12;
   }
 
   .account-panel__info {
