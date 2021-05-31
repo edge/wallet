@@ -115,9 +115,6 @@ export default {
         }
       })
     },
-    fetchPendingTransactions() {
-
-    },
     pollData () {
 		  // this.polling = setInterval(() => {
 			  // this.fetchPendingTransactions()
