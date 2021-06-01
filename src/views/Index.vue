@@ -58,7 +58,7 @@
                           <span class="icon">
                             <LockOpenIcon/>
                           </span>
-                          <input type="password" placeholder='Choose a password' id="pass-create" v-model="password">
+                          <input type="password" autocomplete="off" placeholder='Choose a password' id="pass-create" v-model="password">
                         </div>
                         <div class="form-group__error" v-if="v$.password.$error">Must be 10 characters or more.</div>
                         
@@ -67,7 +67,7 @@
                           <span class="icon">
                             <LockOpenIcon/>
                           </span>
-                          <input type="password" placeholder='Repeat your password' id="pass-create-repeat" v-model="repeatPassword">
+                          <input type="password" autocomplete="off" placeholder='Repeat your password' id="pass-create-repeat" v-model="repeatPassword">
                         </div>
                         <div class="form-group__error" :class="{ 'form-group--error': v$.repeatPassword.$error }" v-if="v$.repeatPassword.$error">Passwords must match.</div>
                       </div>
@@ -76,16 +76,13 @@
                 </template>
 
                 <template v-slot:footer="slotProps">
-                  <div
-                      class="grid grid-cols-1 md:grid-cols-2 gap-24 border-t-default border-solid border-opacity-30 border-gray-700 pt-48 pb-54 px-24">
-                    <a href="#" class="button button--outline-success w-full" @click="slotProps.close">Cancel</a>
-                    <a href="#" class="button button--success w-full"
-                       @click="showOtherModal(slotProps, 'showCreateModal', [v$.password, v$.repeatPassword])">Next</a>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-24 border-t-default border-solid border-opacity-30 border-gray-700 pt-48 pb-54 px-24">
+                    <button class="button button--outline-success w-full" @click="slotProps.close">Cancel</button>
+                    <button class="button button--success w-full" @click="showOtherModal(slotProps, 'showCreateModal', [v$.password, v$.repeatPassword])">Next</button>
                   </div>
                 </template>
               </Modal>
-              <Modal
-                  v-if="showCreateModal === true" :opened="true">
+              <Modal v-if="showCreateModal === true" :opened="true">
                 <template v-slot:header>
                   <h2>Create a wallet</h2>
                 </template>
@@ -140,16 +137,13 @@
                           <span class="icon">
                             <LockOpenIcon/>
                           </span>
-                          <input type="password" placeholder='Your password' id="pass-create2" v-model="passwordConfirm">
+                          <input type="password" autocomplete="off" placeholder='Your password' id="pass-create2" v-model="passwordConfirm">
                         </div>
                         <div class="form-group__error" v-if="v$.passwordConfirm.$error">Name field has an error.</div>
                       </div>
-                      <div
-                          class="grid grid-cols-1 md:grid-cols-2 gap-24">
-                        <a href="#" class="button button--outline-success w-full"
-                           @click="hideModal(slotProps, 'showCreateModal')">Cancel</a>
-                        <a href="#" class="button button--success w-full"
-                           @click="completeAccountCreate()">Next</a>
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-24">
+                        <button class="button button--outline-success w-full" @click="hideModal(slotProps, 'showCreateModal')">Cancel</button>
+                        <button class="button button--success w-full" @click="completeAccountCreate()">Next</button>
                       </div>
                     </form>
                   </div>
@@ -161,9 +155,9 @@
               <Modal
               >
                 <template v-slot:opener="slotProps">
-                  <a href="#" class="button button--outline-success w-full" @click="slotProps.open">
+                  <button class="button button--outline-success w-full" @click="slotProps.open">
                     Restore wallet
-                  </a>
+                  </button>
                 </template>
                 <template v-slot:header>
                   <h2>Restore a wallet</h2>
@@ -199,7 +193,7 @@
                           <span class="icon">
                             <LockOpenIcon/>
                           </span>
-                          <input type="password" placeholder='Choose a password' id="pass-create" v-model="password">
+                          <input type="password" autocomplete="off" placeholder='Choose a password' id="pass-create" v-model="password">
                         </div>
                         <div class="form-group__error" v-if="v$.password.$error">Must be 10 characters or more.</div>
                         
@@ -208,7 +202,7 @@
                           <span class="icon">
                             <LockOpenIcon/>
                           </span>
-                          <input type="password" placeholder='Repeat your password' id="pass-create-repeat" v-model="repeatPassword">
+                          <input type="password" autocomplete="off" placeholder='Repeat your password' id="pass-create-repeat" v-model="repeatPassword">
                         </div>
                         <div class="form-group__error" :class="{ 'form-group--error': v$.repeatPassword.$error }" v-if="v$.repeatPassword.$error">Passwords must match.</div>
                       </div>
@@ -239,46 +233,46 @@
           </div>
 
           <div>
-              <Modal v-if="showUnlockModal === true && hasWallet" :opened="true"
-              >
-                <template v-slot:header>
-                  <h2>Unlock wallet</h2>
-                </template>
+            <Modal v-if="showUnlockModal === true && hasWallet" :opened="true" :closeHandler="swallowClose">
+              <template v-slot:header>
+                <h2>Unlock wallet</h2>
+              </template>
 
-                <template v-slot:body>
-                  <div class="pt-15">
-                    <form action="#">
-                      <div class="form-group">
-                        <label>wallet address</label>
-                        <span class="break-all">{{ wallet.address }}</span>
+              <template v-slot:body>
+                <div class="pt-15">
+                  <form>
+                    <div class="form-group">
+                      <label>wallet address</label>
+                      <span class="break-all">{{ wallet.address }}</span>
+                    </div>
+                    <div class="form-group" :class="{'form-group__error': v$.password.$error}">
+                      <label for="pass-unlock">ENTER PASSWORD</label>
+                      <div class="input-wrap relative">
+                        <span class="icon">
+                          <LockOpenIcon/>
+                        </span>
+                        <input type="password" autocomplete="off" placeholder='Your password' id="pass-unlock" v-model="password">
                       </div>
-                      <div class="form-group" :class="{'form-group__error': v$.password.$error}">
-                        <label for="pass-unlock">ENTER PASSWORD</label>
-                        <div class="input-wrap relative">
-                          <span class="icon">
-                            <LockOpenIcon/>
-                          </span>
-                          <input type="password" placeholder='Your password' id="pass-unlock" v-model="password">
-                        </div>
-                        <div class="form-group__error" v-if="v$.password.$error">Name field has an error.</div>
-                      </div>
-                    </form>
-                  </div>
-                </template>
+                      <div class="form-group__error" v-if="v$.password.$error">Please enter your password.</div>
+                      <div class="form-group__error" v-if="invalidPassword">Password incorrect.</div>
+                    </div>
+                  </form>
+                </div>
+              </template>
 
-                <template v-slot:footer="slotProps">
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-24 border-t-default border-solid border-opacity-30 border-gray-700 pt-48 pb-54 px-24">
-                    <button
-                      class="button button--outline-success w-full border-red-600 hover:border-red-600 hover:bg-red-600"
-                      @click="forgetWallet()"
-                    >
-                      Forget wallet
-                    </button>
-                    <button class="button button--success w-full" @click="unlock()">Unlock</button>
-                  </div>
-                </template>
-              </Modal>
-            </div>
+              <template v-slot:footer="slotProps">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-24 border-t-default border-solid border-opacity-30 border-gray-700 pt-48 pb-54 px-24">
+                  <button
+                    class="button button--outline-success w-full border-red-600 hover:border-red-600 hover:bg-red-600"
+                    @click="forgetWallet()"
+                  >
+                    Forget wallet
+                  </button>
+                  <button class="button button--success w-full" @click.prevent="unlock([v$.password])">Unlock</button>
+                </div>
+              </template>
+            </Modal>
+          </div>
 
         </div>
       </div>
@@ -314,6 +308,7 @@ export default {
   data: function () {
     return {
       canCopy: false,
+      invalidPassword: false,
       showCreateModal: false,
       showUnlockModal: false,
       password: '',
@@ -393,10 +388,16 @@ export default {
     async copyToClipboard (input) {
       await navigator.clipboard.writeText(input)
     },
-    async unlock () {    
-      if (validatePassword(this.password)) {
-        // Redirect to wallet overview screen.
-        window.location.href = 'overview'
+    async unlock (fields) {    
+      if (this.validateFields(fields)) {
+        const isValidPassword = await validatePassword(this.password)
+
+        if (isValidPassword) {
+          // Redirect to wallet overview screen.
+          window.location.href = 'overview'
+        } else {
+          this.invalidPassword = true
+        }
       }
     },
     async restoreWallet (fields) {
@@ -453,6 +454,7 @@ export default {
         }
       })()
     },
+    swallowClose () {},
     validateFields(fields) {
       if (fields && fields.length) {
         fields.forEach(field => {
