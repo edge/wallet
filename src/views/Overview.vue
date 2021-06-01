@@ -4,14 +4,26 @@
 
   <div class="bg-gray-200 py-35">
     <div class="container">
-      <p v-if="loading">
-        Loading...
-      </p>
-      <p v-if="error">{{error}}</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-24 items-center">
+        <div class="flex w-full rounded border border-gray-300 h-35 py-35 items-center">Promo 1</div>
+        <div class="flex w-full rounded border border-gray-300 h-35 py-35 items-center">Promo 2</div>
+      </div>
 
-      <p v-if="!loading">
-        <Overviews :overviews="overviews"/>
-      </p>
+      <div class="mt-15">
+        <h3>Recent transactions</h3>
+        <p v-if="loading">
+          Loading...
+        </p>
+        <p v-if="error">{{error}}</p>
+
+        <p v-if="!loading">
+          <Overviews :overviews="overviews" :transactions="transactions" />
+        </p>
+      </div>
+
+      <div class="w-full text-right">
+        <a href="/transactions" class="button button--success">View all &rarr;</a>
+      </div>
     </div>
   </div>
 </template>
@@ -23,7 +35,7 @@ import Overviews from "@/components/Overviews"
 import AccountPanel from "@/components/AccountPanel"
 import TransactionsTable from "@/components/TransactionsTable"
 
-import { fetchTransactions, fetchWallet } from '../utils/api'
+import { fetchTransactions, fetchWallet, formatTransactions } from '../utils/api'
 import { getWalletAddress } from '../utils/wallet'
 
 const dayjs = require('dayjs')
@@ -36,7 +48,6 @@ export default {
     return {
       wallet: {},
       transactions: [],
-      pendingTransactions: [],
       loading: false,
       error: '',
       polling: null,
@@ -51,17 +62,24 @@ export default {
   },
   mounted () {
     this.loadWallet()
-    this.pollData()
   },
   methods: {
     async fetchTransactions () {
       const { transactions, metadata } = await fetchTransactions(this.wallet.address)
 
-      this.transactions = transactions
+      // Only pick latest 10 tx.
+      this.transactions = transactions.slice(0, 10)
 
+      // TODO: use for summary view.
+      // this.getTransactionSummary()
+
+      this.metadata = metadata
+      this.loading = false
+    },
+    getTransactionSummary () {
       const recentTxs = {}
 
-      transactions.forEach(tx => {
+      this.transactions.forEach(tx => {
         const date = new Date(tx.timestamp)
         const dateKey = `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`
 
@@ -79,25 +97,22 @@ export default {
         if (hours < currentHour ) {
           this.overviews.push({
             date: 'TODAY',
-            items: this.formatTransactions(recentTxs[dateKey])
+            items: this.formatTransactionsWithSummary(recentTxs[dateKey])
           })
         } else if (hours >= currentHour && hours < (24+currentHour)) {
           this.overviews.push({
             date: 'YESTERDAY',
-            items: this.formatTransactions(recentTxs[dateKey])
+            items: this.formatTransactionsWithSummary(recentTxs[dateKey])
           })
         } else {
           this.overviews.push({
             date: date2.fromNow().toUpperCase(),
-            items: this.formatTransactions(recentTxs[dateKey])
+            items: this.formatTransactionsWithSummary(recentTxs[dateKey])
           })
         }
       })
-
-      this.metadata = metadata
-      this.loading = false
     },
-    formatTransactions (transactions) {
+    formatTransactionsWithSummary (transactions) {
       return transactions.map(tx => {
         return {
           head: {
@@ -105,23 +120,17 @@ export default {
             amount: tx.amount
           },
           description: {
-            date: new Date(tx.timestamp).toLocaleString(), //'16/04/2021 13:06',
+            type: tx.type,
+            amount: tx.amount,
+            date: new Date(tx.timestamp).toLocaleString(),
             address: tx.address,
             sender: tx.sender,
             recipient: tx.recipient,
-            id: tx.hash,
-            description: tx.description,
+            hash: tx.hash,
+            description: tx.description
           }
         }
       })
-    },
-    pollData () {
-		  // this.polling = setInterval(() => {
-			  // this.fetchPendingTransactions()
-		  // }, 10000)
-	  },
-    beforeDestroy () {
-      // clearInterval(this.polling)
     },
     fetchWallet (address) {
       return fetchWallet(address)

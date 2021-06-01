@@ -2,7 +2,7 @@
 <template>
   <ul class="header-tools">
     <li class="header-tools__item">
-      <a href="https://edge.network" class="header-tools__link" target="_blank" rel="noreferrer">
+      <a href="https://edge.network/en/contact/" class="header-tools__link" target="_blank" rel="noreferrer">
         <span class="header-tools__icon">
           <SupportIcon/>
         </span>

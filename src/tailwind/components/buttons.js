@@ -52,7 +52,7 @@ const themes = {
     color: colors.white,
 
     '&:hover, &.hover': {
-      backgroundColor: 'transparent',
+      backgroundColor: colors.green[300],
       color: colors.white
     },
 

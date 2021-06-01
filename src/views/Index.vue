@@ -18,7 +18,7 @@
             <h1 class="text-white mb-2">
               Welcome to the Edge
             </h1>
-            <p>Generate or restore an XE wallet to begin</p>
+            <p>Create or restore an XE wallet to begin</p>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-24 bg-black-100 py-20 px-24 pb-52 rounded-md" v-if="!hasWallet">

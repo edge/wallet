@@ -62,13 +62,15 @@ const fetchTransactions = async (address, options = {}) => {
   // Fetch pending transactions first.
   return fetchData(pendingTxUrl)
     .then(response => {
-      txResults = txResults.concat(formatResults(address, response, true))
+      // Pending transactions need to be reversed to show them in the correct order.
+      response = response.reverse()
+      txResults = txResults.concat(formatTransactions(address, response, true))
 
       // Fetch confirmed transactions.
       return fetchData(txUrl)
         .then(response => {
           const { results, metadata } = response
-          txResults = txResults.concat(formatResults(address, results))
+          txResults = txResults.concat(formatTransactions(address, results))
 
           return {
             transactions: txResults,
@@ -82,7 +84,7 @@ const fetchWallet = address => {
   return fetchData(`${BLOCKCHAIN_API_URL}/wallet/${address}`)
 }
 
-const formatResults = (address, data, pending) => {
+const formatTransactions = (address, data, pending) => {
   return data.map(tx => {
     return {
       address: tx.sender === address ? tx.recipient : tx.sender,
@@ -106,5 +108,6 @@ const sendTransaction = tx => {
 export {
   fetchTransactions,
   fetchWallet,
+  formatTransactions,
   sendTransaction
 }

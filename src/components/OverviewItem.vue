@@ -1,6 +1,7 @@
 <template>
   <div class="overview-item">
     <h2 class="overview-item__period h3">{{setting.date}}</h2>
+
     <div class="transactions-items">
       <div
         v-for="(item, index) in setting.items"
