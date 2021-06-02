@@ -27,9 +27,9 @@
               <Modal
               >
                 <template v-slot:opener="slotProps">
-                  <a href="#" class="button button--success w-full" @click="slotProps.open">
+                  <button class="button button--success w-full" @click="slotProps.open">
                     Create wallet
-                  </a>
+                  </button>
                 </template>
                 <template v-slot:header>
                   <h2>Create a wallet</h2>
