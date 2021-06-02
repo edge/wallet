@@ -9,7 +9,7 @@
         <div class="flex w-full rounded border border-gray-300 h-35 py-35 items-center">Promo 2</div>
       </div>
 
-      <div class="mt-15">
+      <div class="mt-15" v-if="transactions.length">
         <h3>Recent transactions</h3>
         <p v-if="loading">
           Loading...
@@ -21,9 +21,10 @@
         </p>
       </div>
 
-      <div class="w-full text-right">
+      <div class="w-full text-right" v-if="transactions.length">
         <a href="/transactions" class="button button--success">View all &rarr;</a>
       </div>
+
     </div>
   </div>
 </template>

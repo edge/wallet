@@ -12,10 +12,17 @@
         <th>Amount</th>
       </tr>
       </thead>
-      <tbody>
-      <tr v-for="item in transactions" :key="item.id" :class="item.pending ? 'italic text-gray-400' : ''">
-        <TransactionsTableItem :item="item"/>
-      </tr>
+      <tbody v-if="transactions.length">
+        <tr v-for="item in transactions" :key="item.id" :class="item.pending ? 'italic text-gray-400' : ''">
+          <TransactionsTableItem :item="item"/>
+        </tr>
+      </tbody>
+      <tbody v-if="!transactions.length">
+        <tr>
+          <td colspan="7" class="py-35 bg-white w-full text-center">
+            No transactions.
+          </td>
+        </tr>
       </tbody>
     </table>
     <!-- <Pagination /> -->
