@@ -251,7 +251,7 @@
                         <span class="icon">
                           <LockOpenIcon/>
                         </span>
-                        <input type="password" autocomplete="off" placeholder='Your password' id="pass-unlock" v-model="password">
+                        <input @keypress="(event) => handleEnterKeyUnlock(event, [v$.password])" type="password" autocomplete="off" placeholder='Your password' id="pass-unlock" v-model="password">
                       </div>
                       <div class="form-group__error" v-if="v$.password.$error">Please enter your password.</div>
                       <div class="form-group__error" v-if="invalidPassword">Password incorrect.</div>
@@ -387,6 +387,15 @@ export default {
     },
     async copyToClipboard (input) {
       await navigator.clipboard.writeText(input)
+    },
+    handleEnterKeyUnlock (event, fields) {
+      const { key, code, charCode } = event
+      
+      if (key === 'Enter' || code === 'Enter' || charCode === 13) {
+        event.preventDefault()
+
+        this.unlock(fields)
+      }
     },
     async unlock (fields) {    
       if (this.validateFields(fields)) {
