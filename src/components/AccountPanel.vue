@@ -1,10 +1,12 @@
 <template>
   <div class="account-panel">
     <div class="container">
+
       <div class="account-panel__address">
         <h3 class="mb-1">Address</h3>
         <span>{{ wallet.address }}</span>
       </div>
+
       <div class="account-panel__info">
         <div class="account-panel__balance">
           <h3 class="mb-1">Balance</h3>
@@ -12,6 +14,7 @@
             {{ fromMicroXe(wallet.balance) }}<sub>XE</sub>
           </h1>
         </div>
+
         <div class="account-panel__buttons">
           <div></div>
           <div></div>
@@ -26,6 +29,7 @@
                   Send
                 </button>
               </template>
+
               <template v-slot:header>
                 <h2 class="mb-8">Send XE</h2>
                 <span class="sub-heading d-block text-gray text-caption">{{ fromMicroXe(wallet.balance) }} XE available</span>
@@ -56,8 +60,18 @@
                   >
                     <label for="amount-send">AMOUNT</label>
                     <div class="input-wrap relative">
-                      <input type="text" id="amount-send" placeholder="0.00" v-model="amount" class="placeholder-white placeholder-opacity-100">
-                      <span class="curren absolute top-23 right-0 text-xl">XE</span>
+                      <input
+                        type="text"
+                        :ref="(el) => {
+                          init(el)
+                          
+                        }"
+                        id="amount-send"
+                        placeholder="0.00"
+                        v-model="amount"
+                        class="placeholder-white placeholder-opacity-100"
+                      />
+                      <span class="currentColor absolute top-23 right-0 text-xl">XE</span>
                       <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="v$.amount.sufficientFunds.$invalid">Insufficient funds.</div>
                       <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="v$.amount.validAmount.$invalid">Invalid amount.</div>
                     </div>
@@ -126,7 +140,7 @@
                           </span>
                       <input type="password" placeholder='Your password' id="pass-step" v-model="password">
                     </div>
-                    <div class="form-group__error" v-if="v$.password.$error">Name field has an error.</div>
+                    <div class="form-group__error" v-if="invalidPassword">Password incorrect.</div>
                   </div>
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-24">
                     <button class="button button--outline-success w-full" @click="() => {
@@ -145,13 +159,16 @@
                 v-if="showSendStep3 === true && currentTx"
             >
               <template v-slot:header>
-                <h2 class="mb-8">Done</h2>
+                <!-- <h2 class="mb-8">Done</h2> -->
+                <Logo/>
               </template>
               <template v-slot:body>
                 <div class="pb-35 min-h-410">
                   <div class="decor-block pb-4 mb-20 border-b border-gray-700 border-opacity-30">
-                    <CheckIcon class="w-52 text-green"/>
+                    <!-- <CheckIcon class="w-52 text-green"/> -->
                   </div>
+                  
+                  <!-- 
                   <div class="form-group mb-14">
                     <span class="label normal-case tracking text-base3 mb-4">You've sent</span>
                     <div class="input-wrap relative">
@@ -162,6 +179,11 @@
                         {{ currentTx.recipient }}
                       </span>
                     </div>
+                  </div>
+                  -->
+                  <div class="form-group mb-25">
+                    <label class="label">Recipient</label>
+                    <span class="break-all">{{ currentTx.recipient }}</span>
                   </div>
                   <div class="form-group mb-25">
                     <label class="label">Memo</label>
@@ -603,12 +625,15 @@ import {
   CheckIcon,
   ShieldExclamationIcon
 } from '@heroicons/vue/solid'
-import {SwitchHorizontalIcon} from '@heroicons/vue/outline'
+
+import Amount from "@/components/Amount"
+import AutoNumeric from 'autonumeric'
+import Logo from "@/components/Logo"
 import Modal from "@/components/Modal"
 import Radio from '@/components/Radio'
+import { SwitchHorizontalIcon } from '@heroicons/vue/outline'
 import {required, minLength, numeric} from '@vuelidate/validators'
 import useVuelidate from "@vuelidate/core"
-import Amount from "@/components/Amount"
 
 import { sendTransaction } from '../utils/api'
 import { createTransaction, validatePassword } from '../utils/wallet'
@@ -633,6 +658,7 @@ export default {
     ShieldExclamationIcon,
     KeyIcon,
     LockOpenIcon,
+    Logo,
     ArrowRightIcon,
     CheckIcon,
     Radio,
@@ -662,6 +688,9 @@ export default {
         validAmount: this.validAmount
       }
     }
+  },
+  mounted () {
+    this.init()
   },
   methods: {
     populateAmount (percentage) {
@@ -724,11 +753,22 @@ export default {
       this.sendAddress = ''
       this.sendMemo = ''
     },
+    handleEnterKeyConfirmTransaction (event, fields) {
+      const { key, code, charCode } = event
+      
+      if (key === 'Enter' || code === 'Enter' || charCode === 13) {
+        event.preventDefault()
+
+        return this.confirmTransaction()
+      }
+    },
     async confirmTransaction () {
-      if (validatePassword(this.password)) {
+      const isValidPassword = await validatePassword(this.password)
+
+      if (isValidPassword) {
         // Create tx object.
         const tx = await createTransaction(this.amount, this.sendMemo, this.wallet.nonce, this.sendAddress)
-
+      
         // Send transaction to the blockchain.
         const txResponse = await sendTransaction(tx)
         
@@ -737,8 +777,11 @@ export default {
         this.sendAddress = ''
         this.sendMemo = ''
         this.showSendStep3 = true
+
+        return true
       } else {
-        // Password incorrect.
+        this.invalidPassword = true
+        return false
       }
     },
     validateFields(fields) {
@@ -776,13 +819,32 @@ export default {
     },
     fromMicroXe (input) {
       return xeStringFromMicroXe(input || 0)
+    },
+    init (element) {     
+      if (element && !this.amountFieldInitialised) {
+        // new AutoNumeric(element, {
+        //   caretPositionOnFocus: "end",
+        //   decimalPlaces: 6,
+        //   decimalPlacesRawValue: 6,
+        //   emptyInputBehavior: "zero",
+        //   minimumValue: "0",
+        //   onInvalidPaste: "ignore"      
+        // })
+
+        // element.addEventListener('autoNumeric:rawValueModified', event => {
+        //   this.amount = event.detail.newRawValue
+        // })
+
+        this.amountFieldInitialised = true
+      }
     }
   },
   data: function () {
     return {
-      // wallet: 'xe_d4D5Fdb4d39A4c38d7Ca02b938049edA73b0fA53',
       amount: '1',
+      amountFieldInitialised: false,
       currentTx: null,
+      invalidPassword: false,
       isModalVisible: false,
       showDepositStep: false,
       showDepositStep2: false,
