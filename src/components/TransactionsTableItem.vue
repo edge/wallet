@@ -12,7 +12,7 @@
   </td>
   <td data-title="Date :">{{ item.date }}</td>
   <td
-    class="text-green cursor-default"
+    class="text-green cursor-pointer"
     data-title="From :"
     :title="item.sender.concat(' (click to copy)')"
     @click="copyToClipboard(item.sender)"
@@ -20,7 +20,7 @@
     {{ sliceString(item.sender, 25) }}
   </td>
   <td
-    class="text-green cursor-default"
+    class="text-green cursor-pointer"
     data-title="To :" 
     :title="item.recipient.concat(' (click to copy)')"
     @click="copyToClipboard(item.recipient)"
