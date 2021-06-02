@@ -11,8 +11,22 @@
     <!-- </router-link> -->
   </td>
   <td data-title="Date :">{{ item.date }}</td>
-  <td data-title="From :" :title="item.sender">{{ sliceString(item.sender, 25) }}</td>
-  <td data-title="To :" :title="item.recipient">{{ sliceString(item.recipient, 25) }}</td>
+  <td
+    class="text-green cursor-default"
+    data-title="From :"
+    :title="item.sender.concat(' (click to copy)')"
+    @click="copyToClipboard(item.sender)"
+  >
+    {{ sliceString(item.sender, 25) }}
+  </td>
+  <td
+    class="text-green cursor-default"
+    data-title="To :" 
+    :title="item.recipient.concat(' (click to copy)')"
+    @click="copyToClipboard(item.recipient)"
+  >
+    {{ sliceString(item.recipient, 25) }}
+  </td>
   <td data-title="Memo :">
     {{ item.description }}
   </td>
@@ -30,6 +44,11 @@ export default {
   name: "TransactionsTableItem",
   props: ['item'],
   methods: {
+    async copyToClipboard (input) {
+      if (!!navigator.clipboard) {
+        await navigator.clipboard.writeText(input)
+      }
+    },
     sliceString(string, symbols) {
       return string.length > symbols ? string.slice(0, symbols) + '...' : string;
     }
