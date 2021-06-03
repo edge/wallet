@@ -1,0 +1,58 @@
+{
+  "name": "wallet",
+  "version": "0.1.0",
+  "description": "Web wallet for managing XE coin",
+  "private": true,
+  "license": "unlicensed",
+  "author": "Edge Network <core@edge.network>",
+  "contributors": [
+    "Adam K Dean <adam@edge.network>"
+  ],
+  "scripts": {
+    "build": "vue-cli-service build",
+    "dev": "vue-cli-service --port 8000 serve",
+    "start": "node server/index.js",
+    "testnet": "VUE_APP_BLOCKCHAIN_API_URL=https://xe1.test.networkinternal.com VUE_APP_INDEX_API_URL=https://index.test.networkinternal.com npm run dev",
+    "staging": "VUE_APP_BLOCKCHAIN_API_URL=https://xe1.staging.networkinternal.com VUE_APP_INDEX_API_URL=https://index.staging.networkinternal.com npm run dev"
+  },
+  "main": "server/index.js",
+  "dependencies": {
+    "@edge/wallet-utils": "latest",
+    "@heroicons/vue": "^1.0.1",
+    "@vuelidate/core": "^2.0.0-alpha.16",
+    "@vuelidate/validators": "^2.0.0-alpha.13",
+    "autonumeric": "^4.6.0",
+    "autoprefixer": "^9.8.6",
+    "click-outside-vue3": "^4.0.1",
+    "core-js": "^3.6.5",
+    "crypto-js": "^4.0.0",
+    "dayjs": "^1.10.5",
+    "dotenv": "^8.2.0",
+    "elliptic": "^6.5.4",
+    "express": "^4.17.1",
+    "flat": "^5.0.2",
+    "idb-keyval": "^5.0.5",
+    "javascript-time-ago": "^2.3.4",
+    "js-sha3": "^0.8.0",
+    "morgan": "^1.10.0",
+    "path": "^0.12.7",
+    "postcss": "^7.0.35",
+    "ramda": "^0.27.1",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.0",
+    "vue": "^3.0.11",
+    "vue-router": "^4.0.0-0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/compiler-sfc": "^3.0.0",
+    "lodash": "^4.17.21",
+    "nodemon": "^2.0.7"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
