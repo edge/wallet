@@ -10,7 +10,6 @@
 </template>
 
 <script>
-
 import Header from "@/components/Header"
 import TableItem from "@/components/TransactionsTableItem"
 import TransactionsTable from "@/components/TransactionsTable"
@@ -36,29 +35,29 @@ export default {
     TableItem,
     Header
   },
-  mounted () {
+  mounted() {
     this.loadWallet()
     this.pollData()
   },
   methods: {
-    beforeDestroy () {
+    beforeDestroy() {
       clearInterval(this.polling)
     },
-    async fetchTransactions () {
+    async fetchTransactions() {
       const { transactions, metadata } = await fetchTransactions(this.wallet.address)
 
       this.transactions = transactions
-      this.metadata = metadata  
+      this.metadata = metadata
       this.loading = false
     },
     fetchWallet (address) {
       return fetchWallet(address)
     },
-    async loadWallet () {
+    async loadWallet() {
       this.loading = true
 
       const walletAddress = await getWalletAddress()
-      
+
       if (!walletAddress) {
         window.location = '/'
         return
@@ -67,15 +66,12 @@ export default {
       this.wallet = await this.fetchWallet(walletAddress)
       this.fetchTransactions()
     },
-    pollData () {
-		  this.polling = setInterval(() => {
-			  // Fetch transactions.
+    pollData() {
+      this.polling = setInterval(() => {
         this.fetchTransactions()
-
-        // Fetch wallet details.
         this.loadWallet()
-		  }, 10000)
-	  }
+      }, 10000)
+    }
   },
   title() {
     return 'XE Wallet » Transactions'
