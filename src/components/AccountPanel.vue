@@ -64,7 +64,7 @@
                         type="text"
                         :ref="(el) => {
                           init(el)
-                          
+
                         }"
                         id="amount-send"
                         placeholder="0.00"
@@ -167,15 +167,15 @@
                   <div class="decor-block pb-4 mb-20 border-b border-gray-700 border-opacity-30">
                     <!-- <CheckIcon class="w-52 text-green"/> -->
                   </div>
-                  
-                  <!-- 
+
+                  <!--
                   <div class="form-group mb-14">
                     <span class="label normal-case tracking text-base3 mb-4">You've sent</span>
                     <div class="input-wrap relative">
                       <span
                         class="input-filled w-full overflow-hidden overflow-ellipsis block text-white text-caption break-all">
-                        {{ fromMicroXe(currentTx.amount) }} XE 
-                        <span class="text-gray">to</span> 
+                        {{ fromMicroXe(currentTx.amount) }} XE
+                        <span class="text-gray">to</span>
                         {{ currentTx.recipient }}
                       </span>
                     </div>
@@ -639,6 +639,7 @@ import { sendTransaction } from '../utils/api'
 import { createTransaction, validatePassword } from '../utils/wallet'
 
 const {
+  formatXe,
   toMicroXe,
   xeStringFromMicroXe
 } = require('@edge/wallet-utils')
@@ -697,7 +698,7 @@ export default {
       this.amount = (parseFloat(this.fromMicroXe(this.wallet.balance)) * (percentage / 100)).toFixed(6)
     },
     formatAmount (input) {
-      return xeStringFromMicroXe(toMicroXe(input))
+      return formatXe(input, true)
     },
     validAmount (value) {
       const enteredAmount = parseFloat(value)
@@ -715,7 +716,7 @@ export default {
           return false
         }
       }
-      
+
       return true
     },
     sufficientFunds (value) {
@@ -755,7 +756,7 @@ export default {
     },
     handleEnterKeyConfirmTransaction (event, fields) {
       const { key, code, charCode } = event
-      
+
       if (key === 'Enter' || code === 'Enter' || charCode === 13) {
         event.preventDefault()
 
@@ -768,10 +769,10 @@ export default {
       if (isValidPassword) {
         // Create tx object.
         const tx = await createTransaction(this.amount, this.sendMemo, this.wallet.nonce, this.sendAddress)
-      
+
         // Send transaction to the blockchain.
         const txResponse = await sendTransaction(tx)
-        
+
         this.currentTx = tx
         this.amount = 0
         this.sendAddress = ''
@@ -818,9 +819,9 @@ export default {
       })()
     },
     fromMicroXe (input) {
-      return xeStringFromMicroXe(input || 0)
+      return xeStringFromMicroXe(input || 0, true)
     },
-    init (element) {     
+    init (element) {
       if (element && !this.amountFieldInitialised) {
         // new AutoNumeric(element, {
         //   caretPositionOnFocus: "end",
@@ -828,7 +829,7 @@ export default {
         //   decimalPlacesRawValue: 6,
         //   emptyInputBehavior: "zero",
         //   minimumValue: "0",
-        //   onInvalidPaste: "ignore"      
+        //   onInvalidPaste: "ignore"
         // })
 
         // element.addEventListener('autoNumeric:rawValueModified', event => {
