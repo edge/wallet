@@ -131,15 +131,16 @@
                           will not be able to access your wallet. Please enter your password to confirm you have
                           backed up your details.</p>
                       </div>
-                      <div class="form-group" :class="{'form-group__error': v$.passwordConfirm.$error}">
+                      <div class="form-group" :class="{'form-group__error': v$.passwordConfirm.$error || invalidPassword}">
                         <label for="pass-create2">ENTER PASSWORD</label>
                         <div class="input-wrap relative">
                           <span class="icon">
                             <LockOpenIcon/>
                           </span>
-                          <input type="password" autocomplete="off" placeholder='Your password' id="pass-create2" v-model="passwordConfirm">
+                          <input type="password" @keypress="(event) => handleEnterKeyCreate(event)" autocomplete="off" placeholder='Your password' id="pass-create2" v-model="passwordConfirm">
                         </div>
                         <div class="form-group__error" v-if="v$.passwordConfirm.$error">Name field has an error.</div>
+                        <div class="form-group__error" v-if="invalidPassword">Password incorrect.</div>
                       </div>
                       <div class="grid grid-cols-1 md:grid-cols-2 gap-24">
                         <button class="button button--outline-success w-full" @click="hideModal(slotProps, 'showCreateModal')">Cancel</button>
@@ -174,19 +175,9 @@
                           </span>
                           <input type="text" placeholder='Your private key' id="key" v-model="privateKeyRestore">
                         </div>
-                        <div class="form-group__error" v-if="v$.privateKeyRestore.$error">Name field has an error.</div>
+                        <div class="form-group__error" v-if="v$.privateKeyRestore.$error">Invalid private key.</div>
                       </div>
-                      
-                      <!-- <div class="form-group" :class="{'form-group__error': v$.passphraseRestore.$error}">
-                        <label for="pass">ENTER PASSPHRASE</label>
-                        <div class="input-wrap relative">
-                          <span class="icon">
-                            <LockOpenIcon/>
-                          </span>
-                          <input type="password" placeholder='Your passphrase' id="pass" v-model="passphraseRestore">
-                        </div>
-                        <div class="form-group__error" v-if="v$.passphraseRestore.$error">Name field has an error.</div>
-                      </div> -->
+
                       <div class="form-group" :class="{'form-group__error': v$.password.$error}">
                         <label for="pass-create">ENTER PASSWORD</label>
                         <div class="input-wrap relative">
@@ -202,7 +193,7 @@
                           <span class="icon">
                             <LockOpenIcon/>
                           </span>
-                          <input type="password" autocomplete="off" placeholder='Repeat your password' id="pass-create-repeat" v-model="repeatPassword">
+                          <input type="password" @keypress="(event) => handleEnterKeyRestore(event, [v$.password, v$.repeatPassword, v$.privateKeyRestore])" autocomplete="off" placeholder='Repeat your password' id="pass-create-repeat" v-model="repeatPassword">
                         </div>
                         <div class="form-group__error" :class="{ 'form-group--error': v$.repeatPassword.$error }" v-if="v$.repeatPassword.$error">Passwords must match.</div>
                       </div>
@@ -222,7 +213,7 @@
                     </button>
                     <button
                       class="button button--success w-full"
-                      @click="restoreWallet([v$.password, v$.repeatPassword])"
+                      @click="restoreWallet([v$.password, v$.repeatPassword, v$.privateKeyRestore])"
                     >
                       Restore
                     </button>
@@ -283,12 +274,13 @@
 <script>
 import Logo from "@/components/Logo"
 import Modal from '@/components/Modal'
-import {KeyIcon, LockOpenIcon, RefreshIcon, ClipboardCopyIcon} from "@heroicons/vue/outline"
-import {ShieldExclamationIcon} from '@heroicons/vue/solid'
-import {minLength, required, sameAs} from '@vuelidate/validators'
+import { KeyIcon, LockOpenIcon, RefreshIcon, ClipboardCopyIcon } from "@heroicons/vue/outline"
+import { ShieldExclamationIcon } from '@heroicons/vue/solid'
+import { minLength, required, sameAs } from '@vuelidate/validators'
 import useVuelidate from "@vuelidate/core"
-import { encrypt } from '../utils/crypto'
-import { clear, get, set } from '../utils/db'
+import { clear } from '../utils/db'
+import { fetchWallet } from '../utils/api'
+import { getWalletAddress, hasExistingWallet, storePassword, storePrivateKey, storePublicKey, validatePassword } from '../utils/wallet'
 
 const {
   generateKeyPair,
@@ -296,9 +288,6 @@ const {
   privateKeyToPublicKey,
   publicKeyToChecksumAddress
 } = require('@edge/wallet-utils')
-
-import { fetchWallet } from '../utils/api'
-import { getWalletAddress, hasExistingWallet, storePassword, validatePassword } from '../utils/wallet'
 
 export default {
   name: 'Index',
@@ -331,7 +320,7 @@ export default {
       },
       privateKeyRestore: {
         required,
-        minLength: minLength(10)
+        validPrivateKey: this.validPrivateKey
       },
       passphraseRestore: {
         required,
@@ -376,22 +365,43 @@ export default {
         this[property] = false
       })()
     },
-    async completeAccountCreate () {     
-      if (validatePassword(this.passwordConfirm)) {
+    async completeAccountCreate () {
+      const isValidPassword = await validatePassword(this.passwordConfirm)
+
+      if (isValidPassword) {
         // Store the generated keypair.
         this.save()
 
         // Redirect to wallet overview screen.
         window.location.href = 'overview'
+      } else {
+        this.invalidPassword = true
       }
     },
     async copyToClipboard (input) {
       await navigator.clipboard.writeText(input)
     },
-    handleEnterKeyUnlock (event, fields) {
+    isEnter (event) {
       const { key, code, charCode } = event
       
-      if (key === 'Enter' || code === 'Enter' || charCode === 13) {
+      return key === 'Enter' || code === 'Enter' || charCode === 13
+    },
+    handleEnterKeyCreate (event, fields) {
+      if (this.isEnter(event)) {
+        event.preventDefault()
+
+        this.completeAccountCreate()
+      }
+    },
+    handleEnterKeyRestore (event, fields) {
+      if (this.isEnter(event)) {
+        event.preventDefault()
+
+        this.restoreWallet(fields)
+      }
+    },
+    handleEnterKeyUnlock (event, fields) {
+      if (this.isEnter(event)) {
         event.preventDefault()
 
         this.unlock(fields)
@@ -416,8 +426,8 @@ export default {
 
         storePassword(this.password)
 
-        await set('p1', encrypt(publicKey))
-        await set('p2', encrypt(this.privateKeyRestore))
+        await storePublicKey(publicKey)
+        await storePrivateKey(this.privateKeyRestore)
       
         window.location.href = '/overview'
       }
@@ -440,8 +450,8 @@ export default {
       const publicKey = this.keyPair.getPublic(true, 'hex').toString()
       const privateKey = this.keyPair.getPrivate('hex').toString()
       
-      await set('p1', encrypt(publicKey))
-      await set('p2', encrypt(privateKey))
+      await storePublicKey(publicKey)
+      await storePrivateKey(privateKey)
     },
     hideModal(slotProps, property) {
       return (() => {
@@ -457,12 +467,14 @@ export default {
         slotProps.close()
         this[property] = true
 
+        // Moving from Create Step 1 to Create Step 2, we must have a 
+        // stored password in order for the user to confirm in the 2nd step.
         if (property === 'showCreateModal') {
-          console.log('SAVE PASSWORD HERE')
           storePassword(this.password)
         }
       })()
     },
+    // Empty function to ignore the modal close event.
     swallowClose () {},
     validateFields(fields) {
       if (fields && fields.length) {
@@ -472,6 +484,10 @@ export default {
         const validFields = fields.filter(field => !field.$invalid)
         return validFields.length === fields.length;
       }
+    },
+    validPrivateKey (value) {
+      const regex = /^[a-fA-F0-9]{64}$/
+      return regex.test(value)
     }
   },
   components: {
