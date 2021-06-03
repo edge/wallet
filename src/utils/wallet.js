@@ -1,4 +1,4 @@
-import { compare, decrypt, getHash, getSalt } from '../utils/crypto'
+import { compare, decrypt, encrypt, getHash, getSalt } from '../utils/crypto'
 import { get, set } from '../utils/db'
 
 const {
@@ -56,6 +56,18 @@ const storePassword = async input => {
   return true
 }
 
+const storePrivateKey = async input => {
+  await set('p2', encrypt(input))
+
+  return true
+}
+
+const storePublicKey = async input => {
+  await set('p1', encrypt(input))
+
+  return true
+}
+
 const validatePassword = async input => {
   const [hash, salt] = await get(['h', 's'])
 
@@ -67,5 +79,7 @@ export {
   getWalletAddress,
   hasExistingWallet,
   storePassword,
+  storePrivateKey,
+  storePublicKey,
   validatePassword
 }
