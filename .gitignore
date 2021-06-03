@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.nyc_output/
+npm-debug.log
+.DS_Store
+.env
+.idea
