@@ -30,7 +30,6 @@
 </template>
 
 <script>
-
 import Header from "@/components/Header"
 import Overviews from "@/components/Overviews"
 import AccountPanel from "@/components/AccountPanel"
@@ -61,11 +60,13 @@ export default {
     TransactionsTable,
     Header
   },
-  mounted () {
+  mounted() {
+    this.loading = true
     this.loadWallet()
+    this.pollData()
   },
   methods: {
-    async fetchTransactions () {
+    async fetchTransactions() {
       const { transactions, metadata } = await fetchTransactions(this.wallet.address)
 
       // Only pick latest 10 tx.
@@ -77,7 +78,7 @@ export default {
       this.metadata = metadata
       this.loading = false
     },
-    getTransactionSummary () {
+    getTransactionSummary() {
       const recentTxs = {}
 
       this.transactions.forEach(tx => {
@@ -113,7 +114,7 @@ export default {
         }
       })
     },
-    formatTransactionsWithSummary (transactions) {
+    formatTransactionsWithSummary(transactions) {
       return transactions.map(tx => {
         return {
           head: {
@@ -133,14 +134,12 @@ export default {
         }
       })
     },
-    fetchWallet (address) {
+    fetchWallet(address) {
       return fetchWallet(address)
     },
-    async loadWallet () {
-      this.loading = true
-
+    async loadWallet() {
       const walletAddress = await getWalletAddress()
-      
+
       if (!walletAddress) {
         window.location = '/'
         return
@@ -148,6 +147,12 @@ export default {
 
       this.wallet = await this.fetchWallet(walletAddress)
       this.fetchTransactions()
+    },
+    pollData() {
+      this.polling = setInterval(() => {
+        this.fetchTransactions()
+        this.loadWallet()
+      }, 10000)
     }
   }
 }
