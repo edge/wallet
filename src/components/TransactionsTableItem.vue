@@ -1,44 +1,36 @@
 <template>
-  <td>
-    <span class="icon">
-      <ArrowDownIcon v-if="item.type.toLowerCase() === 'received'"/>
-      <ArrowUpIcon v-if="item.type.toLowerCase() === 'sent'"/>
+  <td data-title="Date :">{{ item.date }}</td>
+  <td data-title="Address :">
+    <span v-if="item.type.toLowerCase() === 'received'">
+      <span class="icon icon-green"><ArrowDownIcon /></span>
+      <span class="monospace">{{ item.sender }}</span>
+    </span>
+    <span v-if="item.type.toLowerCase() === 'sent'">
+      <span class="icon icon-red"><ArrowUpIcon /></span>
+      <span class="monospace">{{ item.recipient }}</span>
     </span>
   </td>
   <td data-title="Tx Hash:" :title="item.hash">
     <!-- <router-link :to="{name: 'Transaction', params: {id}}"> -->
-    {{ sliceString(item.hash, 7) }}
+    <span class="monospace">{{ sliceString(item.hash, 10) }}</span>
     <!-- </router-link> -->
-  </td>
-  <td data-title="Date :">{{ item.date }}</td>
-  <td
-    class="text-green cursor-pointer"
-    data-title="From :"
-    :title="item.sender.concat(' (click to copy)')"
-    @click="copyToClipboard(item.sender)"
-  >
-    {{ sliceString(item.sender, 25) }}
-  </td>
-  <td
-    class="text-green cursor-pointer"
-    data-title="To :" 
-    :title="item.recipient.concat(' (click to copy)')"
-    @click="copyToClipboard(item.recipient)"
-  >
-    {{ sliceString(item.recipient, 25) }}
   </td>
   <td data-title="Memo :">
     {{ item.description }}
   </td>
+  <td data-title="Status :">
+    {{ formatStatus(item) }}
+  </td>
   <td data-title="Amount: ">
     <span v-if="item.type.toLowerCase() === 'sent'">-</span>
-    {{ item.amount }}
+    {{ formatAmount(item.amount) }}
     XE
   </td>
 </template>
 
 <script>
-import {ArrowDownIcon, ArrowUpIcon} from "@heroicons/vue/outline"
+const { toMicroXe, xeStringFromMicroXe } = require('@edge/wallet-utils')
+import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/vue/outline"
 
 export default {
   name: "TransactionsTableItem",
@@ -50,7 +42,15 @@ export default {
       }
     },
     sliceString(string, symbols) {
-      return string.length > symbols ? string.slice(0, symbols) + '...' : string;
+      return string.length > symbols ? string.slice(0, symbols) : string;
+    },
+    formatAmount(amount) {
+      return xeStringFromMicroXe(toMicroXe(amount), true)
+    },
+    formatStatus(item) {
+      if (item.pending) return 'Pending'
+      if (item.confirmations < 10) return `${item.confirmations} Confirmations`
+      else return `Confirmed`
     }
   },
   components: {
@@ -79,7 +79,15 @@ td:last-child {
 }
 
 td .icon {
-  @apply w-15 text-green mr-8 inline-block align-middle;
+  @apply w-15 mr-8 inline-block align-middle;
+}
+
+td .icon-green {
+  @apply text-green;
+}
+
+td .icon-red {
+  @apply text-red;
 }
 
 td a {
