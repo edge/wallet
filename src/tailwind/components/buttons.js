@@ -8,8 +8,8 @@ const themes = {
     color: colors.white,
 
     '&:hover, &.hover': {
-      backgroundColor: colors.black.DEFAULT,
-      borderColor: colors.black.DEFAULT,
+      backgroundColor: colors.green[200],
+      borderColor: colors.green[200],
       color: colors.white
     },
 
@@ -19,11 +19,12 @@ const themes = {
     }
   },
   outline: {
-    color: colors.black.DEFAULT,
+    color: colors.gray.DEFAULT,
+    borderColor: colors.gray.DEFAULT,
 
     '&:hover, &.hover': {
-      borderColor: colors.black.DEFAULT,
-      color: colors.black.DEFAULT
+      borderColor: colors.green[200],
+      color: colors.green[200]
     },
 
     '&:disabled, &.disabled': {
