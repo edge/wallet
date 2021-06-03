@@ -1,6 +1,6 @@
 <template>
-  <td data-title="Date :">{{ item.date }}</td>
-  <td data-title="Address :">
+  <td data-title="Date:">{{ item.date }}</td>
+  <td data-title="Address:">
     <span v-if="item.type.toLowerCase() === 'received'">
       <span class="icon icon-green mr-4"><ArrowDownIcon /></span>
       <span class="monospace">{{ item.sender }}</span>
@@ -15,14 +15,14 @@
     <span class="monospace">{{ sliceString(item.hash, 10) }}</span>
     <!-- </router-link> -->
   </td>
-  <td data-title="Memo :">
+  <td data-title="Memo:">
     {{ item.description }}
   </td>
-  <td data-title="Status :">
+  <td data-title="Status:">
     <span v-if="item.confirmations >= 10" class="icon icon-green mr-0 -mt-2"><CheckCircleIcon /></span>
     {{ formatStatus(item) }}
   </td>
-  <td data-title="Amount: ">
+  <td data-title="Amount:">
     <span v-if="item.type.toLowerCase() === 'sent'">-</span>
     {{ formatAmount(item.amount) }}
     XE
