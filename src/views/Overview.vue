@@ -9,7 +9,7 @@
         <div class="flex w-full rounded border border-gray-300 h-35 py-35 items-center">Promo 2</div>
       </div>
 
-      <div class="mt-15" v-if="transactions.length">
+      <div class="mt-15">
         <h3>Recent transactions</h3>
         <p v-if="loading">
           Loading...
