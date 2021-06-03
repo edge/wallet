@@ -34,6 +34,7 @@
     "idb-keyval": "^5.0.5",
     "javascript-time-ago": "^2.3.4",
     "js-sha3": "^0.8.0",
+    "moment": "^2.29.1",
     "morgan": "^1.10.0",
     "path": "^0.12.7",
     "postcss": "^7.0.35",
