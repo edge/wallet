@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" class="app">
     <router-view/>
   </div>
 </template>
@@ -23,3 +23,9 @@ export default {
   },
 }
 </script>
+
+<style>
+.app {
+  @apply bg-gray-200 h-screen;
+}
+</style>
