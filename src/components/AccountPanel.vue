@@ -11,7 +11,7 @@
         <div class="account-panel__balance">
           <h3 class="mb-1">Balance</h3>
           <h1>
-            {{ fromMicroXe(wallet.balance) }}<sub>XE</sub>
+            {{ formatMicroXe(wallet.balance) }}<sub>XE</sub>
           </h1>
         </div>
 
@@ -32,7 +32,7 @@
 
               <template v-slot:header>
                 <h2 class="mb-8">Send XE</h2>
-                <span class="sub-heading d-block text-gray text-caption">{{ fromMicroXe(wallet.balance) }} XE available</span>
+                <span class="sub-heading d-block text-gray text-caption">{{ formatMicroXe(wallet.balance) }} XE available</span>
               </template>
               <template v-slot:body>
                 <div class="pb-35 min-h-410">
@@ -103,7 +103,7 @@
             >
               <template v-slot:header>
                 <h2 class="mb-8">Send XE</h2>
-                <span class="sub-heading d-block text-gray text-caption">{{ fromMicroXe(wallet.balance) }} XE available</span>
+                <span class="sub-heading d-block text-gray text-caption">{{ formatMicroXe(wallet.balance) }} XE available</span>
               </template>
               <template v-slot:body>
                 <div class="pb-35 min-h-410">
@@ -174,7 +174,7 @@
                     <div class="input-wrap relative">
                       <span
                         class="input-filled w-full overflow-hidden overflow-ellipsis block text-white text-caption break-all">
-                        {{ fromMicroXe(currentTx.amount) }} XE
+                        {{ formatMicroXe(currentTx.amount) }} XE
                         <span class="text-gray">to</span>
                         {{ currentTx.recipient }}
                       </span>
@@ -191,7 +191,7 @@
                   </div>
                   <div class="form-group mb-16">
                     <label>Amount</label>
-                    <Amount :value="fromMicroXe(currentTx.amount)" currency="XE"/>
+                    <Amount :value="formatMicroXe(currentTx.amount)" currency="XE"/>
                   </div>
                   <div class="form-group mb-16">
                     <label>Fee</label>
@@ -199,7 +199,7 @@
                   </div>
                   <div class="form-group mb-0">
                     <label>Recipient receives</label>
-                    <Amount :value="fromMicroXe(currentTx.amount)" currency="XE"/>
+                    <Amount :value="formatMicroXe(currentTx.amount)" currency="XE"/>
                   </div>
                 </div>
               </template>
@@ -324,7 +324,7 @@
                   </div>
                   <div class="radio-list flex flex-wrap pt-12">
                     <Radio name="currency" id="min" label="MIN"/>
-                    <Radio name="currency" id="half" label="HALF"/>
+                    <Radio name="currency" id= label=/>
                     <Radio name="currency" id="max" label="MAX"/>
                   </div>
                 </div>
@@ -425,7 +425,7 @@
             >
               <template v-slot:header>
                 <h2 class="mb-8">Withdraw XE</h2>
-                <span class="sub-heading d-block text-gray text-caption">{{ fromMicroXe(wallet.balance) }} XE available</span>
+                <span class="sub-heading d-block text-gray text-caption">{{ formatMicroXe(wallet.balance) }} XE available</span>
               </template>
               <template v-slot:body>
                 <div class="pb-35 min-h-410">
@@ -442,7 +442,7 @@
                   </div>
                   <div class="radio-list flex flex-wrap pt-12 pb-32">
                     <Radio name="currency" id="min" label="MIN"/>
-                    <Radio name="currency" id="half" label="HALF"/>
+                    <Radio name="currency" id= label="HALF"/>
                     <Radio name="currency" id="max" label="MAX"/>
                   </div>
                   <div class="form-group mb-0">
@@ -508,7 +508,7 @@
             >
               <template v-slot:header>
                 <h2 class="mb-8">Withdraw XE</h2>
-                <span class="sub-heading d-block text-gray text-caption">{{ fromMicroXe(wallet.balance) }} XE available</span>
+                <span class="sub-heading d-block text-gray text-caption">{{ formatMicroXe(wallet.balance) }} XE available</span>
               </template>
               <template v-slot:body>
                 <div class="pb-35 min-h-410">
@@ -726,6 +726,10 @@ export default {
 
       const enteredAmount = parseFloat(value)
 
+      console.log('this.wallet.balance', this.wallet.balance)
+      console.log('float', parseFloat(this.fromMicroXe(this.wallet.balance)))
+      console.log('enteredAmount', enteredAmount)
+
       // Check amount is less than the wallet balance.
       return enteredAmount <= parseFloat(this.fromMicroXe(this.wallet.balance))
     },
@@ -818,8 +822,11 @@ export default {
         this[property] = false
       })()
     },
-    fromMicroXe (input) {
-      return xeStringFromMicroXe(input || 0, true)
+    fromMicroXe(mxe) {
+      return xeStringFromMicroXe(mxe || 0)
+    },
+    formatMicroXe(mxe) {
+      return xeStringFromMicroXe(mxe || 0, true)
     },
     init (element) {
       if (element && !this.amountFieldInitialised) {
