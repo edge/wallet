@@ -96,6 +96,7 @@ const formatTransactions = (address, data, pending) => {
       sender: tx.sender,
       timestamp: tx.timestamp,
       type: tx.sender === address ? 'Sent' : 'Received',
+      confirmations: tx.confirmations,
       pending
     }
   })
