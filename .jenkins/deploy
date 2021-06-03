@@ -60,7 +60,8 @@ pipeline {
     stage('Deploy') {
       steps {
         script {
-          def ssh = "ssh -o ServerAliveInterval=120 -o ServerAliveCountMax=5 -o StrictHostKeyChecking=no jenkins@${DEPLOY_TARGET} "
+          def sshPort = env.SSH_PORT != null ? env.SSH_PORT : 22
+          def ssh = "ssh -o ServerAliveInterval=120 -o ServerAliveCountMax=5 -o StrictHostKeyChecking=no -p ${sshPort} jenkins@${DEPLOY_TARGET} "
           def filename = "deploy_${UUID.randomUUID().toString()}.sh"
           def script = deployScript()
 
