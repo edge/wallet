@@ -45,6 +45,27 @@ const fetchData = (url, options = {}, payload) => {
     })
 }
 
+const fetchBlocks = async (options = {}) => {
+  if (!options.page) {
+    options.page = 1
+  }
+
+  if (!options.limit) {
+    options.limit = 10
+  }
+
+  const url = `${INDEX_API_URL}/blocks?page=${options.page}&limit=${options.limit}`
+
+  return fetchData(url)
+    .then(response => {
+      const { results, metadata } = response
+      return {
+        blocks: results,
+        metadata
+      }
+    })
+}
+
 const fetchTransactions = async (address, options = {}) => {
   if (!options.page) {
     options.page = 1
@@ -107,6 +128,7 @@ const sendTransaction = tx => {
 }
 
 export {
+  fetchBlocks,
   fetchTransactions,
   fetchWallet,
   formatTransactions,

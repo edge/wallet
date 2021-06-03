@@ -5,8 +5,8 @@
   <div class="bg-gray-200 py-35">
     <div class="container">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-24 items-center">
-        <div class="flex w-full rounded border border-gray-300 h-35 py-35 items-center">Promo 1</div>
-        <div class="flex w-full rounded border border-gray-300 h-35 py-35 items-center">Promo 2</div>
+        <NewsPromo />
+        <RecentBlocks />
       </div>
 
       <div class="mt-15">
@@ -24,7 +24,6 @@
       <div class="w-full text-right" v-if="transactions.length">
         <a href="/transactions" class="button button--success">View all &rarr;</a>
       </div>
-
     </div>
   </div>
 </template>
@@ -34,6 +33,8 @@ import Header from "@/components/Header"
 import Overviews from "@/components/Overviews"
 import AccountPanel from "@/components/AccountPanel"
 import TransactionsTable from "@/components/TransactionsTable"
+import NewsPromo from "@/components/NewsPromo"
+import RecentBlocks from "@/components/RecentBlocks"
 
 import { fetchTransactions, fetchWallet, formatTransactions } from '../utils/api'
 import { getWalletAddress } from '../utils/wallet'
@@ -58,7 +59,9 @@ export default {
     AccountPanel,
     Overviews,
     TransactionsTable,
-    Header
+    Header,
+    NewsPromo,
+    RecentBlocks
   },
   mounted() {
     this.loading = true
