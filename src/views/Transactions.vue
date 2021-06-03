@@ -36,6 +36,7 @@ export default {
     Header
   },
   mounted() {
+    this.loading = true
     this.loadWallet()
     this.pollData()
   },
@@ -54,8 +55,6 @@ export default {
       return fetchWallet(address)
     },
     async loadWallet() {
-      this.loading = true
-
       const walletAddress = await getWalletAddress()
 
       if (!walletAddress) {
