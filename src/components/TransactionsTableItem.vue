@@ -30,7 +30,7 @@
 </template>
 
 <script>
-const { toMicroXe, xeStringFromMicroXe } = require('@edge/wallet-utils')
+const { formatXe } = require('@edge/wallet-utils')
 import { ArrowDownIcon, ArrowUpIcon, CheckCircleIcon } from "@heroicons/vue/outline"
 
 export default {
@@ -46,7 +46,7 @@ export default {
       return string.length > symbols ? string.slice(0, symbols) : string;
     },
     formatAmount(amount) {
-      return xeStringFromMicroXe(toMicroXe(amount), true)
+      return formatXe(amount, true)
     },
     formatStatus(item) {
       if (item.pending) return 'Pending'
