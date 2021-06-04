@@ -16,19 +16,29 @@
         </div>
 
         <div class="account-panel__buttons">
+          <!-- 2x empty elements to replace hidden exchange/receive -->
           <div></div>
           <div></div>
           <div>
+            <button class="button button--success w-full" @click="openSend()">
+              <span class="button__icon w-12">
+                <ArrowUpIcon/>
+              </span>
+              Send
+            </button>
+
             <Modal
-            >
-              <template v-slot:opener="slotProps">
-                <button class="button button--success w-full" @click="slotProps.open">
+              v-if="showSendStep === true"
+              :opened="true"
+              :closeHandler="swallowClose">
+              <!-- <template v-slot:opener="slotProps">
+                <button class="button button--outline-success w-full" @click="slotProps.open">
                   <span class="button__icon w-12">
                     <ArrowUpIcon/>
                   </span>
                   Send
                 </button>
-              </template>
+              </template> -->
 
               <template v-slot:header>
                 <h2 class="mb-8">Send XE</h2>
@@ -86,7 +96,7 @@
               <template v-slot:footer="slotProps">
                 <div class="border-t border-gray-700 border-opacity-30 pt-32 px-24 pb-40">
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-24">
-                    <button class="button button--outline-success w-full" @click="clearForm(); slotProps.close();">
+                    <button class="button button--outline-success w-full" @click="clearForm(); hideModal(slotProps, 'showSendStep');">
                       Cancel
                     </button>
                     <button class="button button--success w-full"
@@ -100,6 +110,7 @@
             <Modal
                 :opened="true"
                 v-if="showSendStep2 === true"
+                :closeHandler="swallowClose"
             >
               <template v-slot:header>
                 <h2 class="mb-8">Send XE</h2>
@@ -145,13 +156,14 @@
                     </div>
                   </form>
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-24">
-                    <button class="button button--outline-success w-full" @click="() => {
-                    hideModal(slotProps, 'showSendStep2')
-                    showOtherModal(slotProps, 'showSendStep')
-                  }">
+                    <button
+                      class="button button--outline-success w-full"
+                      @click="hideModal(slotProps, 'showSendStep2'); showOtherModal(slotProps, 'showSendStep');">
                       Back
                     </button>
-                    <button class="button button--success w-full" @click="confirmTransaction()">Confirm transaction</button>
+                    <button
+                      class="button button--success w-full"
+                      @click="confirmTransaction()">Confirm transaction</button>
                   </div>
 
                   <div class="form-group__error" v-if="errorMessage">{{ errorMessage }}</div>
@@ -767,6 +779,11 @@ export default {
       const regex = /^[a-zA-Z0-9\s-]+$/
       return regex.test(value)
     },
+    openSend() {
+      this.showSendStep = true
+
+      console.log('this', this)
+    },
     clearForm() {
       this.amount = ''
       this.sendAddress = ''
@@ -800,8 +817,6 @@ export default {
         // Send transaction to the blockchain.
         const txResponse = await sendTransaction(tx)
 
-        console.log('txResponse', txResponse)
-
         // TODO: Handle accepted/rejected status.
         const { metadata, results } = txResponse
 
@@ -810,6 +825,8 @@ export default {
           this.amount = 0
           this.sendAddress = ''
           this.sendMemo = ''
+          this.showSendStep = false
+          this.showSendStep2 = false
           this.showSendStep3 = true
 
           return true
@@ -836,7 +853,7 @@ export default {
         if (fields) {
           if (!this.validateFields(fields)) return
         }
-        slotProps.close()
+        // slotProps.close()
         this[property] = true
       })()
     },
@@ -896,6 +913,7 @@ export default {
       showWithdrawStep: false,
       showWithdrawStep2: false,
       showWithdrawStep3: false,
+      showSendStep: false,
       showSendStep2: false,
       showSendStep3: false,
       sendAddress: '',
