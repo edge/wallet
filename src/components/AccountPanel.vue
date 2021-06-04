@@ -723,6 +723,10 @@ export default {
         return true
       }
 
+      if (!/^([0-9]{1,9}\.?[0-9]{0,6})$/.test(value)) {
+        return false
+      }
+
       const enteredAmount = parseFloat(value)
 
       if (isNaN(enteredAmount)) {
@@ -746,7 +750,7 @@ export default {
       return true
     },
     sufficientFunds(value) {
-      if (!this.v$.amount) {
+      if (!this.v$.amount || !value) {
         return true
       }
 
