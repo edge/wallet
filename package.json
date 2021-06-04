@@ -1,6 +1,6 @@
 {
   "name": "wallet",
-  "version": "0.1.1",
+  "version": "1.0.0",
   "description": "Web wallet for managing XE coin",
   "private": true,
   "license": "unlicensed",
@@ -17,7 +17,7 @@
   },
   "main": "server/index.js",
   "dependencies": {
-    "@edge/wallet-utils": "latest",
+    "@edge/wallet-utils": "^0.12.0",
     "@heroicons/vue": "^1.0.1",
     "@vuelidate/core": "^2.0.0-alpha.16",
     "@vuelidate/validators": "^2.0.0-alpha.13",
@@ -34,6 +34,7 @@
     "idb-keyval": "^5.0.5",
     "javascript-time-ago": "^2.3.4",
     "js-sha3": "^0.8.0",
+    "moment": "^2.29.1",
     "morgan": "^1.10.0",
     "path": "^0.12.7",
     "postcss": "^7.0.35",

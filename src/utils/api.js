@@ -45,6 +45,33 @@ const fetchData = (url, options = {}, payload) => {
     })
 }
 
+const fetchBlocks = async (options = {}) => {
+  if (!options.page) {
+    options.page = 1
+  }
+
+  if (!options.limit) {
+    options.limit = 10
+  }
+
+  const url = `${INDEX_API_URL}/blocks?page=${options.page}&limit=${options.limit}`
+
+  return fetchData(url)
+    .then(response => {
+      const { results, metadata } = response
+      return {
+        blocks: results,
+        metadata
+      }
+    })
+}
+
+const fetchPendingTransactions = (address, options = {}) => {
+  const url = `${BLOCKCHAIN_API_URL}/transactions/pending/${address}`
+
+  return fetchData(url)
+}
+
 const fetchTransactions = async (address, options = {}) => {
   if (!options.page) {
     options.page = 1
@@ -96,6 +123,7 @@ const formatTransactions = (address, data, pending) => {
       sender: tx.sender,
       timestamp: tx.timestamp,
       type: tx.sender === address ? 'Sent' : 'Received',
+      confirmations: tx.confirmations,
       pending
     }
   })
@@ -106,6 +134,8 @@ const sendTransaction = tx => {
 }
 
 export {
+  fetchBlocks,
+  fetchPendingTransactions,
   fetchTransactions,
   fetchWallet,
   formatTransactions,
