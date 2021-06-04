@@ -22,7 +22,7 @@
       </div>
 
       <div class="w-full text-right" v-if="transactions.length">
-        <a href="/transactions" class="button button--success">View all &rarr;</a>
+        <a href="/transactions" class="button button--success">View all</a>
       </div>
     </div>
   </div>
