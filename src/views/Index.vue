@@ -289,6 +289,9 @@ const {
 
 export default {
   name: 'Index',
+  title() {
+    return 'XE Wallet » Create or restore a wallet'
+  },
   setup() {
     return {v$: useVuelidate()}
   },
@@ -504,9 +507,6 @@ export default {
     RefreshIcon,
     ClipboardCopyIcon,
     ShieldExclamationIcon
-  },
-  title() {
-    return 'XE Wallet » Create or restore a wallet'
   }
 }
 </script>
