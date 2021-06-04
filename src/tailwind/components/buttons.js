@@ -59,8 +59,8 @@ const themes = {
     },
 
     '&:disabled, &.disabled': {
-      backgroundColor: colors.green.DEFAULT,
-      borderColor: colors.green.DEFAULT
+      backgroundColor: colors.gray.DEFAULT,
+      borderColor: colors.gray.DEFAULT
     }
   },
   'outline-success': {
@@ -73,7 +73,7 @@ const themes = {
     },
 
     '&:disabled, &.disabled': {
-      borderColor: colors.green
+      borderColor: colors.gray.DEFAULT
     }
   }
 }
