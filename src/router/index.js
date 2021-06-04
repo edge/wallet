@@ -14,7 +14,18 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Index from '../views/Index.vue'
 import Transactions from '@/views/Transactions'
 import Overview from '@/views/Overview'
-import Sample from '@/views/Sample'
+
+// {
+//   path: '/governance',
+//   name: 'Governance',
+//   component: () => {}
+// },
+//
+// {
+//   path: '/staking',
+//   name: 'Staking',
+//   component: () => {}
+// },
 
 const routes = [
   {
@@ -23,34 +34,14 @@ const routes = [
     component: Index
   },
   {
-    path: '/governance',
-    name: 'Governance',
-    component: () => {}
-  },
-  {
     path: '/overview',
     name: 'Overview',
     component: Overview
   },
   {
-    path: '/staking',
-    name: 'Staking',
-    component: () => {}
-  },
-  {
     path: '/transactions',
     name: 'Transactions',
     component: Transactions
-  },
-  {
-    path: '/transaction/:id',
-    name: 'Transaction',
-    component: Transactions
-  },
-  {
-    path: '/sample',
-    name: 'Sample',
-    component: Sample
   }
 ]
 
