@@ -24,8 +24,7 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-24 bg-black-100 py-20 px-24 pb-52 rounded-md" v-if="!hasWallet">
             <div>
               <h3 class="text-gray mb-24">CREATE a new wallet</h3>
-              <Modal
-              >
+              <Modal :closeHandler="swallowClose">
                 <template v-slot:opener="slotProps">
                   <button class="button button--success w-full" @click="slotProps.open">
                     Create wallet
@@ -82,7 +81,7 @@
                   </div>
                 </template>
               </Modal>
-              <Modal v-if="showCreateModal === true" :opened="true">
+              <Modal v-if="showCreateModal === true" :opened="true" :closeHandler="swallowClose">
                 <template v-slot:header>
                   <h2>Create a wallet</h2>
                 </template>
@@ -153,8 +152,7 @@
             </div>
             <div>
               <h3 class="text-gray mb-24">restore an existing wallet</h3>
-              <Modal
-              >
+              <Modal :closeHandler="swallowClose">
                 <template v-slot:opener="slotProps">
                   <button class="button button--outline-success w-full" @click="slotProps.open">
                     Restore wallet
