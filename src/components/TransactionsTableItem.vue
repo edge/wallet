@@ -15,7 +15,7 @@
     <span class="monospace">{{ sliceString(item.hash, 10) }}</span>
     <!-- </router-link> -->
   </td>
-  <td data-title="Memo:">
+  <td data-title="Memo:" :class="item.description === 'None' ? 'text-gray-400' : ''">
     {{ item.description }}
   </td>
   <td data-title="Status:">
