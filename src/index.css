@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/*
+ * Common styles
+ */
+
+.monospace {
+ font-family: 'Roboto Mono', monospace;
+}

@@ -11,5 +11,13 @@
 //   Technologies Ltd.   \______/
 
 module.exports = {
-  assetsDir: 'assets/'
+  assetsDir: 'assets/',
+  chainWebpack: config => {
+    config
+      .plugin('html')
+      .tap(args => {
+        args[0].title = 'XE Wallet'
+        return args
+      })
+  }
 }

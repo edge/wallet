@@ -11,28 +11,38 @@
         <div class="account-panel__balance">
           <h3 class="mb-1">Balance</h3>
           <h1>
-            {{ fromMicroXe(wallet.balance) }}<sub>XE</sub>
+            {{ formatMicroXe(wallet.balance) }}<sub>XE</sub>
           </h1>
         </div>
 
         <div class="account-panel__buttons">
+          <!-- 2x empty elements to replace hidden exchange/receive -->
           <div></div>
           <div></div>
           <div>
+            <button class="button button--success w-full" @click="openSend()">
+              <span class="button__icon w-12">
+                <ArrowUpIcon/>
+              </span>
+              Send
+            </button>
+
             <Modal
-            >
-              <template v-slot:opener="slotProps">
+              v-if="showSendStep === true"
+              :opened="true"
+              :closeHandler="swallowClose">
+              <!-- <template v-slot:opener="slotProps">
                 <button class="button button--outline-success w-full" @click="slotProps.open">
                   <span class="button__icon w-12">
                     <ArrowUpIcon/>
                   </span>
                   Send
                 </button>
-              </template>
+              </template> -->
 
               <template v-slot:header>
                 <h2 class="mb-8">Send XE</h2>
-                <span class="sub-heading d-block text-gray text-caption">{{ fromMicroXe(wallet.balance) }} XE available</span>
+                <span class="sub-heading d-block text-gray text-caption">{{ formatMicroXe(wallet.balance) }} XE available</span>
               </template>
               <template v-slot:body>
                 <div class="pb-35 min-h-410">
@@ -64,7 +74,7 @@
                         type="text"
                         :ref="(el) => {
                           init(el)
-                          
+
                         }"
                         id="amount-send"
                         placeholder="0.00"
@@ -86,7 +96,7 @@
               <template v-slot:footer="slotProps">
                 <div class="border-t border-gray-700 border-opacity-30 pt-32 px-24 pb-40">
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-24">
-                    <button class="button button--outline-success w-full" @click="clearForm(); slotProps.close();">
+                    <button class="button button--outline-success w-full" @click="clearForm(); hideModal(slotProps, 'showSendStep');">
                       Cancel
                     </button>
                     <button class="button button--success w-full"
@@ -100,10 +110,11 @@
             <Modal
                 :opened="true"
                 v-if="showSendStep2 === true"
+                :closeHandler="swallowClose"
             >
               <template v-slot:header>
                 <h2 class="mb-8">Send XE</h2>
-                <span class="sub-heading d-block text-gray text-caption">{{ fromMicroXe(wallet.balance) }} XE available</span>
+                <span class="sub-heading d-block text-gray text-caption">{{ formatMicroXe(wallet.balance) }} XE available</span>
               </template>
               <template v-slot:body>
                 <div class="pb-35 min-h-410">
@@ -132,31 +143,38 @@
 
               <template v-slot:footer="slotProps">
                 <div class="border-t border-gray-700 border-opacity-30 pt-32 px-24 pb-40">
-                  <div class="form-group" :class="{'form-group__error': v$.password.$error}">
-                    <label for="pass-step">Enter Password</label>
-                    <div class="input-wrap relative">
-                          <span class="icon">
-                            <LockOpenIcon/>
-                          </span>
-                      <input type="password" placeholder='Your password' id="pass-step" v-model="password">
+                  <form>
+                    <div class="form-group" :class="{'form-group__error': v$.password.$error}">
+                      <label for="pass-step">Enter Password</label>
+                      <div class="input-wrap relative">
+                            <span class="icon">
+                              <LockOpenIcon/>
+                            </span>
+                        <input type="password" autocomplete="off" @keypress="(event) => handleEnterKeyConfirmTransaction(event)" placeholder='Your password' id="pass-step" v-model="password">
+                      </div>
+                      <div class="form-group__error" v-if="invalidPassword">Password incorrect.</div>
                     </div>
-                    <div class="form-group__error" v-if="invalidPassword">Password incorrect.</div>
-                  </div>
+                  </form>
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-24">
-                    <button class="button button--outline-success w-full" @click="() => {
-                    hideModal(slotProps, 'showSendStep2')
-                    showOtherModal(slotProps, 'showSendStep')
-                  }">
+                    <button
+                      class="button button--outline-success w-full"
+                      @click="hideModal(slotProps, 'showSendStep2'); showOtherModal(slotProps, 'showSendStep');">
                       Back
                     </button>
-                    <button class="button button--success w-full" @click="confirmTransaction()">Confirm transaction</button>
+                    <button
+                      class="button button--success w-full"
+                      @click="confirmTransaction()">Confirm transaction</button>
                   </div>
+
+                  <div class="form-group__error" v-if="errorMessage">{{ errorMessage }}</div>
+
                 </div>
               </template>
             </Modal>
             <Modal
                 :opened="true"
                 v-if="showSendStep3 === true && currentTx"
+                 :closeHandler="swallowClose"
             >
               <template v-slot:header>
                 <!-- <h2 class="mb-8">Done</h2> -->
@@ -167,15 +185,15 @@
                   <div class="decor-block pb-4 mb-20 border-b border-gray-700 border-opacity-30">
                     <!-- <CheckIcon class="w-52 text-green"/> -->
                   </div>
-                  
-                  <!-- 
+
+                  <!--
                   <div class="form-group mb-14">
                     <span class="label normal-case tracking text-base3 mb-4">You've sent</span>
                     <div class="input-wrap relative">
                       <span
                         class="input-filled w-full overflow-hidden overflow-ellipsis block text-white text-caption break-all">
-                        {{ fromMicroXe(currentTx.amount) }} XE 
-                        <span class="text-gray">to</span> 
+                        {{ formatMicroXe(currentTx.amount) }} XE
+                        <span class="text-gray">to</span>
                         {{ currentTx.recipient }}
                       </span>
                     </div>
@@ -187,11 +205,11 @@
                   </div>
                   <div class="form-group mb-25">
                     <label class="label">Memo</label>
-                    <span class="break-all">{{ currentTx.data.memo }}</span>
+                    <span class="break-all">{{ currentTx.data.memo || 'None' }}</span>
                   </div>
                   <div class="form-group mb-16">
                     <label>Amount</label>
-                    <Amount :value="fromMicroXe(currentTx.amount)" currency="XE"/>
+                    <Amount :value="formatMicroXe(currentTx.amount)" currency="XE"/>
                   </div>
                   <div class="form-group mb-16">
                     <label>Fee</label>
@@ -199,7 +217,7 @@
                   </div>
                   <div class="form-group mb-0">
                     <label>Recipient receives</label>
-                    <Amount :value="fromMicroXe(currentTx.amount)" currency="XE"/>
+                    <Amount :value="formatMicroXe(currentTx.amount)" currency="XE"/>
                   </div>
                 </div>
               </template>
@@ -207,7 +225,7 @@
               <template v-slot:footer="slotProps">
                 <div class="border-t border-gray-700 border-opacity-30 pt-40 px-24 pb-40">
                   <button class="button button--success w-full md:w-1/2 mx-auto block text-center"
-                     @click="hideModal(slotProps, 'showSendStep3')">
+                     @click="clearForm(); hideModal(slotProps, 'showSendStep3')">
                     Close
                   </button>
                 </div>
@@ -324,7 +342,7 @@
                   </div>
                   <div class="radio-list flex flex-wrap pt-12">
                     <Radio name="currency" id="min" label="MIN"/>
-                    <Radio name="currency" id="half" label="HALF"/>
+                    <Radio name="currency" id= label=/>
                     <Radio name="currency" id="max" label="MAX"/>
                   </div>
                 </div>
@@ -425,7 +443,7 @@
             >
               <template v-slot:header>
                 <h2 class="mb-8">Withdraw XE</h2>
-                <span class="sub-heading d-block text-gray text-caption">{{ fromMicroXe(wallet.balance) }} XE available</span>
+                <span class="sub-heading d-block text-gray text-caption">{{ formatMicroXe(wallet.balance) }} XE available</span>
               </template>
               <template v-slot:body>
                 <div class="pb-35 min-h-410">
@@ -442,7 +460,7 @@
                   </div>
                   <div class="radio-list flex flex-wrap pt-12 pb-32">
                     <Radio name="currency" id="min" label="MIN"/>
-                    <Radio name="currency" id="half" label="HALF"/>
+                    <Radio name="currency" id= label="HALF"/>
                     <Radio name="currency" id="max" label="MAX"/>
                   </div>
                   <div class="form-group mb-0">
@@ -508,7 +526,7 @@
             >
               <template v-slot:header>
                 <h2 class="mb-8">Withdraw XE</h2>
-                <span class="sub-heading d-block text-gray text-caption">{{ fromMicroXe(wallet.balance) }} XE available</span>
+                <span class="sub-heading d-block text-gray text-caption">{{ formatMicroXe(wallet.balance) }} XE available</span>
               </template>
               <template v-slot:body>
                 <div class="pb-35 min-h-410">
@@ -635,10 +653,11 @@ import { SwitchHorizontalIcon } from '@heroicons/vue/outline'
 import {required, minLength, numeric} from '@vuelidate/validators'
 import useVuelidate from "@vuelidate/core"
 
-import { sendTransaction } from '../utils/api'
+import { fetchPendingTransactions, sendTransaction } from '../utils/api'
 import { createTransaction, validatePassword } from '../utils/wallet'
 
 const {
+  formatXe,
   toMicroXe,
   xeStringFromMicroXe
 } = require('@edge/wallet-utils')
@@ -693,33 +712,40 @@ export default {
     this.init()
   },
   methods: {
-    populateAmount (percentage) {
+    populateAmount(percentage) {
       this.amount = (parseFloat(this.fromMicroXe(this.wallet.balance)) * (percentage / 100)).toFixed(6)
     },
-    formatAmount (input) {
-      return xeStringFromMicroXe(toMicroXe(input))
+    formatAmount(input) {
+      return formatXe(input, true)
     },
-    validAmount (value) {
+    validAmount(value) {
+      if (!this.v$.amount) {
+        return true
+      }
+
+      if (!/^([0-9]{1,9}\.?[0-9]{0,6})$/.test(value)) {
+        return false
+      }
+
       const enteredAmount = parseFloat(value)
+
+      if (isNaN(enteredAmount)) {
+        return false
+      }
 
       // Check less than/equal to zero.
       if (enteredAmount <= 0) {
         return false
       }
 
-      // Check no more than 6 decimals.
-      if (enteredAmount.toString().indexOf('.') > 0) {
-        const decimals = enteredAmount.toString().split('.')[1]
-
-        if (decimals.length > 6) {
-          return false
-        }
-      }
-      
       return true
     },
-    sufficientFunds (value) {
-      if (!value || !this.wallet.balance) {
+    sufficientFunds(value) {
+      if (!this.v$.amount || !value) {
+        return true
+      }
+
+      if (!value && !this.wallet.balance) {
         return true
       }
 
@@ -728,7 +754,7 @@ export default {
       // Check amount is less than the wallet balance.
       return enteredAmount <= parseFloat(this.fromMicroXe(this.wallet.balance))
     },
-    validAddress (value) {
+    validAddress(value) {
       if (value.length !== 43) {
         return false
       }
@@ -736,7 +762,7 @@ export default {
       const regex = /^xe_[a-fA-F0-9]+$/
       return regex.test(value)
     },
-    validMemo (value) {
+    validMemo(value) {
       if (value === '') {
         return true
       }
@@ -748,37 +774,68 @@ export default {
       const regex = /^[a-zA-Z0-9\s-]+$/
       return regex.test(value)
     },
-    clearForm () {
-      this.amount = '1'
+    openSend() {
+      this.showSendStep = true
+    },
+    clearForm() {
+      this.amount = ''
       this.sendAddress = ''
       this.sendMemo = ''
+
+      this.v$.amount.$reset()
+      this.v$.sendAddress.$reset()
     },
-    handleEnterKeyConfirmTransaction (event, fields) {
+    handleEnterKeyConfirmTransaction(event) {
       const { key, code, charCode } = event
-      
+
       if (key === 'Enter' || code === 'Enter' || charCode === 13) {
         event.preventDefault()
 
         return this.confirmTransaction()
       }
     },
-    async confirmTransaction () {
+    async confirmTransaction() {
       const isValidPassword = await validatePassword(this.password)
 
       if (isValidPassword) {
         // Create tx object.
-        const tx = await createTransaction(this.amount, this.sendMemo, this.wallet.nonce, this.sendAddress)
-      
+        let nonce = this.wallet.nonce
+
+        // Update nonce with pending transactions.
+        let pendingTx = await fetchPendingTransactions(this.wallet.address)
+
+        if (pendingTx.length) {
+          pendingTx = pendingTx.sort((a, b) => {
+            if (a.nonce === b.nonce) return 0
+            return a.nonce > b.nonce ? -1 : 1
+          })
+
+          nonce = pendingTx[0].nonce + 1
+        }
+
+        const tx = await createTransaction(this.amount, this.sendMemo, nonce, this.sendAddress)
+
         // Send transaction to the blockchain.
         const txResponse = await sendTransaction(tx)
-        
-        this.currentTx = tx
-        this.amount = 0
-        this.sendAddress = ''
-        this.sendMemo = ''
-        this.showSendStep3 = true
 
-        return true
+        // TODO: Handle accepted/rejected status.
+        const { metadata, results } = txResponse
+
+        if (metadata.accepted) {
+          this.currentTx = tx
+          this.amount = 0
+          this.password = ''
+          this.sendAddress = ''
+          this.sendMemo = ''
+          this.showSendStep = false
+          this.showSendStep2 = false
+          this.showSendStep3 = true
+
+          return true
+        } else {
+          this.errorMessage = results && results[0] && results[0].reason
+          return false
+        }
       } else {
         this.invalidPassword = true
         return false
@@ -798,7 +855,7 @@ export default {
         if (fields) {
           if (!this.validateFields(fields)) return
         }
-        slotProps.close()
+        // slotProps.close()
         this[property] = true
       })()
     },
@@ -817,10 +874,13 @@ export default {
         this[property] = false
       })()
     },
-    fromMicroXe (input) {
-      return xeStringFromMicroXe(input || 0)
+    fromMicroXe(mxe) {
+      return xeStringFromMicroXe(mxe || 0)
     },
-    init (element) {     
+    formatMicroXe(mxe) {
+      return xeStringFromMicroXe(mxe || 0, true)
+    },
+    init(element) {
       if (element && !this.amountFieldInitialised) {
         // new AutoNumeric(element, {
         //   caretPositionOnFocus: "end",
@@ -828,7 +888,7 @@ export default {
         //   decimalPlacesRawValue: 6,
         //   emptyInputBehavior: "zero",
         //   minimumValue: "0",
-        //   onInvalidPaste: "ignore"      
+        //   onInvalidPaste: "ignore"
         // })
 
         // element.addEventListener('autoNumeric:rawValueModified', event => {
@@ -837,13 +897,16 @@ export default {
 
         this.amountFieldInitialised = true
       }
-    }
+    },
+    // Empty function to ignore the modal close event.
+    swallowClose () {}
   },
-  data: function () {
+  data: function() {
     return {
-      amount: '1',
+      amount: '',
       amountFieldInitialised: false,
       currentTx: null,
+      errorMessage: '',
       invalidPassword: false,
       isModalVisible: false,
       showDepositStep: false,
@@ -852,6 +915,7 @@ export default {
       showWithdrawStep: false,
       showWithdrawStep2: false,
       showWithdrawStep3: false,
+      showSendStep: false,
       showSendStep2: false,
       showSendStep3: false,
       sendAddress: '',
