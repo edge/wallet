@@ -54,6 +54,7 @@ const themes = {
 
     '&:hover, &.hover': {
       backgroundColor: colors.green[300],
+      borderColor: colors.green[300],
       color: colors.white
     },
 
