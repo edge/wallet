@@ -193,7 +193,7 @@
                   </div>
                   <div class="form-group mb-25">
                     <label class="label">Memo</label>
-                    <span class="break-all">{{ currentTx.data.memo }}</span>
+                    <span class="break-all">{{ currentTx.data.memo || 'None' }}</span>
                   </div>
                   <div class="form-group mb-16">
                     <label>Amount</label>
