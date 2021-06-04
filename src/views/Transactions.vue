@@ -20,6 +20,9 @@ import { getWalletAddress } from '../utils/wallet'
 
 export default {
   name: 'Transactions',
+  title() {
+    return 'XE Wallet » Transactions'
+  },
   data: function () {
     return {
       loading: false,
@@ -71,9 +74,6 @@ export default {
         this.loadWallet()
       }, 10000)
     }
-  },
-  title() {
-    return 'XE Wallet » Transactions'
   }
 }
 </script>
