@@ -358,6 +358,8 @@ export default {
   methods: {
     clearForm() {
       this.privateKeyRestore = ''
+      this.password = ''
+      this.repeatPassword = ''
 
       this.v$.privateKeyRestore.$reset()
       this.v$.password.$reset()
