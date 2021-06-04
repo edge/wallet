@@ -781,8 +781,6 @@ export default {
     },
     openSend() {
       this.showSendStep = true
-
-      console.log('this', this)
     },
     clearForm() {
       this.amount = ''
@@ -809,8 +807,16 @@ export default {
         let nonce = this.wallet.nonce
 
         // Update nonce with pending transactions.
-        const pendingTx = await fetchPendingTransactions(this.wallet.address)
-        nonce = nonce + pendingTx.length + 1
+        let pendingTx = await fetchPendingTransactions(this.wallet.address)
+
+        if (pendingTx.length) {
+          pendingTx = pendingTx.sort((a, b) => {
+            if (a.nonce === b.nonce) return 0
+            return a.nonce > b.nonce ? -1 : 1
+          })
+
+          nonce = pendingTx[0].nonce + 1
+        }
 
         const tx = await createTransaction(this.amount, this.sendMemo, nonce, this.sendAddress)
 
@@ -823,6 +829,7 @@ export default {
         if (metadata.accepted) {
           this.currentTx = tx
           this.amount = 0
+          this.password = ''
           this.sendAddress = ''
           this.sendMemo = ''
           this.showSendStep = false
