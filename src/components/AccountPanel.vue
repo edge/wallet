@@ -738,15 +738,6 @@ export default {
         return false
       }
 
-      // Check no more than 6 decimals.
-      if (enteredAmount.toString().indexOf('.') > 0) {
-        const decimals = enteredAmount.toString().split('.')[1]
-
-        if (decimals.length > 6) {
-          return false
-        }
-      }
-
       return true
     },
     sufficientFunds(value) {
