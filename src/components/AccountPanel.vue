@@ -132,16 +132,18 @@
 
               <template v-slot:footer="slotProps">
                 <div class="border-t border-gray-700 border-opacity-30 pt-32 px-24 pb-40">
-                  <div class="form-group" :class="{'form-group__error': v$.password.$error}">
-                    <label for="pass-step">Enter Password</label>
-                    <div class="input-wrap relative">
-                          <span class="icon">
-                            <LockOpenIcon/>
-                          </span>
-                      <input type="password" placeholder='Your password' id="pass-step" v-model="password">
+                  <form>
+                    <div class="form-group" :class="{'form-group__error': v$.password.$error}">
+                      <label for="pass-step">Enter Password</label>
+                      <div class="input-wrap relative">
+                            <span class="icon">
+                              <LockOpenIcon/>
+                            </span>
+                        <input type="password" autocomplete="off" @keypress="(event) => handleEnterKeyConfirmTransaction(event)" placeholder='Your password' id="pass-step" v-model="password">
+                      </div>
+                      <div class="form-group__error" v-if="invalidPassword">Password incorrect.</div>
                     </div>
-                    <div class="form-group__error" v-if="invalidPassword">Password incorrect.</div>
-                  </div>
+                  </form>
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-24">
                     <button class="button button--outline-success w-full" @click="() => {
                     hideModal(slotProps, 'showSendStep2')
@@ -151,12 +153,16 @@
                     </button>
                     <button class="button button--success w-full" @click="confirmTransaction()">Confirm transaction</button>
                   </div>
+                  
+                  <div class="form-group__error" v-if="errorMessage">{{ errorMessage }}</div>
+
                 </div>
               </template>
             </Modal>
             <Modal
                 :opened="true"
                 v-if="showSendStep3 === true && currentTx"
+                 :closeHandler="swallowClose"
             >
               <template v-slot:header>
                 <!-- <h2 class="mb-8">Done</h2> -->
@@ -207,7 +213,7 @@
               <template v-slot:footer="slotProps">
                 <div class="border-t border-gray-700 border-opacity-30 pt-40 px-24 pb-40">
                   <button class="button button--success w-full md:w-1/2 mx-auto block text-center"
-                     @click="hideModal(slotProps, 'showSendStep3')">
+                     @click="clearForm(); hideModal(slotProps, 'showSendStep3')">
                     Close
                   </button>
                 </div>
@@ -635,7 +641,7 @@ import { SwitchHorizontalIcon } from '@heroicons/vue/outline'
 import {required, minLength, numeric} from '@vuelidate/validators'
 import useVuelidate from "@vuelidate/core"
 
-import { sendTransaction } from '../utils/api'
+import { fetchPendingTransactions, sendTransaction } from '../utils/api'
 import { createTransaction, validatePassword } from '../utils/wallet'
 
 const {
@@ -694,14 +700,22 @@ export default {
     this.init()
   },
   methods: {
-    populateAmount (percentage) {
+    populateAmount(percentage) {
       this.amount = (parseFloat(this.fromMicroXe(this.wallet.balance)) * (percentage / 100)).toFixed(6)
     },
-    formatAmount (input) {
+    formatAmount(input) {
       return formatXe(input, true)
     },
-    validAmount (value) {
+    validAmount(value) {
+      if (!this.v$.amount) {
+        return true
+      }
+
       const enteredAmount = parseFloat(value)
+
+      if (isNaN(enteredAmount)) {
+        return false
+      }
 
       // Check less than/equal to zero.
       if (enteredAmount <= 0) {
@@ -719,21 +733,21 @@ export default {
 
       return true
     },
-    sufficientFunds (value) {
-      if (!value || !this.wallet.balance) {
+    sufficientFunds(value) {
+      if (!this.v$.amount) {
+        return true
+      }
+
+      if (!value && !this.wallet.balance) {
         return true
       }
 
       const enteredAmount = parseFloat(value)
 
-      console.log('this.wallet.balance', this.wallet.balance)
-      console.log('float', parseFloat(this.fromMicroXe(this.wallet.balance)))
-      console.log('enteredAmount', enteredAmount)
-
       // Check amount is less than the wallet balance.
       return enteredAmount <= parseFloat(this.fromMicroXe(this.wallet.balance))
     },
-    validAddress (value) {
+    validAddress(value) {
       if (value.length !== 43) {
         return false
       }
@@ -741,7 +755,7 @@ export default {
       const regex = /^xe_[a-fA-F0-9]+$/
       return regex.test(value)
     },
-    validMemo (value) {
+    validMemo(value) {
       if (value === '') {
         return true
       }
@@ -753,12 +767,15 @@ export default {
       const regex = /^[a-zA-Z0-9\s-]+$/
       return regex.test(value)
     },
-    clearForm () {
-      this.amount = '1'
+    clearForm() {
+      this.amount = ''
       this.sendAddress = ''
       this.sendMemo = ''
+
+      this.v$.amount.$reset()
+      this.v$.sendAddress.$reset()
     },
-    handleEnterKeyConfirmTransaction (event, fields) {
+    handleEnterKeyConfirmTransaction(event) {
       const { key, code, charCode } = event
 
       if (key === 'Enter' || code === 'Enter' || charCode === 13) {
@@ -767,23 +784,39 @@ export default {
         return this.confirmTransaction()
       }
     },
-    async confirmTransaction () {
+    async confirmTransaction() {
       const isValidPassword = await validatePassword(this.password)
 
       if (isValidPassword) {
         // Create tx object.
-        const tx = await createTransaction(this.amount, this.sendMemo, this.wallet.nonce, this.sendAddress)
+        let nonce = this.wallet.nonce
 
+        // Update nonce with pending transactions.
+        const pendingTx = await fetchPendingTransactions(this.wallet.address)
+        nonce = nonce + pendingTx.length + 1
+
+        const tx = await createTransaction(this.amount, this.sendMemo, nonce, this.sendAddress)
+      
         // Send transaction to the blockchain.
         const txResponse = await sendTransaction(tx)
 
-        this.currentTx = tx
-        this.amount = 0
-        this.sendAddress = ''
-        this.sendMemo = ''
-        this.showSendStep3 = true
+        console.log('txResponse', txResponse)
 
-        return true
+        // TODO: Handle accepted/rejected status.
+        const { metadata, results } = txResponse
+
+        if (metadata.accepted) {        
+          this.currentTx = tx
+          this.amount = 0
+          this.sendAddress = ''
+          this.sendMemo = ''
+          this.showSendStep3 = true
+
+          return true
+        } else {
+          this.errorMessage = results && results[0] && results[0].reason
+          return false
+        }
       } else {
         this.invalidPassword = true
         return false
@@ -828,7 +861,7 @@ export default {
     formatMicroXe(mxe) {
       return xeStringFromMicroXe(mxe || 0, true)
     },
-    init (element) {
+    init(element) {
       if (element && !this.amountFieldInitialised) {
         // new AutoNumeric(element, {
         //   caretPositionOnFocus: "end",
@@ -845,13 +878,16 @@ export default {
 
         this.amountFieldInitialised = true
       }
-    }
+    },
+    // Empty function to ignore the modal close event.
+    swallowClose () {}
   },
-  data: function () {
+  data: function() {
     return {
-      amount: '1',
+      amount: '',
       amountFieldInitialised: false,
       currentTx: null,
+      errorMessage: '',
       invalidPassword: false,
       isModalVisible: false,
       showDepositStep: false,

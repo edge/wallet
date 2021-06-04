@@ -66,6 +66,12 @@ const fetchBlocks = async (options = {}) => {
     })
 }
 
+const fetchPendingTransactions = (address, options = {}) => {
+  const url = `${BLOCKCHAIN_API_URL}/transactions/pending/${address}`
+
+  return fetchData(url)
+}
+
 const fetchTransactions = async (address, options = {}) => {
   if (!options.page) {
     options.page = 1
@@ -129,6 +135,7 @@ const sendTransaction = tx => {
 
 export {
   fetchBlocks,
+  fetchPendingTransactions,
   fetchTransactions,
   fetchWallet,
   formatTransactions,
