@@ -16,7 +16,7 @@
         <div class="max-w-800 mx-auto">
           <div class="text-white md:px-6 mb-11 text-caption" v-if="!hasWallet">
             <h1 class="text-white mb-2">
-              Welcome to the Edge
+              Welcome to the edge
             </h1>
             <p>Create or restore an XE wallet to begin</p>
           </div>
