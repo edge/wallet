@@ -22,7 +22,7 @@
             <Modal
             >
               <template v-slot:opener="slotProps">
-                <button class="button button--outline-success w-full" @click="slotProps.open">
+                <button class="button button--success w-full" @click="slotProps.open">
                   <span class="button__icon w-12">
                     <ArrowUpIcon/>
                   </span>
@@ -153,7 +153,7 @@
                     </button>
                     <button class="button button--success w-full" @click="confirmTransaction()">Confirm transaction</button>
                   </div>
-                  
+
                   <div class="form-group__error" v-if="errorMessage">{{ errorMessage }}</div>
 
                 </div>
@@ -796,7 +796,7 @@ export default {
         nonce = nonce + pendingTx.length + 1
 
         const tx = await createTransaction(this.amount, this.sendMemo, nonce, this.sendAddress)
-      
+
         // Send transaction to the blockchain.
         const txResponse = await sendTransaction(tx)
 
@@ -805,7 +805,7 @@ export default {
         // TODO: Handle accepted/rejected status.
         const { metadata, results } = txResponse
 
-        if (metadata.accepted) {        
+        if (metadata.accepted) {
           this.currentTx = tx
           this.amount = 0
           this.sendAddress = ''
