@@ -207,7 +207,7 @@
                       class="grid grid-cols-1 md:grid-cols-2 gap-24 border-t-default border-solid border-opacity-30 border-gray-700 pt-48 pb-54 px-24">
                     <button
                       class="button button--outline-success w-full"
-                      @click="hideModal(slotProps, 'showUnlockModal')"
+                      @click="clearForm(); hideModal(slotProps, 'showUnlockModal')"
                     >
                       Cancel
                     </button>
@@ -356,6 +356,12 @@ export default {
     }
   },
   methods: {
+    clearForm() {
+      this.privateKeyRestore = ''
+
+      this.v$.privateKeyRestore.$reset()
+      this.v$.password.$reset()
+    },
     completeModal(slotProps, property, fields) {
       return (() => {
         if (fields) {
