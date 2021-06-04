@@ -61,7 +61,7 @@
                           <input type="password" autocomplete="off" placeholder='Choose a password' id="pass-create" v-model="password">
                         </div>
                         <div class="form-group__error" v-if="v$.password.$error">Must be 10 characters or more.</div>
-                        
+
                         <label for="pass-create" class="mt-10">REPEAT PASSWORD</label>
                         <div class="input-wrap relative">
                           <span class="icon">
@@ -77,7 +77,7 @@
 
                 <template v-slot:footer="slotProps">
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-24 border-t-default border-solid border-opacity-30 border-gray-700 pt-48 pb-54 px-24">
-                    <button class="button button--outline-success w-full" @click="slotProps.close">Cancel</button>
+                    <button class="button button--outline-success w-full" @click="clearForm(); hideModal(slotProps, 'showUnlockModal')">Cancel</button>
                     <button class="button button--success w-full" @click="showOtherModal(slotProps, 'showCreateModal', [v$.password, v$.repeatPassword])">Next</button>
                   </div>
                 </template>
@@ -143,7 +143,7 @@
                         <div class="form-group__error" v-if="invalidPassword">Password incorrect.</div>
                       </div>
                       <div class="grid grid-cols-1 md:grid-cols-2 gap-24">
-                        <button class="button button--outline-success w-full" @click="hideModal(slotProps, 'showCreateModal')">Cancel</button>
+                        <button class="button button--outline-success w-full" @click="clearForm(); hideModal(slotProps, 'showCreateModal')">Cancel</button>
                         <button class="button button--success w-full" @click="completeAccountCreate()">Next</button>
                       </div>
                     </form>
@@ -187,7 +187,7 @@
                           <input type="password" autocomplete="off" placeholder='Choose a password' id="pass-create" v-model="password">
                         </div>
                         <div class="form-group__error" v-if="v$.password.$error">Must be 10 characters or more.</div>
-                        
+
                         <label for="pass-create" class="mt-10">REPEAT PASSWORD</label>
                         <div class="input-wrap relative">
                           <span class="icon">
@@ -346,7 +346,7 @@ export default {
   async mounted () {
     this.canCopy = !!navigator.clipboard
     this.hasWallet = await hasExistingWallet()
-    
+
     if (!this.hasWallet) {
       // Generates an initial wallet address. User can accept this or regenerate.
       this.generate()
@@ -391,7 +391,7 @@ export default {
     },
     isEnter (event) {
       const { key, code, charCode } = event
-      
+
       return key === 'Enter' || code === 'Enter' || charCode === 13
     },
     handleEnterKeyCreate (event, fields) {
@@ -415,7 +415,7 @@ export default {
         this.unlock(fields)
       }
     },
-    async unlock (fields) {    
+    async unlock (fields) {
       if (this.validateFields(fields)) {
         const isValidPassword = await validatePassword(this.password)
 
@@ -436,7 +436,7 @@ export default {
 
         await storePublicKey(publicKey)
         await storePrivateKey(this.privateKeyRestore)
-      
+
         window.location.href = '/overview'
       }
     },
@@ -457,7 +457,7 @@ export default {
     async save () {
       const publicKey = this.keyPair.getPublic(true, 'hex').toString()
       const privateKey = this.keyPair.getPrivate('hex').toString()
-      
+
       await storePublicKey(publicKey)
       await storePrivateKey(privateKey)
     },
@@ -475,7 +475,7 @@ export default {
         slotProps.close()
         this[property] = true
 
-        // Moving from Create Step 1 to Create Step 2, we must have a 
+        // Moving from Create Step 1 to Create Step 2, we must have a
         // stored password in order for the user to confirm in the 2nd step.
         if (property === 'showCreateModal') {
           storePassword(this.password)
