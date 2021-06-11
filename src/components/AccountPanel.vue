@@ -16,8 +16,7 @@
         </div>
 
         <div class="account-panel__buttons">
-          <!-- 2x empty elements to replace hidden exchange/receive -->
-          <div></div>
+          <!-- 1x empty element to replace hidden receive -->
           <div></div>
           <div>
             <button class="button button--success w-full" @click="openSend()">
@@ -72,10 +71,6 @@
                     <div class="input-wrap relative">
                       <input
                         type="text"
-                        :ref="(el) => {
-                          init(el)
-
-                        }"
                         id="amount-send"
                         placeholder="0.00"
                         v-model="amount"
@@ -147,9 +142,9 @@
                     <div class="form-group" :class="{'form-group__error': v$.password.$error}">
                       <label for="pass-step">Enter Password</label>
                       <div class="input-wrap relative">
-                            <span class="icon">
-                              <LockOpenIcon/>
-                            </span>
+                        <span class="icon">
+                          <LockOpenIcon/>
+                        </span>
                         <input type="password" autocomplete="off" @keypress="(event) => handleEnterKeyConfirmTransaction(event)" placeholder='Your password' id="pass-step" v-model="password">
                       </div>
                       <div class="form-group__error" v-if="invalidPassword">Password incorrect.</div>
@@ -242,19 +237,28 @@
             </a>
           </div>
           -->
-          <!--
           <div>
+            <button class="button button--outline-success w-full" @click="openExchange()">
+              <span class="button__icon w-15">
+                <SwitchHorizontalIcon/>
+              </span>
+              Exchange
+            </button>
+
+
             <Modal
-                with-close-button="true"
+              v-if="showExchangeOptions === true"
+              :opened="true"
+              :closeHandler="swallowClose">
             >
-              <template v-slot:opener="slotProps">
-                <a href="#" class="button button--outline-success w-full" @click="slotProps.open">
-            <span class="button__icon w-15">
-              <SwitchHorizontalIcon/>
-            </span>
+              <!-- <template v-slot:opener="slotProps"> -->
+                <!-- <button class="button button--outline-success w-full" @click="slotProps.open">
+                  <span class="button__icon w-15">
+                    <SwitchHorizontalIcon/>
+                  </span>
                   Exchange
-                </a>
-              </template>
+                </button> -->
+              <!-- </template> -->
               <template v-slot:header>
                 <h2>Exchange</h2>
               </template>
@@ -268,81 +272,101 @@
                       <img src="/assets/deposit.svg" alt="image description">
                     </div>
 
-                    <a href="#" class="button--outline-success button w-full"
-                       @click="showOtherModal(slotProps, 'showDepositStep')">
-                    <span class="button__icon w-12">
-                      <ArrowNarrowLeftIcon/>
-                    </span>
+                    <button
+                      class="button--outline-success button w-full"
+                      @click="openDeposit();"
+                    >
+                      <span class="button__icon w-12">
+                        <ArrowNarrowLeftIcon/>
+                      </span>
                       Deposit
-                    </a>
+                    </button>
                   </div>
                   <div class="">
                     <div class="text-caption leading-7 mb-65">
                       <strong>Withdraw</strong>
                       <p class="mb-25">Lorem ipsum dolor sit amet, consectetur adipiscing.</p>
-                      <img src="/assets/withdraw.svg" alt="image description">
-
+                      <img src="/assets/withdraw.svg" alt="image description" />
                     </div>
-                    <a href="#" class="button--outline-success button w-full"
-                       @click="showOtherModal(slotProps, 'showWithdrawStep')">
-                    <span class="button__icon w-12">
-                      <ArrowNarrowRightIcon/>
-                    </span>
+                    <button
+                      class="button--outline-success button w-full"
+                      @click="openWithdraw();"
+                    >
+                      <span class="button__icon w-12">
+                        <ArrowNarrowRightIcon/>
+                      </span>
                       Withdraw
-                    </a>
+                    </button>
                   </div>
                 </div>
               </template>
             </Modal>
-            <Modal :opened="true" v-if="showDepositStep === true"
-            >
+
+            <Modal :opened="true" v-if="showDepositStep === true">
               <template v-slot:header>
-                <h2 class="mb-8">Deposit XE</h2>
+                <h2 class="mb-8">Deposit EDGE</h2>
                 <span class="sub-heading d-block text-gray text-caption">Connect to METAMASK</span>
               </template>
-              <template v-slot:body>
-                <div class="min-h-410"></div>
+              <template v-slot:body="slotProps">
+                <!-- <div class="min-h-410"></div>
               </template>
-              <template v-slot:footer="slotProps">
-                <div
-                    class="grid grid-cols-1 md:grid-cols-2 gap-24 pt-23 px-24 pb-40 border-t-default border-solid border-opacity-30 border-gray-700">
-                  <a href="#" class="button button--outline-success w-full"
-                     @click="hideModal(slotProps, 'showDepositStep')">
-                    Cancel
-                  </a>
-                  <a href="#" class="button button--success w-full"
-                     @click="showOtherModal(slotProps, 'showDepositStep2')">
+              <template v-slot:footer="slotProps"> -->
+                <div class="pb-35">
+                  <button
+                    class="button button--success w-full"
+                    id="metamaskButton"
+                    :ref="(el) => {
+                      initialise(el)
+                    }"
+                  >
                     Connect
-                  </a>
+                  </button>
+                  <button
+                    class="button button--outline-success w-full"
+                    @click="closeDeposit();"
+                  >
+                    Cancel
+                  </button>
                 </div>
               </template>
             </Modal>
-            <Modal
-                :opened="true"
-                v-if="showDepositStep2 === true"
-            >
+
+            <Modal :opened="true" v-if="showDepositStep2 === true">
               <template v-slot:header>
-                <h2 class="mb-8">Deposit XE</h2>
-                <span class="sub-heading d-block text-gray text-caption">3492.83 EDGE available</span>
+                <div class="flex justify-between">
+                  <div>
+                    <h2 class="mb-8">Deposit EDGE</h2>
+                    <span class="sub-heading d-block text-gray text-caption">{{ formatEdge(edgeBalance) }}  EDGE available</span>
+                  </div>
+                  <div>
+                    <div class="rounded-xl py-5 px-10 border border-green-200 text-gray-400">{{ ethereumNetwork }}</div>
+                  </div>
+                </div>
               </template>
               <template v-slot:body>
                 <div class="pb-35 min-h-410">
                   <div class="form-group">
                     <span class="label">Address</span>
                     <div class="input-wrap relative">
-                      <span class="input-filled w-full overflow-hidden overflow-ellipsis block text-white">hgdaiuygs7ef87wyeiuywei8yi8fm8sufsumef9uemof9uow9fu</span>
+                      <span class="input-filled w-full overflow-hidden overflow-ellipsis block text-white">{{ ethereumAddress }}</span>
                     </div>
                   </div>
                   <div class="lg-input-group">
                     <label for="key">AMOUNT</label>
                     <div class="input-wrap relative">
-                      <input type="text" placeholder="0.00" class="placeholder-white placeholder-opacity-100">
+                      <input
+                        type="text"
+                        id="amount-send"
+                        placeholder="0.00"
+                        v-model="edgeAmount"
+                        class="placeholder-white placeholder-opacity-100"
+                      />
                       <span class="curren absolute top-23 right-0 text-xl">EDGE</span>
                     </div>
                   </div>
                   <div class="radio-list flex flex-wrap pt-12">
                     <Radio name="currency" id="min" label="MIN"/>
-                    <Radio name="currency" id= label=/>
+                    <!-- <Radio name="currency" id= label=/> -->
                     <Radio name="currency" id="max" label="MAX"/>
                   </div>
                 </div>
@@ -356,7 +380,9 @@
                       <div class="left md:text-right md:w-1/2 md:flex md:pr-18 md:relative">
                         <div class="md:flex-grow">
                           <span class="block text-gray mb-3">You are depositing</span>
-                          <span class="price block text-white text-xl">0.00 EDGE</span>
+                          <span class="price block text-white text-xl">
+                            {{ formatAmount(edgeAmount) }} EDGE
+                          </span>
                         </div>
                         <span
                             class="mx-auto md:ml-20 mt-12 md:mt-0 md:flex-shrink-0 p-12 w-52 h-52 rounded-full border border-gray-700 border-opacity-30 flex align-center justify-center">
@@ -368,35 +394,37 @@
                           <ArrowDownIcon class="block md:hidden"/>
                         </span>
                       </div>
-                      <div class="rihgt md:w-1/2 md:flex md:pl-18">
-                        <span
-                            class="mx-auto mb-12 md:mb-0 md:flex-shrink-0 md:mr-20 p-8 pl-12 w-52 h-52 rounded-full border bg-white flex align-center justify-center">
+                      <div class="right md:w-1/2 md:flex md:pl-18">
+                        <span class="mx-auto mb-12 md:mb-0 md:flex-shrink-0 md:mr-20 p-8 pl-12 w-52 h-52 rounded-full border bg-white flex align-center justify-center">
                           <img src="/assets/logo.svg" alt="XE Wallet" class="flex-shrink-0">
                         </span>
                         <div class="md:flex-grow">
                           <span class="block text-gray mb-3">You are receiving</span>
-                          <span class="price block text-white text-xl">0.00 XE</span>
+                          <span class="price block text-white text-xl">
+                            {{ calculateXe() }} XE
+                          </span>
                         </div>
                       </div>
                     </div>
                   </div>
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-24">
-                    <a href="#" class="button button--outline-success w-full"
-                       @click="hideModal(slotProps, 'showDepositStep2')">
+                    <button
+                      class="button button--outline-success w-full"
+                      @click="closeDeposit();"
+                    >
                       Cancel
-                    </a>
-                    <a href="#" class="button button--success w-full"
-                       @click="showOtherModal(slotProps, 'showDepositStep3')">
+                    </button>
+                    <button
+                      class="button button--success w-full"
+                      @click="exchange()"
+                    >
                       Deposit
-                    </a>
+                    </button>
                   </div>
                 </div>
               </template>
             </Modal>
-            <Modal
-                :opened="true"
-                v-if="showDepositStep3 === true"
-            >
+            <Modal :opened="true" v-if="showDepositStep3 === true">
               <template v-slot:header>
                 <h2 class="mb-8">Done</h2>
               </template>
@@ -430,38 +458,56 @@
 
               <template v-slot:footer="slotProps">
                 <div class="border-t border-gray-700 border-opacity-30 pt-40 px-24 pb-40">
-                  <a href="#" class="button button--success w-full md:w-3/6 mx-auto block text-center"
-                     @click="hideModal(slotProps, 'showDepositStep2')">
+                  <button
+                    class="button button--success w-full md:w-3/6 mx-auto block text-center"
+                    @click="closeDeposit();"
+                  >
                     Close
-                  </a>
+                  </button>
                 </div>
               </template>
             </Modal>
-            <Modal
-                :opened="true"
-                v-if="showWithdrawStep === true"
-            >
+
+            <Modal :opened="true" v-if="showWithdrawStep === true">
               <template v-slot:header>
                 <h2 class="mb-8">Withdraw XE</h2>
                 <span class="sub-heading d-block text-gray text-caption">{{ formatMicroXe(wallet.balance) }} XE available</span>
               </template>
               <template v-slot:body>
                 <div class="pb-35 min-h-410">
-                  <div class="form-group">
+                  <div class="form-group" :class="{'form-group__error': v$.withdrawAddress.$error}">
                     <label for="send1" class="label">SEND TO</label>
-                    <input type="text" placeholder="Send to Ethereum address" id="send1">
+                    <input
+                      type="text"
+                      placeholder="Send to Ethereum address"
+                      id="send1"
+                      v-model="withdrawAddress"
+                    />
+                    <div class="form-group__error" v-if="v$.withdrawAddress.$error">Invalid Ethereum wallet address.</div>
                   </div>
-                  <div class="lg-input-group">
+                  <div
+                    class="lg-input-group"
+                    :class="{'form-group__error': v$.amount.sufficientFunds.$invalid || v$.amount.validAmount.$invalid}"
+                  >
                     <label for="key">AMOUNT</label>
                     <div class="input-wrap relative">
-                      <input type="text" placeholder="0.00" class="placeholder-white placeholder-opacity-100">
+                      <input
+                        type="text"
+                        id="amount-send"
+                        placeholder="0.00"
+                        v-model="amount"
+                        class="placeholder-white placeholder-opacity-100"
+                      >
                       <span class="curren absolute top-23 right-0 text-xl">XE</span>
+
+                      <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="v$.amount.sufficientFunds.$invalid">Insufficient funds.</div>
+                      <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="v$.amount.validAmount.$invalid">Invalid amount.</div>
                     </div>
                   </div>
                   <div class="radio-list flex flex-wrap pt-12 pb-32">
-                    <Radio name="currency" id="min" label="MIN"/>
-                    <Radio name="currency" id= label="HALF"/>
-                    <Radio name="currency" id="max" label="MAX"/>
+                    <!-- <Radio name="currency" id="min" label="MIN"/> -->
+                    <!-- <Radio name="currency" id= label="HALF"/> -->
+                    <!-- <Radio name="currency" id="max" label="MAX"/> -->
                   </div>
                   <div class="form-group mb-0">
                     <span class="label">choose fee</span>
@@ -477,53 +523,51 @@
 
               <template v-slot:footer="slotProps">
                 <div class="border-t border-gray-700 border-opacity-30 pt-32 px-24 pb-40">
-                  <div
-                      class="convert-info text-center md:text-left bg-black border-gray-700 border-opacity-30 rounded py-20 px-10 mb-32 border border-color">
+                  <div class="convert-info text-center md:text-left bg-black border-gray-700 border-opacity-30 rounded py-20 px-10 mb-32 border border-color">
                     <div class="md:flex">
                       <div class="left md:text-right md:w-1/2 md:flex md:pr-18 md:relative">
                         <div class="md:flex-grow">
                           <span class="block text-gray mb-3">You are withdrawing</span>
-                          <span class="price block text-white text-xl">0.00 XE</span>
+                          <span class="price block text-white text-xl">
+                            {{ formatAmount(amount) }} XE
+                          </span>
                         </div>
-                        <span
-                            class="mx-auto md:ml-20 mt-12 md:mt-0 md:flex-shrink-0 p-12 pl-12 w-52 h-52 rounded-full border border-gray-700 border-opacity-30 flex align-center justify-center">
+                        <span class="mx-auto md:ml-20 mt-12 md:mt-0 md:flex-shrink-0 p-12 pl-12 w-52 h-52 rounded-full border border-gray-700 border-opacity-30 flex align-center justify-center">
                           <img src="/assets/logo.svg" alt="XE Wallet" class="flex-shrink-0">
                         </span>
-                        <span
-                            class="icon-arrow block md:absolute mx-auto my-12 md:m-0 md:top-1/2 md:-right-13 md:-mt-14 w-27 text-gray">
+                        <span class="icon-arrow block md:absolute mx-auto my-12 md:m-0 md:top-1/2 md:-right-13 md:-mt-14 w-27 text-gray">
                           <ArrowRightIcon class="hidden md:block"/>
                           <ArrowDownIcon class="block md:hidden"/>
                         </span>
                       </div>
-                      <div class="rihgt md:w-1/2 md:flex md:pl-18">
-                        <span
-                            class="mx-auto mb-12 md:mb-0 md:flex-shrink-0 md:mr-20 p-8 w-52 h-52 rounded-full border bg-white flex align-center justify-center">
+                      <div class="right md:w-1/2 md:flex md:pl-18">
+                        <span class="mx-auto mb-12 md:mb-0 md:flex-shrink-0 md:mr-20 p-8 w-52 h-52 rounded-full border bg-white flex align-center justify-center">
                           <img src="/assets/e-logo-alt.svg" alt="image description" class="flex-shrink-0">
                         </span>
                         <div class="md:flex-grow">
                           <span class="block text-gray mb-3">You are receiving</span>
-                          <span class="price block text-white text-xl">0.00 EDGE</span>
+                          <span class="price block text-white text-xl">
+                            {{ formatEdge(calculateEdge())}} EDGE
+                          </span>
                         </div>
                       </div>
                     </div>
                   </div>
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-24">
-                    <a href="#" class="button button--outline-success w-full"
-                       @click="hideModal(slotProps, 'showWithdrawStep')">
+                    <button class="button button--outline-success w-full"
+                       @click="closeWithdraw();">
                       Cancel
-                    </a>
-                    <a href="#" class="button button--success w-full"
-                       @click="showOtherModal(slotProps, 'showWithdrawStep2')">
+                    </button>
+                    <button class="button button--success w-full"
+                       @click="showOtherModal(slotProps, 'showWithdrawStep2', [v$.withdrawAddress, v$.amount])">
                       Withdraw
-                    </a>
+                    </button>
                   </div>
                 </div>
               </template>
             </Modal>
-            <Modal
-                :opened="true"
-                v-if="showWithdrawStep2 === true"
-            >
+
+            <Modal :opened="true" v-if="showWithdrawStep2 === true">
               <template v-slot:header>
                 <h2 class="mb-8">Withdraw XE</h2>
                 <span class="sub-heading d-block text-gray text-caption">{{ formatMicroXe(wallet.balance) }} XE available</span>
@@ -531,12 +575,12 @@
               <template v-slot:body>
                 <div class="pb-35 min-h-410">
                   <div class="form-group mb-25">
-                    <label class="label">Etherium address</label>
-                    <span class="break-all">hgdaiuygs7ef87wyeiuywei8yi8fm8sufsumef9uemof9uow9fu</span>
+                    <label class="label">Ethereum address</label>
+                    <span class="break-all">{{ withdrawAddress }}</span>
                   </div>
                   <div class="form-group mb-16">
-                    <label>Widthdrawing</label>
-                    <Amount value="47.00" currency="XE"/>
+                    <label>Withdrawing</label>
+                    <Amount :value="formatAmount(amount)" currency="XE"/>
                   </div>
                   <div class="form-group mb-16">
                     <label>receiving</label>
@@ -553,27 +597,35 @@
               <template v-slot:footer="slotProps">
                 <div class="border-t border-gray-700 border-opacity-30 pt-32 px-24 pb-40">
                   <div class="form-group" :class="{'form-group__error': v$.passphraseWithdraw.$error}">
-                    <label for="pass-withdraw">ENTER PASSPHRASE</label>
+                    <label for="pass-withdraw">ENTER PASSWORD</label>
                     <div class="input-wrap relative">
-                          <span class="icon">
-                            <LockOpenIcon/>
-                          </span>
-                      <input type="password" placeholder='Your passphrase' id="pass-withdraw"
-                             v-model="passphraseWithdraw">
+                      <span class="icon">
+                        <LockOpenIcon/>
+                      </span>
+                      <input
+                        autocomplete="off"
+                        type="password"
+                        placeholder='Your password'
+                        id="pass-withdraw"
+                        v-model="password"
+                        @keypress="(event) => handleEnterKeyConfirmWithdraw(event)"
+                      />
                     </div>
-                    <div class="form-group__error" v-if="v$.passphraseWithdraw.$error">Name field has an error.</div>
+                    <div class="form-group__error" v-if="invalidPassword">Password incorrect.</div>
                   </div>
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-24">
-                    <a href="#" class="button button--outline-success w-full" @click="() => {
-                    hideModal(slotProps, 'showWithdrawStep2')
-                    showOtherModal(slotProps, 'showWithdrawStep')
-                  }">
+                    <button class="button button--outline-success w-full" @click="() => {
+                      hideModal(slotProps, 'showWithdrawStep2')
+                      showOtherModal(slotProps, 'showWithdrawStep')
+                    }">
                       Back
-                    </a>
-                    <a href="#" class="button button--success w-full"
-                       @click="showOtherModal(slotProps, 'showWithdrawStep3', [v$.passphraseWithdraw])">
+                    </button>
+                    <button
+                      class="button button--success w-full"
+                      @click="confirmWithdraw()"
+                    >
                       Confirm
-                    </a>
+                    </button>
                   </div>
                 </div>
               </template>
@@ -614,15 +666,15 @@
 
               <template v-slot:footer="slotProps">
                 <div class="border-t border-gray-700 border-opacity-30 pt-40 px-24 pb-40">
-                  <a href="#" class="button button--success w-full md:w-1/2 mx-auto block text-center"
-                     @click="slotProps.close">
+                  <button class="button button--success w-full md:w-1/2 mx-auto block text-center"
+                     @click="closeWithdraw();">
                     Close
-                  </a>
+                  </button>
                 </div>
               </template>
             </Modal>
           </div>
-          -->
+
         </div>
       </div>
     </div>
@@ -649,12 +701,25 @@ import AutoNumeric from 'autonumeric'
 import Logo from "@/components/Logo"
 import Modal from "@/components/Modal"
 import Radio from '@/components/Radio'
+
+import detectEthereumProvider from "@metamask/detect-provider"
+import MetaMaskOnboarding from '@metamask/onboarding'
+import { ethers } from 'ethers'
 import { SwitchHorizontalIcon } from '@heroicons/vue/outline'
 import {required, minLength, numeric} from '@vuelidate/validators'
 import useVuelidate from "@vuelidate/core"
 
 import { fetchPendingTransactions, sendTransaction } from '../utils/api'
 import { createTransaction, validatePassword } from '../utils/wallet'
+
+const { utils, BigNumber } = ethers
+
+const {
+  version,
+  addresses,
+  bridge,
+  token
+} = require("@edge/bridge-utils")
 
 const {
   formatXe,
@@ -691,7 +756,11 @@ export default {
       },
       sendAddress: {
         required,
-        validAddress: this.validAddress
+        validAddress: (value) => this.validAddress(value)
+      },
+      withdrawAddress: {
+        required,
+        validAddress: (value) => this.validAddress(value, 'ETH')
       },
       sendMemo: {
         validMemo: this.validMemo
@@ -709,14 +778,31 @@ export default {
     }
   },
   mounted () {
-    this.init()
+    
   },
   methods: {
-    populateAmount(percentage) {
-      this.amount = (parseFloat(this.fromMicroXe(this.wallet.balance)) * (percentage / 100)).toFixed(6)
+    calculateEdge () {
+      const fxRate = 0.004
+
+      return this.amount * fxRate
+    },
+    calculateXe () {
+      const fxRate = 0.4
+
+      return this.edgeAmount * fxRate
     },
     formatAmount(input) {
+      if (this.v$.amount.$invalid) {
+        return formatXe(0, true)
+      }
+
       return formatXe(input, true)
+    },
+    formatEdge(input) {
+      return Number(input).toLocaleString('en-US', { maximumFractionDigits: 6 })
+    },
+    populateAmount(percentage) {
+      this.amount = (parseFloat(this.fromMicroXe(this.wallet.balance)) * (percentage / 100)).toFixed(6)
     },
     validAmount(value) {
       if (!this.v$.amount) {
@@ -754,12 +840,22 @@ export default {
       // Check amount is less than the wallet balance.
       return enteredAmount <= parseFloat(this.fromMicroXe(this.wallet.balance))
     },
-    validAddress(value) {
-      if (value.length !== 43) {
+    validAddress(value, type = 'XE') {
+      const lengths = {
+        XE: 43,
+        ETH: 42
+      }
+
+      const patterns = {
+        XE: /^xe_[a-fA-F0-9]+$/,
+        ETH: /^0x[a-fA-F0-9]+$/
+      }
+
+      if (value.length !== lengths[type]) {
         return false
       }
 
-      const regex = /^xe_[a-fA-F0-9]+$/
+      const regex = new RegExp(patterns[type])
       return regex.test(value)
     },
     validMemo(value) {
@@ -777,13 +873,38 @@ export default {
     openSend() {
       this.showSendStep = true
     },
+    openExchange() {
+      this.showExchangeOptions = true
+    },
+    openDeposit() {
+      this.showExchangeOptions = false
+      this.showDepositStep = true
+    },
+    closeDeposit() {
+      this.showExchangeOptions = false
+      this.showDepositStep = false
+      this.showDepositStep2 = false
+      this.showDepositStep3 = false
+    },
+    openWithdraw() {
+      this.showExchangeOptions = false
+      this.showWithdrawStep = true
+    },
+    closeWithdraw() {
+      this.showExchangeOptions = false
+      this.showWithdrawStep = false
+      this.showWithdrawStep2 = false
+      this.showWithdrawStep3 = false
+    },
     clearForm() {
       this.amount = ''
       this.sendAddress = ''
+      this.withdrawAddress = ''
       this.sendMemo = ''
 
       this.v$.amount.$reset()
       this.v$.sendAddress.$reset()
+      this.v$.withdrawAddress.$reset()
     },
     handleEnterKeyConfirmTransaction(event) {
       const { key, code, charCode } = event
@@ -841,6 +962,32 @@ export default {
         return false
       }
     },
+    handleEnterKeyConfirmWithdraw(event) {
+      const { key, code, charCode } = event
+
+      if (key === 'Enter' || code === 'Enter' || charCode === 13) {
+        event.preventDefault()
+
+        return this.confirmWithdraw()
+      }
+    },
+    async confirmWithdraw() {
+      const isValidPassword = await validatePassword(this.password)
+
+      if (isValidPassword) {
+        console.log('Withdraw:', this.amount)
+
+        this.amount = 0
+        this.password = ''
+        this.withAddress = ''
+        this.showWithdrawStep = false
+        this.showWithdrawStep2 = false
+        this.showWithdrawStep3 = true
+      } else {
+        this.invalidPassword = true
+        return false
+      }
+    },
     validateFields(fields) {
       if (fields && fields.length) {
         fields.forEach(field => {
@@ -874,29 +1021,182 @@ export default {
         this[property] = false
       })()
     },
+    async connect() {
+      try {
+        await ethereum.request({ method: 'eth_requestAccounts' })
+        const provider = new ethers.providers.Web3Provider(window.ethereum)
+
+        /**********************************************************/
+        /* Handle chain (network) and chainChanged (per EIP-1193) */
+        /**********************************************************/
+
+        const chainId = await ethereum.request({ method: "eth_chainId" })
+        this.ethereumNetwork = this.networks[chainId]
+
+        // Handle Ethereum network change.
+        ethereum.on("chainChanged", handleChainChanged)
+
+        function handleChainChanged(_chainId) {
+          // We recommend reloading the page, unless you must do otherwise
+          window.location.reload()
+        }
+
+        const accounts = await ethereum.request({ method: 'eth_accounts' })
+        this.ethereumAddress = accounts[0]
+
+        
+        this.edgeContract = new ethers.Contract(
+          addresses.token,
+          token.abi,
+          provider.getSigner(0)
+        )
+
+        // this.bridgeContract = new ethers.Contract(
+        //   this.bridgeContractAddress,
+        //   BridgeArtifact.abi,
+        //   provider.getSigner(0)
+        // )
+
+        const balance = await this.edgeContract.balanceOf(this.ethereumAddress)
+        this.edgeBalance = utils.formatEther(balance.toString())
+
+
+
+
+        this.showDepositStep2 = true
+
+      } catch (error) {
+        console.log('this', this)
+        console.error(error)
+      }
+
+      return
+      
+      const provider = await detectEthereumProvider();
+
+      if (provider) {
+        // From now on, this should always be true:
+        // provider === window.ethereum
+        // startApp(provider); // initialize your app
+        console.log("provider", provider);
+
+        /**********************************************************/
+        /* Handle chain (network) and chainChanged (per EIP-1193) */
+        /**********************************************************/
+
+        const chainId = await ethereum.request({ method: "eth_chainId" });
+        console.log("chainId", chainId);
+        // handleChainChanged(chainId);
+
+        ethereum.on("chainChanged", handleChainChanged);
+
+        function handleChainChanged(_chainId) {
+          // We recommend reloading the page, unless you must do otherwise
+          window.location.reload();
+        }
+
+        let currentAccount = null;
+
+        // For now, 'eth_accounts' will continue to always return an array
+        const handleAccountsChanged = accounts => {
+          console.log('accounts', accounts)
+          if (accounts.length === 0) {
+            // MetaMask is locked or the user has not connected any accounts
+            console.log("Please connect to MetaMask.");
+          } else if (accounts[0] !== currentAccount) {
+            currentAccount = accounts[0];
+            // Do any other work!
+
+            this.ethereumAddress = accounts[0];
+          }
+        }
+
+        ethereum
+          .request({ method: "eth_accounts" })
+          .then(handleAccountsChanged)
+          .catch((err) => {
+            // Some unexpected error.
+            // For backwards compatibility reasons, if no accounts are available,
+            // eth_accounts will return an empty array.
+            console.error(err);
+          });
+
+        // Note that this event is emitted on page load.
+        // If the array of accounts is non-empty, you're already
+        // connected.
+        ethereum.on("accountsChanged", handleAccountsChanged);
+
+
+        ethereum
+          .request({ method: "eth_requestAccounts" })
+          .then(handleAccountsChanged)
+          .catch((err) => {
+            if (err.code === 4001) {
+              // EIP-1193 userRejectedRequest error
+              // If this happens, the user rejected the connection request.
+              console.log("Please connect to MetaMask.");
+            } else {
+              console.error(err);
+            }
+          });
+      } else {
+        console.log("Please install MetaMask!");
+      }
+    },
+    async exchange() {
+      try {
+        const amount = utils.parseEther(this.edgeAmount.toString())
+        console.log('amount', amount, amount.toString())
+        console.log(this.edgeContract, addresses.bridge, amount.toString(), this.wallet.address)
+        const tx = await this.edgeContract.approveAndCall(addresses.bridge, amount.toString(), this.wallet.address)
+        console.log('tx', tx)
+        // this.txHash = tx.hash
+
+      } catch (err) {
+        console.log('err', err)
+      }
+      // const balance = await this.edgeContract.balanceOf(this.ethereumAddress)
+        // this.edgeBalance = ethers.utils.formatEther(balance.toString())
+    },
     fromMicroXe(mxe) {
       return xeStringFromMicroXe(mxe || 0)
     },
     formatMicroXe(mxe) {
       return xeStringFromMicroXe(mxe || 0, true)
     },
-    init(element) {
-      if (element && !this.amountFieldInitialised) {
-        // new AutoNumeric(element, {
-        //   caretPositionOnFocus: "end",
-        //   decimalPlaces: 6,
-        //   decimalPlacesRawValue: 6,
-        //   emptyInputBehavior: "zero",
-        //   minimumValue: "0",
-        //   onInvalidPaste: "ignore"
-        // })
-
-        // element.addEventListener('autoNumeric:rawValueModified', event => {
-        //   this.amount = event.detail.newRawValue
-        // })
-
-        this.amountFieldInitialised = true
+    initialise(metamaskButton) {
+      if (!metamaskButton) {
+        return
+      }    
+      
+      const isMetaMaskInstalled = () => {
+        // Have to check the ethereum binding on the window object to see if it's installed
+        const { ethereum } = window
+        return Boolean(ethereum && ethereum.isMetaMask)
       }
+
+      const onboarding = new MetaMaskOnboarding()
+
+      const onClickInstall = () => {
+        metamaskButton.innerText = 'Waiting for Metamask...'
+        metamaskButton.disabled = true
+        // Start the onboarding process for our end user.
+        onboarding.startOnboarding()
+      }
+
+      const MetaMaskClientCheck = () => {
+        if (!isMetaMaskInstalled()) {
+          metamaskButton.innerText = 'Click to install MetaMask'
+          metamaskButton.onclick = onClickInstall
+          metamaskButton.disabled = false
+        } else {
+          metamaskButton.innerText = 'Connect MetaMask'
+          metamaskButton.onclick = this.connect
+          metamaskButton.disabled = false
+        }
+      }
+      
+      MetaMaskClientCheck()
     },
     // Empty function to ignore the modal close event.
     swallowClose () {}
@@ -904,9 +1204,17 @@ export default {
   data: function() {
     return {
       amount: '',
-      amountFieldInitialised: false,
       currentTx: null,
+      edgeAmount: 0,
+      edgeBalance: 0,
+      edgeContract: null,
       errorMessage: '',
+      ethereumAddress: '',
+      ethereumNetwork: '',
+      networks: {
+        "0x1": 'Mainnet',
+        "0x4": 'Rinkeby Testnet'
+      },
       invalidPassword: false,
       isModalVisible: false,
       showDepositStep: false,
@@ -918,7 +1226,9 @@ export default {
       showSendStep: false,
       showSendStep2: false,
       showSendStep3: false,
+      showExchangeOptions: false,
       sendAddress: '',
+      withdrawAddress: '',
       sendMemo: '',
       password: '',
       passphraseWithdraw: ''
