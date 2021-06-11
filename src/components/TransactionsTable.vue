@@ -7,8 +7,8 @@
         <th width="33%">To/From</th>
         <th width="9%">Tx Hash</th>
         <th width="18%">Memo</th>
-        <th width="9%">Status</th>
-        <th width="17%">Amount</th>
+        <th width="10%">Status</th>
+        <th width="16%">Amount</th>
       </tr>
       </thead>
       <tbody v-if="transactions.length">
