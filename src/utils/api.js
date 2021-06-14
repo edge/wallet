@@ -129,6 +129,25 @@ const formatTransactions = (address, data, pending) => {
   })
 }
 
+const getNonce = async address => {
+  const wallet = await fetchWallet(address)
+  let nonce = wallet.nonce
+
+  // Update nonce with pending transactions.
+  let pendingTx = await fetchPendingTransactions(address)
+
+  if (pendingTx.length) {
+    pendingTx = pendingTx.sort((a, b) => {
+      if (a.nonce === b.nonce) return 0
+      return a.nonce > b.nonce ? -1 : 1
+    })
+
+    nonce = pendingTx[0].nonce + 1
+  }
+
+  return nonce
+}
+
 const sendTransaction = tx => {
   return fetchData(`${BLOCKCHAIN_API_URL}/transaction`, { method: 'post' }, tx)
 }
@@ -139,5 +158,6 @@ export {
   fetchTransactions,
   fetchWallet,
   formatTransactions,
+  getNonce,
   sendTransaction
 }

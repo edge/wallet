@@ -249,7 +249,7 @@
             <Modal
               v-if="showExchangeOptions === true"
               :opened="true"
-              :closeHandler="swallowClose">
+              :closeHandler="closeExchange"
             >
               <!-- <template v-slot:opener="slotProps"> -->
                 <!-- <button class="button button--outline-success w-full" @click="slotProps.open">
@@ -346,12 +346,21 @@
               <template v-slot:body>
                 <div class="pb-35 min-h-410">
                   <div class="form-group">
-                    <span class="label">Address</span>
+                    <span class="label">Depositing from</span>
                     <div class="input-wrap relative">
                       <span class="input-filled w-full overflow-hidden overflow-ellipsis block text-white">{{ ethereumAddress }}</span>
                     </div>
                   </div>
-                  <div class="lg-input-group">
+                  <div class="form-group">
+                    <span class="label">Depositing to</span>
+                    <div class="input-wrap relative">
+                      <span class="input-filled w-full overflow-hidden overflow-ellipsis block text-white">{{ wallet.address }}</span>
+                    </div>
+                  </div>
+                  <div
+                    class="lg-input-group"
+                    :class="{'form-group__error': v$.edgeAmount.sufficientFunds.$invalid || v$.edgeAmount.validAmount.$invalid}"
+                  >
                     <label for="key">AMOUNT</label>
                     <div class="input-wrap relative">
                       <input
@@ -362,26 +371,36 @@
                         class="placeholder-white placeholder-opacity-100"
                       />
                       <span class="curren absolute top-23 right-0 text-xl">EDGE</span>
+
+                      <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="v$.edgeAmount.sufficientFunds.$invalid">Insufficient funds.</div>
+                      <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="v$.edgeAmount.validAmount.$invalid">Invalid amount.</div>
                     </div>
                   </div>
-                  <div class="radio-list flex flex-wrap pt-12">
-                    <Radio name="currency" id="min" label="MIN"/>
+                  <div class="radio-list flex flex-wrap pt-12 justify-end">
+                    <!-- <Radio name="currency" id="min" label="MIN"/> -->
                     <!-- <Radio name="currency" id= label=/> -->
-                    <Radio name="currency" id="max" label="MAX"/>
+                    <Radio name="currency" id="max" label="MAX" @click="populateEdgeAmount(100)" />
                   </div>
+
+                  <div class="form-group">
+                    <label>Estimated Cost</label>
+                    <Amount value="0.00" currency="XE"/>
+                  </div>
+
                 </div>
               </template>
 
               <template v-slot:footer="slotProps">
                 <div class="border-t border-gray-700 border-opacity-30 pt-32 px-24 pb-40">
-                  <div
+                  
+                  <div v-if="tx === null"
                       class="convert-info text-center md:text-left bg-black border-gray-700 border-opacity-30 rounded py-20 px-10 mb-32 border border-color">
                     <div class="md:flex">
                       <div class="left md:text-right md:w-1/2 md:flex md:pr-18 md:relative">
                         <div class="md:flex-grow">
                           <span class="block text-gray mb-3">You are depositing</span>
-                          <span class="price block text-white text-xl">
-                            {{ formatAmount(edgeAmount) }} EDGE
+                          <span class="price block text-white text-lg">
+                            {{ formatEdge(edgeAmount) }} EDGE
                           </span>
                         </div>
                         <span
@@ -400,13 +419,28 @@
                         </span>
                         <div class="md:flex-grow">
                           <span class="block text-gray mb-3">You are receiving</span>
-                          <span class="price block text-white text-xl">
+                          <span class="price block text-white text-lg">
                             {{ calculateXe() }} XE
                           </span>
                         </div>
                       </div>
                     </div>
                   </div>
+
+                  <div v-if="tx !== null"
+                      class="convert-info text-center md:text-left bg-black border-gray-700 border-opacity-30 rounded py-20 px-10 mb-32 border border-color">
+                    <span class="label text-white">Confirming transaction</span>
+                    <div class="">
+                      <span class="flex w-full overflow-hidden overflow-ellipsis text-white">
+                        Hash: 
+                        <a class="underline text-white italic mx-5" :href="getHashUrl" target="_blank">
+                          {{ tx.hash.substring(0, 6) }}...{{ tx.hash.substring(tx.hash.length - 4) }}
+                        </a>
+                        <svg class="w-15 h-15" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                      </span>
+                    </div>                  
+                  </div>
+
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-24">
                     <button
                       class="button button--outline-success w-full"
@@ -416,6 +450,7 @@
                     </button>
                     <button
                       class="button button--success w-full"
+                      :disabled="tx !== null"
                       @click="exchange()"
                     >
                       Deposit
@@ -559,7 +594,8 @@
                       Cancel
                     </button>
                     <button class="button button--success w-full"
-                       @click="showOtherModal(slotProps, 'showWithdrawStep2', [v$.withdrawAddress, v$.amount])">
+                      @click="validateFields([v$.withdrawAddress, v$.amount]) && openWithdrawalConfirmation();"
+                    >
                       Withdraw
                     </button>
                   </div>
@@ -597,21 +633,23 @@
               <template v-slot:footer="slotProps">
                 <div class="border-t border-gray-700 border-opacity-30 pt-32 px-24 pb-40">
                   <div class="form-group" :class="{'form-group__error': v$.passphraseWithdraw.$error}">
-                    <label for="pass-withdraw">ENTER PASSWORD</label>
-                    <div class="input-wrap relative">
-                      <span class="icon">
-                        <LockOpenIcon/>
-                      </span>
-                      <input
-                        autocomplete="off"
-                        type="password"
-                        placeholder='Your password'
-                        id="pass-withdraw"
-                        v-model="password"
-                        @keypress="(event) => handleEnterKeyConfirmWithdraw(event)"
-                      />
-                    </div>
-                    <div class="form-group__error" v-if="invalidPassword">Password incorrect.</div>
+                    <form>
+                      <label for="pass-withdraw">ENTER PASSWORD</label>
+                      <div class="input-wrap relative">
+                        <span class="icon">
+                          <LockOpenIcon/>
+                        </span>
+                        <input
+                          autocomplete="off"
+                          type="password"
+                          placeholder='Your password'
+                          id="pass-withdraw"
+                          v-model="password"
+                          @keypress="(event) => handleEnterKeyConfirmWithdraw(event)"
+                        />
+                      </div>
+                      <div class="form-group__error" v-if="invalidPassword">Password incorrect.</div>
+                    </form>
                   </div>
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-24">
                     <button class="button button--outline-success w-full" @click="() => {
@@ -635,7 +673,7 @@
                 v-if="showWithdrawStep3 === true"
             >
               <template v-slot:header>
-                <h2 class="mb-8">Done</h2>
+                <h2 class="mb-8">Withdrawal accepted</h2>
               </template>
               <template v-slot:body>
                 <div class="pb-35 min-h-410">
@@ -643,12 +681,22 @@
                     <CheckIcon class="w-52 text-green"/>
                   </div>
                   <div class="form-group mb-14">
-                    <span class="label normal-case tracking text-base3 mb-4">You’ve sent</span>
+                    <span class="label tracking text-base3 mb-4">Destination</span>
                     <div class="input-wrap relative">
-                      <span class="input-filled w-full overflow-hidden overflow-ellipsis block text-white text-caption">47 XE <span
-                          class="text-gray">to</span> 76290sgdjhagsdjh498gasjhdgajshdg5askdgkajsdhkaj</span>
+                      <span class="input-filled w-full overflow-hidden overflow-ellipsis block text-white text-caption">
+                        {{ currentTx.data.destination }}
+                      </span>
                     </div>
                   </div>
+                  <div class="form-group mb-14">
+                    <span class="label tracking text-base3 mb-4">Amount</span>
+                    <div class="input-wrap relative">
+                      <span class="input-filled w-full overflow-hidden overflow-ellipsis block text-white text-caption">
+                        {{formatAmount(currentTx.amount)}}
+                      </span>
+                    </div>
+                  </div>
+
                   <div class="form-group mb-14">
                     <span class="label normal-case tracking text-base3 mb-4">You’ve received</span>
                     <div class="input-wrap relative">
@@ -656,10 +704,7 @@
                     </div>
                   </div>
                   <div class="flex items-center text-gray leading-8 mb-14">
-                      <span class="icon inline-block w-27 mr-12 flex-shrink-0 text-white">
-                        <ShieldExclamationIcon/>
-                      </span>
-                    <p class="mb-0">Your EDGE should reach the Ethereum wallet provided within 24 hours.</p>
+                    <p class="mb-0">Your withdrawal request has been accepted and will be processed within 24 hours.</p>
                   </div>
                 </div>
               </template>
@@ -709,10 +754,10 @@ import { SwitchHorizontalIcon } from '@heroicons/vue/outline'
 import {required, minLength, numeric} from '@vuelidate/validators'
 import useVuelidate from "@vuelidate/core"
 
-import { fetchPendingTransactions, sendTransaction } from '../utils/api'
-import { createTransaction, validatePassword } from '../utils/wallet'
+import { fetchPendingTransactions, getNonce, sendTransaction } from '../utils/api'
+import { createTransaction, createWithdrawalTransaction, validatePassword } from '../utils/wallet'
 
-const { utils, BigNumber } = ethers
+const { utils } = ethers
 
 const {
   version,
@@ -772,7 +817,13 @@ export default {
       amount: {
         numeric,
         required,
-        sufficientFunds: this.sufficientFunds,
+        sufficientFunds: this.sufficientFundsXe,
+        validAmount: this.validAmount
+      },
+      edgeAmount: {
+        numeric,
+        required,
+        sufficientFunds: this.sufficientFundsEdge,
         validAmount: this.validAmount
       }
     }
@@ -787,9 +838,9 @@ export default {
       return this.amount * fxRate
     },
     calculateXe () {
-      const fxRate = 0.4
+      const fee = 120
 
-      return this.edgeAmount * fxRate
+      return formatXe(this.edgeAmount - fee, true)
     },
     formatAmount(input) {
       if (this.v$.amount.$invalid) {
@@ -803,6 +854,9 @@ export default {
     },
     populateAmount(percentage) {
       this.amount = (parseFloat(this.fromMicroXe(this.wallet.balance)) * (percentage / 100)).toFixed(6)
+    },
+    populateEdgeAmount(percentage) {
+      this.edgeAmount = (parseFloat(this.edgeBalance) * (percentage / 100)).toFixed(6)
     },
     validAmount(value) {
       if (!this.v$.amount) {
@@ -826,7 +880,21 @@ export default {
 
       return true
     },
-    sufficientFunds(value) {
+    sufficientFundsEdge(value) {
+      if (!this.v$.edgeAmount || !value) {
+        return true
+      }
+
+      if (!value && !this.edgeBalance) {
+        return true
+      }
+
+      const enteredAmount = parseFloat(value)
+
+      // Check amount is less than the MetaMask balance.
+      return enteredAmount <= parseFloat(this.edgeBalance)
+    },
+    sufficientFundsXe(value) {
       if (!this.v$.amount || !value) {
         return true
       }
@@ -876,6 +944,9 @@ export default {
     openExchange() {
       this.showExchangeOptions = true
     },
+    closeExchange() {
+      this.showExchangeOptions = false
+    },
     openDeposit() {
       this.showExchangeOptions = false
       this.showDepositStep = true
@@ -895,6 +966,10 @@ export default {
       this.showWithdrawStep = false
       this.showWithdrawStep2 = false
       this.showWithdrawStep3 = false
+    },
+    openWithdrawalConfirmation() {
+      this.showWithdrawStep = false
+      this.showWithdrawStep2 = true
     },
     clearForm() {
       this.amount = ''
@@ -920,22 +995,8 @@ export default {
 
       if (isValidPassword) {
         // Create tx object.
-        let nonce = this.wallet.nonce
-
-        // Update nonce with pending transactions.
-        let pendingTx = await fetchPendingTransactions(this.wallet.address)
-
-        if (pendingTx.length) {
-          pendingTx = pendingTx.sort((a, b) => {
-            if (a.nonce === b.nonce) return 0
-            return a.nonce > b.nonce ? -1 : 1
-          })
-
-          nonce = pendingTx[0].nonce + 1
-        }
-
-        const tx = await createTransaction(this.amount, this.sendMemo, nonce, this.sendAddress)
-
+        const nonce = await getNonce(this.wallet.address)
+        const tx = await createTransaction(this.amount, { memo: this.sendMemo }, nonce, this.sendAddress)
         // Send transaction to the blockchain.
         const txResponse = await sendTransaction(tx)
 
@@ -975,14 +1036,33 @@ export default {
       const isValidPassword = await validatePassword(this.password)
 
       if (isValidPassword) {
-        console.log('Withdraw:', this.amount)
+        // Create tx object.
+        const nonce = await getNonce(this.wallet.address)
+        const tx = await createWithdrawalTransaction(this.amount, {
+          destination: this.withdrawAddress,
+          fee: 100
+        }, nonce)
 
-        this.amount = 0
-        this.password = ''
-        this.withAddress = ''
-        this.showWithdrawStep = false
-        this.showWithdrawStep2 = false
-        this.showWithdrawStep3 = true
+        // Send transaction to the blockchain.
+        const txResponse = await sendTransaction(tx)
+
+        // TODO: Handle accepted/rejected status.
+        const { metadata, results } = txResponse
+
+        if (metadata.accepted) {
+          this.currentTx = tx
+          this.password = ''
+          this.showWithdrawStep = false
+          this.showWithdrawStep2 = false
+          this.showWithdrawStep3 = true
+
+          this.clearForm()
+
+          return true
+        } else {
+          this.errorMessage = results && results[0] && results[0].reason
+          return false
+        }
       } else {
         this.invalidPassword = true
         return false
@@ -1021,6 +1101,9 @@ export default {
         this[property] = false
       })()
     },
+    getHashUrl() {
+      return `${this.etherscanUrls[this.chainId]}/tx/${this.tx.hash}`
+    },
     async connect() {
       try {
         await ethereum.request({ method: 'eth_requestAccounts' })
@@ -1031,40 +1114,46 @@ export default {
         /**********************************************************/
 
         const chainId = await ethereum.request({ method: "eth_chainId" })
+        this.chainId = chainId
         this.ethereumNetwork = this.networks[chainId]
 
-        // Handle Ethereum network change.
-        ethereum.on("chainChanged", handleChainChanged)
-
-        function handleChainChanged(_chainId) {
+        const handleChainChanged = _chainId => {
           // We recommend reloading the page, unless you must do otherwise
           window.location.reload()
         }
 
-        const accounts = await ethereum.request({ method: 'eth_accounts' })
-        this.ethereumAddress = accounts[0]
+        const handleAccountChanged = async accounts => {
+          if (accounts.length === 0) {
+            // MetaMask is locked or the user has not connected any accounts
+            console.log("Please connect to MetaMask.");
+          } else if (accounts[0] !== this.ethereumAddress) {
+            this.ethereumAddress = accounts[0]
+            
+            this.edgeContract = new ethers.Contract(
+              addresses.token,
+              token.abi,
+              provider.getSigner(0)
+            )
 
-        
-        this.edgeContract = new ethers.Contract(
-          addresses.token,
-          token.abi,
-          provider.getSigner(0)
-        )
+            const balance = await this.edgeContract.balanceOf(this.ethereumAddress)
+            this.edgeBalance = utils.formatEther(balance.toString())
+          }
+          
+          return Promise.resolve()
+        }
 
-        // this.bridgeContract = new ethers.Contract(
-        //   this.bridgeContractAddress,
-        //   BridgeArtifact.abi,
-        //   provider.getSigner(0)
-        // )
+        // Handle Ethereum account change.
+        ethereum.on("accountsChanged", handleAccountChanged)
+        // Handle Ethereum network change.
+        ethereum.on("chainChanged", handleChainChanged)
 
-        const balance = await this.edgeContract.balanceOf(this.ethereumAddress)
-        this.edgeBalance = utils.formatEther(balance.toString())
-
-
-
-
-        this.showDepositStep2 = true
-
+        ethereum
+          .request({ method: 'eth_accounts' })
+          .then(handleAccountChanged)
+          .then(() => {
+            this.showDepositStep = false
+            this.showDepositStep2 = true
+          })
       } catch (error) {
         console.log('this', this)
         console.error(error)
@@ -1111,6 +1200,8 @@ export default {
           }
         }
 
+        ethereum.on("accountsChanged", handleAccountsChanged);
+
         ethereum
           .request({ method: "eth_accounts" })
           .then(handleAccountsChanged)
@@ -1150,7 +1241,7 @@ export default {
         console.log(this.edgeContract, addresses.bridge, amount.toString(), this.wallet.address)
         const tx = await this.edgeContract.approveAndCall(addresses.bridge, amount.toString(), this.wallet.address)
         console.log('tx', tx)
-        // this.txHash = tx.hash
+        this.tx = tx
 
       } catch (err) {
         console.log('err', err)
@@ -1204,6 +1295,7 @@ export default {
   data: function() {
     return {
       amount: '',
+      chainId: null,
       currentTx: null,
       edgeAmount: 0,
       edgeBalance: 0,
@@ -1211,6 +1303,10 @@ export default {
       errorMessage: '',
       ethereumAddress: '',
       ethereumNetwork: '',
+      etherscanUrls: {
+        "0x1": 'https://etherscan.io',
+        "0x4": 'https://rinkeby.etherscan.io'
+      },
       networks: {
         "0x1": 'Mainnet',
         "0x4": 'Rinkeby Testnet'
@@ -1228,6 +1324,7 @@ export default {
       showSendStep3: false,
       showExchangeOptions: false,
       sendAddress: '',
+      tx: null,
       withdrawAddress: '',
       sendMemo: '',
       password: '',
