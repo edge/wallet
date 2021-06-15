@@ -1238,9 +1238,8 @@ export default {
     async exchange() {
       try {
         const amount = utils.parseEther(this.edgeAmount.toString())
-        console.log('amount', amount, amount.toString())
-        console.log(this.edgeContract, addresses.bridge, amount.toString(), this.wallet.address)
-        const tx = await this.edgeContract.approveAndCall(addresses.bridge, amount.toString(), this.wallet.address)
+        const bridgeAddress = addresses[this.networks[this.chainId].key].bridge
+        const tx = await this.edgeContract.approveAndCall(bridgeAddress, amount.toString(), this.wallet.address)
         console.log('tx', tx)
         this.tx = tx
 
