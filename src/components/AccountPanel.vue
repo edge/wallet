@@ -547,10 +547,10 @@
                   <div class="form-group mb-0">
                     <span class="label">choose fee</span>
                     <div class="radio-list flex flex-wrap pt-12 -mx-6">
-                      <Radio name="fee" id="slow" :label="gasPrices.lowXE + ' XE'" :big="true" extraName="Slow"/>
-                      <Radio name="fee" id="average" :label="gasPrices.avgXE + ' XE'" :big="true" extraName="Average"/>
-                      <Radio name="fee" id="fast" :label="gasPrices.fastXE + ' XE'" :big="true" extraName="Fast"/>
-                      <Radio name="fee" id="fastest" :label="gasPrices.fastestXE + ' XE'" :big="true" extraName="Fastest"/>
+                      <Radio name="fee" id="slow" :label="gasPrices.low + ' XE'" :big="true" extraName="Slow"/>
+                      <Radio name="fee" id="average" :label="gasPrices.average + ' XE'" :big="true" extraName="Average"/>
+                      <Radio name="fee" id="fast" :label="gasPrices.fast + ' XE'" :big="true" extraName="Fast"/>
+                      <Radio name="fee" id="fastest" :label="gasPrices.fastest + ' XE'" :big="true" extraName="Fastest"/>
                     </div>
                   </div>
                 </div>
