@@ -547,10 +547,10 @@
                   <div class="form-group mb-0">
                     <span class="label">choose fee</span>
                     <div class="radio-list flex flex-wrap pt-12 -mx-6">
-                      <Radio name="fee" id="slow" label="80.00XE" :big="true" extraName="Slow"/>
-                      <Radio name="fee" id="average" label="100.00XE" :big="true" extraName="Average"/>
-                      <Radio name="fee" id="fast" label="120.00XE" :big="true" extraName="Fast"/>
-                      <Radio name="fee" id="fastest" label="140.00XE" :big="true" extraName="Fastest"/>
+                      <Radio name="fee" id="slow" :label="gasPrices.lowXE + ' XE'" :big="true" extraName="Slow"/>
+                      <Radio name="fee" id="average" :label="gasPrices.avgXE + ' XE'" :big="true" extraName="Average"/>
+                      <Radio name="fee" id="fast" :label="gasPrices.fastXE + ' XE'" :big="true" extraName="Fast"/>
+                      <Radio name="fee" id="fastest" :label="gasPrices.fastestXE + ' XE'" :big="true" extraName="Fastest"/>
                     </div>
                   </div>
                 </div>
@@ -754,7 +754,7 @@ import { SwitchHorizontalIcon } from '@heroicons/vue/outline'
 import {required, minLength, numeric} from '@vuelidate/validators'
 import useVuelidate from "@vuelidate/core"
 
-import { fetchPendingTransactions, getNonce, sendTransaction } from '../utils/api'
+import { fetchPendingTransactions, fetchRates, getNonce, sendTransaction } from '../utils/api'
 import { createTransaction, createWithdrawalTransaction, validatePassword } from '../utils/wallet'
 
 const { utils } = ethers
@@ -957,7 +957,8 @@ export default {
       this.showDepositStep2 = false
       this.showDepositStep3 = false
     },
-    openWithdraw() {
+    async openWithdraw() {
+      this.gasPrices = await fetchRates()
       this.showExchangeOptions = false
       this.showWithdrawStep = true
     },
@@ -1115,7 +1116,7 @@ export default {
 
         const chainId = await ethereum.request({ method: "eth_chainId" })
         this.chainId = chainId
-        this.ethereumNetwork = this.networks[chainId]
+        this.ethereumNetwork = this.networks[this.chainId].label
 
         const handleChainChanged = _chainId => {
           // We recommend reloading the page, unless you must do otherwise
@@ -1130,7 +1131,7 @@ export default {
             this.ethereumAddress = accounts[0]
             
             this.edgeContract = new ethers.Contract(
-              addresses.token,
+              addresses[this.networks[this.chainId].key].token,
               token.abi,
               provider.getSigner(0)
             )
@@ -1307,12 +1308,19 @@ export default {
         "0x1": 'https://etherscan.io',
         "0x4": 'https://rinkeby.etherscan.io'
       },
-      networks: {
-        "0x1": 'Mainnet',
-        "0x4": 'Rinkeby Testnet'
-      },
+      gasPrices: {},
       invalidPassword: false,
       isModalVisible: false,
+      networks: {
+        "0x1": {
+          key: 'mainnet',
+          label: 'Mainnet'
+        },
+        "0x4": {
+          key: 'testnet',
+          label: 'Rinkeby Testnet'
+        }
+      },
       showDepositStep: false,
       showDepositStep2: false,
       showDepositStep3: false,
