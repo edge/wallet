@@ -531,6 +531,7 @@
                         id="amount-send"
                         placeholder="0.00"
                         v-model="amount"
+                        @keyup="calculateEdge"
                         class="placeholder-white placeholder-opacity-100"
                       >
                       <span class="curren absolute top-23 right-0 text-xl">XE</span>
@@ -544,13 +545,17 @@
                     <!-- <Radio name="currency" id= label="HALF"/> -->
                     <!-- <Radio name="currency" id="max" label="MAX"/> -->
                   </div>
+                  <div class="form-group mt-16 mb-16">
+                    <label>Estimated Transaction Cost</label>
+                    <Amount :value="fee" currency="XE"/>
+                  </div>
                   <div class="form-group mb-0">
                     <span class="label">choose fee</span>
                     <div class="radio-list flex flex-wrap pt-12 -mx-6">
-                      <Radio name="fee" id="slow" :label="gasPrices.low + ' XE'" :big="true" extraName="Slow"/>
-                      <Radio name="fee" id="average" :label="gasPrices.average + ' XE'" :big="true" extraName="Average"/>
-                      <Radio name="fee" id="fast" :label="gasPrices.fast + ' XE'" :big="true" extraName="Fast"/>
-                      <Radio name="fee" id="fastest" :label="gasPrices.fastest + ' XE'" :big="true" extraName="Fastest"/>
+                      <Radio name="fee" @click="selectFeeLevel(gasPrices.slow)" id="slow" :label="gasPrices.slow + ' XE'" :big="true" extraName="Slow"/>
+                      <Radio name="fee" :selected="selectedFeeLevel === gasPrices.average"  @click="selectFeeLevel(gasPrices.average)" id="average" :label="gasPrices.average + ' XE'" :big="true" extraName="Average"/>
+                      <Radio name="fee" @click="selectFeeLevel(gasPrices.fast)" id="fast" :label="gasPrices.fast + ' XE'" :big="true" extraName="Fast"/>
+                      <Radio name="fee" @click="selectFeeLevel(gasPrices.fastest)" id="fastest" :label="gasPrices.fastest + ' XE'" :big="true" extraName="Fastest"/>
                     </div>
                   </div>
                 </div>
@@ -582,7 +587,7 @@
                         <div class="md:flex-grow">
                           <span class="block text-gray mb-3">You are receiving</span>
                           <span class="price block text-white text-xl">
-                            {{ formatEdge(calculateEdge())}} EDGE
+                            {{ calculatedEdge }} EDGE
                           </span>
                         </div>
                       </div>
@@ -833,9 +838,13 @@ export default {
   },
   methods: {
     calculateEdge () {
-      const fxRate = 0.004
-
-      return this.amount * fxRate
+      console.log('calculateEdge', this.amount)
+      const { handlingFeePercentage, minimumHandlingFee } = this.gasPrices
+      const percentageFee = this.amount * (handlingFeePercentage / 100)
+      const minimumFee = percentageFee < minimumHandlingFee ? minimumHandlingFee : percentageFee
+      this.fee = minimumFee + this.selectedFeeLevel
+      
+      this.calculatedEdge = this.formatEdge(this.amount - this.fee)
     },
     calculateXe () {
       const fee = 120
@@ -938,6 +947,10 @@ export default {
       const regex = /^[a-zA-Z0-9\s-]+$/
       return regex.test(value)
     },
+    selectFeeLevel(value) {
+      this.selectedFeeLevel = value
+      this.calculateEdge()
+    },
     openSend() {
       this.showSendStep = true
     },
@@ -959,6 +972,9 @@ export default {
     },
     async openWithdraw() {
       this.gasPrices = await fetchRates()
+      this.selectedFeeLevel = this.gasPrices.average
+      this.calculateEdge()
+      
       this.showExchangeOptions = false
       this.showWithdrawStep = true
     },
@@ -1294,6 +1310,7 @@ export default {
   data: function() {
     return {
       amount: '',
+      calculatedEdge: 0,
       chainId: null,
       currentTx: null,
       edgeAmount: 0,
@@ -1306,6 +1323,7 @@ export default {
         "0x1": 'https://etherscan.io',
         "0x4": 'https://rinkeby.etherscan.io'
       },
+      fee: 0,
       gasPrices: {},
       invalidPassword: false,
       isModalVisible: false,
@@ -1319,6 +1337,7 @@ export default {
           label: 'Rinkeby Testnet'
         }
       },
+      selectedFeeLevel: 0,
       showDepositStep: false,
       showDepositStep2: false,
       showDepositStep3: false,
