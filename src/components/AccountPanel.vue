@@ -249,7 +249,9 @@
             <Modal
               v-if="showExchangeOptions === true"
               :opened="true"
-              :closeHandler="closeExchange"
+              :withCloseButton="true"
+              :disallowClickOutside="true"
+              :closeHandler="closeWithdraw"
             >
               <!-- <template v-slot:opener="slotProps"> -->
                 <!-- <button class="button button--outline-success w-full" @click="slotProps.open">
@@ -311,9 +313,9 @@
                 <!-- <div class="min-h-410"></div>
               </template>
               <template v-slot:footer="slotProps"> -->
-                <div class="pb-35">
+                <div class="pb-15">
                   <button
-                    class="button button--success w-full"
+                    class="button button--success w-full mb-16"
                     id="metamaskButton"
                     :ref="(el) => {
                       initialise(el)
@@ -336,7 +338,7 @@
                 <div class="flex justify-between">
                   <div>
                     <h2 class="mb-8">Deposit EDGE</h2>
-                    <span class="sub-heading d-block text-gray text-caption">{{ formatEdge(edgeBalance) }}  EDGE available</span>
+                    <span class="sub-heading d-block text-gray text-caption">{{ formatEdge(edgeBalance) }} EDGE available</span>
                   </div>
                   <div>
                     <div class="rounded-xl py-5 px-10 border border-green-200 text-gray-400">{{ ethereumNetwork }}</div>
@@ -427,30 +429,26 @@
                     </div>
                   </div>
 
-                  <div v-if="tx !== null"
+                  <div v-if="depositMessage !== null"
                       class="convert-info text-center md:text-left bg-black border-gray-700 border-opacity-30 rounded py-20 px-10 mb-32 border border-color">
-                    <span class="label text-white">Confirming transaction</span>
                     <div class="">
                       <span class="flex w-full overflow-hidden overflow-ellipsis text-white">
-                        Hash: 
-                        <a class="underline text-white italic mx-5" :href="getHashUrl()" target="_blank">
-                          {{ tx.hash.substring(0, 6) }}...{{ tx.hash.substring(tx.hash.length - 4) }}
-                        </a>
-                        <svg class="w-15 h-15" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        {{ depositMessage }}
                       </span>
-                    </div>                  
+                    </div>
                   </div>
 
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-24">
                     <button
                       class="button button--outline-success w-full"
+                      :disabled="depositInProgress"
                       @click="closeDeposit();"
                     >
                       Cancel
                     </button>
                     <button
                       class="button button--success w-full"
-                      :disabled="tx !== null"
+                      :disabled="depositInProgress"
                       @click="exchange()"
                     >
                       Deposit
@@ -461,13 +459,66 @@
             </Modal>
             <Modal :opened="true" v-if="showDepositStep3 === true">
               <template v-slot:header>
-                <h2 class="mb-8">Done</h2>
+                <h2 class="mb-8">Deposit accepted</h2>
               </template>
               <template v-slot:body>
                 <div class="pb-35 min-h-410">
                   <div class="decor-block pb-4 mb-20 border-b border-gray-700 border-opacity-30">
                     <CheckIcon class="w-52 text-green"/>
                   </div>
+
+                  <div class="form-group mb-14">
+                    <label>Depositing from</label>
+                    <div class="input-wrap relative">
+                      <span class="input-filled w-full overflow-hidden overflow-ellipsis block text-white text-caption">
+                        {{ tx.from }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="form-group mb-14">
+                    <label>Depositing to</label>
+                    <div class="input-wrap relative">
+                      <span class="input-filled w-full overflow-hidden overflow-ellipsis block text-white text-caption">
+                        {{ wallet.address }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="form-group mb-14">
+                    <label>Depositing</label>
+                    <Amount :value="edgeAmount" currency="EDGE"/>
+                  </div>
+                  
+                  <div class="form-group mb-14">
+                    <label>Receiving</label>
+                    <Amount :value="10" currency="XE"/>
+                  </div>
+                  
+                  <div class="form-group mb-14">
+                    <span class="label tracking text-base3 mb-4">Estimated cost</span>
+                    <div class="input-wrap relative">
+                      <span class="input-filled w-full overflow-hidden overflow-ellipsis block text-white text-caption">
+                        <Amount :value="0" currency="XE"/>
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="form-group mb-14">
+                    <label>Transaction hash</label>
+                    <span class="flex w-full overflow-hidden overflow-ellipsis text-white">
+                      <a class="underline text-white mx-5 text-lg" :href="getHashUrl()" target="_blank">
+                        {{ tx.hash.substring(0, 6) }}...{{ tx.hash.substring(tx.hash.length - 4) }}
+                      </a>
+                      <svg class="w-20 h-20 mt-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                    </span>
+                  </div>
+                  
+                  <div class="flex items-center text-gray leading-8 mt-14">
+                    <p class="mb-0">Your deposit request has been accepted and will be processed within 24 hours.</p>
+                  </div>
+
+                  <!--
                   <div class="form-group mb-14">
                     <span class="label normal-case tracking text-base3 mb-4">You’ve sent</span>
                     <div class="input-wrap relative">
@@ -487,6 +538,7 @@
                       </span>
                     <p class="mb-0">Your XE should reach your wallet within 24 hours.</p>
                   </div>
+                  -->
 
                 </div>
               </template>
@@ -546,7 +598,7 @@
                     <!-- <Radio name="currency" id="max" label="MAX"/> -->
                   </div>
                   <div class="form-group mt-16 mb-16">
-                    <label>Estimated Transaction Cost</label>
+                    <label>Estimated Cost</label>
                     <Amount :value="fee" currency="XE"/>
                   </div>
                   <div class="form-group mb-0">
@@ -569,7 +621,7 @@
                         <div class="md:flex-grow">
                           <span class="block text-gray mb-3">You are withdrawing</span>
                           <span class="price block text-white text-xl">
-                            {{ formatAmount(amount) }} XE
+                            {{ Number(formatAmount(amount)).toString() }} XE
                           </span>
                         </div>
                         <span class="mx-auto md:ml-20 mt-12 md:mt-0 md:flex-shrink-0 p-12 pl-12 w-52 h-52 rounded-full border border-gray-700 border-opacity-30 flex align-center justify-center">
@@ -625,12 +677,12 @@
                   </div>
                   <div class="form-group mb-16">
                     <label>receiving</label>
-                    <Amount value="47.00" currency="EDGE"/>
+                    <Amount :value="calculatedEdge" currency="EDGE"/>
 
                   </div>
                   <div class="form-group mb-0">
-                    <label>Fee</label>
-                    <Amount value="120.00" currency="XE"/>
+                    <label>Estimated Cost</label>
+                    <Amount :value="fee" currency="XE"/>
                   </div>
                 </div>
               </template>
@@ -686,7 +738,7 @@
                     <CheckIcon class="w-52 text-green"/>
                   </div>
                   <div class="form-group mb-14">
-                    <span class="label tracking text-base3 mb-4">Destination</span>
+                    <label>Ethereum Address</label>
                     <div class="input-wrap relative">
                       <span class="input-filled w-full overflow-hidden overflow-ellipsis block text-white text-caption">
                         {{ currentTx.data.destination }}
@@ -694,20 +746,22 @@
                     </div>
                   </div>
                   <div class="form-group mb-14">
-                    <span class="label tracking text-base3 mb-4">Amount</span>
+                    <label>Withdrawing</label>
+                    <Amount :value="formatMicroXe(currentTx.amount)" currency="XE"/>
+                  </div>
+                  <div class="form-group mb-14">
+                    <label>Receiving</label>
+                    <Amount :value="currentTx.edgeAmount" currency="EDGE"/>
+                  </div>
+                  <div class="form-group mb-14">
+                    <span class="label tracking text-base3 mb-4">Estimated cost</span>
                     <div class="input-wrap relative">
                       <span class="input-filled w-full overflow-hidden overflow-ellipsis block text-white text-caption">
-                        {{formatAmount(currentTx.amount)}}
+                        <Amount :value="formatMicroXe(currentTx.data.fee)" currency="XE"/>
                       </span>
                     </div>
                   </div>
 
-                  <div class="form-group mb-14">
-                    <span class="label normal-case tracking text-base3 mb-4">You’ve received</span>
-                    <div class="input-wrap relative">
-                      <span class="input-filled w-full overflow-hidden overflow-ellipsis block text-white text-caption">47 EDGE</span>
-                    </div>
-                  </div>
                   <div class="flex items-center text-gray leading-8 mb-14">
                     <p class="mb-0">Your withdrawal request has been accepted and will be processed within 24 hours.</p>
                   </div>
@@ -838,7 +892,6 @@ export default {
   },
   methods: {
     calculateEdge () {
-      console.log('calculateEdge', this.amount)
       const { handlingFeePercentage, minimumHandlingFee } = this.gasPrices
       const percentageFee = this.amount * (handlingFeePercentage / 100)
       const minimumFee = percentageFee < minimumHandlingFee ? minimumHandlingFee : percentageFee
@@ -851,8 +904,8 @@ export default {
 
       return formatXe(this.edgeAmount - fee, true)
     },
-    formatAmount(input) {
-      if (this.v$.amount.$invalid) {
+    formatAmount(input, skipValidation) {
+      if (skipValidation && this.v$.amount.$invalid) {
         return formatXe(0, true)
       }
 
@@ -1057,7 +1110,8 @@ export default {
         const nonce = await getNonce(this.wallet.address)
         const tx = await createWithdrawalTransaction(this.amount, {
           destination: this.withdrawAddress,
-          fee: 100
+          fee: toMicroXe(this.fee),
+          memo: 'Exchange for EDGE'
         }, nonce)
 
         // Send transaction to the blockchain.
@@ -1068,6 +1122,8 @@ export default {
 
         if (metadata.accepted) {
           this.currentTx = tx
+          this.currentTx.edgeAmount = this.calculatedEdge
+
           this.password = ''
           this.showWithdrawStep = false
           this.showWithdrawStep2 = false
@@ -1172,7 +1228,6 @@ export default {
             this.showDepositStep2 = true
           })
       } catch (error) {
-        console.log('this', this)
         console.error(error)
       }
 
@@ -1253,16 +1308,23 @@ export default {
     },
     async exchange() {
       try {
+        this.depositInProgress = true
+        this.depositMessage = 'Please confirm the transaction in MetaMask.'
+        
         const amount = utils.parseEther(this.edgeAmount.toString())
         const bridgeAddress = addresses[this.networks[this.chainId].key].bridge
         const tx = await this.edgeContract.approveAndCall(bridgeAddress, amount.toString(), this.wallet.address)
         this.tx = tx
 
+        // Show deposit confirmation screen.
+        this.showDepositStep3 = true
       } catch (err) {
-        console.log('err', err)
+        if (err && err.code && err.code === 4001) {
+          // User rejected the MetaMask transaction, display message and reenable the deposit button
+          this.depositMessage = 'MetaMask transaction rejected, please try again.'
+          this.depositInProgress = false
+        }
       }
-      // const balance = await this.edgeContract.balanceOf(this.ethereumAddress)
-        // this.edgeBalance = ethers.utils.formatEther(balance.toString())
     },
     fromMicroXe(mxe) {
       return xeStringFromMicroXe(mxe || 0)
@@ -1313,6 +1375,8 @@ export default {
       calculatedEdge: 0,
       chainId: null,
       currentTx: null,
+      depositInProgress: false,
+      depositMessage: null,
       edgeAmount: 0,
       edgeBalance: 0,
       edgeContract: null,
