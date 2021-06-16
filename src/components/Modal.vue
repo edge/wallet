@@ -66,7 +66,7 @@
 
 <style scoped>
   .modal-backdrop {
-    @apply fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-50 grid items-center py-20 px-20 z-50 overflow-auto;
+    @apply fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-50 flex items-center justify-center py-20 px-20 z-50 overflow-auto;
   }
 
   .modal {
