@@ -82,7 +82,7 @@
                     </div>
                   </div>
                   <div class="radio-list flex flex-wrap pt-12">
-                    <Radio name="amount-send1" id="half" label="HALF" @click="populateAmount(50)" />
+                    <!-- <Radio name="amount-send1" id="half" label="HALF" @click="populateAmount(50)" /> -->
                     <Radio name="amount-send1" id="max" label="ALL" @click="populateAmount(100)" />
                   </div>
                 </div>
@@ -396,7 +396,7 @@
 
               <template v-slot:footer="slotProps">
                 <div class="border-t border-gray-700 border-opacity-30 pt-32 px-24 pb-40">
-                  
+
                   <div v-if="tx === null"
                       class="convert-info text-center md:text-left bg-black border-gray-700 border-opacity-30 rounded py-20 px-10 mb-32 border border-color">
                     <div class="md:flex">
@@ -491,12 +491,12 @@
                     <label>Depositing</label>
                     <Amount :value="edgeAmount" currency="EDGE"/>
                   </div>
-                  
+
                   <div class="form-group mb-14">
                     <label>Receiving</label>
                     <Amount :value="10" currency="XE"/>
                   </div>
-                  
+
                   <div class="form-group mb-14">
                     <span class="label tracking text-base3 mb-4">Estimated cost</span>
                     <div class="input-wrap relative">
@@ -515,7 +515,7 @@
                       <svg class="w-20 h-20 mt-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                     </span>
                   </div>
-                  
+
                   <div class="flex items-center text-gray leading-8 mt-14">
                     <p class="mb-0">Your deposit request has been accepted and will be processed within 24 hours.</p>
                   </div>
@@ -835,7 +835,7 @@ const {
 
 const { detect } = require('detect-browser')
 const browser = detect()
- 
+
 export default {
   name: "AccountPanel",
   setup() {
@@ -905,7 +905,7 @@ export default {
       const percentageFee = this.amount * (handlingFeePercentage / 100)
       const minimumFee = percentageFee < minimumHandlingFee ? minimumHandlingFee : percentageFee
       this.fee = minimumFee + this.selectedFeeLevel
-      
+
       this.calculatedEdge = this.formatEdge(this.amount - this.fee)
     },
     calculateDepositFee() {
@@ -1044,7 +1044,7 @@ export default {
       this.gasPrices = await fetchRates()
       this.selectedFeeLevel = this.gasPrices.average
       this.calculateEdge()
-      
+
       this.showExchangeOptions = false
       this.showWithdrawStep = true
     },
@@ -1218,7 +1218,7 @@ export default {
             console.log("Please connect to MetaMask.");
           } else if (accounts[0] !== this.ethereumAddress) {
             this.ethereumAddress = accounts[0]
-            
+
             this.edgeContract = new ethers.Contract(
               addresses[this.networks[this.chainId].key].token,
               token.abi,
@@ -1228,7 +1228,7 @@ export default {
             const balance = await this.edgeContract.balanceOf(this.ethereumAddress)
             this.edgeBalance = utils.formatEther(balance.toString())
           }
-          
+
           return Promise.resolve()
         }
 
@@ -1249,7 +1249,7 @@ export default {
       }
 
       return
-      
+
       const provider = await detectEthereumProvider();
 
       if (provider) {
@@ -1328,7 +1328,7 @@ export default {
         try {
           this.depositInProgress = true
           this.depositMessage = 'Please confirm the transaction in MetaMask.'
-          
+
           const amount = utils.parseEther(this.edgeAmount.toString())
           const bridgeAddress = addresses[this.networks[this.chainId].key].bridge
           const tx = await this.edgeContract.approveAndCall(bridgeAddress, amount.toString(), this.wallet.address)
@@ -1354,8 +1354,8 @@ export default {
     initialise(metamaskButton) {
       if (!metamaskButton) {
         return
-      }    
-      
+      }
+
       const isMetaMaskInstalled = () => {
         // Have to check the ethereum binding on the window object to see if it's installed
         const { ethereum } = window
@@ -1382,7 +1382,7 @@ export default {
           metamaskButton.disabled = !this.supportedBrowser
         }
       }
-      
+
       MetaMaskClientCheck()
     },
     // Empty function to ignore the modal close event.
