@@ -83,7 +83,7 @@
                   </div>
                   <div class="radio-list flex flex-wrap pt-12">
                     <!-- <Radio name="amount-send1" id="half" label="HALF" @click="populateAmount(50)" /> -->
-                    <Radio name="amount-send1" id="max" label="ALL" @click="populateAmount(100)" />
+                    <Radio name="amount-send1" id="max" label="MAX" @click="populateAmount(100)" />
                   </div>
                 </div>
               </template>
