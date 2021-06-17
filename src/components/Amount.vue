@@ -1,5 +1,5 @@
 <template>
-  <span class="amount">{{ format(value) }}<sub>{{ currency }}</sub></span>
+  <span class="amount">{{ format(value) }}<sub class="ml-2">{{ currency }}</sub></span>
 </template>
 
 <script>
