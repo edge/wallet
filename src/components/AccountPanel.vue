@@ -307,7 +307,8 @@
             <Modal :opened="true" v-if="showDepositStep === true">
               <template v-slot:header>
                 <h2 class="mb-8">Deposit EDGE</h2>
-                <span class="sub-heading d-block text-gray text-caption">Connect to METAMASK</span>
+                <span v-if="supportedBrowser" class="sub-heading d-block text-gray text-caption">Connect to MetaMask to deposit EDGE for exchange.</span>
+                <span v-if="!supportedBrowser" class="sub-heading d-block text-gray text-caption">Your browser doesn't support the MetaMask browser extension. Please use Brave, Chrome, Edge or Firefox for depositing EDGE.</span>
               </template>
               <template v-slot:body="slotProps">
                 <!-- <div class="min-h-410"></div>
@@ -370,6 +371,7 @@
                         id="amount-send"
                         placeholder="0.00"
                         v-model="edgeAmount"
+                        @keyup="calculateDepositFee()"
                         class="placeholder-white placeholder-opacity-100"
                       />
                       <span class="curren absolute top-23 right-0 text-xl">EDGE</span>
@@ -381,12 +383,12 @@
                   <div class="radio-list flex flex-wrap pt-12 justify-end">
                     <!-- <Radio name="currency" id="min" label="MIN"/> -->
                     <!-- <Radio name="currency" id= label=/> -->
-                    <Radio name="currency" id="max" label="MAX" @click="populateEdgeAmount(100)" />
+                    <Radio name="currency" id="max" label="MAX" @click="populateEdgeAmount(100); calculateDepositFee();" />
                   </div>
 
                   <div class="form-group">
                     <label>Estimated Cost</label>
-                    <Amount value="0.00" currency="XE"/>
+                    <Amount :value="fee" currency="XE"/>
                   </div>
 
                 </div>
@@ -449,7 +451,7 @@
                     <button
                       class="button button--success w-full"
                       :disabled="depositInProgress"
-                      @click="exchange()"
+                      @click="exchange([v$.edgeAmount])"
                     >
                       Deposit
                     </button>
@@ -831,6 +833,9 @@ const {
   xeStringFromMicroXe
 } = require('@edge/wallet-utils')
 
+const { detect } = require('detect-browser')
+const browser = detect()
+ 
 export default {
   name: "AccountPanel",
   setup() {
@@ -888,10 +893,14 @@ export default {
     }
   },
   mounted () {
-    
+    if (browser && this.supportedBrowsers.includes(browser.name)) {
+      this.supportedBrowser = true
+    } else {
+      this.supportedBrowser = false
+    }
   },
   methods: {
-    calculateEdge () {
+    calculateEdge() {
       const { handlingFeePercentage, minimumHandlingFee } = this.gasPrices
       const percentageFee = this.amount * (handlingFeePercentage / 100)
       const minimumFee = percentageFee < minimumHandlingFee ? minimumHandlingFee : percentageFee
@@ -899,7 +908,14 @@ export default {
       
       this.calculatedEdge = this.formatEdge(this.amount - this.fee)
     },
-    calculateXe () {
+    calculateDepositFee() {
+      const { handlingFeePercentage, minimumHandlingFee } = this.gasPrices
+      const percentageFee = this.edgeAmount * (handlingFeePercentage / 100)
+      const minimumFee = percentageFee < minimumHandlingFee ? minimumHandlingFee : percentageFee
+
+      this.fee = formatXe(minimumFee)
+    },
+    calculateXe() {
       const fee = 120
 
       return formatXe(this.edgeAmount - fee, true)
@@ -1013,7 +1029,8 @@ export default {
     closeExchange() {
       this.showExchangeOptions = false
     },
-    openDeposit() {
+    async openDeposit() {
+      this.gasPrices = await fetchRates()
       this.showExchangeOptions = false
       this.showDepositStep = true
     },
@@ -1306,23 +1323,25 @@ export default {
         console.log("Please install MetaMask!");
       }
     },
-    async exchange() {
-      try {
-        this.depositInProgress = true
-        this.depositMessage = 'Please confirm the transaction in MetaMask.'
-        
-        const amount = utils.parseEther(this.edgeAmount.toString())
-        const bridgeAddress = addresses[this.networks[this.chainId].key].bridge
-        const tx = await this.edgeContract.approveAndCall(bridgeAddress, amount.toString(), this.wallet.address)
-        this.tx = tx
+    async exchange(fields) {
+      if (this.validateFields(fields)) {
+        try {
+          this.depositInProgress = true
+          this.depositMessage = 'Please confirm the transaction in MetaMask.'
+          
+          const amount = utils.parseEther(this.edgeAmount.toString())
+          const bridgeAddress = addresses[this.networks[this.chainId].key].bridge
+          const tx = await this.edgeContract.approveAndCall(bridgeAddress, amount.toString(), this.wallet.address)
+          this.tx = tx
 
-        // Show deposit confirmation screen.
-        this.showDepositStep3 = true
-      } catch (err) {
-        if (err && err.code && err.code === 4001) {
-          // User rejected the MetaMask transaction, display message and reenable the deposit button
-          this.depositMessage = 'MetaMask transaction rejected, please try again.'
-          this.depositInProgress = false
+          // Show deposit confirmation screen.
+          this.showDepositStep3 = true
+        } catch (err) {
+          if (err && err.code && err.code === 4001) {
+            // User rejected the MetaMask transaction, display message and reenable the deposit button
+            this.depositMessage = 'MetaMask transaction rejected, please try again.'
+            this.depositInProgress = false
+          }
         }
       }
     },
@@ -1356,11 +1375,11 @@ export default {
         if (!isMetaMaskInstalled()) {
           metamaskButton.innerText = 'Click to install MetaMask'
           metamaskButton.onclick = onClickInstall
-          metamaskButton.disabled = false
+          metamaskButton.disabled = !this.supportedBrowser
         } else {
           metamaskButton.innerText = 'Connect MetaMask'
           metamaskButton.onclick = this.connect
-          metamaskButton.disabled = false
+          metamaskButton.disabled = !this.supportedBrowser
         }
       }
       
@@ -1413,6 +1432,8 @@ export default {
       showSendStep3: false,
       showExchangeOptions: false,
       sendAddress: '',
+      supportedBrowsers: ['brave', 'chrome', 'edge', 'firefox'],
+      supportedBrowser: true,
       tx: null,
       withdrawAddress: '',
       sendMemo: '',
