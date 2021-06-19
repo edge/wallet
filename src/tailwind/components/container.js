@@ -2,7 +2,7 @@ const { rem } = require('../utils')
 
 const containerStyles = ({ theme }) => ({
   base: {
-    maxWidth: 1170,
+    maxWidth: 1280,
     paddingRight: rem(15),
     paddingLeft: rem(15),
     marginRight: 'auto',

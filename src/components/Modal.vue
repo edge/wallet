@@ -9,7 +9,7 @@
             <button
                 type="button"
                 class="btn-close"
-                @click="closeModal"
+                @click="closeHandler ? closeHandler() : closeModal()"
                 v-if="withCloseButton"
             >
               <XIcon />
@@ -34,7 +34,7 @@
   import { XIcon } from '@heroicons/vue/solid';
   export default {
     name: 'Modal',
-    props: ['withCloseButton', 'opened', 'closeHandler'],
+    props: ['disallowClickOutside', 'withCloseButton', 'opened', 'closeHandler'],
     directives: {
       clickOutside: vClickOutside.directive
     },
@@ -48,7 +48,11 @@
     },
     methods: {
       onClickOutside() {
-        this.closeModal()
+        if (disallowClickOutside) {
+
+        } else {
+          this.closeModal()
+        }
       },
       showModal() {
         this.isShow = true
@@ -62,7 +66,7 @@
 
 <style scoped>
   .modal-backdrop {
-    @apply fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-50 grid items-center py-20 px-20 z-50 overflow-auto;
+    @apply fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-70 flex items-center justify-center py-20 px-20 z-50 overflow-auto;
   }
 
   .modal {

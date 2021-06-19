@@ -8,16 +8,14 @@ const {
   xeStringFromMicroXe
 } = require('@edge/wallet-utils')
 
-const createTransaction = async (amount, memo, nonce, recipient) => {
+const createTransaction = async (amount, data, nonce, recipient) => {
   const walletAddress = await getWalletAddress()
   const tx = {
     timestamp: Date.now(),
     sender: walletAddress,
     recipient,
     amount: toMicroXe(amount),
-    data: {
-      memo
-    },
+    data,
     nonce
   }
 
@@ -26,6 +24,10 @@ const createTransaction = async (amount, memo, nonce, recipient) => {
   tx.signature = generateSignature(decrypt(privateKey), JSON.stringify(tx))
 
   return tx
+}
+
+const createWithdrawalTransaction = async (amount, data, nonce) => {
+  return createTransaction(amount, data, nonce, process.env.VUE_APP_BRIDGE_WALLET_ADDRESS)
 }
 
 const getWalletAddress = async () => {
@@ -76,6 +78,7 @@ const validatePassword = async input => {
 
 export {
   createTransaction,
+  createWithdrawalTransaction,
   getWalletAddress,
   hasExistingWallet,
   storePassword,
