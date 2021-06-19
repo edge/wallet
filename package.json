@@ -1,6 +1,6 @@
 {
   "name": "wallet",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Web wallet for managing XE coin",
   "private": true,
   "license": "unlicensed",
@@ -17,7 +17,7 @@
   },
   "main": "server/index.js",
   "dependencies": {
-    "@edge/bridge-utils": "0.4.0",
+    "@edge/bridge-utils": "1.0.0",
     "@edge/wallet-utils": "0.13.0",
     "@heroicons/vue": "^1.0.1",
     "@metamask/detect-provider": "^1.2.0",
