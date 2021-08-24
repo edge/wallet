@@ -1,6 +1,6 @@
 <template>
   <div class="w-full mb-25">
-    <h3>XE Distribution now open</h3>
+    <h3>XE Distribution is closing soon</h3>
     <div class="rounded border border-black">
       <img src="/assets/e-xe-promo.png">
     </div>
