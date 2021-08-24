@@ -39,7 +39,7 @@ const routes = [
     component: Overview
   },
   {
-    path: '/transactions',
+    path: '/transactions/:page(\\d+)?',
     name: 'Transactions',
     component: Transactions
   }

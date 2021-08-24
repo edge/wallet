@@ -73,7 +73,7 @@ export default {
   },
   methods: {
     async fetchTransactions() {
-      const { transactions, metadata } = await fetchTransactions(this.wallet.address)
+      const { transactions, metadata } = await fetchTransactions(this.wallet.address, { limit: 5 })
 
       // Only pick latest 10 tx.
       this.transactions = transactions.slice(0, 10)

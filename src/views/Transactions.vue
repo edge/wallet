@@ -5,15 +5,16 @@
   <div class="bg-gray-200 py-35">
     <div class="container">
       <TransactionsTable :transactions="transactions"/>
+      <Pagination v-if="transactions.length" baseRoute="Transactions" :currentPage="page" :totalPages="Math.ceil(metadata.totalCount/metadata.limit)" />
     </div>
   </div>
 </template>
 
 <script>
-import Header from "@/components/Header"
-import TableItem from "@/components/TransactionsTableItem"
-import TransactionsTable from "@/components/TransactionsTable"
 import AccountPanel from "@/components/AccountPanel"
+import Header from "@/components/Header"
+import TransactionsTable from "@/components/TransactionsTable"
+import Pagination from "@/components/Pagination"
 
 import { fetchTransactions, fetchWallet } from '../utils/api'
 import { getWalletAddress } from '../utils/wallet'
@@ -27,6 +28,7 @@ export default {
     return {
       loading: false,
       metadata: {},
+      page: 1,
       polling: null,
       transactions: [],
       wallet: {}
@@ -34,9 +36,9 @@ export default {
   },
   components: {
     AccountPanel,
-    TransactionsTable,
-    TableItem,
-    Header
+    Header,
+    Pagination,
+    TransactionsTable
   },
   mounted() {
     this.loading = true
@@ -48,7 +50,9 @@ export default {
       clearInterval(this.polling)
     },
     async fetchTransactions() {
-      const { transactions, metadata } = await fetchTransactions(this.wallet.address)
+      this.page = parseInt(this.$route.params.page || 1)
+      
+      const { transactions, metadata } = await fetchTransactions(this.wallet.address, { page: this.page })
 
       this.transactions = transactions
       this.metadata = metadata
