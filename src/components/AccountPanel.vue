@@ -365,7 +365,7 @@
                   </div>
                   <div
                     class="lg-input-group"
-                    :class="{'form-group__error': v$.edgeAmount.sufficientFunds.$invalid || v$.edgeAmount.validAmount.$invalid}"
+                    :class="{'form-group__error': edgeAmount !== 0 && (v$.edgeAmount.sufficientFunds.$invalid || v$.edgeAmount.validAmount.$invalid)}"
                   >
                     <label for="key">AMOUNT</label>
                     <div class="input-wrap relative">
@@ -379,7 +379,7 @@
                       <span class="curren absolute top-23 right-0 text-xl">EDGE</span>
 
                       <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="v$.edgeAmount.sufficientFunds.$invalid">Insufficient funds.</div>
-                      <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="v$.edgeAmount.validAmount.$invalid">Invalid amount.</div>
+                      <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="edgeAmount !== 0 && v$.edgeAmount.validAmount.$invalid">Invalid amount.</div>
                     </div>
                   </div>
                   <div class="radio-list flex flex-wrap pt-12 justify-end">
@@ -452,7 +452,7 @@
                     </button>
                     <button
                       class="button button--success w-full"
-                      :disabled="depositInProgress"
+                      :disabled="depositInProgress || (v$.edgeAmount.sufficientFunds.$invalid || v$.edgeAmount.validAmount.$invalid)"
                       @click="exchange([v$.edgeAmount])"
                     >
                       Deposit
@@ -1029,6 +1029,8 @@ export default {
       this.showSendStep = true
     },
     openExchange() {
+      // Validate the EDGE value - it should be zero and invalid to begin.
+      this.validateFields([this.v$.edgeAmount])
       this.showExchangeOptions = true
     },
     closeExchange() {
@@ -1182,6 +1184,7 @@ export default {
         fields.forEach(field => {
           field.$touch()
         })
+
         const validFields = fields.filter(field => !field.$invalid)
         return validFields.length === fields.length;
       }
