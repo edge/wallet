@@ -82,7 +82,7 @@ const fetchTransactions = async (address, options = {}) => {
   }
 
   if (!options.limit) {
-    options.limit = 25
+    options.limit = 20
   }
 
   const pendingTxUrl = `${BLOCKCHAIN_API_URL}/transactions/pending/${address}`
