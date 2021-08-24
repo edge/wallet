@@ -171,7 +171,7 @@
                           <span class="icon">
                             <KeyIcon/>
                           </span>
-                          <input type="text" placeholder='Your private key' id="key" v-model="privateKeyRestore">
+                          <input type="password" placeholder='Your private key' id="key" v-model="privateKeyRestore">
                         </div>
                         <div class="form-group__error" v-if="v$.privateKeyRestore.$error">Invalid private key.</div>
                       </div>
