@@ -121,7 +121,7 @@
 
                 <template v-slot:footer="slotProps">
                   <div class="border-t-default border-solid border-opacity-30 border-gray-700 pt-48 pb-54 px-24">
-                    <form action="#">
+                    <form>
                       <div class="flex items-start text-gray leading-8 mb-14">
                       <span class="icon inline-block w-27 mr-12 mt-8 flex-shrink-0 text-white">
                         <ShieldExclamationIcon/>
@@ -143,7 +143,7 @@
                       </div>
                       <div class="grid grid-cols-1 md:grid-cols-2 gap-24">
                         <button class="button button--outline-success w-full" @click="clearForm(); hideModal(slotProps, 'showCreateModal')">Cancel</button>
-                        <button class="button button--success w-full" @click="completeAccountCreate()">Next</button>
+                        <button class="button button--success w-full" @click.prevent="completeAccountCreate()">Next</button>
                       </div>
                     </form>
                   </div>
@@ -382,7 +382,7 @@ export default {
         this.save()
 
         // Redirect to wallet overview screen.
-        window.location.href = 'overview'
+        this.$router.push('overview')
       } else {
         this.invalidPassword = true
       }
@@ -422,7 +422,7 @@ export default {
 
         if (isValidPassword) {
           // Redirect to wallet overview screen.
-          window.location.href = 'overview'
+          this.$router.push('overview')
         } else {
           this.invalidPassword = true
         }
@@ -438,12 +438,12 @@ export default {
         await storePublicKey(publicKey)
         await storePrivateKey(this.privateKeyRestore)
 
-        window.location.href = '/overview'
+        this.$router.push('overview')
       }
     },
     async forgetWallet () {
       await clear()
-      window.location.href = '/'
+      this.$router.push('/')
     },
     generate () {
       this.keyPair = generateKeyPair()
