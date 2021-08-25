@@ -8,6 +8,8 @@ export default {
   props: ['value', 'currency'],
   methods: {
     format(input) {
+      input = input.replace(/,/g, '')
+      
       return Number(input).toLocaleString('en-US', { maximumFractionDigits: 6 })
     }
   }
