@@ -1,9 +1,13 @@
 <template>
   <td data-title="Tx Hash:" :title="item.hash">
-    <!-- <router-link :to="{name: 'Transaction', params: {hash: item.hash}}"> -->
+    <a v-if="!item.pending" :href="`https://xe.network/transaction/${item.hash}`" target="_blank" rel="noreferrer">
       <span class="hidden monospace md:inline-block">{{ sliceString(item.hash, 8) }}</span>
       <span class="monospace md:hidden">{{ sliceString(item.hash, 26) }}</span>
-    <!-- </router-link> -->
+    </a>
+    <div v-else>
+      <span class="hidden monospace md:inline-block">{{ sliceString(item.hash, 8) }}</span>
+      <span class="monospace md:hidden">{{ sliceString(item.hash, 26) }}</span>
+    </div>
   </td>
   <td data-title="Date:">
     <span class="monospace md:font-sans">
@@ -35,7 +39,8 @@
     <span class="monospace md:font-sans" :class="item.confirmations < 10 || !item.confirmations ? 'text-gray-400' : ''">{{ formatStatus(item) }}</span>
   </td>
   <td data-title="Amount:">
-    <span class="monospace lg:font-sans">{{ formatAmount(item.amount) }} XE</span>
+    <span class="monospace lg:font-sans">
+      <span v-if="item.type.toLowerCase() === 'sent'">-</span>{{ formatAmount(item.amount) }}</span>
   </td>
 </template>
 
