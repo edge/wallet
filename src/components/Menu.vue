@@ -1,6 +1,6 @@
 
 <template>
-  <ul class="main-nav">
+  <ul class="flex-1 main-nav">
     <li
       v-for="(item, index) in mainNav"
       :key="index"
@@ -35,7 +35,7 @@ export default {
 
 <style scoped>
   .main-nav__link {
-    @apply text-gray block p-12 transition bg-black-100 bg-opacity-60 hover:text-white;
+    @apply text-gray block px-12 py-20 transition bg-black-100 bg-opacity-60 hover:text-white;
   }
 
   .main-nav__link.router-link-active {
@@ -49,22 +49,22 @@ export default {
 
   @screen md {
     .main-nav {
-      @apply flex flex-wrap -my-20;
+      @apply flex flex-wrap -my-20 md:pl-32;
     }
     .main-nav__link {
-      @apply py-20 px-24;
+      @apply py-20 px-24 my-0;
     }
   }
   @screen lg {
     .main-nav__link {
-      @apply py-20 px-38;
+      @apply py-20 px-32;
     }
   }
 
   @screen xl {
     .main-nav__item {}
     .main-nav__link {
-      @apply py-20 px-50;
+      @apply py-20 px-32;
     }
   }
 </style>
