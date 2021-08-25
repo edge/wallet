@@ -57,7 +57,7 @@ export default {
   }
   @screen lg {
     .main-nav__link {
-      @apply py-20 px-32;
+      @apply py-20 pl-32;
     }
   }
 

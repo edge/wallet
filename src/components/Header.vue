@@ -3,7 +3,7 @@
       <div class="container flex items-center justify-between">
         <Logo/>
         <BurgerButton  @click="showNav = !showNav"/>
-        <div class="absolute left-0 right-0 flex flex-col flex-1 pt-12 pb-24 bg-black mobile-drop top-full md:static md:flex-row md:px-15 md:p-0">
+        <div class="absolute left-0 right-0 flex flex-col flex-1 pt-12 pb-24 bg-black mobile-drop top-full md:static md:flex-row md:pl-15 md:p-0">
           <Menu :mainNav="mainNav"/>
           <HeaderTools/>
         </div>
