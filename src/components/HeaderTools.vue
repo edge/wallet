@@ -18,17 +18,25 @@
     <li class="header-tools__item">
       <router-link to="/" class="header-tools__link">
         <span class="header-tools__icon">
-          <LockOpenIcon/>
+          <KeyIcon/>
         </span>
-        Lock
+        Export Private Key
       </router-link>
     </li>
     <li class="header-tools__item">
       <router-link to="/" class="header-tools__link">
         <span class="header-tools__icon">
-          <KeyIcon/>
+          <LockOpenIcon/>
         </span>
-        Export Private Key
+        Lock Wallet
+      </router-link>
+    </li>
+    <li class="header-tools__item">
+      <router-link to="/" class="header-tools__link header-tools__link--red">
+        <span class="header-tools__icon">
+          <ArchiveIcon/>
+        </span>
+        Forget Wallet
       </router-link>
     </li>
   </ul>
@@ -39,10 +47,11 @@
   import {LockOpenIcon} from "@heroicons/vue/outline"
   import {ChevronDownIcon} from "@heroicons/vue/outline"
   import {KeyIcon} from "@heroicons/vue/outline"
+  import {ArchiveIcon} from "@heroicons/vue/outline"
   import vClickOutside from 'click-outside-vue3'
   export default {
     name: "HeaderTools",
-    components: {SupportIcon, LockOpenIcon, ChevronDownIcon, KeyIcon},
+    components: {SupportIcon, LockOpenIcon, ChevronDownIcon, KeyIcon, ArchiveIcon},
     data: function () {
       return {
         showTools: false
@@ -83,6 +92,10 @@
     @apply flex items-center text-gray transition-colors hover:text-white p-12;
   }
 
+  .header-tools__link--red {
+    @apply text-red hover:text-red-500;
+  }
+
   .header-tools__icon {
     @apply block flex-shrink-0 mr-7 w-16;
   }
@@ -93,11 +106,11 @@
 
   @screen md {
     .header-tools {
-      @apply flex-col space-y-10 absolute top-32 w-56 right-0 bg-black border border-opacity-50 border-gray-300 p-0 rounded flex-wrap mt-0;
+      @apply flex-col space-y-10 absolute top-40 w-56 right-0 bg-black p-0 rounded flex-wrap mt-0;
     }
 
     .header-tools__item {
-      @apply flex flex-wrap mt-0 w-full border-gray-300 md:border-b border-opacity-50 !important;
+      @apply flex flex-wrap mt-0 w-full border-gray-300 md:border-b border-opacity-25 !important;
     }
 
     .header-tools__item:last-child {
@@ -105,7 +118,7 @@
     }
 
     .header-tools__link {
-      @apply p-12 m-0 w-full;
+      @apply p-16 m-0 w-full;
     }
   }
 
