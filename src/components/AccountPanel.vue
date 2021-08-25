@@ -65,7 +65,7 @@
                   </div>
                   <div
                     class="lg-input-group"
-                    :class="{'form-group__error': v$.amount.sufficientFunds.$invalid || v$.amount.validAmount.$invalid}"
+                    :class="{'form-group__error': (!v$.amount.sufficientFunds.$pending && v$.amount.sufficientFunds.$invalid) || (v$.amount.validAmount.$invalid)}"
                   >
                     <label for="amount-send">AMOUNT</label>
                     <div class="input-wrap relative">
@@ -77,7 +77,7 @@
                         class="placeholder-white placeholder-opacity-100"
                       />
                       <span class="currentColor absolute top-23 right-0 text-xl">XE</span>
-                      <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="v$.amount.sufficientFunds.$invalid">Insufficient funds.</div>
+                      <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="(!v$.amount.sufficientFunds.$pending && v$.amount.sufficientFunds.$invalid)">Insufficient funds.</div>
                       <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="v$.amount.validAmount.$invalid">Invalid amount.</div>
                     </div>
                   </div>
@@ -889,7 +889,10 @@ export default {
       amount: {
         numeric,
         required,
-        sufficientFunds: this.sufficientFundsXe,
+        sufficientFunds: async (value) => {
+          const result = await this.sufficientFundsXe(value)
+          return result
+        },
         validAmount: this.validAmount
       },
       edgeAmount: {
@@ -945,19 +948,19 @@ export default {
       if (!this.v$.amount) {
         return true
       }
-
-      if (!/^([0-9]{1,9}\.?[0-9]{0,6})$/.test(value)) {
+      
+      if (!/^([0-9]{1,9}\.?[0-9]{0,6})$/.test(value) && this.v$.amount.$dirty) {
         return false
       }
 
       const enteredAmount = parseFloat(value)
 
-      if (isNaN(enteredAmount)) {
+      if (isNaN(enteredAmount) && this.v$.amount.$dirty) {
         return false
       }
 
       // Check less than/equal to zero.
-      if (enteredAmount <= 0) {
+      if (enteredAmount <= 0 && this.v$.amount.$dirty) {
         return false
       }
 
@@ -977,7 +980,7 @@ export default {
       // Check amount is less than the MetaMask balance.
       return enteredAmount <= parseFloat(this.edgeBalance)
     },
-    sufficientFundsXe(value) {
+    async sufficientFundsXe(value) {
       if (!this.v$.amount || !value) {
         return true
       }
@@ -986,10 +989,21 @@ export default {
         return true
       }
 
+      // Determine amount of XE currently in pending txs.
+      const pendingTxs = await fetchPendingTransactions(this.wallet.address)
+
+      const pendingTxTotal = pendingTxs.reduce((accumulator, currentItem) => {
+        if (currentItem.sender === this.wallet.address) {
+          accumulator += Number(currentItem.amount)
+        }
+
+        return accumulator
+      }, 0)
+
       const enteredAmount = parseFloat(value)
 
       // Check amount is less than the wallet balance.
-      return enteredAmount <= parseFloat(this.fromMicroXe(this.wallet.balance))
+      return enteredAmount <= parseFloat(this.fromMicroXe(this.wallet.balance) - this.fromMicroXe(pendingTxTotal))
     },
     validAddress(value, type = 'XE') {
       const lengths = {
@@ -1098,6 +1112,8 @@ export default {
         const { metadata, results } = txResponse
 
         if (metadata.accepted) {
+          this.v$.amount.$reset()
+
           this.currentTx = tx
           this.amount = 0
           this.password = ''
