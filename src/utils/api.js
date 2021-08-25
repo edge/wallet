@@ -116,8 +116,33 @@ const fetchWallet = address => {
 }
 
 const formatTransactions = (address, data, pending) => {
-  return data.map(tx => {
-    return {
+  const transactions = []
+  
+  data.forEach(tx => {
+    if (tx.sender === tx.recipient) {
+      const rcvTx = {
+        address: tx.sender === address ? tx.recipient : tx.sender,
+        amount: xeStringFromMicroXe(tx.amount),
+        date: new Date(tx.timestamp).toLocaleString(), // '16/04/2021 13:06',
+        description: tx.data.memo || 'None',
+        hash: tx.hash,
+        recipient: tx.recipient,
+        sender: tx.sender,
+        timestamp: tx.timestamp,
+        type: 'Received',
+        confirmations: tx.confirmations,
+        pending
+      }
+      
+      const sendTx = {
+        ...rcvTx,
+        type: 'Sent'
+      }
+
+      transactions.push(rcvTx)
+      transactions.push(sendTx)
+    } else {
+    transactions.push({
       address: tx.sender === address ? tx.recipient : tx.sender,
       amount: xeStringFromMicroXe(tx.amount),
       date: new Date(tx.timestamp).toLocaleString(), // '16/04/2021 13:06',
@@ -129,8 +154,11 @@ const formatTransactions = (address, data, pending) => {
       type: tx.sender === address ? 'Sent' : 'Received',
       confirmations: tx.confirmations,
       pending
+    })
     }
   })
+
+  return transactions
 }
 
 const getNonce = async address => {

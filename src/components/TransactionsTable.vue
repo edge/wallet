@@ -8,7 +8,7 @@
         <th width="33%">From/To</th>
         <th width="16%">Memo</th>
         <th width="12%">Status</th>
-        <th width="20%">Amount</th>
+        <th width="20%">Amount XE</th>
       </tr>
       </thead>
       <tbody v-if="transactions.length">
