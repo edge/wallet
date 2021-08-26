@@ -5,28 +5,28 @@
   >
     <div class="container">
       <div class="relative">
-        <div class="absolute top-64 left-0">
+        <div class="absolute left-0 top-64">
           <Logo/>
         </div>
       </div>
     </div>
 
-    <div class="min-h-screen py-128 flex items-center justify-center">
+    <div class="flex items-center justify-center min-h-screen py-128">
       <div class="container">
-        <div class="max-w-800 mx-auto">
+        <div class="mx-auto max-w-800">
           <div class="text-white md:px-6 mb-11 text-caption" v-if="!hasWallet">
-            <h1 class="text-white mb-2">
+            <h1 class="mb-2 text-white">
               Welcome to the edge
             </h1>
             <p>Create or restore an XE wallet to begin</p>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-24 bg-black-100 py-20 px-24 pb-52 rounded-md" v-if="!hasWallet">
+          <div class="grid grid-cols-1 gap-32 p-32 rounded-md md:grid-cols-2 bg-black-100" v-if="!hasWallet">
             <div>
-              <h3 class="text-gray mb-24">CREATE a new wallet</h3>
+              <h3 class="mb-18 text-gray">CREATE a new wallet</h3>
               <Modal :closeHandler="swallowClose">
                 <template v-slot:opener="slotProps">
-                  <button class="button button--success w-full" @click="slotProps.open">
+                  <button class="w-full button button--success" @click="slotProps.open">
                     Create wallet
                   </button>
                 </template>
@@ -40,11 +40,11 @@
                       <div class="form-group">
                         <label>wallet address</label>
                         <span class="flex items-center">
-                          <span class="break-all font-mono">
+                          <span class="font-mono break-all">
                             {{ xeAddress }}
                           </span>
                           <button
-                            class="text-green w-20 ml-24 flex-shrink-0"
+                            class="flex-shrink-0 w-20 ml-24 text-green"
                             v-on:click.prevent="generate()"
                           >
                             <RefreshIcon/>
@@ -53,7 +53,7 @@
                       </div>
                       <div class="form-group" :class="{'form-group__error': v$.password.$error}">
                         <label for="pass-create">ENTER PASSWORD</label>
-                        <div class="input-wrap relative">
+                        <div class="relative input-wrap">
                           <span class="icon">
                             <LockOpenIcon/>
                           </span>
@@ -62,7 +62,7 @@
                         <div class="form-group__error" v-if="v$.password.$error">Must be 10 characters or more.</div>
 
                         <label for="pass-create" class="mt-10">REPEAT PASSWORD</label>
-                        <div class="input-wrap relative">
+                        <div class="relative input-wrap">
                           <span class="icon">
                             <LockOpenIcon/>
                           </span>
@@ -75,9 +75,9 @@
                 </template>
 
                 <template v-slot:footer="slotProps">
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-24 border-t-default border-solid border-opacity-30 border-gray-700 pt-48 pb-54 px-24">
-                    <button class="button button--outline-success w-full" @click="clearForm(); hideModal(slotProps, 'showUnlockModal')">Cancel</button>
-                    <button class="button button--success w-full" @click="showOtherModal(slotProps, 'showCreateModal', [v$.password, v$.repeatPassword])">Next</button>
+                  <div class="grid grid-cols-1 gap-24 px-24 pt-48 border-gray-700 border-solid md:grid-cols-2 border-t-default border-opacity-30 pb-54">
+                    <button class="w-full button button--outline-success" @click="clearForm(); hideModal(slotProps, 'showUnlockModal')">Cancel</button>
+                    <button class="w-full button button--success" @click="showOtherModal(slotProps, 'showCreateModal', [v$.password, v$.repeatPassword])">Next</button>
                   </div>
                 </template>
               </Modal>
@@ -91,9 +91,9 @@
                     <div class="form-group">
                       <label>wallet address</label>
                       <span class="flex items-center">
-                        <span class="break-all font-mono text-sm2">{{ xeAddress }}</span>
+                        <span class="font-mono break-all text-sm2">{{ xeAddress }}</span>
                         <button
-                          class="text-green w-24 ml-24 flex-shrink-0"
+                          class="flex-shrink-0 w-24 ml-24 text-green"
                           v-if="canCopy"
                           @click="copyToClipboard(xeAddress)"
                         >
@@ -104,11 +104,11 @@
                     <div class="form-group mb-25">
                       <label>PRIVATE KEY</label>
                       <span class="flex items-center">
-                        <span class="break-all font-mono text-sm2">
+                        <span class="font-mono break-all text-sm2">
                           {{ privateKey }}
                         </span>
                         <button
-                          class="text-green w-24 ml-18 flex-shrink-0"
+                          class="flex-shrink-0 w-24 text-green ml-18"
                           v-if="canCopy"
                           @click="copyToClipboard(privateKey)"
                         >
@@ -120,10 +120,10 @@
                 </template>
 
                 <template v-slot:footer="slotProps">
-                  <div class="border-t-default border-solid border-opacity-30 border-gray-700 pt-48 pb-54 px-24">
+                  <div class="px-24 pt-48 border-gray-700 border-solid border-t-default border-opacity-30 pb-54">
                     <form>
-                      <div class="flex items-start text-gray leading-8 mb-14">
-                      <span class="icon inline-block w-27 mr-12 mt-8 flex-shrink-0 text-white">
+                      <div class="flex items-start leading-8 text-gray mb-14">
+                      <span class="flex-shrink-0 inline-block mt-8 mr-12 text-white icon w-27">
                         <ShieldExclamationIcon/>
                       </span>
                         <p>Ensure you copy and store your wallet address and key securely. If you lose your details you
@@ -132,7 +132,7 @@
                       </div>
                       <div class="form-group" :class="{'form-group__error': v$.passwordConfirm.$error || invalidPassword}">
                         <label for="pass-create2">ENTER PASSWORD</label>
-                        <div class="input-wrap relative">
+                        <div class="relative input-wrap">
                           <span class="icon">
                             <LockOpenIcon/>
                           </span>
@@ -141,9 +141,9 @@
                         <div class="form-group__error" v-if="v$.passwordConfirm.$error">Name field has an error.</div>
                         <div class="form-group__error" v-if="invalidPassword">Password incorrect.</div>
                       </div>
-                      <div class="grid grid-cols-1 md:grid-cols-2 gap-24">
-                        <button class="button button--outline-success w-full" @click="clearForm(); hideModal(slotProps, 'showCreateModal')">Cancel</button>
-                        <button class="button button--success w-full" @click.prevent="completeAccountCreate()">Next</button>
+                      <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
+                        <button class="w-full button button--outline-success" @click="clearForm(); hideModal(slotProps, 'showCreateModal')">Cancel</button>
+                        <button class="w-full button button--success" @click.prevent="completeAccountCreate()">Next</button>
                       </div>
                     </form>
                   </div>
@@ -151,10 +151,10 @@
               </Modal>
             </div>
             <div>
-              <h3 class="text-gray mb-24">restore an existing wallet</h3>
+              <h3 class="mb-18 text-gray">restore an existing wallet</h3>
               <Modal :closeHandler="swallowClose">
                 <template v-slot:opener="slotProps">
-                  <button class="button button--outline-success w-full" @click="slotProps.open">
+                  <button class="w-full button button--outline-success" @click="slotProps.open">
                     Restore wallet
                   </button>
                 </template>
@@ -167,7 +167,7 @@
                     <form>
                       <div class="form-group" :class="{'form-group__error' : v$.privateKeyRestore.$error }">
                         <label for="key">ENTER private key</label>
-                        <div class="input-wrap relative">
+                        <div class="relative input-wrap">
                           <span class="icon">
                             <KeyIcon/>
                           </span>
@@ -178,7 +178,7 @@
 
                       <div class="form-group" :class="{'form-group__error': v$.password.$error}">
                         <label for="pass-create">ENTER PASSWORD</label>
-                        <div class="input-wrap relative">
+                        <div class="relative input-wrap">
                           <span class="icon">
                             <LockOpenIcon/>
                           </span>
@@ -187,7 +187,7 @@
                         <div class="form-group__error" v-if="v$.password.$error">Must be 10 characters or more.</div>
 
                         <label for="pass-create" class="mt-10">REPEAT PASSWORD</label>
-                        <div class="input-wrap relative">
+                        <div class="relative input-wrap">
                           <span class="icon">
                             <LockOpenIcon/>
                           </span>
@@ -202,15 +202,15 @@
 
                 <template v-slot:footer="slotProps">
                   <div
-                      class="grid grid-cols-1 md:grid-cols-2 gap-24 border-t-default border-solid border-opacity-30 border-gray-700 pt-48 pb-54 px-24">
+                      class="grid grid-cols-1 gap-24 px-24 pt-48 border-gray-700 border-solid md:grid-cols-2 border-t-default border-opacity-30 pb-54">
                     <button
-                      class="button button--outline-success w-full"
+                      class="w-full button button--outline-success"
                       @click="clearForm(); hideModal(slotProps, 'showUnlockModal')"
                     >
                       Cancel
                     </button>
                     <button
-                      class="button button--success w-full"
+                      class="w-full button button--success"
                       @click="restoreWallet([v$.password, v$.repeatPassword, v$.privateKeyRestore])"
                     >
                       Restore
@@ -236,7 +236,7 @@
                     </div>
                     <div class="form-group" :class="{'form-group__error': v$.password.$error}">
                       <label for="pass-unlock">ENTER PASSWORD</label>
-                      <div class="input-wrap relative">
+                      <div class="relative input-wrap">
                         <span class="icon">
                           <LockOpenIcon/>
                         </span>
@@ -250,14 +250,14 @@
               </template>
 
               <template v-slot:footer="slotProps">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-24 border-t-default border-solid border-opacity-30 border-gray-700 pt-48 pb-54 px-24">
+                <div class="grid grid-cols-1 gap-24 px-24 pt-48 border-gray-700 border-solid md:grid-cols-2 border-t-default border-opacity-30 pb-54">
                   <button
-                    class="button button--outline-success w-full border-red-600 hover:border-red-600 hover:bg-red-600"
+                    class="w-full border-red-600 button button--outline-success hover:border-red-600 hover:bg-red-600"
                     @click="forgetWallet()"
                   >
                     Forget wallet
                   </button>
-                  <button class="button button--success w-full" @click.prevent="unlock([v$.password])">Unlock</button>
+                  <button class="w-full button button--success" @click.prevent="unlock([v$.password])">Unlock</button>
                 </div>
               </template>
             </Modal>
