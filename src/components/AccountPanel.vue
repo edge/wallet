@@ -559,7 +559,7 @@
                   </div>
                   <div
                     class="lg-input-group"
-                    :class="{'form-group__error': v$.amount.sufficientFunds.$invalid || v$.amount.validAmount.$invalid}"
+                    :class="{'form-group__error': (!v$.amount.sufficientFunds.$pending && v$.amount.sufficientFunds.$invalid) || v$.amount.validAmount.$invalid}"
                   >
                     <label for="key">AMOUNT</label>
                     <div class="input-wrap relative">
@@ -572,7 +572,7 @@
                       >
                       <span class="curren absolute top-23 right-0 text-xl">XE</span>
 
-                      <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="v$.amount.sufficientFunds.$invalid">Insufficient funds.</div>
+                      <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="(!v$.amount.sufficientFunds.$pending && v$.amount.sufficientFunds.$invalid)">Insufficient funds.</div>
                       <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="v$.amount.validAmount.$invalid">Invalid amount.</div>
                     </div>
                   </div>
