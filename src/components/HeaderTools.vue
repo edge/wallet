@@ -100,11 +100,11 @@
   }
 
   .header-tools__icon--expand {
-    @apply block ml-2 flex-shrink-0 w-16;
+    @apply block flex-shrink-0 w-15;
   }
 
   .header-tools__icon--cog {
-    @apply flex-shrink-0 w-24;
+    @apply flex-shrink-0 w-21;
   }
 
   @screen md {
