@@ -1,8 +1,10 @@
 
 <template>
   <button @click.prevent="showTools = !showTools" class="header-tools__expand">
-    More
-    <span class="pointer-events-none header-tools__icon--right">
+    <span class="pointer-events-none header-tools__icon--cog">
+      <CogIcon/>
+    </span>
+    <span class="pointer-events-none header-tools__icon--expand">
       <ChevronDownIcon/>
     </span>
   </button>
@@ -43,15 +45,12 @@
 </template>
 
 <script>
+  import {ArchiveIcon, ChevronDownIcon, CogIcon, KeyIcon, LockOpenIcon} from "@heroicons/vue/outline"
   import {SupportIcon} from "@heroicons/vue/solid"
-  import {LockOpenIcon} from "@heroicons/vue/outline"
-  import {ChevronDownIcon} from "@heroicons/vue/outline"
-  import {KeyIcon} from "@heroicons/vue/outline"
-  import {ArchiveIcon} from "@heroicons/vue/outline"
   import vClickOutside from 'click-outside-vue3'
   export default {
     name: "HeaderTools",
-    components: {SupportIcon, LockOpenIcon, ChevronDownIcon, KeyIcon, ArchiveIcon},
+    components: {ArchiveIcon, ChevronDownIcon, CogIcon, KeyIcon, LockOpenIcon, SupportIcon},
     data: function () {
       return {
         showTools: false
@@ -100,8 +99,12 @@
     @apply block flex-shrink-0 mr-7 w-16;
   }
 
-  .header-tools__icon--right {
-    @apply block flex-shrink-0 ml-5 w-16;
+  .header-tools__icon--expand {
+    @apply block ml-2 flex-shrink-0 w-16;
+  }
+
+  .header-tools__icon--cog {
+    @apply flex-shrink-0 w-24;
   }
 
   @screen md {
