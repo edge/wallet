@@ -452,7 +452,7 @@
                     </button>
                     <button
                       class="button button--success w-full"
-                      :disabled="depositInProgress || (v$.edgeAmount.sufficientFunds.$invalid || v$.edgeAmount.validAmount.$invalid)"
+                      :disabled="depositInProgress || (v$.edgeAmount.sufficientFunds.$invalid || v$.edgeAmount.validAmount.$invalid) || edgeAmount <= 0"
                       @click="exchange([v$.edgeAmount])"
                     >
                       Deposit
