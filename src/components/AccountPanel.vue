@@ -19,7 +19,8 @@
         <!-- SEND XE MODALS -->
         <!--~~~~~~~~~~~~~~~~-->
         <div class="account-panel__buttons">
-          <!-- 1x empty element to replace hidden receive -->
+          <!-- 2x empty element to replace hidden receive -->
+          <div></div>
           <div></div>
           <div>
             <button class="button button--success w-full" @click="openSend()">
@@ -65,7 +66,7 @@
                   </div>
                   <div
                     class="lg-input-group"
-                    :class="{'form-group__error': v$.amount.sufficientFunds.$invalid || v$.amount.validAmount.$invalid}"
+                    :class="{'form-group__error': (!v$.amount.sufficientFunds.$pending && v$.amount.sufficientFunds.$invalid) || (v$.amount.validAmount.$invalid)}"
                   >
                     <label for="amount-send">AMOUNT</label>
                     <div class="input-wrap relative">
@@ -77,7 +78,7 @@
                         class="placeholder-white placeholder-opacity-100"
                       />
                       <span class="currentColor absolute top-23 right-0 text-xl">XE</span>
-                      <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="v$.amount.sufficientFunds.$invalid">Insufficient funds.</div>
+                      <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="(!v$.amount.sufficientFunds.$pending && v$.amount.sufficientFunds.$invalid)">Insufficient funds.</div>
                       <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="v$.amount.validAmount.$invalid">Invalid amount.</div>
                     </div>
                   </div>
@@ -235,8 +236,8 @@
           -->
 
           <!--~~~~~~~~~~~~~~~~~-->
-          <!-- EXCHANGE MODALS -->
-          <!--~~~~~~~~~~~~~~~~~-->
+          <!-- EXCHANGE MODALS 
+          
           <div>
             <button class="button button--outline-success w-full" @click="openExchange()">
               <span class="button__icon w-15">
@@ -245,23 +246,12 @@
               Exchange
             </button>
 
-            <!--~~~~~~~~~~~~~~-->
-            <!-- CHOICE MODAL -->
-            <!--~~~~~~~~~~~~~~-->
             <Modal
               v-if="showExchangeOptions === true"
               :opened="true"
               :withCloseButton="true"
               :disallowClickOutside="true"
               :closeHandler="closeWithdraw">
-              <!-- <template v-slot:opener="slotProps"> -->
-                <!-- <button class="button button--outline-success w-full" @click="slotProps.open">
-                  <span class="button__icon w-15">
-                    <SwitchHorizontalIcon/>
-                  </span>
-                  Exchange
-                </button> -->
-              <!-- </template> -->
               <template v-slot:header>
                 <h2>Exchange</h2>
               </template>
@@ -305,9 +295,6 @@
               </template>
             </Modal>
 
-            <!--~~~~~~~~~~~~~~~~-->
-            <!-- DEPOSIT MODALS -->
-            <!--~~~~~~~~~~~~~~~~-->
             <Modal v-if="showDepositStep === true" :opened="true" :closeHandler="swallowClose">
               <template v-slot:header>
                 <h2 class="mb-8">Deposit EDGE</h2>
@@ -315,9 +302,6 @@
                 <span v-if="!supportedBrowser" class="sub-heading d-block text-gray text-caption">Your browser doesn't support the MetaMask browser extension. Please use Brave, Chrome, Edge or Firefox for depositing EDGE.</span>
               </template>
               <template v-slot:body="slotProps">
-                <!-- <div class="min-h-410"></div>
-              </template>
-              <template v-slot:footer="slotProps"> -->
                 <div class="pb-15">
                   <button
                     class="button button--success w-full mb-16"
@@ -365,7 +349,7 @@
                   </div>
                   <div
                     class="lg-input-group"
-                    :class="{'form-group__error': v$.edgeAmount.sufficientFunds.$invalid || v$.edgeAmount.validAmount.$invalid}"
+                    :class="{'form-group__error': edgeAmount !== 0 && (v$.edgeAmount.sufficientFunds.$invalid || v$.edgeAmount.validAmount.$invalid)}"
                   >
                     <label for="key">AMOUNT</label>
                     <div class="input-wrap relative">
@@ -379,12 +363,10 @@
                       <span class="curren absolute top-23 right-0 text-xl">EDGE</span>
 
                       <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="v$.edgeAmount.sufficientFunds.$invalid">Insufficient funds.</div>
-                      <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="v$.edgeAmount.validAmount.$invalid">Invalid amount.</div>
+                      <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="edgeAmount !== 0 && v$.edgeAmount.validAmount.$invalid">Invalid amount.</div>
                     </div>
                   </div>
                   <div class="radio-list flex flex-wrap pt-12 justify-end">
-                    <!-- <Radio name="currency" id="min" label="MIN"/> -->
-                    <!-- <Radio name="currency" id= label=/> -->
                     <Radio name="currency" id="max" label="MAX" @click="populateEdgeAmount(100);" />
                   </div>
 
@@ -452,7 +434,7 @@
                     </button>
                     <button
                       class="button button--success w-full"
-                      :disabled="depositInProgress"
+                      :disabled="depositInProgress || (v$.edgeAmount.sufficientFunds.$invalid || v$.edgeAmount.validAmount.$invalid) || edgeAmount <= 0"
                       @click="exchange([v$.edgeAmount])"
                     >
                       Deposit
@@ -467,10 +449,6 @@
               </template>
               <template v-slot:body>
                 <div class="pb-14 min-h-410">
-                  <!-- <div class="decor-block pb-4 mb-20 border-b border-gray-700 border-opacity-30">
-                    <CheckIcon class="w-52 text-green"/>
-                  </div> -->
-
                   <div class="form-group mb-14">
                     <label>You are depositing</label>
                     <Amount :value="edgeAmount" currency="EDGE" />
@@ -536,9 +514,6 @@
               </template>
             </Modal>
 
-            <!--~~~~~~~~~~~~~~~~~-->
-            <!-- WITHDRAW MODALS -->
-            <!--~~~~~~~~~~~~~~~~~-->
             <Modal v-if="showWithdrawStep === true" :opened="true" :closeHandler="swallowClose">
               <template v-slot:header>
                 <h2 class="mb-8">Withdraw XE</h2>
@@ -559,7 +534,7 @@
                   </div>
                   <div
                     class="lg-input-group"
-                    :class="{'form-group__error': v$.amount.sufficientFunds.$invalid || v$.amount.validAmount.$invalid}"
+                    :class="{'form-group__error': (!v$.amount.sufficientFunds.$pending && v$.amount.sufficientFunds.$invalid) || v$.amount.validAmount.$invalid}"
                   >
                     <label for="key">AMOUNT</label>
                     <div class="input-wrap relative">
@@ -572,14 +547,12 @@
                       >
                       <span class="curren absolute top-23 right-0 text-xl">XE</span>
 
-                      <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="v$.amount.sufficientFunds.$invalid">Insufficient funds.</div>
+                      <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="(!v$.amount.sufficientFunds.$pending && v$.amount.sufficientFunds.$invalid)">Insufficient funds.</div>
                       <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="v$.amount.validAmount.$invalid">Invalid amount.</div>
                     </div>
                   </div>
                   <div class="radio-list flex flex-wrap pt-12 pb-32">
-                    <!-- <Radio name="currency" id="min" label="MIN"/> -->
-                    <!-- <Radio name="currency" id= label="HALF"/> -->
-                    <!-- <Radio name="currency" id="max" label="MAX"/> -->
+
                   </div>
                   <div class="form-group mt-16 mb-16">
                     <label>Estimated Cost</label>
@@ -739,9 +712,7 @@
               </template>
               <template v-slot:body>
                 <div class="pb-14 min-h-410">
-                  <!-- <div class="decor-block pb-4 mb-20 border-b border-gray-700 border-opacity-30">
-                    <CheckIcon class="w-52 text-green"/>
-                  </div> -->
+
                   <div class="form-group mb-14">
                     <label>You are withdrawing</label>
                     <Amount :value="currentTx.amount / 1e6" currency="XE"/>
@@ -791,6 +762,7 @@
               </template>
             </Modal>
           </div>
+          --~~~~~~~~~~~~~~~~~-->
         </div>
       </div>
     </div>
@@ -889,7 +861,10 @@ export default {
       amount: {
         numeric,
         required,
-        sufficientFunds: this.sufficientFundsXe,
+        sufficientFunds: async (value) => {
+          const result = await this.sufficientFundsXe(value)
+          return result
+        },
         validAmount: this.validAmount
       },
       edgeAmount: {
@@ -945,19 +920,19 @@ export default {
       if (!this.v$.amount) {
         return true
       }
-
-      if (!/^([0-9]{1,9}\.?[0-9]{0,6})$/.test(value)) {
+      
+      if (!/^([0-9]{1,9}\.?[0-9]{0,6})$/.test(value) && this.v$.amount.$dirty) {
         return false
       }
 
       const enteredAmount = parseFloat(value)
 
-      if (isNaN(enteredAmount)) {
+      if (isNaN(enteredAmount) && this.v$.amount.$dirty) {
         return false
       }
 
       // Check less than/equal to zero.
-      if (enteredAmount <= 0) {
+      if (enteredAmount <= 0 && this.v$.amount.$dirty) {
         return false
       }
 
@@ -977,7 +952,7 @@ export default {
       // Check amount is less than the MetaMask balance.
       return enteredAmount <= parseFloat(this.edgeBalance)
     },
-    sufficientFundsXe(value) {
+    async sufficientFundsXe(value) {
       if (!this.v$.amount || !value) {
         return true
       }
@@ -986,10 +961,21 @@ export default {
         return true
       }
 
+      // Determine amount of XE currently in pending txs.
+      const pendingTxs = await fetchPendingTransactions(this.wallet.address)
+
+      const pendingTxTotal = pendingTxs.reduce((accumulator, currentItem) => {
+        if (currentItem.sender === this.wallet.address) {
+          accumulator += Number(currentItem.amount)
+        }
+
+        return accumulator
+      }, 0)
+
       const enteredAmount = parseFloat(value)
 
       // Check amount is less than the wallet balance.
-      return enteredAmount <= parseFloat(this.fromMicroXe(this.wallet.balance))
+      return enteredAmount <= parseFloat(this.fromMicroXe(this.wallet.balance) - this.fromMicroXe(pendingTxTotal))
     },
     validAddress(value, type = 'XE') {
       const lengths = {
@@ -1029,6 +1015,8 @@ export default {
       this.showSendStep = true
     },
     openExchange() {
+      // Validate the EDGE value - it should be zero and invalid to begin.
+      this.validateFields([this.v$.edgeAmount])
       this.showExchangeOptions = true
     },
     closeExchange() {
@@ -1096,6 +1084,8 @@ export default {
         const { metadata, results } = txResponse
 
         if (metadata.accepted) {
+          this.v$.amount.$reset()
+
           this.currentTx = tx
           this.amount = 0
           this.password = ''
@@ -1182,6 +1172,7 @@ export default {
         fields.forEach(field => {
           field.$touch()
         })
+
         const validFields = fields.filter(field => !field.$invalid)
         return validFields.length === fields.length;
       }

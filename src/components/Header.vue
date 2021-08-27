@@ -1,9 +1,9 @@
 <template>
-    <header class="header relative z-10 py-16 md:pb-15" :class="{'menu-open':showNav}">
+    <header class="relative z-10 py-16 header md:pb-15" :class="{'menu-open':showNav}">
       <div class="container flex items-center justify-between">
         <Logo/>
         <BurgerButton  @click="showNav = !showNav"/>
-        <div class="mobile-drop absolute top-full left-0 right-0 md:static flex flex-col md:flex-row bg-black pt-12 md:px-15 pb-24 md:p-0">
+        <div class="absolute left-0 right-0 flex flex-col flex-1 pt-12 pb-24 bg-black mobile-drop top-full md:static md:flex-row md:pl-15 md:p-0">
           <Menu :mainNav="mainNav"/>
           <HeaderTools/>
         </div>

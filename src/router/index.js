@@ -15,18 +15,6 @@ import Index from '../views/Index.vue'
 import Transactions from '@/views/Transactions'
 import Overview from '@/views/Overview'
 
-// {
-//   path: '/governance',
-//   name: 'Governance',
-//   component: () => {}
-// },
-//
-// {
-//   path: '/staking',
-//   name: 'Staking',
-//   component: () => {}
-// },
-
 const routes = [
   {
     path: '/',
@@ -39,9 +27,21 @@ const routes = [
     component: Overview
   },
   {
-    path: '/transactions',
+    path: '/transactions/:page(\\d+)?',
     name: 'Transactions',
     component: Transactions
+  },
+  {
+    path: '/governance',
+    name: 'Governance',
+    component: () => {},
+    disabled: true
+  },
+  {
+    path: '/staking',
+    name: 'Staking',
+    component: () => {},
+    disabled: true
   }
 ]
 
