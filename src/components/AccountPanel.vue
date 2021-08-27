@@ -19,7 +19,8 @@
         <!-- SEND XE MODALS -->
         <!--~~~~~~~~~~~~~~~~-->
         <div class="account-panel__buttons">
-          <!-- 1x empty element to replace hidden receive -->
+          <!-- 2x empty element to replace hidden receive -->
+          <div></div>
           <div></div>
           <div>
             <button class="button button--success w-full" @click="openSend()">
@@ -235,8 +236,8 @@
           -->
 
           <!--~~~~~~~~~~~~~~~~~-->
-          <!-- EXCHANGE MODALS -->
-          <!--~~~~~~~~~~~~~~~~~-->
+          <!-- EXCHANGE MODALS 
+          
           <div>
             <button class="button button--outline-success w-full" @click="openExchange()">
               <span class="button__icon w-15">
@@ -245,23 +246,12 @@
               Exchange
             </button>
 
-            <!--~~~~~~~~~~~~~~-->
-            <!-- CHOICE MODAL -->
-            <!--~~~~~~~~~~~~~~-->
             <Modal
               v-if="showExchangeOptions === true"
               :opened="true"
               :withCloseButton="true"
               :disallowClickOutside="true"
               :closeHandler="closeWithdraw">
-              <!-- <template v-slot:opener="slotProps"> -->
-                <!-- <button class="button button--outline-success w-full" @click="slotProps.open">
-                  <span class="button__icon w-15">
-                    <SwitchHorizontalIcon/>
-                  </span>
-                  Exchange
-                </button> -->
-              <!-- </template> -->
               <template v-slot:header>
                 <h2>Exchange</h2>
               </template>
@@ -305,9 +295,6 @@
               </template>
             </Modal>
 
-            <!--~~~~~~~~~~~~~~~~-->
-            <!-- DEPOSIT MODALS -->
-            <!--~~~~~~~~~~~~~~~~-->
             <Modal v-if="showDepositStep === true" :opened="true" :closeHandler="swallowClose">
               <template v-slot:header>
                 <h2 class="mb-8">Deposit EDGE</h2>
@@ -315,9 +302,6 @@
                 <span v-if="!supportedBrowser" class="sub-heading d-block text-gray text-caption">Your browser doesn't support the MetaMask browser extension. Please use Brave, Chrome, Edge or Firefox for depositing EDGE.</span>
               </template>
               <template v-slot:body="slotProps">
-                <!-- <div class="min-h-410"></div>
-              </template>
-              <template v-slot:footer="slotProps"> -->
                 <div class="pb-15">
                   <button
                     class="button button--success w-full mb-16"
@@ -383,8 +367,6 @@
                     </div>
                   </div>
                   <div class="radio-list flex flex-wrap pt-12 justify-end">
-                    <!-- <Radio name="currency" id="min" label="MIN"/> -->
-                    <!-- <Radio name="currency" id= label=/> -->
                     <Radio name="currency" id="max" label="MAX" @click="populateEdgeAmount(100);" />
                   </div>
 
@@ -467,10 +449,6 @@
               </template>
               <template v-slot:body>
                 <div class="pb-14 min-h-410">
-                  <!-- <div class="decor-block pb-4 mb-20 border-b border-gray-700 border-opacity-30">
-                    <CheckIcon class="w-52 text-green"/>
-                  </div> -->
-
                   <div class="form-group mb-14">
                     <label>You are depositing</label>
                     <Amount :value="edgeAmount" currency="EDGE" />
@@ -536,9 +514,6 @@
               </template>
             </Modal>
 
-            <!--~~~~~~~~~~~~~~~~~-->
-            <!-- WITHDRAW MODALS -->
-            <!--~~~~~~~~~~~~~~~~~-->
             <Modal v-if="showWithdrawStep === true" :opened="true" :closeHandler="swallowClose">
               <template v-slot:header>
                 <h2 class="mb-8">Withdraw XE</h2>
@@ -577,9 +552,7 @@
                     </div>
                   </div>
                   <div class="radio-list flex flex-wrap pt-12 pb-32">
-                    <!-- <Radio name="currency" id="min" label="MIN"/> -->
-                    <!-- <Radio name="currency" id= label="HALF"/> -->
-                    <!-- <Radio name="currency" id="max" label="MAX"/> -->
+
                   </div>
                   <div class="form-group mt-16 mb-16">
                     <label>Estimated Cost</label>
@@ -739,9 +712,7 @@
               </template>
               <template v-slot:body>
                 <div class="pb-14 min-h-410">
-                  <!-- <div class="decor-block pb-4 mb-20 border-b border-gray-700 border-opacity-30">
-                    <CheckIcon class="w-52 text-green"/>
-                  </div> -->
+
                   <div class="form-group mb-14">
                     <label>You are withdrawing</label>
                     <Amount :value="currentTx.amount / 1e6" currency="XE"/>
@@ -791,6 +762,7 @@
               </template>
             </Modal>
           </div>
+          --~~~~~~~~~~~~~~~~~-->
         </div>
       </div>
     </div>
