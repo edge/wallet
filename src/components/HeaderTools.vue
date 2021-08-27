@@ -17,14 +17,14 @@
         Support
       </a>
     </li>
-    <li class="header-tools__item">
+    <!-- <li class="header-tools__item">
       <router-link to="/" class="header-tools__link">
         <span class="header-tools__icon">
           <KeyIcon/>
         </span>
         Export Private Key
       </router-link>
-    </li>
+    </li> -->
     <li class="header-tools__item">
       <router-link to="/" class="header-tools__link">
         <span class="header-tools__icon">
@@ -33,14 +33,14 @@
         Lock Wallet
       </router-link>
     </li>
-    <li class="header-tools__item">
+    <!-- <li class="header-tools__item">
       <router-link to="/" class="header-tools__link header-tools__link--red">
         <span class="header-tools__icon">
           <ArchiveIcon/>
         </span>
         Forget Wallet
       </router-link>
-    </li>
+    </li> -->
   </ul>
 </template>
 
