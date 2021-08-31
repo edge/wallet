@@ -19,8 +19,7 @@
         <!-- SEND XE MODALS -->
         <!--~~~~~~~~~~~~~~~~-->
         <div class="account-panel__buttons">
-          <!-- 2x empty element to replace hidden receive -->
-          <div></div>
+          <!-- 1x empty element to replace hidden receive -->
           <div></div>
           <div>
             <button class="button button--success w-full" @click="openSend()">
@@ -236,7 +235,7 @@
           -->
 
           <!--~~~~~~~~~~~~~~~~~-->
-          <!-- EXCHANGE MODALS 
+          <!-- EXCHANGE MODALS -->
           
           <div>
             <button class="button button--outline-success w-full" @click="openExchange()">
@@ -554,18 +553,23 @@
                   <div class="radio-list flex flex-wrap pt-12 pb-32">
 
                   </div>
-                  <div class="form-group mt-16 mb-16">
-                    <label>Estimated Cost</label>
-                    <Amount :value="fee" currency="XE"/>
-                  </div>
                   <div class="form-group mb-0">
-                    <span class="label">choose fee</span>
+                    <span class="label">Transaction speed</span>
                     <div class="radio-list flex flex-wrap pt-12 -mx-6">
                       <Radio name="fee" @click="selectFeeLevel(gasPrices.slow)" id="slow" :label="gasPrices.slow + ' XE'" :big="true" extraName="Slow"/>
                       <Radio name="fee" :selected="selectedFeeLevel === gasPrices.average"  @click="selectFeeLevel(gasPrices.average)" id="average" :label="gasPrices.average + ' XE'" :big="true" extraName="Average"/>
                       <Radio name="fee" @click="selectFeeLevel(gasPrices.fast)" id="fast" :label="gasPrices.fast + ' XE'" :big="true" extraName="Fast"/>
                       <Radio name="fee" @click="selectFeeLevel(gasPrices.fastest)" id="fastest" :label="gasPrices.fastest + ' XE'" :big="true" extraName="Fastest"/>
                     </div>
+                  </div>
+                  <div class="form-group mt-16 mb-16">
+                    <label>
+                      Estimated Cost
+                      <Tooltip :text="`Includes handling fee of ${minimumFee} XE`">
+                        <InformationCircleIcon class="hidden md:block button__icon w-15 pt-2" />
+                      </Tooltip>
+                    </label>
+                    <Amount :value="fee" currency="XE"/>
                   </div>
                 </div>
               </template>
@@ -762,7 +766,7 @@
               </template>
             </Modal>
           </div>
-          --~~~~~~~~~~~~~~~~~-->
+          <!--~~~~~~~~~~~~~~~~~-->
         </div>
       </div>
     </div>
@@ -772,13 +776,14 @@
 <script>
 import {
   ArrowDownIcon,
-  ArrowUpIcon,
   ArrowNarrowLeftIcon,
   ArrowNarrowRightIcon,
+  ArrowRightIcon,
+  ArrowUpIcon,
+  CheckIcon,
+  InformationCircleIcon,
   KeyIcon,
   LockOpenIcon,
-  ArrowRightIcon,
-  CheckIcon,
   ShieldExclamationIcon
 } from '@heroicons/vue/solid'
 
@@ -787,6 +792,7 @@ import AutoNumeric from 'autonumeric'
 import Logo from "@/components/Logo"
 import Modal from "@/components/Modal"
 import Radio from '@/components/Radio'
+import Tooltip from '@/components/Tooltip'
 
 import detectEthereumProvider from "@metamask/detect-provider"
 import MetaMaskOnboarding from '@metamask/onboarding'
@@ -824,18 +830,20 @@ export default {
   components: {
     Amount,
     ArrowDownIcon,
-    ArrowUpIcon,
-    SwitchHorizontalIcon,
     ArrowNarrowLeftIcon,
     ArrowNarrowRightIcon,
-    ShieldExclamationIcon,
+    ArrowRightIcon,
+    ArrowUpIcon,
+    CheckIcon,
     KeyIcon,
+    InformationCircleIcon,
     LockOpenIcon,
     Logo,
-    ArrowRightIcon,
-    CheckIcon,
+    Modal,
     Radio,
-    Modal
+    ShieldExclamationIcon,
+    SwitchHorizontalIcon,
+    Tooltip
   },
   validations() {
     return {
@@ -890,8 +898,8 @@ export default {
     calculateEdge() {
       const { handlingFeePercentage, minimumHandlingFee } = this.gasPrices
       const percentageFee = this.amount * (handlingFeePercentage / 100)
-      const minimumFee = percentageFee < minimumHandlingFee ? minimumHandlingFee : percentageFee
-      this.fee = minimumFee + this.selectedFeeLevel
+      this.minimumFee = percentageFee < minimumHandlingFee ? minimumHandlingFee : percentageFee
+      this.fee = this.minimumFee + this.selectedFeeLevel
       this.calculatedEdge = this.amount - this.fee > 0 ? this.amount - this.fee : 0
     },
     calculateDepositFee() {
@@ -1422,6 +1430,7 @@ export default {
       gasPrices: {},
       invalidPassword: false,
       isModalVisible: false,
+      minimumFee: 0,
       networks: {
         "0x1": {
           key: 'mainnet',

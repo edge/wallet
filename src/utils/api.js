@@ -51,14 +51,6 @@ const fetchData = (url, options = {}, payload) => {
       return res.json()
     })
     .catch(err => {
-      console.log(err)
-
-      // if (err.json) {
-      // return err.json.then(json => {
-      // set the JSON response message
-      // this.error.message = json.message
-      // })
-      // }
       return {
         results: [],
         metdata: {}
