@@ -1,7 +1,7 @@
 <template>
   <div class="tooltip-box">
     <slot />
-    <div class="tooltip" :class="theme === 'dark' ? 'dark' : 'light'">
+    <div class="tooltip" :class="theme === 'dark' ? 'dark' : 'light', position || 'top'">
       <span class="text">{{ text }}</span>
     </div>
   </div>
@@ -19,6 +19,10 @@ export default {
     theme: {
       type: String,
       required: false
+    },
+    position: {
+      type: String,
+      required: false
     }
   }
 }
@@ -29,23 +33,73 @@ export default {
     @apply relative inline-block;
   }
 
-  .tooltip-box:hover .tooltip {
+  /* visible states */
+  .tooltip-box:hover .tooltip.top {
     @apply opacity-100 -translate-y-8;
   }
 
-  .tooltip { 
-    @apply p-10 text-xs absolute bottom-full left-7 transform -translate-x-1/2 w-180 transition duration-200 text-white text-center shadow rounded opacity-0 z-10 bg-green;
+  .tooltip-box:hover .tooltip.bottom {
+    @apply opacity-100 translate-y-8;
   }
 
+  .tooltip-box:hover .tooltip.right {
+    @apply opacity-100 translate-x-5;
+  }
+
+  .tooltip-box:hover .tooltip.left {
+    @apply opacity-100 -translate-x-5;
+  }
+
+  /* tooltip position */
+  .tooltip {
+    @apply p-10 text-xs absolute transform w-180 transition duration-200 text-white text-center shadow rounded opacity-0 z-10 bg-green;
+  }
+
+  .tooltip.top { 
+    @apply bottom-full left-1/2 -translate-x-1/2;
+  }
+
+  .tooltip.bottom { 
+    @apply top-full left-1/2 -translate-x-1/2;
+  }
+
+  .tooltip.right {
+    @apply left-full translate-x-0 top-1/2 -translate-y-1/2;
+  }
+
+  .tooltip.left {
+    @apply right-full translate-x-0 top-1/2 -translate-y-1/2;
+  }
+
+  /* theme */
   .tooltip.dark {
-    @apply bg-black-100 border border-green;
+    @apply bg-black-100 border border-green !important;
   }
 
-  .text::after {
+  /* the notch */
+  .tooltip .text::after {
     content: " ";
-    @apply absolute top-full left-1/2 -ml-5;
+    @apply absolute transform;
     border-width: 5px;
     border-style: solid;
+  }
+  .tooltip.top .text::after {
+    @apply top-full left-1/2 transform -translate-x-1/2;
     border-color: #0ecc5f transparent transparent transparent;
+  }
+
+  .tooltip.right .text::after {
+    @apply top-1/2 left-0 transform -translate-y-1/2 -translate-x-10;
+    border-color: transparent #0ecc5f transparent transparent;
+  }
+
+  .tooltip.bottom .text::after {
+    @apply bottom-full left-1/2 transform -translate-x-1/2;
+    border-color: transparent transparent #0ecc5f transparent;
+  }
+
+  .tooltip.left .text::after {
+    @apply top-1/2 right-0 transform -translate-y-1/2 translate-x-10;
+    border-color: transparent transparent transparent #0ecc5f;
   }
 </style>
