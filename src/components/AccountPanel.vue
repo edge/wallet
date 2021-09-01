@@ -1152,32 +1152,22 @@ export default {
       }
     },
     async confirmWithdraw() {
-      console.log('confirmWithdraw started')
       const isValidPassword = await validatePassword(this.password)
 
-      console.log('isValidPassword', isValidPassword)
-
       if (isValidPassword) {
-        console.log('A')
         // Create tx object.
         const nonce = await getNonce(this.wallet.address)
         const tx = await createWithdrawalTransaction(this.amount, {
           destination: this.withdrawAddress,
           fee: toMicroXe(this.fee),
-          memo: 'Exchange for EDGE'
+          memo: 'XE Withdrawal'
         }, nonce)
-
-        console.log('B')
 
         // Send transaction to the blockchain.
         const txResponse = await sendTransaction(tx)
 
-        console.log('C')
-
         // TODO: Handle accepted/rejected status.
         const { metadata, results } = txResponse
-
-        console.log('D')
 
         if (metadata.accepted) {
           this.currentTx = tx
@@ -1190,16 +1180,12 @@ export default {
 
           this.clearForm()
 
-          console.log('E')
-
           return true
         } else {
-          console.log('F')
           this.errorMessage = results && results[0] && results[0].reason
           return false
         }
       } else {
-        console.log('G')
         this.invalidPassword = true
         return false
       }
