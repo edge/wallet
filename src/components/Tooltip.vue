@@ -22,40 +22,20 @@ export default {
 
 <style scoped>
   .tooltip-box { 
-    position: relative;
-    display: inline-block;
+    @apply relative inline-block;
   }
 
   .tooltip-box:hover .tooltip {
-    opacity: 1;
+    @apply opacity-100 -translate-y-8;
   }
 
   .tooltip { 
-    color: #ffffff;
-    text-align: center;
-    padding: 5px 0;
-    border-radius: 2px;
-    
-    width: 120px;
-    bottom: 100%;
-    left: 50%;
-    margin-left: -60px;
-
-    opacity: 0;
-    transition: opacity 1s;
-
-    position: absolute;
-    z-index: 1;
-
-    background: #0ecc5f;
+    @apply p-10 text-xs absolute bottom-full left-7 transform -translate-x-1/2 w-180 transition duration-200 text-white text-center shadow rounded opacity-0 z-10 bg-green;
   }
 
   .text::after {
     content: " ";
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    margin-left: -5px;
+    @apply absolute top-full left-1/2 -ml-5;
     border-width: 5px;
     border-style: solid;
     border-color: #0ecc5f transparent transparent transparent;
