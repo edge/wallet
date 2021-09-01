@@ -1,7 +1,7 @@
 <template>
   <div class="tooltip-box">
     <slot />
-    <div class="tooltip" :class="theme === 'dark' ? 'dark' : 'light', position || 'top', width ? 'wide' : ''">
+    <div class="tooltip" :class="theme === 'dark' ? 'dark' : 'light', position || 'top', wide ? 'wide' : ''">
       <span class="text">{{ text }}</span>
     </div>
   </div>
@@ -24,7 +24,7 @@ export default {
       type: String,
       required: false
     },
-    width: {
+    wide: {
       type: Boolean,
       required: false
     }
@@ -59,11 +59,12 @@ export default {
 
   /* tooltip position */
   .tooltip {
-    @apply invisible p-10 w-180 text-xs absolute transform transition duration-200 text-white text-center shadow rounded opacity-0 z-10 bg-green;
+    width: 200px;
+    @apply invisible p-10 text-xs absolute transform transition duration-200 text-white text-center shadow rounded opacity-0 z-10 bg-green;
   }
 
   .tooltip.wide {
-    @apply w-360;
+    width: 300px;
   }
 
   .tooltip.top {
