@@ -370,7 +370,12 @@
                   </div>
 
                   <div class="form-group">
-                    <label>Estimated Cost</label>
+                    <label class="flex items-center space-x-3">
+                      Estimated Cost
+                      <Tooltip class="ml-3" position="right" theme="dark" :text="`Inclusive of a ${minimumFee} XE handling fee`">
+                        <InformationCircleIcon class="hidden md:block button__icon w-15" />
+                      </Tooltip>
+                    </label>
                     <Amount :value="fee" currency="XE"/>
                   </div>
 
@@ -519,11 +524,13 @@
                 <span class="sub-heading d-block text-gray text-caption">{{ formatMicroXe(wallet.balance) }} XE available</span>
               </template>
               <template v-slot:body>
-                <div class="pb-14 min-h-410">
-                  <div class="form-group" :class="{'form-group__error': v$.withdrawAddress.$error}">
+                <div class="pb-4 min-h-410">
+                  <div class="form-group mb-8" :class="{'form-group__error': v$.withdrawAddress.$error}">
                     <label for="send1" class="flex items-center space-x-3 label">
                       Withdraw to
-                      <Tooltip class="ml-3" position="right" theme="dark" width="true" text="The address of the Ethereum wallet where the EDGE should be sent to">
+                      <Tooltip
+                        class="ml-3" position="right" theme="dark" wide="true"
+                        text="This is the Ethereum wallet that will hold your EDGE">
                         <InformationCircleIcon class="hidden md:block button__icon w-15" />
                       </Tooltip>
                     </label>
@@ -536,11 +543,11 @@
                     />
                     <div class="form-group__error" v-if="v$.withdrawAddress.$error">Invalid Ethereum wallet address.</div>
                   </div>
+
                   <div
-                    class="lg-input-group"
-                    :class="{'form-group__error': (!v$.amount.sufficientFunds.$pending && v$.amount.sufficientFunds.$invalid) || v$.amount.validAmount.$invalid}"
-                  >
-                    <label for="key">AMOUNT</label>
+                    class="mt-32 lg-input-group"
+                    :class="{'form-group__error': (!v$.amount.sufficientFunds.$pending && v$.amount.sufficientFunds.$invalid) || v$.amount.validAmount.$invalid}">
+                    <label for="key">Amount</label>
                     <div class="relative input-wrap">
                       <input
                         type="text"
@@ -555,27 +562,27 @@
                       <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="v$.amount.validAmount.$invalid">Invalid amount.</div>
                     </div>
                   </div>
-                  <div class="flex flex-wrap pt-12 pb-32 radio-list">
 
-                  </div>
-                  <div class="mb-0 form-group">
-                    <span class="label">
+                  <div class="mt-32 mb-8 form-group">
+                    <label class="flex items-center space-x-3 label">
                       Transaction speed
-                      <Tooltip class="ml-3" position="right" theme="dark" text="The amount of gas you're willing to spend on the Ethereum transaction">
+                      <Tooltip
+                        class="ml-3" position="right" theme="dark" wide="true"
+                        text="Faster transactions cost more gas in the Ethereum network">
                         <InformationCircleIcon class="hidden md:block button__icon w-15" />
                       </Tooltip>
-                    </span>
-                    <div class="flex flex-wrap pt-12 -mx-6 radio-list">
+                    </label>
+                    <div class="flex flex-wrap mt-12 -mx-6 radio-list">
                       <Radio name="fee" @click="selectFeeLevel(gasPrices.slow)" id="slow" :label="gasPrices.slow + ' XE'" :big="true" extraName="Slow"/>
                       <Radio name="fee" :selected="selectedFeeLevel === gasPrices.average"  @click="selectFeeLevel(gasPrices.average)" id="average" :label="gasPrices.average + ' XE'" :big="true" extraName="Average"/>
                       <Radio name="fee" @click="selectFeeLevel(gasPrices.fast)" id="fast" :label="gasPrices.fast + ' XE'" :big="true" extraName="Fast"/>
                       <Radio name="fee" @click="selectFeeLevel(gasPrices.fastest)" id="fastest" :label="gasPrices.fastest + ' XE'" :big="true" extraName="Fastest"/>
                     </div>
                   </div>
-                  <div class="mt-16 mb-16 form-group">
+                  <div class="mt-32 mb-8 form-group">
                     <label class="flex items-center space-x-3">
                       Estimated Cost
-                      <Tooltip class="ml-3" position="right" theme="dark" :text="`Includes handling fee of ${minimumFee} XE`">
+                      <Tooltip class="ml-3" position="right" theme="dark" :text="`Inclusive of a ${minimumFee} XE handling fee`">
                         <InformationCircleIcon class="hidden md:block button__icon w-15" />
                       </Tooltip>
                     </label>
@@ -661,12 +668,24 @@
                   </div>
 
                   <div class="form-group mb-14">
-                    <label>Estimated Cost</label>
+                    <label class="flex items-center space-x-3">
+                      Estimated Cost
+                      <Tooltip class="ml-3" position="right" theme="dark" :text="`Includes handling fee of ${minimumFee} XE`">
+                        <InformationCircleIcon class="hidden md:block button__icon w-15" />
+                      </Tooltip>
+                    </label>
                     <Amount :value="fee" currency="XE"/>
                   </div>
 
                   <div class="form-group mb-14">
-                    <label>You should receive</label>
+                    <label class="flex items-center space-x-3">
+                      You should receive
+                      <Tooltip
+                        class="ml-3" position="right" wide="true" theme="dark"
+                        :text="`You may receive more if the Ethereum transaction costs less`">
+                        <InformationCircleIcon class="hidden md:block button__icon w-15" />
+                      </Tooltip>
+                    </label>
                     <Amount :value="calculatedEdge" currency="EDGE"/>
                   </div>
                 </div>
