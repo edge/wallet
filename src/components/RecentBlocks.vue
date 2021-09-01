@@ -20,10 +20,14 @@
       <tbody v-if="blocks.length">
         <tr v-for="block in blocks" :key="block.hash">
           <td data-title="Height:">
-            {{ block.height }}
+            <a :href="`https://xe.network/blocks/${block.height}`" target="_blank" rel="noreferrer">
+              {{ block.height }}
+            </a>
           </td>
           <td data-title="Hash:">
-            <span class="monospace">{{ block.hash.substr(0, 32) }}</span>
+            <a :href="`https://xe.network/blocks/${block.hash}`" target="_blank" rel="noreferrer">
+              <span class="monospace">{{ block.hash.substr(0, 32) }}</span>
+            </a>
           </td>
           <td data-title="Mined:">
             {{ timeSince(block.timestamp) }}
@@ -89,6 +93,10 @@ th:last-child {
 
 td {
   @apply bg-white text-sm2 font-normal flex items-center px-5 break-all max-w-full;
+}
+
+td a {
+  @apply leading-none border-b border-black border-opacity-25 hover:border-green hover:border-opacity-25 hover:text-green align-middle;
 }
 
 td::before {

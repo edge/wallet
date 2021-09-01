@@ -1,12 +1,14 @@
 {
   "name": "wallet",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Web wallet for managing XE coin",
   "private": true,
   "license": "unlicensed",
   "author": "Edge Network <core@edge.network>",
   "contributors": [
-    "Adam K Dean <adam@edge.network>"
+    "Adam K Dean <adam@edge.network>",
+    "Jim Lambie <jim@27.works>",
+    "Jay Whitmore <jay@27.works>"
   ],
   "scripts": {
     "build": "vue-cli-service build",

@@ -19,12 +19,11 @@
         <!-- SEND XE MODALS -->
         <!--~~~~~~~~~~~~~~~~-->
         <div class="account-panel__buttons">
-          <!-- 2x empty element to replace hidden receive -->
-          <div></div>
+          <!-- 1x empty element to replace hidden receive -->
           <div></div>
           <div>
-            <button class="button button--success w-full" @click="openSend()">
-              <span class="button__icon w-12">
+            <button class="w-full button button--success" @click="openSend()">
+              <span class="w-12 button__icon">
                 <ArrowUpIcon/>
               </span>
               Send
@@ -32,8 +31,8 @@
 
             <Modal v-if="showSendStep === true" :opened="true" :closeHandler="swallowClose">
               <!-- <template v-slot:opener="slotProps">
-                <button class="button button--outline-success w-full" @click="slotProps.open">
-                  <span class="button__icon w-12">
+                <button class="w-full button button--outline-success" @click="slotProps.open">
+                  <span class="w-12 button__icon">
                     <ArrowUpIcon/>
                   </span>
                   Send
@@ -69,7 +68,7 @@
                     :class="{'form-group__error': (!v$.amount.sufficientFunds.$pending && v$.amount.sufficientFunds.$invalid) || (v$.amount.validAmount.$invalid)}"
                   >
                     <label for="amount-send">AMOUNT</label>
-                    <div class="input-wrap relative">
+                    <div class="relative input-wrap">
                       <input
                         type="text"
                         id="amount-send"
@@ -77,12 +76,12 @@
                         v-model="amount"
                         class="placeholder-white placeholder-opacity-100"
                       />
-                      <span class="currentColor absolute top-23 right-0 text-xl">XE</span>
+                      <span class="absolute right-0 text-xl currentColor top-23">XE</span>
                       <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="(!v$.amount.sufficientFunds.$pending && v$.amount.sufficientFunds.$invalid)">Insufficient funds.</div>
                       <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="v$.amount.validAmount.$invalid">Invalid amount.</div>
                     </div>
                   </div>
-                  <div class="radio-list flex flex-wrap pt-12">
+                  <div class="flex flex-wrap pt-12 radio-list">
                     <!-- <Radio name="amount-send1" id="half" label="HALF" @click="populateAmount(50)" /> -->
                     <Radio name="amount-send1" id="max" label="MAX" @click="populateAmount(100)" />
                   </div>
@@ -90,12 +89,12 @@
               </template>
 
               <template v-slot:footer="slotProps">
-                <div class="border-t border-gray-700 border-opacity-30 pt-32 px-24 pb-40">
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-24">
-                    <button class="button button--outline-success w-full" @click="clearForm(); hideModal(slotProps, 'showSendStep');">
+                <div class="px-24 pt-32 pb-40 border-t border-gray-700 border-opacity-30">
+                  <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
+                    <button class="w-full button button--outline-success" @click="clearForm(); hideModal(slotProps, 'showSendStep');">
                       Cancel
                     </button>
-                    <button class="button button--success w-full"
+                    <button class="w-full button button--success"
                        @click="showOtherModal(slotProps, 'showSendStep2', [v$.sendAddress, v$.sendMemo, v$.amount])">
                       Send
                     </button>
@@ -118,15 +117,15 @@
                     <label class="label">Memo</label>
                     <span class="break-all">{{ sendMemo || 'None' }}</span>
                   </div>
-                  <div class="form-group mb-16">
+                  <div class="mb-16 form-group">
                     <label>Amount</label>
                     <Amount :value="amount" currency="XE"/>
                   </div>
-                  <div class="form-group mb-16">
+                  <div class="mb-16 form-group">
                     <label>Fee</label>
                     <Amount value="0.00" currency="XE"/>
                   </div>
-                  <div class="form-group mb-0">
+                  <div class="mb-0 form-group">
                     <label>Recipient receives</label>
                     <Amount :value="amount" currency="XE"/>
                   </div>
@@ -134,11 +133,11 @@
               </template>
 
               <template v-slot:footer="slotProps">
-                <div class="border-t border-gray-700 border-opacity-30 pt-32 px-24 pb-40">
+                <div class="px-24 pt-32 pb-40 border-t border-gray-700 border-opacity-30">
                   <form>
                     <div class="form-group" :class="{'form-group__error': v$.password.$error}">
                       <label for="pass-step">Enter Password</label>
-                      <div class="input-wrap relative">
+                      <div class="relative input-wrap">
                         <span class="icon">
                           <LockOpenIcon/>
                         </span>
@@ -147,14 +146,14 @@
                       <div class="form-group__error" v-if="invalidPassword">Password incorrect.</div>
                     </div>
                   </form>
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-24">
+                  <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
                     <button
-                      class="button button--outline-success w-full"
+                      class="w-full button button--outline-success"
                       @click="hideModal(slotProps, 'showSendStep2'); showOtherModal(slotProps, 'showSendStep');">
                       Back
                     </button>
                     <button
-                      class="button button--success w-full"
+                      class="w-full button button--success"
                       @click="confirmTransaction()">Confirm transaction</button>
                   </div>
 
@@ -170,16 +169,16 @@
               </template>
               <template v-slot:body>
                 <div class="pb-14 min-h-410">
-                  <div class="decor-block pb-4 mb-20 border-b border-gray-700 border-opacity-30">
+                  <div class="pb-4 mb-20 border-b border-gray-700 decor-block border-opacity-30">
                     <!-- <CheckIcon class="w-52 text-green"/> -->
                   </div>
 
                   <!--
                   <div class="form-group mb-14">
-                    <span class="label normal-case tracking text-base3 mb-4">You've sent</span>
-                    <div class="input-wrap relative">
+                    <span class="mb-4 normal-case label tracking text-base3">You've sent</span>
+                    <div class="relative input-wrap">
                       <span
-                        class="input-filled w-full overflow-hidden overflow-ellipsis block text-white text-caption break-all">
+                        class="block w-full overflow-hidden text-white break-all input-filled overflow-ellipsis text-caption">
                         {{ formatMicroXe(currentTx.amount) }} XE
                         <span class="text-gray">to</span>
                         {{ currentTx.recipient }}
@@ -195,15 +194,15 @@
                     <label class="label">Memo</label>
                     <span class="break-all">{{ currentTx.data.memo || 'None' }}</span>
                   </div>
-                  <div class="form-group mb-16">
+                  <div class="mb-16 form-group">
                     <label>Amount</label>
                     <Amount :value="formatMicroXe(currentTx.amount)" currency="XE"/>
                   </div>
-                  <div class="form-group mb-16">
+                  <div class="mb-16 form-group">
                     <label>Fee</label>
                     <Amount value="0.00" currency="XE"/>
                   </div>
-                  <div class="form-group mb-0">
+                  <div class="mb-0 form-group">
                     <label>Recipient receives</label>
                     <Amount :value="formatMicroXe(currentTx.amount)" currency="XE"/>
                   </div>
@@ -211,8 +210,8 @@
               </template>
 
               <template v-slot:footer="slotProps">
-                <div class="border-t border-gray-700 border-opacity-30 pt-40 px-24 pb-40">
-                  <button class="button button--success w-full md:w-1/2 mx-auto block text-center"
+                <div class="px-24 pt-40 pb-40 border-t border-gray-700 border-opacity-30">
+                  <button class="block w-full mx-auto text-center button button--success md:w-1/2"
                      @click="clearForm(); hideModal(slotProps, 'showSendStep3')">
                     Close
                   </button>
@@ -226,8 +225,8 @@
           <!--~~~~~~~~~~~~~~~~-->
           <!--
           <div>
-            <a href="#" class="button button--outline-success w-full">
-            <span class="button__icon w-12">
+            <a href="#" class="w-full button button--outline-success">
+            <span class="w-12 button__icon">
               <ArrowDownIcon/>
             </span>
               Receive
@@ -236,10 +235,10 @@
           -->
 
           <!--~~~~~~~~~~~~~~~~~-->
-          <!-- EXCHANGE MODALS 
-          
+          <!-- EXCHANGE MODALS -->
+
           <div>
-            <button class="button button--outline-success w-full" @click="openExchange()">
+            <button class="w-full button button--outline-success" @click="openExchange()">
               <span class="button__icon w-15">
                 <SwitchHorizontalIcon/>
               </span>
@@ -257,35 +256,35 @@
               </template>
 
               <template v-slot:body="slotProps">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-24 pt-12 pb-20">
+                <div class="grid grid-cols-1 gap-24 pt-12 pb-20 md:grid-cols-2">
                   <div class="">
-                    <div class="text-caption leading-7 mb-65">
+                    <div class="leading-7 text-caption mb-65">
                       <strong>Deposit</strong>
                       <p class="mb-25">Convert EDGE to XE for staking, governance and service use.</p>
                       <img src="/assets/deposit.svg" alt="image description">
                     </div>
 
                     <button
-                      class="button--outline-success button w-full"
+                      class="w-full button--outline-success button"
                       @click="openDeposit();"
                     >
-                      <span class="button__icon w-12">
+                      <span class="w-12 button__icon">
                         <ArrowNarrowLeftIcon/>
                       </span>
                       Deposit
                     </button>
                   </div>
                   <div class="">
-                    <div class="text-caption leading-7 mb-65">
+                    <div class="leading-7 text-caption mb-65">
                       <strong>Withdraw</strong>
                       <p class="mb-25">Convert XE to EDGE for use within the Ethereum network.</p>
                       <img src="/assets/withdraw.svg" alt="image description" />
                     </div>
                     <button
-                      class="button--outline-success button w-full"
+                      class="w-full button--outline-success button"
                       @click="openWithdraw();"
                     >
-                      <span class="button__icon w-12">
+                      <span class="w-12 button__icon">
                         <ArrowNarrowRightIcon/>
                       </span>
                       Withdraw
@@ -304,7 +303,7 @@
               <template v-slot:body="slotProps">
                 <div class="pb-15">
                   <button
-                    class="button button--success w-full mb-16"
+                    class="w-full mb-16 button button--success"
                     id="metamaskButton"
                     :ref="(el) => {
                       initialise(el)
@@ -313,7 +312,7 @@
                     Connect
                   </button>
                   <button
-                    class="button button--outline-success w-full"
+                    class="w-full button button--outline-success"
                     @click="closeDeposit();"
                   >
                     Cancel
@@ -329,7 +328,7 @@
                     <span class="sub-heading d-block text-gray text-caption">{{ formatCurrency(edgeBalance) }} EDGE available</span>
                   </div>
                   <div>
-                    <div class="rounded-xl py-5 px-10 border border-green-200 text-gray-400">{{ ethereumNetwork }}</div>
+                    <div class="px-10 py-5 text-gray-400 border border-green-200 rounded-xl">{{ ethereumNetwork }}</div>
                   </div>
                 </div>
               </template>
@@ -337,14 +336,14 @@
                 <div class="pb-14 min-h-410">
                   <div class="form-group">
                     <span class="label">Depositing from</span>
-                    <div class="input-wrap relative">
-                      <span class="input-filled w-full overflow-hidden overflow-ellipsis block text-white">{{ ethereumAddress }}</span>
+                    <div class="relative input-wrap">
+                      <span class="block w-full overflow-hidden text-white input-filled overflow-ellipsis">{{ ethereumAddress }}</span>
                     </div>
                   </div>
                   <div class="form-group">
                     <span class="label">Depositing to</span>
-                    <div class="input-wrap relative">
-                      <span class="input-filled w-full overflow-hidden overflow-ellipsis block text-white">{{ wallet.address }}</span>
+                    <div class="relative input-wrap">
+                      <span class="block w-full overflow-hidden text-white input-filled overflow-ellipsis">{{ wallet.address }}</span>
                     </div>
                   </div>
                   <div
@@ -352,7 +351,7 @@
                     :class="{'form-group__error': edgeAmount !== 0 && (v$.edgeAmount.sufficientFunds.$invalid || v$.edgeAmount.validAmount.$invalid)}"
                   >
                     <label for="key">AMOUNT</label>
-                    <div class="input-wrap relative">
+                    <div class="relative input-wrap">
                       <input
                         type="text"
                         id="amount-send"
@@ -360,18 +359,23 @@
                         v-model="edgeAmount"
                         class="placeholder-white placeholder-opacity-100"
                       />
-                      <span class="curren absolute top-23 right-0 text-xl">EDGE</span>
+                      <span class="absolute right-0 text-xl curren top-23">EDGE</span>
 
                       <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="v$.edgeAmount.sufficientFunds.$invalid">Insufficient funds.</div>
                       <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="edgeAmount !== 0 && v$.edgeAmount.validAmount.$invalid">Invalid amount.</div>
                     </div>
                   </div>
-                  <div class="radio-list flex flex-wrap pt-12 justify-end">
+                  <div class="flex flex-wrap justify-end pt-12 radio-list">
                     <Radio name="currency" id="max" label="MAX" @click="populateEdgeAmount(100);" />
                   </div>
 
                   <div class="form-group">
-                    <label>Estimated Cost</label>
+                    <label class="flex items-center space-x-3">
+                      Estimated Cost
+                      <Tooltip class="ml-3" position="right" theme="dark" :text="`Inclusive of a ${minimumFee} XE handling fee`">
+                        <InformationCircleIcon class="hidden md:block button__icon w-15" />
+                      </Tooltip>
+                    </label>
                     <Amount :value="fee" currency="XE"/>
                   </div>
 
@@ -379,35 +383,35 @@
               </template>
 
               <template v-slot:footer="slotProps">
-                <div class="border-t border-gray-700 border-opacity-30 pt-32 px-24 pb-40">
+                <div class="px-24 pt-32 pb-40 border-t border-gray-700 border-opacity-30">
 
                   <div v-if="tx === null"
-                      class="convert-info text-center md:text-left bg-black border-gray-700 border-opacity-30 rounded py-20 px-10 mb-32 border border-color">
+                      class="px-10 py-20 mb-32 text-center bg-black border border-gray-700 rounded convert-info md:text-left border-opacity-30 border-color">
                     <div class="md:flex">
                       <div class="left md:text-right md:w-1/2 md:flex md:pr-18 md:relative">
                         <div class="md:flex-grow">
-                          <span class="block text-gray mb-3">You are depositing</span>
-                          <span class="price block text-white text-lg">
+                          <span class="block mb-3 text-gray">You are depositing</span>
+                          <span class="block text-lg text-white price">
                             {{ formatCurrency(edgeAmount) }} EDGE
                           </span>
                         </div>
                         <span
-                            class="mx-auto md:ml-20 mt-12 md:mt-0 md:flex-shrink-0 p-12 w-52 h-52 rounded-full border border-gray-700 border-opacity-30 flex align-center justify-center">
+                            class="flex justify-center p-12 mx-auto mt-12 border border-gray-700 rounded-full md:ml-20 md:mt-0 md:flex-shrink-0 w-52 h-52 border-opacity-30 align-center">
                           <img src="/assets/e-logo-alt.svg" alt="image description" class="flex-shrink-0">
                         </span>
                         <span
-                            class="icon-arrow block md:absolute mx-auto my-12 md:m-0 md:top-1/2 md:-right-13 md:-mt-14 w-27 text-gray">
+                            class="block mx-auto my-12 icon-arrow md:absolute md:m-0 md:top-1/2 md:-right-13 md:-mt-14 w-27 text-gray">
                           <ArrowRightIcon class="hidden md:block"/>
                           <ArrowDownIcon class="block md:hidden"/>
                         </span>
                       </div>
                       <div class="right md:w-1/2 md:flex md:pl-18">
-                        <span class="mx-auto mb-12 md:mb-0 md:flex-shrink-0 md:mr-20 p-8 pl-12 w-52 h-52 rounded-full border bg-white flex align-center justify-center">
+                        <span class="flex justify-center p-8 pl-12 mx-auto mb-12 bg-white border rounded-full md:mb-0 md:flex-shrink-0 md:mr-20 w-52 h-52 align-center">
                           <img src="/assets/logo.svg" alt="XE Wallet" class="flex-shrink-0">
                         </span>
                         <div class="md:flex-grow">
-                          <span class="block text-gray mb-3">You should receive</span>
-                          <span class="price block text-white text-lg">
+                          <span class="block mb-3 text-gray">You should receive</span>
+                          <span class="block text-lg text-white price">
                             {{ formatCurrency(calculatedXe) }} XE
                           </span>
                         </div>
@@ -416,24 +420,24 @@
                   </div>
 
                   <div v-if="depositMessage !== null"
-                      class="convert-info text-center md:text-left bg-black border-gray-700 border-opacity-30 rounded py-20 px-20 mb-32 border border-color">
+                      class="px-20 py-20 mb-32 text-center bg-black border border-gray-700 rounded convert-info md:text-left border-opacity-30 border-color">
                     <div class="">
-                      <span class="flex w-full overflow-hidden overflow-ellipsis text-white">
+                      <span class="flex w-full overflow-hidden text-white overflow-ellipsis">
                         {{ depositMessage }}
                       </span>
                     </div>
                   </div>
 
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-24">
+                  <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
                     <button
-                      class="button button--outline-success w-full"
+                      class="w-full button button--outline-success"
                       :disabled="depositInProgress"
                       @click="closeDeposit();"
                     >
                       Cancel
                     </button>
                     <button
-                      class="button button--success w-full"
+                      class="w-full button button--success"
                       :disabled="depositInProgress || (v$.edgeAmount.sufficientFunds.$invalid || v$.edgeAmount.validAmount.$invalid) || edgeAmount <= 0"
                       @click="exchange([v$.edgeAmount])"
                     >
@@ -456,8 +460,8 @@
 
                   <div class="form-group mb-14">
                     <label>From</label>
-                    <div class="input-wrap relative">
-                      <span class="input-filled w-full overflow-hidden overflow-ellipsis block text-white text-caption">
+                    <div class="relative input-wrap">
+                      <span class="block w-full overflow-hidden text-white input-filled overflow-ellipsis text-caption">
                         {{ tx.from }}
                       </span>
                     </div>
@@ -465,17 +469,17 @@
 
                   <div class="form-group mb-14">
                     <label>To</label>
-                    <div class="input-wrap relative">
-                      <span class="input-filled w-full overflow-hidden overflow-ellipsis block text-white text-caption">
+                    <div class="relative input-wrap">
+                      <span class="block w-full overflow-hidden text-white input-filled overflow-ellipsis text-caption">
                         {{ wallet.address }}
                       </span>
                     </div>
                   </div>
 
                   <div class="form-group mb-14">
-                    <span class="label tracking text-base3 mb-4">Estimated cost</span>
-                    <div class="input-wrap relative">
-                      <span class="input-filled w-full overflow-hidden overflow-ellipsis block text-white text-caption">
+                    <span class="mb-4 label tracking text-base3">Estimated cost</span>
+                    <div class="relative input-wrap">
+                      <span class="block w-full overflow-hidden text-white input-filled overflow-ellipsis text-caption">
                         <Amount :value="fee" currency="XE" />
                       </span>
                     </div>
@@ -488,24 +492,24 @@
 
                   <div class="form-group mb-14">
                     <label>Transaction hash</label>
-                    <span class="flex w-full overflow-hidden overflow-ellipsis text-white">
-                      <a class="underline text-white text-lg" :href="getHashUrl()" target="_blank">
+                    <span class="flex w-full overflow-hidden text-white overflow-ellipsis">
+                      <a class="text-lg text-white underline" :href="getHashUrl()" target="_blank">
                         {{ tx.hash.substring(0, 6) }}...{{ tx.hash.substring(tx.hash.length - 4) }}
                       </a>
                       <svg class="w-20 h-20 mt-2 ml-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                     </span>
                   </div>
 
-                  <div class="flex items-center text-gray leading-8 mt-24">
+                  <div class="flex items-center mt-24 leading-8 text-gray">
                     <p class="mb-0">Your request has been accepted and should be processed within 24 hours.</p>
                   </div>
                 </div>
               </template>
 
               <template v-slot:footer="slotProps">
-                <div class="border-t border-gray-700 border-opacity-30 pt-40 px-24 pb-40">
+                <div class="px-24 pt-40 pb-40 border-t border-gray-700 border-opacity-30">
                   <button
-                    class="button button--success w-full md:w-3/6 mx-auto block text-center"
+                    class="block w-full mx-auto text-center button button--success md:w-3/6"
                     @click="closeDeposit();"
                   >
                     Close
@@ -520,9 +524,16 @@
                 <span class="sub-heading d-block text-gray text-caption">{{ formatMicroXe(wallet.balance) }} XE available</span>
               </template>
               <template v-slot:body>
-                <div class="pb-14 min-h-410">
-                  <div class="form-group" :class="{'form-group__error': v$.withdrawAddress.$error}">
-                    <label for="send1" class="label">Withdraw to</label>
+                <div class="pb-4 min-h-410">
+                  <div class="form-group mb-8" :class="{'form-group__error': v$.withdrawAddress.$error}">
+                    <label for="send1" class="flex items-center space-x-3 label">
+                      Withdraw to
+                      <Tooltip
+                        class="ml-3" position="right" theme="dark" wide="true"
+                        text="This is the Ethereum wallet that will hold your EDGE">
+                        <InformationCircleIcon class="hidden md:block button__icon w-15" />
+                      </Tooltip>
+                    </label>
                     <input
                       type="text"
                       placeholder="Ethereum address"
@@ -532,12 +543,12 @@
                     />
                     <div class="form-group__error" v-if="v$.withdrawAddress.$error">Invalid Ethereum wallet address.</div>
                   </div>
+
                   <div
-                    class="lg-input-group"
-                    :class="{'form-group__error': (!v$.amount.sufficientFunds.$pending && v$.amount.sufficientFunds.$invalid) || v$.amount.validAmount.$invalid}"
-                  >
-                    <label for="key">AMOUNT</label>
-                    <div class="input-wrap relative">
+                    class="mt-32 lg-input-group"
+                    :class="{'form-group__error': (!v$.amount.sufficientFunds.$pending && v$.amount.sufficientFunds.$invalid) || v$.amount.validAmount.$invalid}">
+                    <label for="key">Amount</label>
+                    <div class="relative input-wrap">
                       <input
                         type="text"
                         id="amount-send"
@@ -545,69 +556,79 @@
                         v-model="amount"
                         class="placeholder-white placeholder-opacity-100"
                       >
-                      <span class="curren absolute top-23 right-0 text-xl">XE</span>
+                      <span class="absolute right-0 text-xl curren top-23">XE</span>
 
                       <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="(!v$.amount.sufficientFunds.$pending && v$.amount.sufficientFunds.$invalid)">Insufficient funds.</div>
                       <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="v$.amount.validAmount.$invalid">Invalid amount.</div>
                     </div>
                   </div>
-                  <div class="radio-list flex flex-wrap pt-12 pb-32">
 
-                  </div>
-                  <div class="form-group mt-16 mb-16">
-                    <label>Estimated Cost</label>
-                    <Amount :value="fee" currency="XE"/>
-                  </div>
-                  <div class="form-group mb-0">
-                    <span class="label">choose fee</span>
-                    <div class="radio-list flex flex-wrap pt-12 -mx-6">
+                  <div class="mt-32 mb-8 form-group">
+                    <label class="flex items-center space-x-3 label">
+                      Transaction speed
+                      <Tooltip
+                        class="ml-3" position="right" theme="dark" wide="true"
+                        text="Faster transactions cost more gas in the Ethereum network">
+                        <InformationCircleIcon class="hidden md:block button__icon w-15" />
+                      </Tooltip>
+                    </label>
+                    <div class="flex flex-wrap mt-12 -mx-6 radio-list">
                       <Radio name="fee" @click="selectFeeLevel(gasPrices.slow)" id="slow" :label="gasPrices.slow + ' XE'" :big="true" extraName="Slow"/>
                       <Radio name="fee" :selected="selectedFeeLevel === gasPrices.average"  @click="selectFeeLevel(gasPrices.average)" id="average" :label="gasPrices.average + ' XE'" :big="true" extraName="Average"/>
                       <Radio name="fee" @click="selectFeeLevel(gasPrices.fast)" id="fast" :label="gasPrices.fast + ' XE'" :big="true" extraName="Fast"/>
                       <Radio name="fee" @click="selectFeeLevel(gasPrices.fastest)" id="fastest" :label="gasPrices.fastest + ' XE'" :big="true" extraName="Fastest"/>
                     </div>
                   </div>
+                  <div class="mt-32 mb-8 form-group">
+                    <label class="flex items-center space-x-3">
+                      Estimated Cost
+                      <Tooltip class="ml-3" position="right" theme="dark" :text="`Inclusive of a ${minimumFee} XE handling fee`">
+                        <InformationCircleIcon class="hidden md:block button__icon w-15" />
+                      </Tooltip>
+                    </label>
+                    <Amount :value="fee" currency="XE"/>
+                  </div>
                 </div>
               </template>
 
               <template v-slot:footer="slotProps">
-                <div class="border-t border-gray-700 border-opacity-30 pt-32 px-24 pb-40">
-                  <div class="convert-info text-center md:text-left bg-black border-gray-700 border-opacity-30 rounded py-20 px-10 mb-32 border border-color">
+                <div class="px-24 pt-32 pb-40 border-t border-gray-700 border-opacity-30">
+                  <div class="px-10 py-20 mb-32 text-center bg-black border border-gray-700 rounded convert-info md:text-left border-opacity-30 border-color">
                     <div class="md:flex">
                       <div class="left md:text-right md:w-1/2 md:flex md:pr-18 md:relative">
                         <div class="md:flex-grow">
-                          <span class="block text-gray mb-3">You are withdrawing</span>
-                          <span class="price block text-white text-xl">
+                          <span class="block mb-3 text-gray">You are withdrawing</span>
+                          <span class="block text-xl text-white price">
                             {{ formatCurrency(amount) }} XE
                           </span>
                         </div>
-                        <span class="mx-auto md:ml-20 mt-12 md:mt-0 md:flex-shrink-0 p-12 pl-12 w-52 h-52 rounded-full border border-gray-700 border-opacity-30 flex align-center justify-center">
+                        <span class="flex justify-center p-12 pl-12 mx-auto mt-12 border border-gray-700 rounded-full md:ml-20 md:mt-0 md:flex-shrink-0 w-52 h-52 border-opacity-30 align-center">
                           <img src="/assets/logo.svg" alt="XE Wallet" class="flex-shrink-0">
                         </span>
-                        <span class="icon-arrow block md:absolute mx-auto my-12 md:m-0 md:top-1/2 md:-right-13 md:-mt-14 w-27 text-gray">
+                        <span class="block mx-auto my-12 icon-arrow md:absolute md:m-0 md:top-1/2 md:-right-13 md:-mt-14 w-27 text-gray">
                           <ArrowRightIcon class="hidden md:block"/>
                           <ArrowDownIcon class="block md:hidden"/>
                         </span>
                       </div>
                       <div class="right md:w-1/2 md:flex md:pl-18">
-                        <span class="mx-auto mb-12 md:mb-0 md:flex-shrink-0 md:mr-20 p-8 w-52 h-52 rounded-full border bg-white flex align-center justify-center">
+                        <span class="flex justify-center p-8 mx-auto mb-12 bg-white border rounded-full md:mb-0 md:flex-shrink-0 md:mr-20 w-52 h-52 align-center">
                           <img src="/assets/e-logo-alt.svg" alt="image description" class="flex-shrink-0">
                         </span>
                         <div class="md:flex-grow">
-                          <span class="block text-gray mb-3">You should receive</span>
-                          <span class="price block text-white text-xl">
+                          <span class="block mb-3 text-gray">You should receive</span>
+                          <span class="block text-xl text-white price">
                             {{ formatCurrency(calculatedEdge) }} EDGE
                           </span>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-24">
-                    <button class="button button--outline-success w-full"
+                  <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
+                    <button class="w-full button button--outline-success"
                        @click="closeWithdraw();">
                       Cancel
                     </button>
-                    <button class="button button--success w-full"
+                    <button class="w-full button button--success"
                       @click="validateFields([v$.withdrawAddress, v$.amount]) && openWithdrawalConfirmation();"
                     >
                       Withdraw
@@ -630,8 +651,8 @@
 
                   <div class="form-group mb-14">
                     <label class="label">From</label>
-                    <div class="input-wrap relative">
-                      <span class="input-filled w-full overflow-hidden overflow-ellipsis block text-white text-caption">
+                    <div class="relative input-wrap">
+                      <span class="block w-full overflow-hidden text-white input-filled overflow-ellipsis text-caption">
                         {{ wallet.address }}
                       </span>
                     </div>
@@ -639,31 +660,43 @@
 
                   <div class="form-group mb-14">
                     <label class="label">To</label>
-                    <div class="input-wrap relative">
-                      <span class="input-filled w-full overflow-hidden overflow-ellipsis block text-white text-caption">
+                    <div class="relative input-wrap">
+                      <span class="block w-full overflow-hidden text-white input-filled overflow-ellipsis text-caption">
                         {{ withdrawAddress }}
                       </span>
                     </div>
                   </div>
 
                   <div class="form-group mb-14">
-                    <label>Estimated Cost</label>
+                    <label class="flex items-center space-x-3">
+                      Estimated Cost
+                      <Tooltip class="ml-3" position="right" theme="dark" :text="`Includes handling fee of ${minimumFee} XE`">
+                        <InformationCircleIcon class="hidden md:block button__icon w-15" />
+                      </Tooltip>
+                    </label>
                     <Amount :value="fee" currency="XE"/>
                   </div>
 
                   <div class="form-group mb-14">
-                    <label>You should receive</label>
+                    <label class="flex items-center space-x-3">
+                      You should receive
+                      <Tooltip
+                        class="ml-3" position="right" wide="true" theme="dark"
+                        :text="`This is dependent on the final Ethereum transaction cost, you may receive more`">
+                        <InformationCircleIcon class="hidden md:block button__icon w-15" />
+                      </Tooltip>
+                    </label>
                     <Amount :value="calculatedEdge" currency="EDGE"/>
                   </div>
                 </div>
               </template>
 
               <template v-slot:footer="slotProps">
-                <div class="border-t border-gray-700 border-opacity-30 py-32 px-24">
-                  <div class="form-group mb-24" :class="{'form-group__error': v$.passphraseWithdraw.$error}">
+                <div class="px-24 py-32 border-t border-gray-700 border-opacity-30">
+                  <div class="mb-24 form-group" :class="{'form-group__error': v$.passphraseWithdraw.$error}">
                     <form>
                       <label for="pass-withdraw">ENTER PASSWORD</label>
-                      <div class="input-wrap relative">
+                      <div class="relative input-wrap">
                         <span class="icon">
                           <LockOpenIcon/>
                         </span>
@@ -681,7 +714,7 @@
                   </div>
 
                   <div v-if="errorMessage !== ''"
-                      class="convert-info text-center md:text-left red bg-black border-gray-700 border-opacity-30 rounded py-20 px-20 border border-color">
+                      class="px-20 py-20 text-center bg-black border border-gray-700 rounded convert-info md:text-left red border-opacity-30 border-color">
                     <div class="">
                       <span class="flex w-full overflow-hidden overflow-ellipsis text-red">
                         An error has occured ({{ errorMessage }}). Please try again.
@@ -689,15 +722,15 @@
                     </div>
                   </div>
 
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-24 pt-12">
-                    <button class="button button--outline-success w-full" @click="() => {
+                  <div class="grid grid-cols-1 gap-24 pt-12 md:grid-cols-2">
+                    <button class="w-full button button--outline-success" @click="() => {
                       hideModal(slotProps, 'showWithdrawStep2')
                       showOtherModal(slotProps, 'showWithdrawStep')
                     }">
                       Back
                     </button>
                     <button
-                      class="button button--success w-full"
+                      class="w-full button button--success"
                       @click="confirmWithdraw()"
                     >
                       Confirm
@@ -720,8 +753,8 @@
 
                   <div class="form-group mb-14">
                     <label>From</label>
-                    <div class="input-wrap relative">
-                      <span class="input-filled w-full overflow-hidden overflow-ellipsis block text-white text-caption">
+                    <div class="relative input-wrap">
+                      <span class="block w-full overflow-hidden text-white input-filled overflow-ellipsis text-caption">
                         {{ wallet.address }}
                       </span>
                     </div>
@@ -729,8 +762,8 @@
 
                   <div class="form-group mb-14">
                     <label>To</label>
-                    <div class="input-wrap relative">
-                      <span class="input-filled w-full overflow-hidden overflow-ellipsis block text-white text-caption">
+                    <div class="relative input-wrap">
+                      <span class="block w-full overflow-hidden text-white input-filled overflow-ellipsis text-caption">
                         {{ currentTx.data.destination }}
                       </span>
                     </div>
@@ -746,15 +779,15 @@
                     <Amount :value="currentTx.edgeAmount" currency="EDGE"/>
                   </div>
 
-                  <div class="flex items-center text-gray leading-8 mt-24">
+                  <div class="flex items-center mt-24 leading-8 text-gray">
                     <p class="mb-0">Your request has been accepted and should be processed within 24 hours.</p>
                   </div>
                 </div>
               </template>
 
               <template v-slot:footer="slotProps">
-                <div class="border-t border-gray-700 border-opacity-30 pt-40 px-24 pb-40">
-                  <button class="button button--success w-full md:w-1/2 mx-auto block text-center"
+                <div class="px-24 pt-40 pb-40 border-t border-gray-700 border-opacity-30">
+                  <button class="block w-full mx-auto text-center button button--success md:w-1/2"
                      @click="closeWithdraw();">
                     Close
                   </button>
@@ -762,7 +795,7 @@
               </template>
             </Modal>
           </div>
-          --~~~~~~~~~~~~~~~~~-->
+          <!--~~~~~~~~~~~~~~~~~-->
         </div>
       </div>
     </div>
@@ -772,13 +805,14 @@
 <script>
 import {
   ArrowDownIcon,
-  ArrowUpIcon,
   ArrowNarrowLeftIcon,
   ArrowNarrowRightIcon,
+  ArrowRightIcon,
+  ArrowUpIcon,
+  CheckIcon,
+  InformationCircleIcon,
   KeyIcon,
   LockOpenIcon,
-  ArrowRightIcon,
-  CheckIcon,
   ShieldExclamationIcon
 } from '@heroicons/vue/solid'
 
@@ -787,6 +821,7 @@ import AutoNumeric from 'autonumeric'
 import Logo from "@/components/Logo"
 import Modal from "@/components/Modal"
 import Radio from '@/components/Radio'
+import Tooltip from '@/components/Tooltip'
 
 import detectEthereumProvider from "@metamask/detect-provider"
 import MetaMaskOnboarding from '@metamask/onboarding'
@@ -824,18 +859,20 @@ export default {
   components: {
     Amount,
     ArrowDownIcon,
-    ArrowUpIcon,
-    SwitchHorizontalIcon,
     ArrowNarrowLeftIcon,
     ArrowNarrowRightIcon,
-    ShieldExclamationIcon,
+    ArrowRightIcon,
+    ArrowUpIcon,
+    CheckIcon,
     KeyIcon,
+    InformationCircleIcon,
     LockOpenIcon,
     Logo,
-    ArrowRightIcon,
-    CheckIcon,
+    Modal,
     Radio,
-    Modal
+    ShieldExclamationIcon,
+    SwitchHorizontalIcon,
+    Tooltip
   },
   validations() {
     return {
@@ -890,8 +927,8 @@ export default {
     calculateEdge() {
       const { handlingFeePercentage, minimumHandlingFee } = this.gasPrices
       const percentageFee = this.amount * (handlingFeePercentage / 100)
-      const minimumFee = percentageFee < minimumHandlingFee ? minimumHandlingFee : percentageFee
-      this.fee = minimumFee + this.selectedFeeLevel
+      this.minimumFee = percentageFee < minimumHandlingFee ? minimumHandlingFee : percentageFee
+      this.fee = this.minimumFee + this.selectedFeeLevel
       this.calculatedEdge = this.amount - this.fee > 0 ? this.amount - this.fee : 0
     },
     calculateDepositFee() {
@@ -920,7 +957,7 @@ export default {
       if (!this.v$.amount) {
         return true
       }
-      
+
       if (!/^([0-9]{1,9}\.?[0-9]{0,6})$/.test(value) && this.v$.amount.$dirty) {
         return false
       }
@@ -1422,6 +1459,7 @@ export default {
       gasPrices: {},
       invalidPassword: false,
       isModalVisible: false,
+      minimumFee: 0,
       networks: {
         "0x1": {
           key: 'mainnet',
