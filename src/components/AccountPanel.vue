@@ -521,9 +521,9 @@
               <template v-slot:body>
                 <div class="pb-14 min-h-410">
                   <div class="form-group" :class="{'form-group__error': v$.withdrawAddress.$error}">
-                    <label for="send1" class="label flex items-center space-x-3">
+                    <label for="send1" class="flex items-center space-x-3 label">
                       Withdraw to
-                      <Tooltip class="ml-3" position="right" theme="dark" text="The address of the Ethereum wallet where the EDGE should be sent to">
+                      <Tooltip class="ml-3" position="right" theme="dark" width="true" text="The address of the Ethereum wallet where the EDGE should be sent to">
                         <InformationCircleIcon class="hidden md:block button__icon w-15" />
                       </Tooltip>
                     </label>
