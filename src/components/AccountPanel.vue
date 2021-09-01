@@ -236,7 +236,7 @@
 
           <!--~~~~~~~~~~~~~~~~~-->
           <!-- EXCHANGE MODALS -->
-          
+
           <div>
             <button class="w-full button button--outline-success" @click="openExchange()">
               <span class="button__icon w-15">
@@ -521,7 +521,12 @@
               <template v-slot:body>
                 <div class="pb-14 min-h-410">
                   <div class="form-group" :class="{'form-group__error': v$.withdrawAddress.$error}">
-                    <label for="send1" class="label">Withdraw to</label>
+                    <label for="send1" class="label flex items-center space-x-3">
+                      Withdraw to
+                      <Tooltip class="ml-3" position="right" theme="dark" text="The address of the Ethereum wallet where the EDGE should be sent to">
+                        <InformationCircleIcon class="hidden md:block button__icon w-15" />
+                      </Tooltip>
+                    </label>
                     <input
                       type="text"
                       placeholder="Ethereum address"
@@ -554,7 +559,12 @@
 
                   </div>
                   <div class="mb-0 form-group">
-                    <span class="label">Transaction speed</span>
+                    <span class="label">
+                      Transaction speed
+                      <Tooltip class="ml-3" position="right" theme="dark" text="The amount of gas you're willing to spend on the Ethereum transaction">
+                        <InformationCircleIcon class="hidden md:block button__icon w-15" />
+                      </Tooltip>
+                    </span>
                     <div class="flex flex-wrap pt-12 -mx-6 radio-list">
                       <Radio name="fee" @click="selectFeeLevel(gasPrices.slow)" id="slow" :label="gasPrices.slow + ' XE'" :big="true" extraName="Slow"/>
                       <Radio name="fee" :selected="selectedFeeLevel === gasPrices.average"  @click="selectFeeLevel(gasPrices.average)" id="average" :label="gasPrices.average + ' XE'" :big="true" extraName="Average"/>
@@ -565,7 +575,7 @@
                   <div class="mt-16 mb-16 form-group">
                     <label class="flex items-center space-x-3">
                       Estimated Cost
-                      <Tooltip position="right" theme="dark" :text="`Includes handling fee of ${minimumFee} XE`">
+                      <Tooltip class="ml-3" position="right" theme="dark" :text="`Includes handling fee of ${minimumFee} XE`">
                         <InformationCircleIcon class="hidden md:block button__icon w-15" />
                       </Tooltip>
                     </label>
@@ -928,7 +938,7 @@ export default {
       if (!this.v$.amount) {
         return true
       }
-      
+
       if (!/^([0-9]{1,9}\.?[0-9]{0,6})$/.test(value) && this.v$.amount.$dirty) {
         return false
       }
