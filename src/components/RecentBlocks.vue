@@ -20,12 +20,12 @@
       <tbody v-if="blocks.length">
         <tr v-for="block in blocks" :key="block.hash">
           <td data-title="Height:">
-            <a :href="`https://xe.network/blocks/${block.height}`" target="_blank" rel="noreferrer">
+            <a :href="`https://xe.network/block/${block.height}`" target="_blank" rel="noreferrer">
               {{ block.height }}
             </a>
           </td>
           <td data-title="Hash:">
-            <a :href="`https://xe.network/blocks/${block.hash}`" target="_blank" rel="noreferrer">
+            <a :href="`https://xe.network/block/${block.hash}`" target="_blank" rel="noreferrer">
               <span class="monospace">{{ block.hash.substr(0, 32) }}</span>
             </a>
           </td>
