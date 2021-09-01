@@ -565,7 +565,7 @@
                   <div class="mt-16 mb-16 form-group">
                     <label class="flex items-center space-x-3">
                       Estimated Cost
-                      <Tooltip :text="`Includes handling fee of ${minimumFee} XE`">
+                      <Tooltip theme="dark" :text="`Includes handling fee of ${minimumFee} XE`">
                         <InformationCircleIcon class="hidden md:block button__icon w-15" />
                       </Tooltip>
                     </label>

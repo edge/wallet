@@ -1,7 +1,7 @@
 <template>
   <div class="tooltip-box">
     <slot />
-    <div class="tooltip">
+    <div class="tooltip" :class="theme === 'dark' ? 'dark' : 'light'">
       <span class="text">{{ text }}</span>
     </div>
   </div>
@@ -15,6 +15,10 @@ export default {
     text: {
       type: String,
       required: true
+    },
+    theme: {
+      type: String,
+      required: false
     }
   }
 }
@@ -31,6 +35,10 @@ export default {
 
   .tooltip { 
     @apply p-10 text-xs absolute bottom-full left-7 transform -translate-x-1/2 w-180 transition duration-200 text-white text-center shadow rounded opacity-0 z-10 bg-green;
+  }
+
+  .tooltip.dark {
+    @apply bg-black-100 border border-green;
   }
 
   .text::after {
