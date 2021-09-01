@@ -1160,7 +1160,7 @@ export default {
         const tx = await createWithdrawalTransaction(this.amount, {
           destination: this.withdrawAddress,
           fee: toMicroXe(this.fee),
-          memo: 'Exchange for EDGE'
+          memo: 'XE Withdrawal'
         }, nonce)
 
         // Send transaction to the blockchain.
