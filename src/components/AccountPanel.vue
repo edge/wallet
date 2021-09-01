@@ -682,7 +682,7 @@
                       You should receive
                       <Tooltip
                         class="ml-3" position="right" wide="true" theme="dark"
-                        :text="`You may receive more if the Ethereum transaction costs less`">
+                        :text="`This is dependent on the final Ethereum transaction cost, you may receive more`">
                         <InformationCircleIcon class="hidden md:block button__icon w-15" />
                       </Tooltip>
                     </label>
