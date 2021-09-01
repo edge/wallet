@@ -29,8 +29,8 @@ export default {
 </script>
 
 <style scoped>
-  .tooltip-box { 
-    @apply relative inline-block;
+  .tooltip-box {
+    @apply relative inline-block cursor-pointer;
   }
 
   /* visible states */
@@ -55,11 +55,11 @@ export default {
     @apply p-10 text-xs absolute transform w-180 transition duration-200 text-white text-center shadow rounded opacity-0 z-10 bg-green;
   }
 
-  .tooltip.top { 
+  .tooltip.top {
     @apply bottom-full left-1/2 -translate-x-1/2;
   }
 
-  .tooltip.bottom { 
+  .tooltip.bottom {
     @apply top-full left-1/2 -translate-x-1/2;
   }
 
