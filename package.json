@@ -20,7 +20,7 @@
   "main": "server/index.js",
   "dependencies": {
     "@edge/bridge-utils": "1.0.0",
-    "@edge/wallet-utils": "0.13.0",
+    "@edge/wallet-utils": "^0.14.0",
     "@heroicons/vue": "^1.0.1",
     "@metamask/detect-provider": "^1.2.0",
     "@metamask/onboarding": "^1.0.0",
