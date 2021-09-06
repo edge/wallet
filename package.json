@@ -15,8 +15,7 @@
     "build": "vue-cli-service build",
     "dev": "vue-cli-service --port 8000 serve",
     "start": "node server/index.js",
-    "testnet": "VUE_APP_BLOCKCHAIN_API_URL=https://xe1.test.networkinternal.com VUE_APP_INDEX_API_URL=https://index.test.networkinternal.com VUE_APP_BRIDGE_WALLET_ADDRESS=xe_BEE3d7E5f007b662B2C886d51e2B3E08de090488 npm run dev",
-    "staging": "VUE_APP_BLOCKCHAIN_API_URL=https://xe1.staging.networkinternal.com VUE_APP_INDEX_API_URL=https://index.staging.networkinternal.com npm run dev"
+    "testnet": "VUE_APP_BLOCKCHAIN_API_URL=https://xe1.test.networkinternal.com VUE_APP_INDEX_API_URL=https://index.test.networkinternal.com VUE_APP_BRIDGE_WALLET_ADDRESS=xe_BEE3d7E5f007b662B2C886d51e2B3E08de090488 npm run dev"
   },
   "main": "server/index.js",
   "dependencies": {
