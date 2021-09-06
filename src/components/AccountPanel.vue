@@ -19,7 +19,8 @@
         <!-- SEND XE MODALS -->
         <!--~~~~~~~~~~~~~~~~-->
         <div class="account-panel__buttons">
-          <!-- 1x empty element to replace hidden receive -->
+          <!-- 2x empty element to replace hidden receive -->
+          <div></div>
           <div></div>
           <div>
             <button class="w-full button button--success" @click="openSend()">
