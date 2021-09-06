@@ -1,7 +1,7 @@
 <template>
   <div
     class="bg-black bg-center bg-no-repeat bg-cover"
-    :style="!hasWallet ? 'background-image: url(/assets/Map-placeholder.png);' : ''"
+    :style="!hasWallet ? 'background-image: url(/assets/map.svg);' : ''"
   >
     <div class="container">
       <div class="relative">
@@ -21,7 +21,11 @@
             <p>Create or restore an XE wallet to begin</p>
           </div>
 
-          <div class="grid grid-cols-1 gap-32 p-32 rounded-md md:grid-cols-2 bg-black-100" v-if="!hasWallet">
+          <div
+            v-if="!hasWallet"
+            class="grid grid-cols-1 gap-32 p-32 rounded-md md:grid-cols-2 bg-black-100"
+            style="box-shadow: 0px 0px 100px 50px #000000"
+          >
             <div>
               <h3 class="mb-18 text-gray">CREATE a new wallet</h3>
               <Modal :closeHandler="swallowClose">

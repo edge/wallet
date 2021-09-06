@@ -19,7 +19,8 @@
         <!-- SEND XE MODALS -->
         <!--~~~~~~~~~~~~~~~~-->
         <div class="account-panel__buttons">
-          <!-- 1x empty element to replace hidden receive -->
+          <!-- 2x empty element to replace hidden receive -->
+          <div></div>
           <div></div>
           <div>
             <button class="w-full button button--success" @click="openSend()">
@@ -237,7 +238,7 @@
           <!--~~~~~~~~~~~~~~~~~-->
           <!-- EXCHANGE MODALS -->
 
-          <div>
+          <!-- <div>
             <button class="w-full button button--outline-success" @click="openExchange()">
               <span class="button__icon w-15">
                 <SwitchHorizontalIcon/>
@@ -794,7 +795,7 @@
                 </div>
               </template>
             </Modal>
-          </div>
+          </div> -->
           <!--~~~~~~~~~~~~~~~~~-->
         </div>
       </div>
@@ -896,7 +897,6 @@ export default {
         minLength: minLength(10)
       },
       amount: {
-        numeric,
         required,
         sufficientFunds: async (value) => {
           const result = await this.sufficientFundsXe(value)
@@ -957,6 +957,10 @@ export default {
       if (!this.v$.amount) {
         return true
       }
+
+      // Remove commas, otherwise the parseFloat call will remove all characters
+      // after the first comma.
+      value = typeof value === 'string' ? value.replace(/,/g, '') : value
 
       if (!/^([0-9]{1,9}\.?[0-9]{0,6})$/.test(value) && this.v$.amount.$dirty) {
         return false
@@ -1112,12 +1116,13 @@ export default {
 
       if (isValidPassword) {
         // Create tx object.
+        const amount = this.amount.replace(/,/g, '')
         const nonce = await getNonce(this.wallet.address)
-        const tx = await createTransaction(this.amount, { memo: this.sendMemo }, nonce, this.sendAddress)
+        const tx = await createTransaction(amount, { memo: this.sendMemo }, nonce, this.sendAddress)
+
         // Send transaction to the blockchain.
         const txResponse = await sendTransaction(tx)
 
-        // TODO: Handle accepted/rejected status.
         const { metadata, results } = txResponse
 
         if (metadata.accepted) {
@@ -1205,6 +1210,7 @@ export default {
         if (fields) {
           if (!this.validateFields(fields)) return
         }
+
         // slotProps.close()
         this[property] = true
       })()
