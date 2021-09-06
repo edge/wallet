@@ -1,9 +1,9 @@
 <template>
-  <Header />
-  <AccountPanel :wallet="this.wallet" />
+  <Header v-if="this.wallet.balance" />
+  <AccountPanel :wallet="this.wallet" v-if="this.wallet.balance" />
 
   <div class="bg-gray-200 py-35">
-    <div class="container">
+    <div class="container" v-if="this.wallet.balance">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-24 items-center">
         <NewsPromo />
         <RecentBlocks />
@@ -67,7 +67,6 @@ export default {
     RecentBlocks
   },
   mounted() {
-    this.loading = true
     this.loadWallet()
     this.pollData()
   },
@@ -147,9 +146,10 @@ export default {
       const walletAddress = await getWalletAddress()
 
       if (!walletAddress) {
-        window.location = '/'
-        return
+        this.$router.push(`/`)
       }
+
+      this.loading = true
 
       this.wallet = await this.fetchWallet(walletAddress)
       this.fetchTransactions()

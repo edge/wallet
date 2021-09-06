@@ -1,9 +1,9 @@
 <template>
-  <Header/>
-  <AccountPanel :wallet="this.wallet" />
+  <Header v-if="this.wallet.balance"/>
+  <AccountPanel :wallet="this.wallet" v-if="this.wallet.balance" />
 
   <div class="bg-gray-200 py-35">
-    <div class="container">
+    <div class="container" v-if="this.wallet.balance">
       <TransactionsTable :transactions="transactions"/>
       <Pagination v-if="transactions.length" baseRoute="Transactions" :currentPage="page" :totalPages="Math.ceil(metadata.totalCount/metadata.limit)" />
     </div>
