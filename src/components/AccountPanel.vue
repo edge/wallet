@@ -19,8 +19,7 @@
         <!-- SEND XE MODALS -->
         <!--~~~~~~~~~~~~~~~~-->
         <div class="account-panel__buttons">
-          <!-- 2x empty element to replace hidden receive -->
-          <div></div>
+          <!-- 1x empty element to replace hidden receive -->
           <div></div>
           <div>
             <button class="w-full button button--success" @click="openSend()">
@@ -238,7 +237,7 @@
           <!--~~~~~~~~~~~~~~~~~-->
           <!-- EXCHANGE MODALS -->
 
-          <!-- <div>
+          <div>
             <button class="w-full button button--outline-success" @click="openExchange()">
               <span class="button__icon w-15">
                 <SwitchHorizontalIcon/>
@@ -795,7 +794,7 @@
                 </div>
               </template>
             </Modal>
-          </div> -->
+          </div>
           <!--~~~~~~~~~~~~~~~~~-->
         </div>
       </div>
