@@ -1,37 +1,28 @@
 <img src="https://cdn.edge.network/assets/img/edge-logo-green.svg" width="200">
 
-# wallet
+# Wallet
 
 Web wallet for managing XE coin
 
-## Contributor guidelines
+## License
 
-### Design
+Edge is the infrastructure of Web3. A peer-to-peer network and blockchain providing high performance decentralised web services, powered by the spare capacity all around us.
 
-For the design work, please use the `design` branch of `edge/wallet`.
+Copyright notice
+(C) 2021 Edge Network Technologies Limited <support@edge.network><br />
+All rights reserved
 
-### Git commit format
+This product is part of Edge.
+Edge is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version ("the GPL").
 
-We use semantic prefixes for commit messages. These include:
+**If you wish to use Edge outside the scope of the GPL, please contact us at licensing@edge.network for details of alternative license arrangements.**
 
-- `feat:` for features
-- `fix:` for fixes
-- `chore:` for chores
-- `docs:` for docs
-- `refactor:` for refactoring
-- `debug:` for debugging
-- `test:` for tests/test related commits
+**This product may be distributed alongside other components available under different licenses (which may not be GPL). See those components themselves, or the documentation accompanying them, to determine what licenses are applicable.**
 
-In addition to this, we use imperative messages, for example:
+Edge is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-`feat: add create wallet functionality`
+The GNU General Public License (GPL) is available at: https://www.gnu.org/licenses/gpl-3.0.en.html<br />
+A copy can be found in the file GPL.md distributed with
+these files.
 
-Finally, we keep all commit messages in lowercase, with no end of sentence punctuation.
-
-### Vue/Tailwind CSS/Heroicons
-
-For this and future web applications, we'll be using a combination of Vue 3, Tailwind CSS, and Heroicons. This application has been setup and configured for this, and should work out of the box.
-
-Please use Tailwind CSS as much as possible for implementing the design. Where icons have been specified in the design, please find and use the most applicable icon from [Heroicons](https://heroicons.com/).
-
-There are three npm scripts: `npm run dev`, `npm run build`, and of course `npm start`. The non-dev start script uses a local server, but working with the dev server should be sufficient.
+This copyright notice MUST APPEAR in all copies of the product!
