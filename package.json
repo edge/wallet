@@ -3,7 +3,7 @@
   "version": "1.4.2",
   "description": "Web wallet for managing XE coin",
   "private": true,
-  "license": "unlicensed",
+  "license": "GPL",
   "author": "Edge Network <core@edge.network>",
   "contributors": [
     "Adam K Dean <adam@edge.network>",
