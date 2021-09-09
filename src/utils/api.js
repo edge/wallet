@@ -68,8 +68,8 @@ const fetchPendingTransactions = (address, options = {}) => {
   return fetchData(url)
 }
 
-const fetchRates = async () => {
-  return fetchData(`${INDEX_API_URL}/rates`)
+const fetchGasRates = async () => {
+  return fetchData(`${INDEX_API_URL}/gasrates`)
 }
 
 const fetchTransactions = async (address, options = {}) => {
@@ -183,7 +183,7 @@ const sendTransaction = tx => {
 export {
   fetchBlocks,
   fetchPendingTransactions,
-  fetchRates,
+  fetchGasRates,
   fetchTransactions,
   fetchWallet,
   formatTransactions,

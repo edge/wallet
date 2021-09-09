@@ -830,7 +830,7 @@ import { SwitchHorizontalIcon } from '@heroicons/vue/outline'
 import {required, minLength, numeric} from '@vuelidate/validators'
 import useVuelidate from "@vuelidate/core"
 
-import { fetchPendingTransactions, fetchRates, getNonce, sendTransaction } from '../utils/api'
+import { fetchPendingTransactions, fetchGasRates, getNonce, sendTransaction } from '../utils/api'
 import { createTransaction, createWithdrawalTransaction, validatePassword } from '../utils/wallet'
 
 const { utils } = ethers
@@ -1063,7 +1063,7 @@ export default {
       this.showExchangeOptions = false
     },
     async openDeposit() {
-      this.gasPrices = await fetchRates()
+      this.gasPrices = await fetchGasRates()
       this.showExchangeOptions = false
       this.showDepositStep = true
     },
@@ -1074,7 +1074,7 @@ export default {
       this.showDepositStep3 = false
     },
     async openWithdraw() {
-      this.gasPrices = await fetchRates()
+      this.gasPrices = await fetchGasRates()
       this.selectedFeeLevel = this.gasPrices.average
       this.calculateEdge()
 
