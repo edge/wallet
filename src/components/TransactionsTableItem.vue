@@ -1,6 +1,6 @@
 <template>
   <td data-title="Tx Hash:" :title="item.hash">
-    <a v-if="!item.pending" :href="`https://xe.network/transaction/${item.hash}`" target="_blank" rel="noreferrer">
+    <a v-if="!item.pending" :href="`${explorerUrl}/transaction/${item.hash}`" target="_blank" rel="noreferrer">
       <span class="hidden monospace md:inline-block">{{ sliceString(item.hash, 8) }}</span>
       <span class="monospace md:hidden">{{ sliceString(item.hash, 26) }}</span>
     </a>
@@ -23,7 +23,7 @@
     <span v-if="item.type.toLowerCase() === 'sent'">
       <span class="icon icon-red mr-4"><ArrowUpIcon /></span>
       <span class="hidden lg:pl-10 monospace md:inline-block">{{ item.recipient }}</span>
-      <span class="monospace md:hidden">{{ sliceString(item.recipient, 26) }}</span>  
+      <span class="monospace md:hidden">{{ sliceString(item.recipient, 26) }}</span>
     </span>
   </td>
   <td :title="item.description" data-title="Memo:" :class="item.description === 'None' ? 'text-gray-400' : ''">
@@ -51,6 +51,11 @@ import { ArrowDownIcon, ArrowUpIcon, CheckCircleIcon, ClockIcon } from "@heroico
 export default {
   name: "TransactionsTableItem",
   props: ['item'],
+  data: function() {
+    return {
+      explorerUrl: process.env.VUE_APP_EXPLORER_URL
+    }
+  },
   methods: {
     async copyToClipboard (input) {
       if (!!navigator.clipboard) {

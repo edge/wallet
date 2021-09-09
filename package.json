@@ -1,9 +1,9 @@
 {
   "name": "wallet",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "description": "Web wallet for managing XE coin",
   "private": true,
-  "license": "unlicensed",
+  "license": "GPL",
   "author": "Edge Network <core@edge.network>",
   "contributors": [
     "Adam K Dean <adam@edge.network>",
@@ -15,12 +15,11 @@
     "build": "vue-cli-service build",
     "dev": "vue-cli-service --port 8000 serve",
     "start": "node server/index.js",
-    "testnet": "VUE_APP_BLOCKCHAIN_API_URL=https://xe1.test.networkinternal.com VUE_APP_INDEX_API_URL=https://index.test.networkinternal.com VUE_APP_BRIDGE_WALLET_ADDRESS=xe_BEE3d7E5f007b662B2C886d51e2B3E08de090488 npm run dev",
-    "staging": "VUE_APP_BLOCKCHAIN_API_URL=https://xe1.staging.networkinternal.com VUE_APP_INDEX_API_URL=https://index.staging.networkinternal.com npm run dev"
+    "testnet": "VUE_APP_BLOCKCHAIN_API_URL=https://xe1.test.networkinternal.com VUE_APP_INDEX_API_URL=https://index.test.networkinternal.com VUE_APP_EXPLORER_URL=https://xe-explorer.test.networkinternal.com VUE_APP_BRIDGE_WALLET_ADDRESS=xe_BEE3d7E5f007b662B2C886d51e2B3E08de090488 npm run dev"
   },
   "main": "server/index.js",
   "dependencies": {
-    "@edge/bridge-utils": "1.0.0",
+    "@edge/bridge-utils": "1.1.0",
     "@edge/wallet-utils": "^0.14.0",
     "@heroicons/vue": "^1.0.1",
     "@metamask/detect-provider": "^1.2.0",

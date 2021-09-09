@@ -1,3 +1,7 @@
+// Copyright (C) 2021 Edge Network Technologies Limited
+// Use of this source code is governed by a GNU GPL-style license
+// that can be found in the LICENSE.md file. All rights reserved.
+
 const {
   xeStringFromMicroXe
 } = require('@edge/wallet-utils')
@@ -64,8 +68,8 @@ const fetchPendingTransactions = (address, options = {}) => {
   return fetchData(url)
 }
 
-const fetchRates = async () => {
-  return fetchData(`${INDEX_API_URL}/rates`)
+const fetchGasRates = async () => {
+  return fetchData(`${INDEX_API_URL}/gasrates`)
 }
 
 const fetchTransactions = async (address, options = {}) => {
@@ -109,7 +113,7 @@ const fetchWallet = address => {
 
 const formatTransactions = (address, data, pending) => {
   const transactions = []
-  
+
   data.forEach(tx => {
     if (tx.sender === tx.recipient) {
       const rcvTx = {
@@ -125,7 +129,7 @@ const formatTransactions = (address, data, pending) => {
         confirmations: tx.confirmations,
         pending
       }
-      
+
       const sendTx = {
         ...rcvTx,
         type: 'Sent'
@@ -179,7 +183,7 @@ const sendTransaction = tx => {
 export {
   fetchBlocks,
   fetchPendingTransactions,
-  fetchRates,
+  fetchGasRates,
   fetchTransactions,
   fetchWallet,
   formatTransactions,

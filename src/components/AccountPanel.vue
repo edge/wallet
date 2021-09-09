@@ -19,8 +19,7 @@
         <!-- SEND XE MODALS -->
         <!--~~~~~~~~~~~~~~~~-->
         <div class="account-panel__buttons">
-          <!-- 2x empty element to replace hidden receive -->
-          <div></div>
+          <!-- 1x empty element to replace hidden receive -->
           <div></div>
           <div>
             <button class="w-full button button--success" @click="openSend()">
@@ -238,7 +237,7 @@
           <!--~~~~~~~~~~~~~~~~~-->
           <!-- EXCHANGE MODALS -->
 
-          <!-- <div>
+          <div>
             <button class="w-full button button--outline-success" @click="openExchange()">
               <span class="button__icon w-15">
                 <SwitchHorizontalIcon/>
@@ -795,7 +794,7 @@
                 </div>
               </template>
             </Modal>
-          </div> -->
+          </div>
           <!--~~~~~~~~~~~~~~~~~-->
         </div>
       </div>
@@ -831,7 +830,7 @@ import { SwitchHorizontalIcon } from '@heroicons/vue/outline'
 import {required, minLength, numeric} from '@vuelidate/validators'
 import useVuelidate from "@vuelidate/core"
 
-import { fetchPendingTransactions, fetchRates, getNonce, sendTransaction } from '../utils/api'
+import { fetchPendingTransactions, fetchGasRates, getNonce, sendTransaction } from '../utils/api'
 import { createTransaction, createWithdrawalTransaction, validatePassword } from '../utils/wallet'
 
 const { utils } = ethers
@@ -1064,7 +1063,7 @@ export default {
       this.showExchangeOptions = false
     },
     async openDeposit() {
-      this.gasPrices = await fetchRates()
+      this.gasPrices = await fetchGasRates()
       this.showExchangeOptions = false
       this.showDepositStep = true
     },
@@ -1075,7 +1074,7 @@ export default {
       this.showDepositStep3 = false
     },
     async openWithdraw() {
-      this.gasPrices = await fetchRates()
+      this.gasPrices = await fetchGasRates()
       this.selectedFeeLevel = this.gasPrices.average
       this.calculateEdge()
 
@@ -1165,7 +1164,8 @@ export default {
         const tx = await createWithdrawalTransaction(this.amount, {
           destination: this.withdrawAddress,
           fee: toMicroXe(this.fee),
-          memo: 'XE Withdrawal'
+          memo: 'XE Withdrawal',
+          token: 'EDGE'
         }, nonce)
 
         // Send transaction to the blockchain.
