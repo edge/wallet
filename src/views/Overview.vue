@@ -1,9 +1,9 @@
 <template>
-  <Header v-if="this.wallet.balance" />
-  <AccountPanel :wallet="this.wallet" v-if="this.wallet.balance" />
+  <Header />
+  <AccountPanel :wallet="this.wallet" />
 
   <div class="bg-gray-200 py-35">
-    <div class="container" v-if="this.wallet.balance">
+    <div class="container">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-24 items-center">
         <NewsPromo />
         <RecentBlocks />
