@@ -53,7 +53,7 @@ export default {
   props: ['item'],
   data: function() {
     return {
-      explorerUrl: process.env.VUE_APP_EXPLORER_URL
+      explorerUrl: process.env.VUE_APP_EXPLORER_URL || 'https://xe.network',
     }
   },
   methods: {

@@ -46,7 +46,7 @@ export default {
   name: 'RecentBlocks',
   data: function () {
     return {
-      explorerUrl: process.env.VUE_APP_EXPLORER_URL,
+      explorerUrl: process.env.VUE_APP_EXPLORER_URL || 'https://xe.network',
       loading: false,
       polling: null,
       blocks: []
