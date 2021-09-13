@@ -717,7 +717,7 @@
                       class="px-20 py-20 text-center bg-black border border-gray-700 rounded convert-info md:text-left red border-opacity-30 border-color">
                     <div class="">
                       <span class="flex w-full overflow-hidden overflow-ellipsis text-red">
-                        An error has occured ({{ errorMessage }}). Please try again.
+                        An error has occurred ({{ errorMessage }}). Please try again.
                       </span>
                     </div>
                   </div>
@@ -927,13 +927,13 @@ export default {
       const { handlingFeePercentage, minimumHandlingFee } = this.gasPrices
       const percentageFee = this.amount * (handlingFeePercentage / 100)
       this.minimumFee = percentageFee < minimumHandlingFee ? minimumHandlingFee : percentageFee
-      this.fee = this.minimumFee + this.selectedFeeLevel
+      this.fee = Math.round(this.minimumFee + this.selectedFeeLevel)
       this.calculatedEdge = this.amount - this.fee > 0 ? this.amount - this.fee : 0
     },
     calculateDepositFee() {
       const { handlingFeePercentage, minimumHandlingFee } = this.gasPrices
       const percentageFee = this.edgeAmount * (handlingFeePercentage / 100)
-      this.fee = percentageFee < minimumHandlingFee ? minimumHandlingFee : percentageFee
+      this.fee = Math.round(percentageFee < minimumHandlingFee ? minimumHandlingFee : percentageFee)
       this.calculatedXe = this.edgeAmount - this.fee > 0 ? this.edgeAmount - this.fee : 0
     },
     formatAmount(input, skipValidation) {
