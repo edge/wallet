@@ -717,7 +717,7 @@
                       class="px-20 py-20 text-center bg-black border border-gray-700 rounded convert-info md:text-left red border-opacity-30 border-color">
                     <div class="">
                       <span class="flex w-full overflow-hidden overflow-ellipsis text-red">
-                        An error has occured ({{ errorMessage }}). Please try again.
+                        An error has occurred ({{ errorMessage }}). Please try again.
                       </span>
                     </div>
                   </div>
