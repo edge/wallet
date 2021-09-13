@@ -1,9 +1,9 @@
 <template>
-  <Header v-if="this.wallet.balance"/>
-  <AccountPanel :wallet="this.wallet" v-if="this.wallet.balance" />
+  <Header />
+  <AccountPanel :wallet="this.wallet" />
 
   <div class="bg-gray-200 py-35">
-    <div class="container" v-if="this.wallet.balance">
+    <div class="container">
       <TransactionsTable :transactions="transactions"/>
       <Pagination v-if="transactions.length" baseRoute="Transactions" :currentPage="page" :totalPages="Math.ceil(metadata.totalCount/metadata.limit)" />
     </div>
@@ -51,7 +51,7 @@ export default {
     },
     async fetchTransactions() {
       this.page = parseInt(this.$route.params.page || 1)
-      
+
       const { transactions, metadata } = await fetchTransactions(this.wallet.address, { page: this.page })
 
       this.transactions = transactions
