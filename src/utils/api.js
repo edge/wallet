@@ -73,7 +73,13 @@ const fetchGasRates = async () => {
 }
 
 const fetchExchangeRates = async () => {
-  return fetchData(`${INDEX_API_URL}/exchangerates`)
+  // return fetchData(`${INDEX_API_URL}/exchangerates`)
+  // MOCKED! @annybs!
+  return {
+    xeToUSDC: 0.35,
+    xeAvailable: 75000.000000,
+    xeTradeLimit: 25000.000000
+  }
 }
 
 const fetchTransactions = async (address, options = {}) => {
