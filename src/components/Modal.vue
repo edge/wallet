@@ -3,7 +3,9 @@
     <slot name="opener" :open="showModal"></slot>
     <transition name="modal-fade">
       <div class="modal-backdrop" v-if="isShow">
-        <div class="modal" v-click-outside="closeHandler ? closeHandler : onClickOutside">
+        <div class="modal" 
+          v-click-outside="closeHandler ? closeHandler : onClickOutside"
+          :style="{ maxWidth: width ? `${width}px` : '36rem' }">
           <header class="modal-header">
             <slot name="header"></slot>
             <button
@@ -34,7 +36,7 @@
   import { XIcon } from '@heroicons/vue/solid';
   export default {
     name: 'Modal',
-    props: ['disallowClickOutside', 'withCloseButton', 'opened', 'closeHandler'],
+    props: ['disallowClickOutside', 'withCloseButton', 'opened', 'closeHandler', 'width'],
     directives: {
       clickOutside: vClickOutside.directive
     },
@@ -70,7 +72,7 @@
   }
 
   .modal {
-    @apply w-full bg-black-100 flex flex-col rounded-md text-white max-w-612 mx-auto;
+    @apply w-full bg-black-100 flex flex-col rounded-md text-white mx-auto;
   }
 
   .modal-header {
