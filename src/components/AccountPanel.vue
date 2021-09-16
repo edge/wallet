@@ -230,18 +230,19 @@
         :opened="true"
         :withCloseButton="true"
         :disallowClickOutside="true"
-        :closeHandler="closeWithdraw">
+        :closeHandler="closeWithdraw"
+        :width="900">
         <template v-slot:header>
           <h2>Exchange</h2>
         </template>
 
         <template v-slot:body="slotProps">
-          <div class="grid grid-cols-1 gap-24 pt-12 pb-20 md:grid-cols-2">
-            <div class="">
+          <div class="grid grid-cols-1 gap-24 pt-12 pb-20 md:grid-cols-3">
+            <div>
               <div class="leading-7 text-caption mb-65">
                 <strong>Deposit</strong>
                 <p class="mb-25">Convert EDGE to XE for staking, governance and service use.</p>
-                <img src="/assets/deposit.svg" alt="Deposit EDGE for XE">
+                <img src="/assets/deposit.svg" alt="Deposit EDGE for XE" class="account-panel__exchange-img">
               </div>
 
               <button
@@ -254,11 +255,11 @@
                 Deposit
               </button>
             </div>
-            <div class="">
+            <div>
               <div class="leading-7 text-caption mb-65">
                 <strong>Withdraw</strong>
                 <p class="mb-25">Convert XE to EDGE for use within the Ethereum network.</p>
-                <img src="/assets/withdraw.svg" alt="Withdraw XE for EDGE" />
+                <img src="/assets/withdraw.svg" alt="Withdraw XE for EDGE" class="account-panel__exchange-img">
               </div>
               <button
                 class="w-full button--outline-success button"
@@ -268,6 +269,22 @@
                   <ArrowNarrowRightIcon/>
                 </span>
                 Withdraw
+              </button>
+            </div>
+            <div>
+              <div class="leading-7 text-caption mb-65">
+                <strong>Sell</strong>
+                <p class="mb-25">Sell XE for USDC on the Ethereum network.</p>
+                <img src="/assets/sell.svg" alt="Sell XE for USDC" class="account-panel__exchange-img">
+              </div>
+              <button
+                class="w-full button--outline-success button"
+                @click="openSell();"
+              >
+                <span class="w-12 button__icon">
+                  <CurrencyDollarIcon/>
+                </span>
+                Sell
               </button>
             </div>
           </div>
@@ -509,7 +526,7 @@
               <label for="send1" class="flex items-center space-x-3 label">
                 Withdraw to
                 <Tooltip
-                  class="ml-3" position="right" theme="dark" wide="true"
+                  class="ml-3" position="right" theme="dark" :wide="true"
                   text="This is the Ethereum wallet that will hold your EDGE">
                   <InformationCircleIcon class="hidden md:block button__icon w-15" />
                 </Tooltip>
@@ -547,7 +564,7 @@
               <label class="flex items-center space-x-3 label">
                 Transaction speed
                 <Tooltip
-                  class="ml-3" position="right" theme="dark" wide="true"
+                  class="ml-3" position="right" theme="dark" :wide="true"
                   text="Faster transactions cost more gas in the Ethereum network">
                   <InformationCircleIcon class="hidden md:block button__icon w-15" />
                 </Tooltip>
@@ -661,7 +678,7 @@
               <label class="flex items-center space-x-3">
                 You should receive
                 <Tooltip
-                  class="ml-3" position="right" wide="true" theme="dark"
+                  class="ml-3" position="right" :wide="true" theme="dark"
                   :text="`This is dependent on the final Ethereum transaction cost, you may receive more`">
                   <InformationCircleIcon class="hidden md:block button__icon w-15" />
                 </Tooltip>
@@ -777,50 +794,6 @@
 
       <Modal v-if="showSellStep === true" :opened="true" :closeHandler="swallowClose">
         <template v-slot:header>
-          <h2 class="mb-8">Sell</h2>
-          <span class="sub-heading d-block text-gray text-caption">Current price: $0.21 / XE &middot; 2 seconds ago (TODO!)</span>
-        </template>
-
-        <template v-slot:body="slotProps">
-          <div class="leading-7 text-caption mb-24">
-            <strong>Sell XE for USDC</strong>
-            <p class="mb-25">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer id molestie nunc, sit XE amet USDC.
-              </p>
-            <img class="h-24" src="/assets/sell.svg" alt="Sell XE for USDC">
-            <!-- TODO: availability toggle
-            <div class="flex items-start leading-8 text-gray mt-48">
-              <span class="flex-shrink-0 inline-block mt-32 mr-12 text-gray icon w-27">
-                <InformationCircleIcon/>
-              </span>
-              <p>
-                The sell option is currently unavailable. It opens every day at midnight and remains 
-                open while stocks of USDC remain. Joe to provide more copy. TODO!
-              </p>
-            </div>
-            -->
-          </div>
-        </template>
-
-        <template v-slot:footer="slotProps">
-          <div class="px-24 pt-32 pb-40 border-t border-gray-700 border-opacity-30">
-            <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
-              <button class="w-full button button--outline-success" @click="hideModal(slotProps, 'showSellStep');">
-                Cancel
-              </button>
-              <button class="w-full button button--success" @click="continueToSell();">
-                Continue
-              </button>
-              <!-- TODO: availability toggle
-              <button class="w-full button button--success disabled">
-                Not available
-              </button> -->
-            </div>
-          </div>
-        </template>
-      </Modal>
-      <Modal v-if="showSellStep2 === true" :opened="true" :closeHandler="swallowClose">
-        <template v-slot:header>
           <h2 class="mb-8">Sell XE</h2>
           <span class="sub-heading d-block text-gray text-caption">{{ formatMicroXe(wallet.balance) }} XE available</span>
         </template>
@@ -830,7 +803,7 @@
               <label for="send1" class="flex items-center space-x-3 label">
                 Ethereum address
                 <Tooltip
-                  class="ml-3" position="right" theme="dark" wide="true"
+                  class="ml-3" position="right" theme="dark" :wide="true"
                   text="This is the Ethereum wallet that will hold your USDC">
                   <InformationCircleIcon class="hidden md:block button__icon w-15" />
                 </Tooltip>
@@ -867,17 +840,17 @@
             <div class="mt-32 mb-8 form-group">
               <label class="flex items-center space-x-3">
                 Exchange Rate
-                <Tooltip class="ml-3" position="right" theme="dark" :text="`Last updated X seconds ago`">
+                <Tooltip class="ml-3" position="right" theme="dark" :wide="true" :text="`Last updated X seconds ago`">
                   <InformationCircleIcon class="hidden md:block button__icon w-15" />
                 </Tooltip>
               </label>
-              $0.21 / XE (TODO!)
+              <Amount :value="exchangeRates.xeToUSDC" currency="USDC"/>
             </div>
 
             <div class="mt-32 mb-8 form-group">
               <label class="flex items-center space-x-3">
-                Sale Fee
-                <Tooltip class="ml-3" position="right" theme="dark" :text="`TODO`">
+                Transaction Fee
+                <Tooltip class="ml-3" position="right" theme="dark" :wide="true" :text="`This covers the cost of the Ethereum transaction`">
                   <InformationCircleIcon class="hidden md:block button__icon w-15" />
                 </Tooltip>
               </label>
@@ -912,7 +885,7 @@
                   <div class="md:flex-grow">
                     <span class="block mb-3 text-gray">You will receive</span>
                     <span class="block text-xl text-white price">
-                      {{ formatCurrency(calculatedEdge) }} USDC
+                      {{ formatCurrency(calculatedUSDC) }} USDC
                     </span>
                   </div>
                 </div>
@@ -932,15 +905,15 @@
           </div>
         </template>
       </Modal>
-      <Modal v-if="showSellStep3 === true" :opened="true" :closeHandler="swallowClose">
+      <Modal v-if="showSellStep2 === true" :opened="true" :closeHandler="swallowClose">
         <template v-slot:header>
-          <h2 class="mb-8">Withdraw XE</h2>
+          <h2 class="mb-8">Sell XE</h2>
           <span class="sub-heading d-block text-gray text-caption">{{ formatMicroXe(wallet.balance) }} XE available</span>
         </template>
         <template v-slot:body>
           <div class="pb-12 min-h-300">
             <div class="form-group mb-14">
-              <label>You are withdrawing</label>
+              <label>You are selling</label>
               <Amount :value="amount" currency="XE"/>
             </div>
 
@@ -964,8 +937,8 @@
 
             <div class="form-group mb-14">
               <label class="flex items-center space-x-3">
-                Estimated Cost
-                <Tooltip class="ml-3" position="right" theme="dark" :text="`Includes handling fee of ${minimumFee} XE`">
+                Transaction Fee
+                <Tooltip class="ml-3" position="right" theme="dark" :wide="true" :text="`This covers the cost of the Ethereum transaction`">
                   <InformationCircleIcon class="hidden md:block button__icon w-15" />
                 </Tooltip>
               </label>
@@ -974,14 +947,14 @@
 
             <div class="form-group mb-14">
               <label class="flex items-center space-x-3">
-                You should receive
+                You will receive
                 <Tooltip
-                  class="ml-3" position="right" wide="true" theme="dark"
-                  :text="`This is dependent on the final Ethereum transaction cost, you may receive more`">
+                  class="ml-3" position="right" :wide="true" theme="dark"
+                  :text="`TODO`">
                   <InformationCircleIcon class="hidden md:block button__icon w-15" />
                 </Tooltip>
               </label>
-              <Amount :value="calculatedEdge" currency="EDGE"/>
+              <Amount :value="calculatedUSDC" currency="USDC"/>
             </div>
           </div>
         </template>
@@ -990,7 +963,7 @@
           <div class="px-24 py-32 border-t border-gray-700 border-opacity-30">
             <div class="mb-24 form-group" :class="{'form-group__error': v$.passphraseWithdraw.$error}">
               <form>
-                <label for="pass-withdraw">ENTER PASSWORD</label>
+                <label for="pass-sell">ENTER PASSWORD</label>
                 <div class="relative input-wrap">
                   <span class="icon">
                     <LockOpenIcon/>
@@ -999,9 +972,9 @@
                     autocomplete="off"
                     type="password"
                     placeholder='Your password'
-                    id="pass-withdraw"
+                    id="pass-sell"
                     v-model="password"
-                    @keypress="(event) => handleEnterKeyConfirmWithdraw(event)"
+                    @keypress="(event) => handleEnterKeyConfirmSell(event)"
                   />
                 </div>
                 <div class="form-group__error" v-if="invalidPassword">Password incorrect.</div>
@@ -1019,14 +992,14 @@
 
             <div class="grid grid-cols-1 gap-24 pt-12 md:grid-cols-2">
               <button class="w-full button button--outline-success" @click="() => {
-                hideModal(slotProps, 'showWithdrawStep2')
-                showOtherModal(slotProps, 'showWithdrawStep')
+                hideModal(slotProps, 'showSellStep2')
+                showOtherModal(slotProps, 'showSellStep3')
               }">
                 Back
               </button>
               <button
                 class="w-full button button--success"
-                @click="confirmWithdraw()"
+                @click="confirmSell()"
               >
                 Confirm
               </button>
@@ -1034,7 +1007,7 @@
           </div>
         </template>
       </Modal>
-      <Modal v-if="showSellStep4 === true" :opened="true" :closeHandler="swallowClose">
+      <Modal v-if="showSellStep3 === true" :opened="true" :closeHandler="swallowClose">
         <template v-slot:header>
           <h2 class="mb-8">Withdrawal accepted</h2>
         </template>
@@ -1065,17 +1038,17 @@
             </div>
 
             <div class="form-group mb-14">
-              <label>Estimated cost</label>
+              <label>Transaction Fee</label>
               <Amount :value="currentTx.data.fee / 1e6" currency="XE"/>
             </div>
 
             <div class="form-group mb-14">
-              <label>You should receive</label>
-              <Amount :value="currentTx.edgeAmount" currency="EDGE"/>
+              <label>You will receive</label>
+              <Amount :value="currentTx.usdcAmount" currency="USDC"/>
             </div>
 
             <div class="flex items-center mt-24 leading-8 text-gray">
-              <p class="mb-0">Your request has been accepted and should be processed within 24 hours.</p>
+              <p class="mb-0">Your request has been accepted and should be processed within 10-15 minutes.</p>
             </div>
           </div>
         </template>
@@ -1083,7 +1056,7 @@
         <template v-slot:footer="slotProps">
           <div class="px-24 pt-40 pb-40 border-t border-gray-700 border-opacity-30">
             <button class="block w-full mx-auto text-center button button--success md:w-1/2"
-                @click="closeWithdraw();">
+                @click="closeSell();">
               Close
             </button>
           </div>
@@ -1141,6 +1114,10 @@
 
 .account-panel__modals {
   width: 1px;
+}
+
+.account-panel__exchange-img {
+  height: 24px;
 }
 
 @screen md {
@@ -1210,7 +1187,7 @@ import { ethers } from 'ethers'
 import { required, minLength, numeric } from '@vuelidate/validators'
 import useVuelidate from "@vuelidate/core"
 
-import { fetchPendingTransactions, fetchGasRates, getNonce, sendTransaction } from '../utils/api'
+import { fetchPendingTransactions, fetchGasRates, fetchExchangeRates, getNonce, sendTransaction } from '../utils/api'
 import { createTransaction, createWithdrawalTransaction, validatePassword } from '../utils/wallet'
 
 const { utils } = ethers
@@ -1300,7 +1277,7 @@ export default {
     }
   },
   watch: {
-    amount: 'calculateEdge',
+    amount: ['calculateEdge', 'calculateUSDC'],
     edgeAmount: 'calculateDepositFee'
   },
   methods: {
@@ -1310,6 +1287,14 @@ export default {
       this.minimumFee = percentageFee < minimumHandlingFee ? minimumHandlingFee : percentageFee
       this.fee = Math.round(this.minimumFee + this.selectedFeeLevel)
       this.calculatedEdge = this.amount - this.fee > 0 ? this.amount - this.fee : 0
+    },
+    calculateUSDC() {
+      // const { handlingFeePercentage, minimumHandlingFee } = this.gasPrices
+      // const percentageFee = this.amount * (handlingFeePercentage / 100)
+      // this.minimumFee = percentageFee < minimumHandlingFee ? minimumHandlingFee : percentageFee
+      this.fee = Math.round(this.minimumFee + this.gasPrices.average)
+      const xeToExchange = this.amount - this.fee > 0 ? this.amount - this.fee : 0
+      this.calculatedUSDC = xeToExchange * this.exchangeRates.xeToUSDC
     },
     calculateDepositFee() {
       const { handlingFeePercentage, minimumHandlingFee } = this.gasPrices
@@ -1472,31 +1457,6 @@ export default {
       this.showWithdrawStep = false
       this.showWithdrawStep2 = true
     },
-    openSell() {
-      console.log('SHOW SELL!')
-      this.showSellStep = true
-    },
-    closeSell() {
-      this.showSellStep = false
-      this.showSellStep2 = false
-      this.showSellStep3 = false
-      this.showSellStep4 = false
-    },
-    continueToSell() {
-      this.showSellStep = false
-      this.showSellStep2 = true
-    },
-    continueToSellConfirmation() {
-      this.showSellStep = false
-      this.showSellStep2 = false
-      this.showSellStep3 = true
-    },
-    confirmSell() {
-      this.showSellStep = false
-      this.showSellStep2 = false
-      this.showSellStep3 = false
-      this.showSellStep4 = true
-    },
     clearForm() {
       this.amount = ''
       this.xeAddress = ''
@@ -1561,6 +1521,15 @@ export default {
         return this.confirmWithdraw()
       }
     },
+    handleEnterKeyConfirmSell(event) {
+      const { key, code, charCode } = event
+
+      if (key === 'Enter' || code === 'Enter' || charCode === 13) {
+        event.preventDefault()
+
+        return this.confirmSell()
+      }
+    },
     async confirmWithdraw() {
       const isValidPassword = await validatePassword(this.password)
 
@@ -1588,6 +1557,61 @@ export default {
           this.showWithdrawStep = false
           this.showWithdrawStep2 = false
           this.showWithdrawStep3 = true
+
+          this.clearForm()
+
+          return true
+        } else {
+          this.errorMessage = results && results[0] && results[0].reason
+          return false
+        }
+      } else {
+        this.invalidPassword = true
+        return false
+      }
+    },
+    async openSell() {
+      this.gasPrices = await fetchGasRates()
+      this.exchangeRates = await fetchExchangeRates()
+      this.showExchangeOptions = false
+      this.showSellStep = true
+    },
+    closeSell() {
+      this.showSellStep = false
+      this.showSellStep2 = false
+      this.showSellStep3 = false
+    },
+    continueToSellConfirmation() {
+      this.showSellStep = false
+      this.showSellStep2 = true
+    },
+    async confirmSell() {
+      const isValidPassword = await validatePassword(this.password)
+
+      if (isValidPassword) {
+        // Create tx object.
+        const nonce = await getNonce(this.wallet.address)
+        const tx = await createWithdrawalTransaction(this.amount, {
+          destination: this.ethAddress,
+          fee: toMicroXe(this.fee),
+          memo: 'XE Sale',
+          token: 'USDC'
+        }, nonce)
+
+        // Send transaction to the blockchain.
+        const txResponse = await sendTransaction(tx)
+
+        // TODO: Handle accepted/rejected status.
+        const { metadata, results } = txResponse
+
+        if (metadata.accepted) {
+          this.currentTx = tx
+          this.currentTx.usdcAmount = this.calculatedUSDC
+
+          this.password = ''
+          this.showSellStep = false
+          this.showSellStep2 = false
+          this.showSellStep3 = true
 
           this.clearForm()
 
@@ -1839,6 +1863,7 @@ export default {
       amount: '',
       calculatedEdge: 0,
       calculatedXe: 0,
+      calculatedUSDC: 0,
       chainId: null,
       currentTx: null,
       depositInProgress: false,
@@ -1855,6 +1880,7 @@ export default {
       },
       fee: 0,
       gasPrices: {},
+      exchangeRates: {},
       invalidPassword: false,
       isModalVisible: false,
       minimumFee: 0,
