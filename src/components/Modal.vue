@@ -82,7 +82,7 @@
   }
 
   .modal-outer {
-    @apply flex items-center justify-center min-h-screen px-10 text-center sm:px-30 md:px-0;
+    @apply flex items-center justify-center min-h-screen px-10 sm:px-30 md:px-0;
   }
 
   .modal {
