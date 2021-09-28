@@ -90,7 +90,7 @@
   }
 
   .modal-header {
-    @apply relative pt-21 px-24 text-white border-gray-700 border-b-default border-opacity-30;
+    @apply relative pt-21 px-24 text-white;
   }
 
 
