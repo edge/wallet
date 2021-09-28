@@ -46,7 +46,7 @@
   import { XIcon } from '@heroicons/vue/solid';
   export default {
     name: 'Modal',
-    props: ['disallowClickOutside', 'withCloseButton', 'opened', 'closeHandler'],
+    props: ['disallowClickOutside', 'withCloseButton', 'opened', 'closeHandler', 'width'],
     directives: {
       clickOutside: vClickOutside.directive
     },
