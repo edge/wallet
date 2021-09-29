@@ -834,6 +834,7 @@
 
                 <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="(!v$.amount.sufficientFunds.$pending && v$.amount.sufficientFunds.$invalid)">Insufficient funds.</div>
                 <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="v$.amount.validAmount.$invalid">Invalid amount.</div>
+                <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="v$.amount.withinSaleLimit.$invalid">Sales are limited to {{exchangeRate.limit}} XE</div>
               </div>
             </div>
 
@@ -947,14 +948,28 @@
 
             <div class="form-group mb-14">
               <label class="flex items-center space-x-3">
-                You will receive
-                <Tooltip
-                  class="ml-3" position="right" :wide="true" theme="dark"
-                  :text="`Exchange rate: ${exchangeRate.rate} USDC`">
+                Exchange Rate
+                <Tooltip class="ml-3" position="right" theme="dark" :wide="true" :text="`Last updated ${secondsSince(exchangeRate.date)}`">
                   <InformationCircleIcon class="hidden md:block button__icon w-15" />
                 </Tooltip>
               </label>
+              <Amount :value="exchangeRate.rate" currency="USDC"/>
+            </div>
+
+            <div class="form-group mb-14">
+              <label class="flex items-center space-x-3">
+                You will receive
+              </label>
               <Amount :value="calculatedUSDC" currency="USDC"/>
+            </div>
+          </div>
+
+          <div v-if="!withinSaleLimit()"
+              class="px-20 py-20 mb-24 text-center bg-black border border-gray-700 rounded convert-info md:text-left red border-opacity-30 border-color">
+            <div class="">
+              <span class="flex w-full overflow-hidden overflow-ellipsis text-red">
+                Exchange rate has been updated and your exchange of {{amount}} XE is now above the limit of {{exchangeRate.limit}} XE.
+              </span>
             </div>
           </div>
         </template>
@@ -993,12 +1008,13 @@
             <div class="grid grid-cols-1 gap-24 pt-12 md:grid-cols-2">
               <button class="w-full button button--outline-success" @click="() => {
                 hideModal(slotProps, 'showSellStep2')
-                showOtherModal(slotProps, 'showSellStep3')
+                showOtherModal(slotProps, 'showSellStep')
               }">
                 Back
               </button>
               <button
                 class="w-full button button--success"
+                :disabled="!withinSaleLimit()"
                 @click="confirmSell()"
               >
                 Confirm
@@ -1039,7 +1055,12 @@
 
             <div class="form-group mb-14">
               <label>Transaction Fee</label>
-              <Amount :value="currentTx.data.fee / 1e6" currency="XE"/>
+              <Amount :value="fee" currency="XE"/>
+            </div>
+
+            <div class="form-group mb-14">
+              <label>Exchange Rate</label>
+              <Amount :value="currentTx.exchangeRate" currency="USDC"/>
             </div>
 
             <div class="form-group mb-14">
@@ -1259,7 +1280,8 @@ export default {
           const result = await this.sufficientFundsXe(value)
           return result
         },
-        validAmount: this.validAmount
+        validAmount: this.validAmount,
+        withinSaleLimit: this.withinSaleLimit
       },
       edgeAmount: {
         numeric,
@@ -1293,9 +1315,9 @@ export default {
       this.calculatedEdge = this.amount - this.fee > 0 ? this.amount - this.fee : 0
     },
     calculateUSDC() {
-      // const { handlingFeePercentage, minimumHandlingFee } = this.gasRates
-      // const percentageFee = this.amount * (handlingFeePercentage / 100)
-      // this.minimumFee = percentageFee < minimumHandlingFee ? minimumHandlingFee : percentageFee
+      const { handlingFeePercentage, minimumHandlingFee } = this.gasRates
+      const percentageFee = this.amount * (handlingFeePercentage / 100)
+      this.minimumFee = percentageFee < minimumHandlingFee ? minimumHandlingFee : percentageFee
       this.fee = Math.round(this.minimumFee + this.gasRates.average)
       const xeToExchange = this.amount - this.fee > 0 ? this.amount - this.fee : 0
       this.calculatedUSDC = xeToExchange * this.exchangeRate.rate
@@ -1314,20 +1336,21 @@ export default {
       return `${s} ${unit} ago`
     },
     startExchangeRateUpdateCycle() {
-      this.exchangeRateUpdateInterval = setInterval(async () => {
+      this.exchangeRateUpdateCycle = setInterval(async () => {
         this.exchangeRate = await fetchExchangeRates()
-      }, 5000)
+        console.log('updated exchange rate', this.exchangeRate)
+      }, this.exchangeRateUpdateInterval)
     },
     stopExchangeRateUpdateCycle() {
-      clearInterval(this.exchangeRateUpdateInterval)
+      clearInterval(this.exchangeRateUpdateCycle)
     },
     startGasRatesUpdateCycle() {
-      this.gasRatesUpdateInterval = setInterval(async () => {
+      this.gasRatesUpdateCycle = setInterval(async () => {
         this.gasRates = await fetchGasRates()
-      }, 5000)
+      }, this.gasRatesUpdateInterval)
     },
     stopGasRatesUpdateCycle() {
-      clearInterval(this.gasRatesUpdateInterval)
+      clearInterval(this.gasRatesUpdateCycle)
     },
     formatAmount(input, skipValidation) {
       if (skipValidation && this.v$.amount.$invalid) {
@@ -1346,39 +1369,23 @@ export default {
       this.edgeAmount = (parseFloat(this.edgeBalance) * (percentage / 100)).toFixed(6)
     },
     validAmount(value) {
-      if (!this.v$.amount) {
-        return true
-      }
+      if (!this.v$.amount) return true
 
-      // Remove commas, otherwise the parseFloat call will remove all characters
-      // after the first comma.
+      // Remove commas, otherwise the parseFloat call will remove all characters after the first comma.
       value = typeof value === 'string' ? value.replace(/,/g, '') : value
 
-      if (!/^([0-9]{1,9}\.?[0-9]{0,6})$/.test(value) && this.v$.amount.$dirty) {
-        return false
-      }
+      if (!/^([0-9]{1,9}\.?[0-9]{0,6})$/.test(value) && this.v$.amount.$dirty) return false
 
       const enteredAmount = parseFloat(value)
-
-      if (isNaN(enteredAmount) && this.v$.amount.$dirty) {
-        return false
-      }
-
-      // Check less than/equal to zero.
-      if (enteredAmount <= 0 && this.v$.amount.$dirty) {
-        return false
-      }
+      if (isNaN(enteredAmount) && this.v$.amount.$dirty) return false
+      if (enteredAmount <= 0 && this.v$.amount.$dirty) return false
+      if (this.calculatedUSDC <= 0) return false
 
       return true
     },
     sufficientFundsEdge(value) {
-      if (!this.v$.edgeAmount || !value) {
-        return true
-      }
-
-      if (!value && !this.edgeBalance) {
-        return true
-      }
+      if (!this.v$.edgeAmount || !value) return true
+      if (!value && !this.edgeBalance) return true
 
       const enteredAmount = parseFloat(value)
 
@@ -1386,13 +1393,8 @@ export default {
       return enteredAmount <= parseFloat(this.edgeBalance)
     },
     async sufficientFundsXe(value) {
-      if (!this.v$.amount || !value) {
-        return true
-      }
-
-      if (!value && !this.wallet.balance) {
-        return true
-      }
+      if (!this.v$.amount || !value) return true
+      if (!value && !this.wallet.balance) return true
 
       // Determine amount of XE currently in pending txs.
       const pendingTxs = await fetchPendingTransactions(this.wallet.address)
@@ -1409,6 +1411,10 @@ export default {
 
       // Check amount is less than the wallet balance.
       return enteredAmount <= parseFloat(this.fromMicroXe(this.wallet.balance) - this.fromMicroXe(pendingTxTotal))
+    },
+    withinSaleLimit() {
+      const isSellScreen = this.showSellStep || this.showSellStep2
+      return !isSellScreen || this.amount <= this.exchangeRate.limit
     },
     validAddress(value, type = 'XE') {
       const lengths = {
@@ -1620,11 +1626,14 @@ export default {
       const isValidPassword = await validatePassword(this.password)
 
       if (isValidPassword) {
+        this.stopExchangeRateUpdateCycle()
+        this.stopGasRatesUpdateCycle()
+
         // Create tx object.
         const nonce = await getNonce(this.wallet.address)
         const tx = await createWithdrawalTransaction(this.amount, {
           destination: this.ethAddress,
-          fee: toMicroXe(this.fee),
+          ref: this.exchangeRate.ref,
           memo: 'XE Sale',
           token: 'USDC'
         }, nonce)
@@ -1637,6 +1646,8 @@ export default {
 
         if (metadata.accepted) {
           this.currentTx = tx
+          this.currentTx.fee = this.fee
+          this.currentTx.exchangeRate = this.exchangeRate.rate
           this.currentTx.usdcAmount = this.calculatedUSDC
 
           this.password = ''
@@ -1910,10 +1921,12 @@ export default {
         "0x4": 'https://rinkeby.etherscan.io'
       },
       exchangeRate: {},
-      exchangeRateUpdateInterval: null,
+      exchangeRateUpdateCycle: null,
+      exchangeRateUpdateInterval: 2500,
       fee: 0,
       gasRates: {},
-      gasRatesUpdateInterval: null,
+      gasRatesUpdateCycle: null,
+      gasRatesUpdateInterval: 2500,
       invalidPassword: false,
       isModalVisible: false,
       minimumFee: 0,
