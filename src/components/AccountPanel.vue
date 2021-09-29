@@ -24,7 +24,7 @@
             </span>
             Send
           </button>
-          
+
           <button class="w-full button button--outline-success" @click="openExchange()">
             <span class="button__icon w-15">
               <SwitchHorizontalIcon/>
@@ -34,7 +34,7 @@
         </div>
       </div>
     </div>
-  
+
     <div class="account-panel__modals">
       <Modal v-if="showSendStep === true" :opened="true" :closeHandler="swallowClose">
         <!-- <template v-slot:opener="slotProps">
@@ -1009,13 +1009,13 @@
       </Modal>
       <Modal v-if="showSellStep3 === true" :opened="true" :closeHandler="swallowClose">
         <template v-slot:header>
-          <h2 class="mb-8">Withdrawal accepted</h2>
+          <h2 class="mb-8">Sale accepted</h2>
         </template>
         <template v-slot:body>
           <div class="pb-14 min-h-410">
 
             <div class="form-group mb-14">
-              <label>You are withdrawing</label>
+              <label>You are selling</label>
               <Amount :value="currentTx.amount / 1e6" currency="XE"/>
             </div>
 
@@ -1048,7 +1048,7 @@
             </div>
 
             <div class="flex items-center mt-24 leading-8 text-gray">
-              <p class="mb-0">Your request has been accepted and should be processed within 10-15 minutes.</p>
+              <p class="mb-0">Your request has been accepted and should be processed soon. If your request cannot be processed for any reason, your XE will be returned.</p>
             </div>
           </div>
         </template>
@@ -1145,7 +1145,7 @@
   .account-panel__buttons {
     @apply grid grid-cols-2 mt-0;
   }
-  
+
   .account-panel__buttons > button {
     width: 170px;
   }
@@ -1169,7 +1169,7 @@ import {
   LockOpenIcon,
   ShieldExclamationIcon
 } from '@heroicons/vue/solid'
-import { 
+import {
   SwitchHorizontalIcon,
   CurrencyDollarIcon
 } from '@heroicons/vue/outline'
