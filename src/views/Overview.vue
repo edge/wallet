@@ -52,10 +52,11 @@ export default {
     return {
       wallet: {},
       transactions: [],
-      loading: false,
+      loading: true,
       error: '',
       polling: null,
-      overviews: []
+      overviews: [],
+      transactionRefreshInterval: 1000
     }
   },
   components: {
@@ -67,98 +68,36 @@ export default {
     RecentBlocks
   },
   mounted() {
-    this.loadWallet()
-    this.pollData()
+    this.initialise()
   },
   methods: {
-    async fetchTransactions() {
+    async initialise() {
+      await this.updateWallet()
+      await this.updateTransactions()
+      this.pollData()
+    },
+    async updateWallet() {
+      const walletAddress = await getWalletAddress()
+      if (!walletAddress) this.$router.push(`/`)
+
+      const wallet = await fetchWallet(walletAddress)
+
+      // Update this.wallet only once promise has resolved
+      this.wallet = wallet
+    },
+    async updateTransactions() {
       const { transactions, metadata } = await fetchTransactions(this.wallet.address, { limit: 5 })
 
-      // Only pick latest 10 tx.
-      this.transactions = transactions.slice(0, 10)
-
-      // TODO: use for summary view.
-      // this.getTransactionSummary()
-
+      // Update this.transactions & this.metadata only once promise has resolved
+      this.transactions = transactions
       this.metadata = metadata
       this.loading = false
     },
-    getTransactionSummary() {
-      const recentTxs = {}
-
-      this.transactions.forEach(tx => {
-        const date = new Date(tx.timestamp)
-        const dateKey = `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`
-
-        recentTxs[dateKey] = recentTxs[dateKey] || []
-        recentTxs[dateKey].push(tx)
-      })
-
-      Object.keys(recentTxs).forEach((dateKey, index) => {
-        const date1 = dayjs()
-        const date2 = dayjs(recentTxs[dateKey][0].timestamp)
-
-        const currentHour = date1.hour()
-        const hours = date1.diff(date2, 'hours')
-
-        if (hours < currentHour ) {
-          this.overviews.push({
-            date: 'TODAY',
-            items: this.formatTransactionsWithSummary(recentTxs[dateKey])
-          })
-        } else if (hours >= currentHour && hours < (24+currentHour)) {
-          this.overviews.push({
-            date: 'YESTERDAY',
-            items: this.formatTransactionsWithSummary(recentTxs[dateKey])
-          })
-        } else {
-          this.overviews.push({
-            date: date2.fromNow().toUpperCase(),
-            items: this.formatTransactionsWithSummary(recentTxs[dateKey])
-          })
-        }
-      })
-    },
-    formatTransactionsWithSummary(transactions) {
-      return transactions.map(tx => {
-        return {
-          head: {
-            type: tx.type,
-            amount: tx.amount
-          },
-          description: {
-            type: tx.type,
-            amount: tx.amount,
-            date: new Date(tx.timestamp).toLocaleString(),
-            address: tx.address,
-            sender: tx.sender,
-            recipient: tx.recipient,
-            hash: tx.hash,
-            description: tx.description
-          }
-        }
-      })
-    },
-    fetchWallet(address) {
-      return fetchWallet(address)
-    },
-    async loadWallet() {
-      const walletAddress = await getWalletAddress()
-
-      if (!walletAddress) {
-        this.$router.push(`/`)
-      }
-
-      this.loading = true
-
-      this.wallet = await this.fetchWallet(walletAddress)
-      this.fetchTransactions()
-    },
     pollData() {
       this.polling = setInterval(() => {
-        this.fetchTransactions()
-        this.loadWallet()
-      }, 10000)
+        this.updateWallet()
+        this.updateTransactions()
+      }, this.transactionRefreshInterval)
     }
   }
 }
