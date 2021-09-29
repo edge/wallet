@@ -1318,7 +1318,7 @@ export default {
       const { handlingFeePercentage, minimumHandlingFee } = this.gasRates
       const percentageFee = this.amount * (handlingFeePercentage / 100)
       this.minimumFee = percentageFee < minimumHandlingFee ? minimumHandlingFee : percentageFee
-      this.fee = Math.round(this.minimumFee + this.gasRates.average)
+      this.fee = Math.round(this.minimumFee + this.exchangeRate.gas)
       const xeToExchange = this.amount - this.fee > 0 ? this.amount - this.fee : 0
       this.calculatedUSDC = xeToExchange * this.exchangeRate.rate
     },
@@ -1606,13 +1606,11 @@ export default {
       this.gasRates = await fetchGasRates()
       this.exchangeRate = await fetchExchangeRates()
       this.startExchangeRateUpdateCycle()
-      this.startGasRatesUpdateCycle()
       this.showExchangeOptions = false
       this.showSellStep = true
     },
     closeSell() {
       this.stopExchangeRateUpdateCycle()
-      this.stopGasRatesUpdateCycle()
       this.showSellStep = false
       this.showSellStep2 = false
       this.showSellStep3 = false
