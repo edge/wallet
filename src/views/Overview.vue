@@ -56,7 +56,7 @@ export default {
       error: '',
       polling: null,
       overviews: [],
-      transactionRefreshInterval: 1000
+      transactionRefreshInterval: 5000
     }
   },
   components: {
@@ -69,6 +69,9 @@ export default {
   },
   mounted() {
     this.initialise()
+  },
+  unmounted() {
+    clearInterval(this.polling)
   },
   methods: {
     async initialise() {
