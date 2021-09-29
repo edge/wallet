@@ -1338,7 +1338,6 @@ export default {
     startExchangeRateUpdateCycle() {
       this.exchangeRateUpdateCycle = setInterval(async () => {
         this.exchangeRate = await fetchExchangeRates()
-        console.log('updated exchange rate', this.exchangeRate)
       }, this.exchangeRateUpdateInterval)
     },
     stopExchangeRateUpdateCycle() {
