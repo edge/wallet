@@ -570,10 +570,10 @@
                 </Tooltip>
               </label>
               <div class="flex flex-wrap mt-12 -mx-6 radio-list">
-                <Radio name="fee" @click="selectFeeLevel(gasPrices.slow)" id="slow" :label="gasPrices.slow + ' XE'" :big="true" extraName="Slow"/>
-                <Radio name="fee" :selected="selectedFeeLevel === gasPrices.average"  @click="selectFeeLevel(gasPrices.average)" id="average" :label="gasPrices.average + ' XE'" :big="true" extraName="Average"/>
-                <Radio name="fee" @click="selectFeeLevel(gasPrices.fast)" id="fast" :label="gasPrices.fast + ' XE'" :big="true" extraName="Fast"/>
-                <Radio name="fee" @click="selectFeeLevel(gasPrices.fastest)" id="fastest" :label="gasPrices.fastest + ' XE'" :big="true" extraName="Fastest"/>
+                <Radio name="fee" @click="selectFeeLevel(gasRates.slow)" id="slow" :label="gasRates.slow + ' XE'" :big="true" extraName="Slow"/>
+                <Radio name="fee" :selected="selectedFeeLevel === gasRates.average"  @click="selectFeeLevel(gasRates.average)" id="average" :label="gasRates.average + ' XE'" :big="true" extraName="Average"/>
+                <Radio name="fee" @click="selectFeeLevel(gasRates.fast)" id="fast" :label="gasRates.fast + ' XE'" :big="true" extraName="Fast"/>
+                <Radio name="fee" @click="selectFeeLevel(gasRates.fastest)" id="fastest" :label="gasRates.fastest + ' XE'" :big="true" extraName="Fastest"/>
               </div>
             </div>
             <div class="mt-32 mb-8 form-group">
@@ -840,11 +840,11 @@
             <div class="mt-32 mb-8 form-group">
               <label class="flex items-center space-x-3">
                 Exchange Rate
-                <Tooltip class="ml-3" position="right" theme="dark" :wide="true" :text="`Last updated X seconds ago`">
+                <Tooltip class="ml-3" position="right" theme="dark" :wide="true" :text="`Last updated ${secondsSince(exchangeRate.date)}`">
                   <InformationCircleIcon class="hidden md:block button__icon w-15" />
                 </Tooltip>
               </label>
-              <Amount :value="exchangeRates.xeToUSDC" currency="USDC"/>
+              <Amount :value="exchangeRate.rate" currency="USDC"/>
             </div>
 
             <div class="mt-32 mb-8 form-group">
@@ -950,7 +950,7 @@
                 You will receive
                 <Tooltip
                   class="ml-3" position="right" :wide="true" theme="dark"
-                  :text="`TODO`">
+                  :text="`Exchange rate: ${exchangeRate.rate} USDC`">
                   <InformationCircleIcon class="hidden md:block button__icon w-15" />
                 </Tooltip>
               </label>
@@ -1269,12 +1269,16 @@ export default {
       }
     }
   },
-  mounted () {
+  mounted() {
     if (browser && this.supportedBrowsers.includes(browser.name)) {
       this.supportedBrowser = true
     } else {
       this.supportedBrowser = false
     }
+  },
+  unmounted() {
+    this.stopExchangeRateUpdateCycle()
+    this.stopGasRatesUpdateCycle()
   },
   watch: {
     amount: ['calculateEdge', 'calculateUSDC'],
@@ -1282,25 +1286,48 @@ export default {
   },
   methods: {
     calculateEdge() {
-      const { handlingFeePercentage, minimumHandlingFee } = this.gasPrices
+      const { handlingFeePercentage, minimumHandlingFee } = this.gasRates
       const percentageFee = this.amount * (handlingFeePercentage / 100)
       this.minimumFee = percentageFee < minimumHandlingFee ? minimumHandlingFee : percentageFee
       this.fee = Math.round(this.minimumFee + this.selectedFeeLevel)
       this.calculatedEdge = this.amount - this.fee > 0 ? this.amount - this.fee : 0
     },
     calculateUSDC() {
-      // const { handlingFeePercentage, minimumHandlingFee } = this.gasPrices
+      // const { handlingFeePercentage, minimumHandlingFee } = this.gasRates
       // const percentageFee = this.amount * (handlingFeePercentage / 100)
       // this.minimumFee = percentageFee < minimumHandlingFee ? minimumHandlingFee : percentageFee
-      this.fee = Math.round(this.minimumFee + this.gasPrices.average)
+      this.fee = Math.round(this.minimumFee + this.gasRates.average)
       const xeToExchange = this.amount - this.fee > 0 ? this.amount - this.fee : 0
-      this.calculatedUSDC = xeToExchange * this.exchangeRates.xeToUSDC
+      this.calculatedUSDC = xeToExchange * this.exchangeRate.rate
     },
     calculateDepositFee() {
-      const { handlingFeePercentage, minimumHandlingFee } = this.gasPrices
+      const { handlingFeePercentage, minimumHandlingFee } = this.gasRates
       const percentageFee = this.edgeAmount * (handlingFeePercentage / 100)
       this.fee = Math.round(percentageFee < minimumHandlingFee ? minimumHandlingFee : percentageFee)
       this.calculatedXe = this.edgeAmount - this.fee > 0 ? this.edgeAmount - this.fee : 0
+    },
+    secondsSince(date) {
+      if (typeof date === 'string') date = new Date(date)
+      const ms = Date.now() - date.getTime()
+      const s = Math.floor(ms / 1000)
+      const unit = s === 1 ? 'second' : 'seconds'
+      return `${s} ${unit} ago`
+    },
+    startExchangeRateUpdateCycle() {
+      this.exchangeRateUpdateInterval = setInterval(async () => {
+        this.exchangeRate = await fetchExchangeRates()
+      }, 5000)
+    },
+    stopExchangeRateUpdateCycle() {
+      clearInterval(this.exchangeRateUpdateInterval)
+    },
+    startGasRatesUpdateCycle() {
+      this.gasRatesUpdateInterval = setInterval(async () => {
+        this.gasRates = await fetchGasRates()
+      }, 5000)
+    },
+    stopGasRatesUpdateCycle() {
+      clearInterval(this.gasRatesUpdateInterval)
     },
     formatAmount(input, skipValidation) {
       if (skipValidation && this.v$.amount.$invalid) {
@@ -1429,7 +1456,7 @@ export default {
       this.showExchangeOptions = false
     },
     async openDeposit() {
-      this.gasPrices = await fetchGasRates()
+      this.gasRates = await fetchGasRates()
       this.showExchangeOptions = false
       this.showDepositStep = true
     },
@@ -1440,8 +1467,8 @@ export default {
       this.showDepositStep3 = false
     },
     async openWithdraw() {
-      this.gasPrices = await fetchGasRates()
-      this.selectedFeeLevel = this.gasPrices.average
+      this.gasRates = await fetchGasRates()
+      this.selectedFeeLevel = this.gasRates.average
       this.calculateEdge()
 
       this.showExchangeOptions = false
@@ -1571,12 +1598,16 @@ export default {
       }
     },
     async openSell() {
-      this.gasPrices = await fetchGasRates()
-      this.exchangeRates = await fetchExchangeRates()
+      this.gasRates = await fetchGasRates()
+      this.exchangeRate = await fetchExchangeRates()
+      this.startExchangeRateUpdateCycle()
+      this.startGasRatesUpdateCycle()
       this.showExchangeOptions = false
       this.showSellStep = true
     },
     closeSell() {
+      this.stopExchangeRateUpdateCycle()
+      this.stopGasRatesUpdateCycle()
       this.showSellStep = false
       this.showSellStep2 = false
       this.showSellStep3 = false
@@ -1878,9 +1909,11 @@ export default {
         "0x1": 'https://etherscan.io',
         "0x4": 'https://rinkeby.etherscan.io'
       },
+      exchangeRate: {},
+      exchangeRateUpdateInterval: null,
       fee: 0,
-      gasPrices: {},
-      exchangeRates: {},
+      gasRates: {},
+      gasRatesUpdateInterval: null,
       invalidPassword: false,
       isModalVisible: false,
       minimumFee: 0,
