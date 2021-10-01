@@ -834,7 +834,7 @@
 
                 <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="(!v$.amount.sufficientFunds.$pending && v$.amount.sufficientFunds.$invalid)">Insufficient funds.</div>
                 <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="v$.amount.validAmount.$invalid">Invalid amount.</div>
-                <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="v$.amount.withinSaleLimit.$invalid">Sales are limited to {{exchangeRate.limit}} XE</div>
+                <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="v$.amount.withinSaleLimit.$invalid">The exchange maximum is {{exchangeRate.limit}} XE</div>
               </div>
             </div>
 
@@ -968,7 +968,7 @@
               class="px-20 py-20 mb-24 text-center bg-black border border-gray-700 rounded convert-info md:text-left red border-opacity-30 border-color">
             <div class="">
               <span class="flex w-full overflow-hidden overflow-ellipsis text-red">
-                Exchange rate has been updated and your exchange of {{amount}} XE is now above the limit of {{exchangeRate.limit}} XE.
+                Exchange rate has been updated. The exchange maximum is now {{exchangeRate.limit}} XE.
               </span>
             </div>
           </div>
