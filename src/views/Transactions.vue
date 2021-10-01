@@ -26,12 +26,13 @@ export default {
   },
   data: function () {
     return {
-      loading: false,
+      loading: true,
       metadata: {},
       page: 1,
       polling: null,
       transactions: [],
-      wallet: {}
+      wallet: {},
+      transactionRefreshInterval: 5000
     }
   },
   components: {
@@ -41,42 +42,40 @@ export default {
     TransactionsTable
   },
   mounted() {
-    this.loading = true
-    this.loadWallet()
-    this.pollData()
+    this.initialise()
+  },
+  unmounted() {
+    clearInterval(this.polling)
   },
   methods: {
-    beforeDestroy() {
-      clearInterval(this.polling)
+    async initialise() {
+      await this.updateWallet()
+      await this.updateTransactions()
+      this.pollData()
     },
-    async fetchTransactions() {
-      this.page = parseInt(this.$route.params.page || 1)
+    async updateWallet() {
+      const walletAddress = await getWalletAddress()
+      if (!walletAddress) this.$router.push(`/`)
 
+      const wallet = await fetchWallet(walletAddress)
+
+      // Update this.wallet only once promise has resolved
+      this.wallet = wallet
+    },
+    async updateTransactions() {
+      this.page = parseInt(this.$route.params.page || 1)
       const { transactions, metadata } = await fetchTransactions(this.wallet.address, { page: this.page })
 
+      // Update this.transactions & this.metadata only once promise has resolved
       this.transactions = transactions
       this.metadata = metadata
       this.loading = false
     },
-    fetchWallet (address) {
-      return fetchWallet(address)
-    },
-    async loadWallet() {
-      const walletAddress = await getWalletAddress()
-
-      if (!walletAddress) {
-        window.location = '/'
-        return
-      }
-
-      this.wallet = await this.fetchWallet(walletAddress)
-      this.fetchTransactions()
-    },
     pollData() {
       this.polling = setInterval(() => {
-        this.fetchTransactions()
-        this.loadWallet()
-      }, 10000)
+        this.updateWallet()
+        this.updateTransactions()
+      }, this.transactionRefreshInterval)
     }
   }
 }
