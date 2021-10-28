@@ -24,6 +24,8 @@ RUN npm install
 
 COPY src src/
 COPY public public/
+
+RUN env
 RUN npm run build
 
 #
