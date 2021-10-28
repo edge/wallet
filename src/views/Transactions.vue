@@ -21,9 +21,7 @@ import { getWalletAddress } from '../utils/wallet'
 
 export default {
   name: 'Transactions',
-  title() {
-    return 'XE Wallet » Transactions'
-  },
+  title: 'Transactions',
   data: function () {
     return {
       loading: true,
