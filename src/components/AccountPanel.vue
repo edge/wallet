@@ -1,15 +1,6 @@
 <template>
   <div class="account-panel">
 
-    <h1 style="color: white;">VUE_APP_IS_TESTNET: {{ isTestnet }}</h1>
-
-    <h1 style="color: white;" v-if="isTestnet">Testnet!</h1>
-    <h1 style="color: white;" v-if="!isTestnet">Mainnet!</h1>
-
-
-
-
-
     <div class="container">
       <div class="account-panel__left">
         <div class="account-panel__address">
