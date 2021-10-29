@@ -293,9 +293,7 @@ const {
 
 export default {
   name: 'Index',
-  title() {
-    return 'XE Wallet » Create or restore a wallet'
-  },
+  title: 'Create or restore a wallet',
   setup() {
     return {v$: useVuelidate()}
   },

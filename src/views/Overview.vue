@@ -45,9 +45,7 @@ dayjs.extend(relativeTime)
 
 export default {
   name: 'Overview',
-  title() {
-    return 'XE Wallet » Overview'
-  },
+  title: 'Overview',
   data: function () {
     return {
       wallet: {},

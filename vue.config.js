@@ -8,7 +8,8 @@ module.exports = {
     config
       .plugin('html')
       .tap(args => {
-        args[0].title = 'XE Wallet'
+        // This sets the pre-render title (see also src/mixins/titleMixing.js)
+        args[0].title = process.env.VUE_APP_IS_TESTNET === 'true' ? 'Testnet (XE) Wallet' : 'Edge (XE) Wallet'
         return args
       })
   }

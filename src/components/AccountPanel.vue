@@ -47,7 +47,7 @@
         </template> -->
 
         <template v-slot:header>
-          <h2 class="mb-8">Send XE</h2>
+          <h2 class="mb-8">Send XE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
           <span class="sub-heading d-block text-gray text-caption">{{ formatMicroXe(wallet.balance) }} XE available</span>
         </template>
         <template v-slot:body>
@@ -111,7 +111,7 @@
       </Modal>
       <Modal v-if="showSendStep2 === true" :opened="true" :closeHandler="swallowClose">
         <template v-slot:header>
-          <h2 class="mb-8">Send XE</h2>
+          <h2 class="mb-8">Send XE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
           <span class="sub-heading d-block text-gray text-caption">{{ formatMicroXe(wallet.balance) }} XE available</span>
         </template>
         <template v-slot:body>
@@ -233,7 +233,7 @@
         :closeHandler="closeWithdraw"
         :width="900">
         <template v-slot:header>
-          <h2>Exchange</h2>
+          <h2>Exchange<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
         </template>
 
         <template v-slot:body="slotProps">
@@ -293,7 +293,7 @@
 
       <Modal v-if="showDepositStep === true" :opened="true" :closeHandler="swallowClose">
         <template v-slot:header>
-          <h2 class="mb-8">Deposit EDGE</h2>
+          <h2 class="mb-8">Deposit EDGE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
           <span v-if="supportedBrowser" class="sub-heading d-block text-gray text-caption">Connect to MetaMask to deposit EDGE for exchange.</span>
           <span v-if="!supportedBrowser" class="sub-heading d-block text-gray text-caption">Your browser doesn't support the MetaMask browser extension. Please use Brave, Chrome, Edge or Firefox for depositing EDGE.</span>
         </template>
@@ -321,7 +321,7 @@
         <template v-slot:header>
           <div class="flex justify-between">
             <div>
-              <h2 class="mb-8">Deposit EDGE</h2>
+              <h2 class="mb-8">Deposit EDGE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
               <span class="sub-heading d-block text-gray text-caption">{{ formatCurrency(edgeBalance) }} EDGE available</span>
             </div>
             <div>
@@ -446,7 +446,7 @@
       </Modal>
       <Modal v-if="showDepositStep3 === true" :opened="true" :closeHandler="swallowClose">
         <template v-slot:header>
-          <h2 class="mb-8">Deposit accepted</h2>
+          <h2 class="mb-8">Deposit accepted<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
         </template>
         <template v-slot:body>
           <div class="pb-14 min-h-410">
@@ -517,7 +517,7 @@
 
       <Modal v-if="showWithdrawStep === true" :opened="true" :closeHandler="swallowClose">
         <template v-slot:header>
-          <h2 class="mb-8">Withdraw XE</h2>
+          <h2 class="mb-8">Withdraw XE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
           <span class="sub-heading d-block text-gray text-caption">{{ formatMicroXe(wallet.balance) }} XE available</span>
         </template>
         <template v-slot:body>
@@ -636,7 +636,7 @@
       </Modal>
       <Modal v-if="showWithdrawStep2 === true" :opened="true" :closeHandler="swallowClose">
         <template v-slot:header>
-          <h2 class="mb-8">Withdraw XE</h2>
+          <h2 class="mb-8">Withdraw XE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
           <span class="sub-heading d-block text-gray text-caption">{{ formatMicroXe(wallet.balance) }} XE available</span>
         </template>
         <template v-slot:body>
@@ -738,7 +738,7 @@
       </Modal>
       <Modal v-if="showWithdrawStep3 === true" :opened="true" :closeHandler="swallowClose">
         <template v-slot:header>
-          <h2 class="mb-8">Withdrawal accepted</h2>
+          <h2 class="mb-8">Withdrawal accepted<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
         </template>
         <template v-slot:body>
           <div class="pb-14 min-h-410">
@@ -794,7 +794,7 @@
 
       <Modal v-if="showSellStep === true" :opened="true" :closeHandler="swallowClose">
         <template v-slot:header>
-          <h2 class="mb-8">Sell XE</h2>
+          <h2 class="mb-8">Sell XE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
           <span class="sub-heading d-block text-gray text-caption">{{ formatMicroXe(wallet.balance) }} XE available</span>
         </template>
         <template v-slot:body>
@@ -908,7 +908,7 @@
       </Modal>
       <Modal v-if="showSellStep2 === true" :opened="true" :closeHandler="swallowClose">
         <template v-slot:header>
-          <h2 class="mb-8">Sell XE</h2>
+          <h2 class="mb-8">Sell XE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
           <span class="sub-heading d-block text-gray text-caption">{{ formatMicroXe(wallet.balance) }} XE available</span>
         </template>
         <template v-slot:body>
@@ -1025,7 +1025,7 @@
       </Modal>
       <Modal v-if="showSellStep3 === true" :opened="true" :closeHandler="swallowClose">
         <template v-slot:header>
-          <h2 class="mb-8">Sale accepted</h2>
+          <h2 class="mb-8">Sale accepted<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
         </template>
         <template v-slot:body>
           <div class="pb-14 min-h-410">
@@ -1174,6 +1174,11 @@
   .account-panel__balance {
     @apply mb-0;
   }
+}
+
+.testnet-header {
+  color: #0ecc5f;
+  padding-left: 10px;
 }
 </style>
 
@@ -1959,7 +1964,8 @@ export default {
       ethAddress: '',
       sendMemo: '',
       password: '',
-      passphraseWithdraw: ''
+      passphraseWithdraw: '',
+      isTestnet: process.env.VUE_APP_IS_TESTNET === 'true'
     }
   },
   props: {
