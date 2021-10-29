@@ -1965,7 +1965,7 @@ export default {
       sendMemo: '',
       password: '',
       passphraseWithdraw: '',
-      isTestnet: process.env.VUE_APP_IS_TESTNET === true
+      isTestnet: process.env.VUE_APP_IS_TESTNET === 'true'
     }
   },
   props: {
