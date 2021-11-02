@@ -425,6 +425,14 @@
               </div>
             </div>
 
+            <div>
+              depositInProgress: {{depositInProgress}}<br>
+              a: {{v$.edgeAmount.sufficientFunds.$invalid}}<br>
+              b: {{v$.edgeAmount.validAmount.$invalid}}<br>
+              edgeAmount: {{edgeAmount}}<br>
+              check: {{ depositInProgress || (v$.edgeAmount.sufficientFunds.$invalid || v$.edgeAmount.validAmount.$invalid) || edgeAmount <= 0 }}
+            </div>
+
             <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
               <button
                 class="w-full button button--outline-success"
@@ -1383,7 +1391,11 @@ export default {
       const enteredAmount = parseFloat(value)
       if (isNaN(enteredAmount) && this.v$.amount.$dirty) return false
       if (enteredAmount <= 0 && this.v$.amount.$dirty) return false
-      if (this.calculatedUSDC <= 0) return false
+
+      // Invalid amount when selling and USDC <= 0
+      if (this.showSellStep || this.showSellStep2 || this.showSellStep3 || this.showSellStep4) {
+        if (this.calculatedUSDC <= 0) return false
+      }
 
       return true
     },
