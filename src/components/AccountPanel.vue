@@ -425,14 +425,6 @@
               </div>
             </div>
 
-            <div>
-              depositInProgress: {{depositInProgress}}<br>
-              a: {{v$.edgeAmount.sufficientFunds.$invalid}}<br>
-              b: {{v$.edgeAmount.validAmount.$invalid}}<br>
-              edgeAmount: {{edgeAmount}}<br>
-              check: {{ depositInProgress || (v$.edgeAmount.sufficientFunds.$invalid || v$.edgeAmount.validAmount.$invalid) || edgeAmount <= 0 }}
-            </div>
-
             <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
               <button
                 class="w-full button button--outline-success"
