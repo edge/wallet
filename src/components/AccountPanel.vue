@@ -425,14 +425,6 @@
               </div>
             </div>
 
-            <div>
-              depositInProgress: {{depositInProgress}}<br>
-              a: {{v$.edgeAmount.sufficientFunds.$invalid}}<br>
-              b: {{v$.edgeAmount.validAmount.$invalid}}<br>
-              edgeAmount: {{edgeAmount}}<br>
-              check: {{ depositInProgress || (v$.edgeAmount.sufficientFunds.$invalid || v$.edgeAmount.validAmount.$invalid) || edgeAmount <= 0 }}
-            </div>
-
             <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
               <button
                 class="w-full button button--outline-success"
@@ -1321,6 +1313,10 @@ export default {
   },
   methods: {
     calculateEdge() {
+      // only calculate withdrawal fee in withdrawal view
+      const isWithdrawal = this.showWithdrawStep || this.showWithdrawStep2 || this.showWithdrawStep3
+      if (!isWithdrawal) return
+
       const { handlingFeePercentage, minimumHandlingFee } = this.gasRates
       const percentageFee = this.amount * (handlingFeePercentage / 100)
       this.minimumFee = percentageFee < minimumHandlingFee ? minimumHandlingFee : percentageFee
@@ -1328,6 +1324,10 @@ export default {
       this.calculatedEdge = this.amount - this.fee > 0 ? this.amount - this.fee : 0
     },
     calculateUSDC() {
+      // only calculate sell fee in sell view
+      const isSell = this.showSellStep || this.showSellStep2 || this.showSellStep3 || this.showSellStep4
+      if (!isSell) return
+
       const { handlingFeePercentage, minimumHandlingFee } = this.gasRates
       const percentageFee = this.amount * (handlingFeePercentage / 100)
       this.minimumFee = percentageFee < minimumHandlingFee ? minimumHandlingFee : percentageFee
