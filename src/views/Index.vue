@@ -100,7 +100,7 @@
                         <div class="form-group__error" v-if="v$.password.$error">Must be 10 characters or more.</div>
                       </div>
                       <div class="form-group" :class="{'form-group__error': v$.confirmPhrase.$error}">
-                        <label for="confirm-phrase">Please type '<strong style="text-transform: none">I confirm I have backed up my private key</strong>'</label>
+                        <label for="confirm-phrase">Please type '<span style="text-transform: none">I confirm I have backed up my private key</span>'</label>
                         <!-- <div class="relative input-wrap"> -->
                           <input type="text" autocomplete="off" id="confirm-phrase" v-model="confirmPhrase">
                         <!-- </div> -->
