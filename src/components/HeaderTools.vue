@@ -1,4 +1,3 @@
-
 <template>
   <button @click.prevent="showTools = !showTools" class="header-tools__expand">
     <span class="pointer-events-none header-tools__icon--cog">
@@ -42,7 +41,7 @@
       </router-link>
     </li> -->
     <li class="header-tools__item">
-      <div class="header-tools__link" @click="forgetWallet">
+      <div class="header-tools__link" @click="forget">
         <span class="header-tools__icon">
           <LogoutIcon/>
         </span>
@@ -57,10 +56,11 @@
   import {SupportIcon} from "@heroicons/vue/solid"
   import vClickOutside from 'click-outside-vue3'
   import { clear } from '../utils/db'
+  import ForgetWallet from './Modal/ForgetWallet.vue'
 
   export default {
     name: "HeaderTools",
-    components: {ArchiveIcon, ChevronDownIcon, CogIcon, KeyIcon, LockOpenIcon, LogoutIcon, SupportIcon},
+    components: {ArchiveIcon, ChevronDownIcon, CogIcon, KeyIcon, ForgetWallet, LockOpenIcon, LogoutIcon, SupportIcon},
     data: function () {
       return {
         showTools: false
@@ -70,16 +70,19 @@
       clickOutside: vClickOutside.directive
     },
     methods: {
-      async forgetWallet () {
-        await clear()
-        this.$router.push('/')
-      },
       onClickOutside (event) {
         const target = event.target.className
         if (target !== 'header-tools__expand') {
           this.showTools = false
         }
+      },
+      forget() {
+        this.showTools = false
+        this.openForgetWalletModal()
       }
+    },
+    props: {
+      openForgetWalletModal: Function
     }
   }
 </script>
