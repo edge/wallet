@@ -41,16 +41,26 @@
         Forget Wallet
       </router-link>
     </li> -->
+    <li class="header-tools__item">
+      <div class="header-tools__link" @click="forgetWallet">
+        <span class="header-tools__icon">
+          <LogoutIcon/>
+        </span>
+        Forget Wallet
+      </div>
+    </li>
   </ul>
 </template>
 
 <script>
-  import {ArchiveIcon, ChevronDownIcon, CogIcon, KeyIcon, LockOpenIcon} from "@heroicons/vue/outline"
+  import {ArchiveIcon, ChevronDownIcon, CogIcon, KeyIcon, LockOpenIcon, LogoutIcon} from "@heroicons/vue/outline"
   import {SupportIcon} from "@heroicons/vue/solid"
   import vClickOutside from 'click-outside-vue3'
+  import { clear } from '../utils/db'
+
   export default {
     name: "HeaderTools",
-    components: {ArchiveIcon, ChevronDownIcon, CogIcon, KeyIcon, LockOpenIcon, SupportIcon},
+    components: {ArchiveIcon, ChevronDownIcon, CogIcon, KeyIcon, LockOpenIcon, LogoutIcon, SupportIcon},
     data: function () {
       return {
         showTools: false
@@ -60,6 +70,10 @@
       clickOutside: vClickOutside.directive
     },
     methods: {
+      async forgetWallet () {
+        await clear()
+        this.$router.push('/')
+      },
       onClickOutside (event) {
         const target = event.target.className
         if (target !== 'header-tools__expand') {
@@ -122,6 +136,7 @@
 
     .header-tools__link {
       @apply p-16 m-0 w-full;
+      cursor: pointer;
     }
   }
 
