@@ -34,58 +34,7 @@
                     Create wallet
                   </button>
                 </template>
-                <template v-slot:header>
-                  <h2>Create a wallet</h2>
-                </template>
 
-                <template v-slot:body>
-                  <div class="pt-15">
-                    <form>
-                      <div class="form-group">
-                        <label>wallet address</label>
-                        <span class="flex items-center">
-                          <span class="font-mono break-all">
-                            {{ xeAddress }}
-                          </span>
-                          <button
-                            class="flex-shrink-0 w-20 ml-24 text-green"
-                            v-on:click.prevent="generate()"
-                          >
-                            <RefreshIcon/>
-                          </button>
-                        </span>
-                      </div>
-                      <div class="form-group" :class="{'form-group__error': v$.password.$error}">
-                        <label for="pass-create">ENTER PASSWORD</label>
-                        <div class="relative input-wrap">
-                          <span class="icon">
-                            <LockOpenIcon/>
-                          </span>
-                          <input type="password" autocomplete="off" placeholder='Choose a password' id="pass-create" v-model="password">
-                        </div>
-                        <div class="form-group__error" v-if="v$.password.$error">Must be 10 characters or more.</div>
-
-                        <label for="pass-create" class="mt-10">REPEAT PASSWORD</label>
-                        <div class="relative input-wrap">
-                          <span class="icon">
-                            <LockOpenIcon/>
-                          </span>
-                          <input type="password" autocomplete="off" placeholder='Repeat your password' id="pass-create-repeat" v-model="repeatPassword">
-                        </div>
-                        <div class="form-group__error" :class="{ 'form-group--error': v$.repeatPassword.$error }" v-if="v$.repeatPassword.$error">Passwords must match.</div>
-                      </div>
-                    </form>
-                  </div>
-                </template>
-
-                <template v-slot:footer="slotProps">
-                  <div class="grid grid-cols-1 gap-24 px-24 pt-48 border-gray-700 border-solid md:grid-cols-2 border-t-default border-opacity-30 pb-54">
-                    <button class="w-full button button--outline-success" @click="clearForm(); hideModal(slotProps, 'showUnlockModal')">Cancel</button>
-                    <button class="w-full button button--success" @click="showOtherModal(slotProps, 'showCreateModal', [v$.password, v$.repeatPassword])">Next</button>
-                  </div>
-                </template>
-              </Modal>
-              <Modal v-if="showCreateModal === true" :opened="true" :closeHandler="swallowClose">
                 <template v-slot:header>
                   <h2>Create a wallet</h2>
                 </template>
@@ -96,6 +45,12 @@
                       <label>wallet address</label>
                       <span class="flex items-center">
                         <span class="font-mono break-all text-sm2">{{ xeAddress }}</span>
+                        <button
+                          class="flex-shrink-0 w-20 ml-24 text-green"
+                          v-on:click.prevent="generate()"
+                        >
+                          <RefreshIcon/>
+                        </button>
                         <button
                           class="flex-shrink-0 w-24 ml-24 text-green"
                           v-if="canCopy"
@@ -134,22 +89,28 @@
                           will not be able to access your wallet. Please enter your password to confirm you have
                           backed up your details.</p>
                       </div>
-                      <div class="form-group" :class="{'form-group__error': v$.passwordConfirm.$error || invalidPassword}">
-                        <label for="pass-create2">ENTER PASSWORD</label>
+                      <div class="form-group" :class="{'form-group__error': v$.password.$error}">
+                        <label for="pass-create">ENTER PASSWORD to encrypt this session</label>
                         <div class="relative input-wrap">
                           <span class="icon">
                             <LockOpenIcon/>
                           </span>
-                          <input type="password" @keypress="(event) => handleEnterKeyCreate(event)" autocomplete="off" placeholder='Your password' id="pass-create2" v-model="passwordConfirm">
+                          <input type="password" autocomplete="off" placeholder='Choose a password' id="pass-create" v-model="password">
                         </div>
-                        <div class="form-group__error" v-if="v$.passwordConfirm.$error">Name field has an error.</div>
-                        <div class="form-group__error" v-if="invalidPassword">Password incorrect.</div>
+                        <div class="form-group__error" v-if="v$.password.$error">Must be 10 characters or more.</div>
                       </div>
-                      <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
-                        <button class="w-full button button--outline-success" @click="clearForm(); hideModal(slotProps, 'showCreateModal')">Cancel</button>
-                        <button class="w-full button button--success" @click.prevent="completeAccountCreate()">Next</button>
+                      <div class="form-group" :class="{'form-group__error': v$.confirmPhrase.$error}">
+                        <label for="confirm-phrase">Please type '<strong style="text-transform: none">I confirm I have backed up my private key</strong>'</label>
+                        <!-- <div class="relative input-wrap"> -->
+                          <input type="text" autocomplete="off" id="confirm-phrase" v-model="confirmPhrase">
+                        <!-- </div> -->
+                        <div class="form-group__error" v-if="v$.confirmPhrase.$error">Confirmation phrase does not match.</div>
                       </div>
                     </form>
+                    <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
+                      <button class="w-full button button--outline-success" @click="clearForm(); hideModal(slotProps)">Cancel</button>
+                      <button class="w-full button button--success" @click.prevent="completeAccountCreate()">Next</button>
+                    </div>
                   </div>
                 </template>
               </Modal>
@@ -301,11 +262,10 @@ export default {
     return {
       canCopy: false,
       invalidPassword: false,
-      showCreateModal: false,
       showUnlockModal: false,
       password: '',
+      confirmPhrase: '',
       repeatPassword: '',
-      passwordConfirm: '',
       passphraseRestore: '',
       passwordUnlock: '',
       privateKey: '',
@@ -337,13 +297,13 @@ export default {
         required,
         minLength: minLength(10)
       },
+      confirmPhrase: {
+        required,
+        sameAsRawValue: sameAs('I confirm I have backed up my private key')
+      },
       repeatPassword: {
         sameAsPassword: sameAs(this.password)
       },
-      passwordConfirm: {
-        required,
-        minLength: minLength(10)
-      }
     }
   },
   async mounted () {
@@ -363,9 +323,11 @@ export default {
       this.privateKeyRestore = ''
       this.password = ''
       this.repeatPassword = ''
+      this.confirmPhrase = ''
 
       this.v$.privateKeyRestore.$reset()
       this.v$.password.$reset()
+      this.v$.confirmPhrase.$reset()
     },
     completeModal(slotProps, property, fields) {
       return (() => {
@@ -377,9 +339,9 @@ export default {
       })()
     },
     async completeAccountCreate () {
-      const isValidPassword = await validatePassword(this.passwordConfirm)
+      const ok = this.validateFields([this.v$.password, this.v$.confirmPhrase])
 
-      if (isValidPassword) {
+      if (ok) {
         // Store the generated keypair.
         this.save()
 
@@ -465,25 +427,8 @@ export default {
       await storePrivateKey(privateKey)
     },
     hideModal(slotProps, property) {
-      return (() => {
-        slotProps.close()
-        this[property] = false
-      })()
-    },
-    showOtherModal(slotProps, property, fields) {
-      return (() => {
-        if (fields) {
-          if (!this.validateFields(fields)) return
-        }
-        slotProps.close()
-        this[property] = true
-
-        // Moving from Create Step 1 to Create Step 2, we must have a
-        // stored password in order for the user to confirm in the 2nd step.
-        if (property === 'showCreateModal') {
-          storePassword(this.password)
-        }
-      })()
+      slotProps.close()
+      if (property !== undefined) this[property] = false
     },
     // Empty function to ignore the modal close event.
     swallowClose () {},
