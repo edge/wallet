@@ -1487,6 +1487,11 @@ export default {
       this.showDepositStep = false
       this.showDepositStep2 = false
       this.showDepositStep3 = false
+
+      this.depositInProgress = false
+      this.depositMessage = null
+      this.edgeAmount = 0
+      this.tx = null
     },
     async openWithdraw() {
       this.gasRates = await fetchGasRates()
