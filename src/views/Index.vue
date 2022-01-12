@@ -302,7 +302,7 @@ export default {
       },
       confirmPhrase: {
         required,
-        sameAsRawValue: sameAs('I confirm I have backed up my private key')
+        sameAsRawValue: value => value.toLowerCase() === 'i confirm i have backed up my private key'
       },
       repeatPassword: {
         sameAsPassword: sameAs(this.password)
