@@ -1,11 +1,12 @@
 <template>
+    <ForgetWallet :close="closeForgetWalletModal" :afterForget="afterForgetWallet" :visible="showForgetWalletModal"/>
     <header class="relative z-10 py-16 header md:pb-15" :class="{'menu-open':showNav}">
       <div class="container flex items-center justify-between">
         <Logo/>
         <BurgerButton  @click="showNav = !showNav"/>
         <div class="absolute left-0 right-0 flex flex-col flex-1 pt-12 pb-24 bg-black mobile-drop top-full md:static md:flex-row md:pl-15 md:p-0">
           <Menu :mainNav="mainNav"/>
-          <HeaderTools/>
+          <HeaderTools :openForgetWalletModal="openForgetWalletModal"/>
         </div>
       </div>
     </header>
@@ -16,11 +17,13 @@
   import Menu from "@/components/Menu";
   import HeaderTools from "@/components/HeaderTools";
   import BurgerButton from "@/components/BurgerButton";
+  import ForgetWallet from '@/components/Modal/ForgetWallet';
 
   export default {
     name: "Header",
     data: function () {
       return {
+        showForgetWalletModal: false,
         showNav: false,
         mainNav: [
           {
@@ -45,12 +48,22 @@
       }
     },
     methods: {
+      closeForgetWalletModal() {
+        this.showForgetWalletModal = false
+      },
+      openForgetWalletModal() {
+        this.showForgetWalletModal = true
+      },
+      afterForgetWallet() {
+        this.$router.push('/')
+      }
     },
     components: {
       Logo,
       Menu,
       HeaderTools,
-      BurgerButton
+      BurgerButton,
+      ForgetWallet
     }
   }
 </script>

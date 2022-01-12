@@ -214,11 +214,11 @@
                 </div>
               </template>
 
-              <template v-slot:footer="slotProps">
+              <template v-slot:footer>
                 <div class="grid grid-cols-1 gap-24 px-24 pt-48 border-gray-700 border-solid md:grid-cols-2 border-t-default border-opacity-30 pb-54">
                   <button
                     class="w-full border-red-600 button button--outline-success hover:border-red-600 hover:bg-red-600"
-                    @click="forgetWallet()"
+                    @click="openForgetWalletModal"
                   >
                     Forget wallet
                   </button>
@@ -226,6 +226,7 @@
                 </div>
               </template>
             </Modal>
+            <ForgetWallet v-if="showForgetWalletModal" :close="closeForgetWalletModal" :afterForget="afterForgetWallet" :visible="showForgetWalletModal"/>
           </div>
 
         </div>
@@ -244,6 +245,7 @@ import useVuelidate from "@vuelidate/core"
 import { clear } from '../utils/db'
 import { fetchWallet } from '../utils/api'
 import { getWalletAddress, hasExistingWallet, storePassword, storePrivateKey, storePublicKey, validatePassword } from '../utils/wallet'
+import ForgetWallet from '@/components/Modal/ForgetWallet'
 
 const {
   generateKeyPair,
@@ -263,6 +265,7 @@ export default {
       canCopy: false,
       invalidPassword: false,
       showUnlockModal: false,
+      showForgetWalletModal: false,
       password: '',
       confirmPhrase: '',
       repeatPassword: '',
@@ -405,9 +408,18 @@ export default {
         this.$router.push('overview')
       }
     },
-    async forgetWallet () {
-      await clear()
-      this.$router.push('/')
+    async afterForgetWallet() {
+      this.hasWallet = false
+      this.showForgetWalletModal = false
+      this.generate()
+    },
+    openForgetWalletModal() {
+      this.showUnlockModal = false
+      this.showForgetWalletModal = true
+    },
+    closeForgetWalletModal() {
+      this.showUnlockModal = true
+      this.showForgetWalletModal = false
     },
     generate () {
       this.keyPair = generateKeyPair()
@@ -453,7 +465,8 @@ export default {
     Modal,
     RefreshIcon,
     ClipboardCopyIcon,
-    ShieldExclamationIcon
+    ShieldExclamationIcon,
+    ForgetWallet
   }
 }
 </script>
