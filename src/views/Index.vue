@@ -95,21 +95,19 @@
                           <span class="icon">
                             <LockOpenIcon/>
                           </span>
-                          <input type="password" autocomplete="off" placeholder='Choose a password' id="pass-create" v-model="password">
+                          <input type="password" autocomplete="off" placeholder='Choose a password' id="pass-create" v-model="password" @keyup="toggleNextButton">
                         </div>
                         <div class="form-group__error" v-if="v$.password.$error">Must be 10 characters or more.</div>
                       </div>
                       <div class="form-group" :class="{'form-group__error': v$.confirmPhrase.$error}">
                         <label for="confirm-phrase">Please type '<span style="text-transform: none">I confirm I have backed up my private key</span>'</label>
-                        <!-- <div class="relative input-wrap"> -->
-                          <input type="text" autocomplete="off" id="confirm-phrase" v-model="confirmPhrase">
-                        <!-- </div> -->
+                        <input type="text" autocomplete="off" id="confirm-phrase" v-model="confirmPhrase" @keyup="toggleNextButton">
                         <div class="form-group__error" v-if="v$.confirmPhrase.$error">Confirmation phrase does not match.</div>
                       </div>
                     </form>
                     <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
                       <button class="w-full button button--outline-success" @click="clearForm(); hideModal(slotProps)">Cancel</button>
-                      <button class="w-full button button--success" @click.prevent="completeAccountCreate()">Next</button>
+                      <button class="w-full button button--success" :disabled="!enableNextButton" @click.prevent="completeAccountCreate()">Next</button>
                     </div>
                   </div>
                 </template>
@@ -266,6 +264,7 @@ export default {
       invalidPassword: false,
       showUnlockModal: false,
       showForgetWalletModal: false,
+      enableNextButton: false,
       password: '',
       confirmPhrase: '',
       repeatPassword: '',
@@ -382,6 +381,9 @@ export default {
 
         this.unlock(fields)
       }
+    },
+    toggleNextButton() {
+      this.enableNextButton = this.password.length && this.confirmPhrase.length
     },
     async unlock (fields) {
       if (this.validateFields(fields)) {
