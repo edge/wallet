@@ -240,9 +240,8 @@ import { KeyIcon, LockOpenIcon, RefreshIcon, ClipboardCopyIcon } from "@heroicon
 import { ShieldExclamationIcon } from '@heroicons/vue/solid'
 import { minLength, required, sameAs } from '@vuelidate/validators'
 import useVuelidate from "@vuelidate/core"
-import { clear } from '../utils/db'
 import { fetchWallet } from '../utils/api'
-import { getWalletAddress, hasExistingWallet, storePassword, storePrivateKey, storePublicKey, validatePassword } from '../utils/wallet'
+import * as storage from '../utils/storage/v0'
 import ForgetWallet from '@/components/Modal/ForgetWallet'
 
 const {
@@ -310,7 +309,7 @@ export default {
   },
   async mounted () {
     this.canCopy = !!navigator.clipboard
-    this.hasWallet = await hasExistingWallet()
+    this.hasWallet = await storage.hasWallet()
 
     if (!this.hasWallet) {
       // Generates an initial wallet address. User can accept this or regenerate.
@@ -387,7 +386,7 @@ export default {
     },
     async unlock (fields) {
       if (this.validateFields(fields)) {
-        const isValidPassword = await validatePassword(this.password)
+        const isValidPassword = await storage.comparePassword(this.password)
 
         if (isValidPassword) {
           // Redirect to wallet overview screen.
@@ -402,10 +401,9 @@ export default {
         const publicKey = privateKeyToPublicKey(this.privateKeyRestore)
         this.xeAddress = privateKeyToChecksumAddress(this.privateKeyRestore)
 
-        storePassword(this.password)
-
-        await storePublicKey(publicKey)
-        await storePrivateKey(this.privateKeyRestore)
+        await storage.setPassword(this.password)
+        await storage.setPublicKey(publicKey)
+        await storage.setPrivateKey(this.privateKeyRestore)
 
         this.$router.push('overview')
       }
@@ -430,15 +428,15 @@ export default {
       this.xeAddress = publicKeyToChecksumAddress(this.keyPair.getPublic(true, 'hex').toString())
     },
     async loadWallet () {
-      const walletAddress = await getWalletAddress()
+      const walletAddress = await storage.getAddress()
       this.wallet = await fetchWallet(walletAddress)
     },
     async save () {
       const publicKey = this.keyPair.getPublic(true, 'hex').toString()
       const privateKey = this.keyPair.getPrivate('hex').toString()
 
-      await storePublicKey(publicKey)
-      await storePrivateKey(privateKey)
+      await storage.setPublicKey(publicKey)
+      await storage.setPrivateKey(privateKey)
     },
     hideModal(slotProps, property) {
       slotProps.close()

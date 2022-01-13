@@ -22,6 +22,7 @@
   "dependencies": {
     "@edge/bridge-utils": "^1.6.1",
     "@edge/wallet-utils": "^0.14.0",
+    "@edge/xe-utils": "^1.1.2",
     "@heroicons/vue": "^1.0.1",
     "@metamask/detect-provider": "^1.2.0",
     "@metamask/onboarding": "^1.0.0",

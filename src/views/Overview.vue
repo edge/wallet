@@ -37,7 +37,7 @@ import NewsPromo from "@/components/NewsPromo"
 import RecentBlocks from "@/components/RecentBlocks"
 
 import { fetchTransactions, fetchWallet, formatTransactions } from '../utils/api'
-import { getWalletAddress } from '../utils/wallet'
+import { getAddress } from '../utils/storage/v0'
 
 const dayjs = require('dayjs')
 const relativeTime = require('dayjs/plugin/relativeTime')
@@ -78,7 +78,7 @@ export default {
       this.pollData()
     },
     async updateWallet() {
-      const walletAddress = await getWalletAddress()
+      const walletAddress = await getAddress()
       if (!walletAddress) this.$router.push(`/`)
 
       const wallet = await fetchWallet(walletAddress)

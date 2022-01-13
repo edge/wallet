@@ -1213,8 +1213,9 @@ import { ethers } from 'ethers'
 import { required, minLength, numeric } from '@vuelidate/validators'
 import useVuelidate from "@vuelidate/core"
 
-import { fetchPendingTransactions, fetchGasRates, fetchExchangeRates, getNonce, sendTransaction } from '../utils/api'
-import { createTransaction, createWithdrawalTransaction, validatePassword } from '../utils/wallet'
+import { fetchPendingTransactions, fetchGasRates, fetchExchangeRates } from '../utils/api'
+import * as storage from '../utils/storage/v0'
+import * as xe from '@edge/xe-utils'
 
 const { utils } = ethers
 
@@ -1531,16 +1532,26 @@ export default {
       }
     },
     async confirmTransaction() {
-      const isValidPassword = await validatePassword(this.password)
+      const isValidPassword = await storage.comparePassword(this.password)
 
       if (isValidPassword) {
         // Create tx object.
         const amount = this.amount.replace(/,/g, '')
-        const nonce = await getNonce(this.wallet.address)
-        const tx = await createTransaction(amount, { memo: this.sendMemo }, nonce, this.xeAddress)
+        const address = await storage.getAddress()
+        const { nonce } = await xe.wallet.infoWithNextNonce(process.env.VUE_APP_BLOCKCHAIN_API_URL, address)
+        const tx = xe.tx.sign({
+          timestamp: Date.now(),
+          sender: address,
+          recipient: this.xeAddress,
+          amount: toMicroXe(amount),
+          data: {
+            memo: this.sendMemo
+          },
+          nonce
+        }, await storage.getPrivateKey())
 
         // Send transaction to the blockchain.
-        const txResponse = await sendTransaction(tx)
+        const txResponse = await xe.tx.createTransactions(process.env.VUE_APP_BLOCKCHAIN_API_URL, [tx])
 
         const { metadata, results } = txResponse
 
@@ -1585,20 +1596,29 @@ export default {
       }
     },
     async confirmWithdraw() {
-      const isValidPassword = await validatePassword(this.password)
+      const isValidPassword = await storage.comparePassword(this.password)
 
       if (isValidPassword) {
         // Create tx object.
-        const nonce = await getNonce(this.wallet.address)
-        const tx = await createWithdrawalTransaction(this.amount, {
-          destination: this.ethAddress,
-          fee: toMicroXe(this.fee),
-          memo: 'XE Withdrawal',
-          token: 'EDGE'
-        }, nonce)
+        const amount = this.amount.replace(/,/g, '')
+        const address = await storage.getAddress()
+        const { nonce } = await xe.wallet.infoWithNextNonce(process.env.VUE_APP_BLOCKCHAIN_API_URL, address)
+        const tx = xe.tx.sign({
+          timestamp: Date.now(),
+          sender: address,
+          recipient: process.env.VUE_APP_BRIDGE_WALLET_ADDRESS,
+          amount: toMicroXe(amount),
+          data: {
+            destination: this.ethAddress,
+            fee: toMicroXe(this.fee),
+            memo: 'XE Withdrawal',
+            token: 'EDGE'
+          },
+          nonce
+        }, await storage.getPrivateKey())
 
         // Send transaction to the blockchain.
-        const txResponse = await sendTransaction(tx)
+        const txResponse = await xe.tx.createTransactions(process.env.VUE_APP_BLOCKCHAIN_API_URL, [tx])
 
         // TODO: Handle accepted/rejected status.
         const { metadata, results } = txResponse
@@ -1642,23 +1662,32 @@ export default {
       this.showSellStep2 = true
     },
     async confirmSell() {
-      const isValidPassword = await validatePassword(this.password)
+      const isValidPassword = await storage.comparePassword(this.password)
 
       if (isValidPassword) {
         this.stopExchangeRateUpdateCycle()
         this.stopGasRatesUpdateCycle()
 
         // Create tx object.
-        const nonce = await getNonce(this.wallet.address)
-        const tx = await createWithdrawalTransaction(this.amount, {
-          destination: this.ethAddress,
-          ref: this.exchangeRate.ref,
-          memo: 'XE Sale',
-          token: 'USDC'
-        }, nonce)
+        const amount = this.amount.replace(/,/g, '')
+        const address = await storage.getAddress()
+        const { nonce } = await xe.wallet.infoWithNextNonce(process.env.VUE_APP_BLOCKCHAIN_API_URL, address)
+        const tx = xe.tx.sign({
+          timestamp: Date.now(),
+          sender: address,
+          recipient: process.env.VUE_APP_BRIDGE_WALLET_ADDRESS,
+          amount: toMicroXe(amount),
+          data: {
+            destination: this.ethAddress,
+            ref: this.exchangeRate.ref,
+            memo: 'XE Sale',
+            token: 'USDC'
+          },
+          nonce
+        }, await storage.getPrivateKey())
 
         // Send transaction to the blockchain.
-        const txResponse = await sendTransaction(tx)
+        const txResponse = await xe.tx.createTransactions(process.env.VUE_APP_BLOCKCHAIN_API_URL, [tx])
 
         // TODO: Handle accepted/rejected status.
         const { metadata, results } = txResponse

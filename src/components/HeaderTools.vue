@@ -55,7 +55,6 @@
   import {ArchiveIcon, ChevronDownIcon, CogIcon, KeyIcon, LockOpenIcon, LogoutIcon} from "@heroicons/vue/outline"
   import {SupportIcon} from "@heroicons/vue/solid"
   import vClickOutside from 'click-outside-vue3'
-  import { clear } from '../utils/db'
   import ForgetWallet from './Modal/ForgetWallet.vue'
 
   export default {

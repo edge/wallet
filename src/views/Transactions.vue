@@ -17,7 +17,7 @@ import TransactionsTable from "@/components/TransactionsTable"
 import Pagination from "@/components/Pagination"
 
 import { fetchTransactions, fetchWallet } from '../utils/api'
-import { getWalletAddress } from '../utils/wallet'
+import * as storage from '../utils/storage/v0'
 
 export default {
   name: 'Transactions',
@@ -52,7 +52,7 @@ export default {
       this.pollData()
     },
     async updateWallet() {
-      const walletAddress = await getWalletAddress()
+      const walletAddress = await storage.getAddress()
       if (!walletAddress) this.$router.push(`/`)
 
       const wallet = await fetchWallet(walletAddress)

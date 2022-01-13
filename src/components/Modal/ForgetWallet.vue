@@ -25,7 +25,7 @@
 
 <script>
 import Modal from '../Modal.vue'
-import { clear } from '../../utils/db'
+import { empty } from '../../utils/storage/v0'
 
 export default {
   name: "ForgetWallet",
@@ -37,7 +37,7 @@ export default {
       this.close()
     },
     async forgetWallet() {
-      await clear()
+      await empty()
       this.close()
       this.afterForget()
     }
