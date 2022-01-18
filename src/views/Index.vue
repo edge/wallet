@@ -77,6 +77,7 @@ export default {
   },
   computed: mapState({
     address: 'address',
+    locked: 'locked',
     hasWallet: state => state.address.length > 0
   }),
   methods: {
@@ -104,7 +105,8 @@ export default {
     }
   },
   mounted() {
-    this.resetAuto()
+    if (!this.locked) this.$router.replace('overview')
+    else this.resetAuto()
   }
 }
 </script>

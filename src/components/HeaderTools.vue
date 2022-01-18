@@ -25,12 +25,12 @@
       </router-link>
     </li> -->
     <li class="header-tools__item">
-      <router-link to="/" class="header-tools__link">
+      <div class="header-tools__link" @click="lock">
         <span class="header-tools__icon">
           <LockOpenIcon/>
         </span>
         Lock Wallet
-      </router-link>
+      </div>
     </li>
     <!-- <li class="header-tools__item">
       <router-link to="/" class="header-tools__link header-tools__link--red">
@@ -78,6 +78,10 @@
       forget() {
         this.showTools = false
         this.openForgetWalletModal()
+      },
+      lock() {
+        this.$store.commit('lock')
+        this.$router.push('/')
       }
     },
     props: {

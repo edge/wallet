@@ -14,10 +14,8 @@ const WALLET_REFRESH_INTERVAL = 30 * 1000
 
 const init = async () => {
   const store = await Store.init()
-  if (store.state.address) store.dispatch('refresh')
-  setInterval(() => store.dispatch('refresh'), WALLET_REFRESH_INTERVAL)
 
-  createApp(App, { store })
+  const app = createApp(App, { store })
     .use(router)
     .use(store)
     .mixin(titleMixin)
@@ -29,6 +27,10 @@ const init = async () => {
       }
     })
     .mount('#app')
+
+  if (store.state.locked) app.$router.replace('/')
+  if (store.state.address) store.dispatch('refresh')
+  setInterval(() => store.dispatch('backgroundRefresh', app.$router), WALLET_REFRESH_INTERVAL)
 }
 
 init()

@@ -1,6 +1,9 @@
 import * as v0 from './v0'
 import * as v1 from './v1'
-import { clear, createStore, get, set } from 'idb-keyval'
+import { clear, createStore, del, get, set } from 'idb-keyval'
+
+const KEY_UNLOCK_EXPIRY = 'unlock-expiry'
+const KEY_WALLET_VERSION = 'wallet-version'
 
 const invalidVersion = version => new Error(`Invalid storage version ${version}`)
 
@@ -39,6 +42,13 @@ const comparePassword = (password, version) => {
  * @returns Promise<void>
  */
 const empty = () => clear(store)
+
+/**
+ * Force unlock expiry.
+ *
+ * @returns Promise<void>
+ */
+const expire = () => del(KEY_UNLOCK_EXPIRY, store)
 
 /**
  * Get wallet address from storage.
@@ -111,6 +121,17 @@ const getPublicKey = version => {
 }
 
 /**
+ * Get unlock expiry time from storage.
+ *
+ * @returns Promise<Date>
+ */
+const getUnlockExpiry = async () => {
+  const dateStr = await get(KEY_UNLOCK_EXPIRY, store)
+  if (!dateStr) return new Date(0)
+  return new Date(dateStr)
+}
+
+/**
  * Get wallet version from storage.
  *
  * If no version is found, this function returns 0.
@@ -118,10 +139,18 @@ const getPublicKey = version => {
  * @returns Promise<number>
  */
 const getWalletVersion = async () => {
-  const v = await get('wallet-version', store)
+  const v = await get(KEY_WALLET_VERSION, store)
   if (v !== undefined) return v
   return 0
 }
+
+/**
+ * Set unlock expiry time in storage.
+ *
+ * @param {Date} date Expiry date & time
+ * @returns Promise<void>
+ */
+const setUnlockExpiry = (date) => set(KEY_UNLOCK_EXPIRY, date.toString(), store)
 
 /**
  * Save wallet in storage.
@@ -160,16 +189,19 @@ const setWallet = async (keypair, password, version) => {
  * @param {number} v Wallet version
  * @returns Promise<void>
  */
-const setWalletVersion = v => set('wallet-version', v, store)
+const setWalletVersion = v => set(KEY_WALLET_VERSION, v, store)
 
 export {
   comparePassword,
   empty,
+  expire,
   getAddress,
   getHighestWalletVersion,
   getPrivateKey,
   getPublicKey,
+  getUnlockExpiry,
   getWalletVersion,
+  setUnlockExpiry,
   setWallet,
   setWalletVersion,
   store,
