@@ -38,6 +38,13 @@ export const caseInsensitive = (cmp, msg = '') => {
   return validate
 }
 
+
+const ethAddressRegexp = /^0x[a-fA-F0-9]{40}$/
+/**
+ * Ethereum address validator.
+ */
+export const ethAddress = helpers.withMessage('Invalid Ethereum address.', v => ethAddressRegexp.test(v))
+
 /**
  * Password validation rules.
  */
@@ -46,4 +53,13 @@ export const password = [
   helpers.withMessage('Must be 10 characters or more.', minLength(10)),
 ]
 
+/**
+ * Required value validator with a more attractive error message.
+ */
 export const required = helpers.withMessage('A value is required.', _required)
+
+const xeAddressRegexp = /^xe_[a-fA-F0-9]{40}$/
+/**
+ * XE address validator.
+ */
+export const xeAddress = helpers.withMessage('Invalid XE address.', v => xeAddressRegexp.test(v))

@@ -49,7 +49,7 @@
       <div class="px-24 pt-32 pb-40 border-t border-gray-700 border-opacity-30">
         <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
           <button class="w-full button button--outline-success" @click="cancel">Cancel</button>
-          <button class="w-full button button--success" @click="readySend">Send</button>
+          <button class="w-full button button--success" :disabled="!canReadySend" @click="readySend">Send</button>
         </div>
       </div>
     </template>
@@ -72,15 +72,15 @@
         </div>
         <div class="mb-16 form-group">
           <label>Amount</label>
-          <Amount :value="amount" currency="XE"/>
+          <Amount :value="amountParsed" currency="XE"/>
         </div>
         <div class="mb-16 form-group">
           <label>Fee</label>
-          <Amount value="0.00" currency="XE"/>
+          <Amount :value="0" currency="XE"/>
         </div>
         <div class="mb-0 form-group">
           <label>Recipient receives</label>
-          <Amount :value="amount" currency="XE"/>
+          <Amount :value="amountParsed" currency="XE"/>
         </div>
       </div>
     </template>
@@ -108,7 +108,7 @@
         </form>
         <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
           <button class="w-full button button--outline-success" @click="() => goto(1)">Back</button>
-          <button class="w-full button button--success" @click="send">Confirm transaction</button>
+          <button class="w-full button button--success" :disabled="!canSend" @click="send">Confirm transaction</button>
         </div>
         <div class="form-group__error" v-if="submitError">{{ submitError }}</div>
       </div>
@@ -138,7 +138,7 @@
         </div>
         <div class="mb-16 form-group">
           <label>Fee</label>
-          <Amount value="0.00" currency="XE"/>
+          <Amount :value="0" currency="XE"/>
         </div>
         <div class="mb-0 form-group">
           <label>Recipient receives</label>
@@ -165,13 +165,12 @@ import Logo from '../Logo'
 import Modal from '../Modal'
 import Radio from '../Radio'
 import { mapState } from 'vuex'
+import { parseAmount } from '../../utils/form'
 import useVuelidate from '@vuelidate/core'
-import { helpers, maxLength, required } from '@vuelidate/validators'
+import { helpers, maxLength } from '@vuelidate/validators'
 import { toMicroXe, xeStringFromMicroXe } from '@edge/wallet-utils'
 
-const amountRegexp = /^[0-9,.]+$/
 const memoRegexp = /^[a-zA-Z0-9\s-]+$/
-const xeAddressRegexp = /^xe_[a-fA-F0-9]{40}$/
 
 export default {
   name: 'SendModal',
@@ -202,11 +201,11 @@ export default {
   validations() {
     return {
       recipient: [
-        required,
-        helpers.withMessage('Invalid XE wallet address.', v => xeAddressRegexp.test(v))
+        validation.required,
+        validation.xeAddress
       ],
       amount: [
-        required,
+        validation.required,
         ...validation.amount(this.balance, this.amountParsed)
       ],
       memo: [
@@ -223,11 +222,16 @@ export default {
     }
   },
   computed: {
+    ...mapState(['address', 'balance', 'nextNonce']),
     amountParsed() {
-      if (!amountRegexp.test(this.amount)) return NaN
-      return parseFloat(this.amount.replace(/,/g, ''))
+      return parseAmount(this.amount)
     },
-    ...mapState(['address', 'balance', 'nextNonce'])
+    canReadySend() {
+      return ![this.v$.recipient, this.v$.memo, this.v$.amount].map(f => f.$invalid).includes(true)
+    },
+    canSend() {
+      return !this.v$.$invalid
+    }
   },
   methods: {
     cancel() {

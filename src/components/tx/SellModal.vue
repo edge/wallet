@@ -71,9 +71,7 @@
             <div class="left md:text-right md:w-1/2 md:flex md:pr-18 md:relative">
               <div class="md:flex-grow">
                 <span class="block mb-3 text-gray">You are selling</span>
-                <span class="block text-xl text-white price">
-                  {{ formatCurrency(amount) }} XE
-                </span>
+                <span class="block text-xl text-white price">{{formatCurrency(amountParsed)}} XE</span>
               </div>
               <span class="flex justify-center p-12 pl-12 mx-auto mt-12 border border-gray-700 rounded-full md:ml-20 md:mt-0 md:flex-shrink-0 w-52 h-52 border-opacity-30 align-center">
                 <img src="/assets/logo.svg" alt="XE" class="flex-shrink-0">
@@ -89,16 +87,14 @@
               </span>
               <div class="md:flex-grow">
                 <span class="block mb-3 text-gray">You will receive</span>
-                <span class="block text-xl text-white price">
-                  {{ formatCurrency(usdcAmount) }} USDC
-                </span>
+                <span class="block text-xl text-white price">{{formatCurrency(usdcAmount)}} USDC</span>
               </div>
             </div>
           </div>
         </div>
         <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
           <button class="w-full button button--outline-success" @click="cancel">Cancel</button>
-          <button class="w-full button button--success" @click="readySell">Sell</button>
+          <button class="w-full button button--success" :disabled="!canReadySell" @click="readySell">Sell</button>
         </div>
       </div>
     </template>
@@ -113,7 +109,7 @@
       <div class="pb-12 min-h-300">
         <div class="form-group mb-14">
           <label>You are selling</label>
-          <Amount :value="amount" currency="XE"/>
+          <Amount :value="amountParsed" currency="XE"/>
         </div>
 
         <div class="form-group mb-14">
@@ -207,7 +203,7 @@
 
         <div class="grid grid-cols-1 gap-24 pt-12 md:grid-cols-2">
           <button class="w-full button button--outline-success" @click="() => goto(1)">Back</button>
-          <button class="w-full button button--success" :disabled="!withinSaleLimit" @click="sell">Confirm</button>
+          <button class="w-full button button--success" :disabled="!canSell" @click="sell">Confirm</button>
         </div>
       </div>
     </template>
@@ -279,15 +275,14 @@ import * as xe from '@edge/xe-utils'
 import Amount from '../Amount'
 import Modal from '../Modal'
 import Tooltip from '../Tooltip'
-import { fetchExchangeRates, fetchGasRates } from '../../utils/api'
+import { helpers } from '@vuelidate/validators'
 import { mapState } from 'vuex'
+import { parseAmount } from '../../utils/form'
 import useVuelidate from '@vuelidate/core'
 import { ArrowDownIcon, ArrowRightIcon, InformationCircleIcon, LockOpenIcon } from '@heroicons/vue/outline'
-import { helpers, required } from '@vuelidate/validators'
+import { fetchExchangeRates, fetchGasRates } from '../../utils/api'
 import { toMicroXe, xeStringFromMicroXe } from '@edge/wallet-utils'
 
-const amountRegexp = /^[0-9,.]+$/
-const ethAddressRegexp = /^0x[a-fA-F0-9]{40}$/
 const exchangeRateUpdateInterval = 15 * 1000
 const gasRatesUpdateInterval = 15 * 1000
 
@@ -329,11 +324,11 @@ export default {
   validations() {
     return {
       recipient: [
-        required,
-        helpers.withMessage('Invalid Ethereum wallet address.', v => ethAddressRegexp.test(v))
+        validation.required,
+        validation.ethAddress
       ],
       amount: [
-        required,
+        validation.required,
         ...validation.amount(this.balance, this.amountParsed),
         helpers.withParams(
           { saleLimit: this.saleLimit },
@@ -349,9 +344,13 @@ export default {
   computed: {
     ...mapState(['address', 'balance', 'nextNonce']),
     amountParsed() {
-      if (this.amount.length === 0) return 0
-      if (!amountRegexp.test(this.amount)) return NaN
-      return parseFloat(this.amount.replace(/,/g, ''))
+      return parseAmount(this.amount)
+    },
+    canReadySell() {
+      return ![this.v$.recipient, this.v$.amount].map(f => f.$invalid).includes(true) && this.usdcAmount > 0
+    },
+    canSell() {
+      return !this.v$.$invalid && withinSaleLimit && this.usdcAmount > 0
     },
     saleLimit() {
       return this.exchangeRate.limit || 0
@@ -484,32 +483,6 @@ export default {
     }
   }
 }
-
-/*
-async sufficientFundsXe(value) {
-  if (!this.v$.amount || !value) return true
-  if (!value && !this.wallet.balance) return true
-
-  // Determine amount of XE currently in pending txs.
-  const pendingTxs = await fetchPendingTransactions(this.wallet.address)
-
-  const pendingTxTotal = pendingTxs.reduce((accumulator, currentItem) => {
-    if (currentItem.sender === this.wallet.address) {
-      accumulator += Number(currentItem.amount)
-    }
-
-    return accumulator
-  }, 0)
-
-  const enteredAmount = parseFloat(value)
-
-  // Check amount is less than the wallet balance.
-  return enteredAmount <= parseFloat(this.fromMicroXe(this.wallet.balance) - this.fromMicroXe(pendingTxTotal))
-},
-*/
-
-// <div class="mt-5 form-group__error" style="color: #CD5F4E" v-if="v$.amount.withinSaleLimit.$invalid">The exchange maximum is {{exchangeRate.limit}} XE</div>
-
 </script>
 
 <style scoped>

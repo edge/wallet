@@ -82,9 +82,7 @@
             <div class="left md:text-right md:w-1/2 md:flex md:pr-18 md:relative">
               <div class="md:flex-grow">
                 <span class="block mb-3 text-gray">You are depositing</span>
-                <span class="block text-lg text-white price">
-                  {{ formatCurrency(amountParsed) }} EDGE
-                </span>
+                <span class="block text-lg text-white price">{{formatCurrency(amountParsed)}} EDGE</span>
               </div>
               <span
                   class="flex justify-center p-12 mx-auto mt-12 border border-gray-700 rounded-full md:ml-20 md:mt-0 md:flex-shrink-0 w-52 h-52 border-opacity-30 align-center">
@@ -102,9 +100,7 @@
               </span>
               <div class="md:flex-grow">
                 <span class="block mb-3 text-gray">You should receive</span>
-                <span class="block text-lg text-white price">
-                  {{ formatCurrency(xeAmount) }} XE
-                </span>
+                <span class="block text-lg text-white price">{{formatCurrency(xeAmount)}} XE</span>
               </div>
             </div>
           </div>
@@ -147,7 +143,7 @@
       <div class="pb-14 min-h-410">
         <div class="form-group mb-14">
           <label>You are depositing</label>
-          <Amount :value="amount" currency="EDGE" />
+          <Amount :value="amount" currency="EDGE"/>
         </div>
 
         <div class="form-group mb-14">
@@ -172,14 +168,14 @@
           <span class="mb-4 label tracking text-base3">Estimated cost</span>
           <div class="relative input-wrap">
             <span class="block w-full overflow-hidden text-white input-filled overflow-ellipsis text-caption">
-              <Amount :value="fee" currency="XE" />
+              <Amount :value="fee" currency="XE"/>
             </span>
           </div>
         </div>
 
         <div class="form-group mb-14">
           <label>You should receive</label>
-          <Amount :value="xeAmount" currency="XE" />
+          <Amount :value="xeAmount" currency="XE"/>
         </div>
 
         <div class="form-group mb-14">
@@ -206,6 +202,7 @@
 
 <script>
 import * as storage from '../../utils/storage'
+import * as validation from '../../utils/validation'
 import Amount from '../Amount'
 import MetaMaskOnboarding from '@metamask/onboarding'
 import Modal from '../Modal'
@@ -215,12 +212,12 @@ import bridge from '@edge/bridge-utils'
 import { detect } from 'detect-browser'
 import { ethers } from 'ethers'
 import { fetchGasRates } from '../../utils/api'
+import { helpers } from '@vuelidate/validators'
 import { mapState } from 'vuex'
+import { parseAmount } from '../../utils/form'
 import useVuelidate from '@vuelidate/core'
 import { ArrowDownIcon, ArrowRightIcon, InformationCircleIcon } from '@heroicons/vue/outline'
-import { helpers, required } from '@vuelidate/validators'
 
-const amountRegexp = /^[0-9,.]+$/
 const gasRatesUpdateInterval = 15 * 1000
 
 const etherscanUrls = {
@@ -282,7 +279,7 @@ export default {
   validations() {
     return {
       amount: [
-        required,
+        validation.required,
         helpers.withParams({ p: this.amountParsed }, helpers.withMessage('Invalid amount.', () => !isNaN(this.amountParsed) && this.amountParsed > 0)),
         helpers.withParams({ b: this.edgeBalance, p: this.amountParsed }, helpers.withMessage('Insufficient funds.', () => {
           if (isNaN(this.amountParsed)) return false
@@ -300,13 +297,11 @@ export default {
       return !!(ethereum && ethereum.isMetaMask)
     },
     amountParsed() {
-      if (this.amount.length === 0) return 0
-      if (!amountRegexp.test(this.amount)) return NaN
-      return parseFloat(this.amount.replace(/,/g, ''))
+      return parseAmount(this.amount)
     },
     canDeposit() {
       if (this.depositInProgress || this.v$.$invalid) return false
-      return true
+      return this.xeAmount > 0
     },
     minimumFee() {
       return this.gasRates.minimumHandlingFee || NaN

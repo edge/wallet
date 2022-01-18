@@ -77,9 +77,7 @@
             <div class="left md:text-right md:w-1/2 md:flex md:pr-18 md:relative">
               <div class="md:flex-grow">
                 <span class="block mb-3 text-gray">You are withdrawing</span>
-                <span class="block text-xl text-white price">
-                  {{ formatCurrency(amountParsed) }} XE
-                </span>
+                <span class="block text-xl text-white price">{{formatCurrency(amountParsed)}} XE</span>
               </div>
               <span class="flex justify-center p-12 pl-12 mx-auto mt-12 border border-gray-700 rounded-full md:ml-20 md:mt-0 md:flex-shrink-0 w-52 h-52 border-opacity-30 align-center">
                 <img src="/assets/logo.svg" alt="XE Wallet" class="flex-shrink-0">
@@ -95,16 +93,14 @@
               </span>
               <div class="md:flex-grow">
                 <span class="block mb-3 text-gray">You should receive</span>
-                <span class="block text-xl text-white price">
-                  {{ formatCurrency(edgeAmount) }} EDGE
-                </span>
+                <span class="block text-xl text-white price">{{formatCurrency(edgeAmount)}} EDGE</span>
               </div>
             </div>
           </div>
         </div>
         <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
           <button class="w-full button button--outline-success" @click="cancel">Cancel</button>
-          <button class="w-full button button--success" @click="readyWithdraw">Withdraw</button>
+          <button class="w-full button button--success" :disabled="!canReadyWithdraw" @click="readyWithdraw">Withdraw</button>
         </div>
       </div>
     </template>
@@ -196,7 +192,7 @@
 
         <div class="grid grid-cols-1 gap-24 pt-12 md:grid-cols-2">
           <button class="w-full button button--outline-success" @click="() => goto(1)">Back</button>
-          <button class="w-full button button--success" @click="withdraw">Confirm</button>
+          <button class="w-full button button--success" :disabled="!canWithdraw" @click="withdraw">Confirm</button>
         </div>
       </div>
     </template>
@@ -265,14 +261,13 @@ import Modal from '../Modal'
 import Radio from '../Radio'
 import Tooltip from '../Tooltip'
 import { fetchGasRates } from '../../utils/api'
+import { helpers } from '@vuelidate/validators'
 import { mapState } from 'vuex'
+import { parseAmount } from '../../utils/form'
 import useVuelidate from '@vuelidate/core'
 import { ArrowDownIcon, ArrowRightIcon, InformationCircleIcon, LockOpenIcon } from '@heroicons/vue/outline'
-import { helpers, required } from '@vuelidate/validators'
 import { toMicroXe, xeStringFromMicroXe } from '@edge/wallet-utils'
 
-const amountRegexp = /^[0-9,.]+$/
-const ethAddressRegexp = /^0x[a-fA-F0-9]{40}$/
 const gasRatesUpdateInterval = 15 * 1000
 
 export default {
@@ -311,11 +306,11 @@ export default {
   validations() {
     return {
       recipient: [
-        required,
-        helpers.withMessage('Invalid Ethereum wallet address.', v => ethAddressRegexp.test(v))
+        validation.required,
+        validation.ethAddress
       ],
       amount: [
-        required,
+        validation.required,
         ...validation.amount(this.balance, this.amountParsed)
       ],
       password: [
@@ -327,9 +322,13 @@ export default {
   computed: {
     ...mapState(['address', 'balance', 'nextNonce']),
     amountParsed() {
-      if (this.amount.length === 0) return 0
-      if (!amountRegexp.test(this.amount)) return NaN
-      return parseFloat(this.amount.replace(/,/g, ''))
+      return parseAmount(this.amount)
+    },
+    canReadyWithdraw() {
+      return ![this.v$.recipient, this.v$.amount].map(f => f.$invalid).includes(true) && this.edgeAmount > 0
+    },
+    canWithdraw() {
+      return !this.v$.$invalid && this.edgeAmount > 0
     },
     gasRate() {
       /*
@@ -364,7 +363,7 @@ export default {
       return this.minimumFee + this.gasRate
     },
     edgeAmount() {
-      return Math.max(0, this.amount - this.fee)
+      return Math.max(0, this.amountParsed - this.fee)
     }
   },
   watch: {
