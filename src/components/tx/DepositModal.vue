@@ -204,6 +204,7 @@
 import * as storage from '../../utils/storage'
 import * as validation from '../../utils/validation'
 import Amount from '../Amount'
+import { InformationCircleIcon } from '@heroicons/vue/solid'
 import MetaMaskOnboarding from '@metamask/onboarding'
 import Modal from '../Modal'
 import Radio from '../Radio'
@@ -216,7 +217,7 @@ import { helpers } from '@vuelidate/validators'
 import { mapState } from 'vuex'
 import { parseAmount } from '../../utils/form'
 import useVuelidate from '@vuelidate/core'
-import { ArrowDownIcon, ArrowRightIcon, InformationCircleIcon } from '@heroicons/vue/outline'
+import { ArrowDownIcon, ArrowRightIcon } from '@heroicons/vue/outline'
 
 const gasRatesUpdateInterval = 15 * 1000
 
