@@ -1,12 +1,7 @@
-import { publicKeyToChecksumAddress } from '@edge/wallet-utils'
+import * as xe from '@edge/xe-utils'
 import { store } from './'
 import { get, getMany, set, setMany } from 'idb-keyval'
 import { compare, createSalt, decrypt, encrypt, hash } from '../crypto'
-
-// v0 (legacy) wallet storage uses a fixed secret key.
-// This value is preserved solely to support automatic migration to >=v1.
-// It should not be used anywhere else.
-const secretKey = 'vOVH6sdmpNWjRRIqCc7rdxs01lwHzfr3'
 
 const comparePassword = async password => {
   const [hash, salt] = await getMany(['h', 's'], store)
@@ -15,25 +10,29 @@ const comparePassword = async password => {
 
 const getAddress = async () => {
   const publicKey = await getPublicKey()
-  return publicKeyToChecksumAddress(publicKey)
+  if (publicKey !== undefined) return xe.wallet.deriveAddress(publicKey)
+  return undefined
 }
 
-const getPrivateKey = async () => {
+const getPrivateKey = async (password) => {
   const enc = await get('p2', store)
   if (enc === undefined) return undefined
-  return decrypt(enc, secretKey)
+  return decrypt(enc, resize(password))
 }
 
-const getPublicKey = async () => {
-  const enc = await get('p1', store)
-  if (enc === undefined) return undefined
-  return decrypt(enc, secretKey)
-}
+const getPublicKey = () => get('p1', store)
 
 const hasWallet = async () => {
   const encPublicKey = await get('p1', store)
   return encPublicKey !== undefined
 }
+
+/**
+ * Resize password to minimum length for cipher.
+ *
+ * @param {string} password Password to resize
+ */
+const resize = password => password.length >= 32 ? password : password.padEnd(32, '0')
 
 const setPassword = password => {
   const s = createSalt()
@@ -44,8 +43,8 @@ const setPassword = password => {
   ], store)
 }
 
-const setPrivateKey = key => set('p2', encrypt(key, secretKey), store)
-const setPublicKey = key => set('p1', encrypt(key, secretKey), store)
+const setPrivateKey = (key, password) => set('p2', encrypt(key, resize(password)), store)
+const setPublicKey = key => set('p1', key, store)
 
 export {
   comparePassword,

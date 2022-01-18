@@ -17,7 +17,7 @@
   import Menu from "@/components/Menu";
   import HeaderTools from "@/components/HeaderTools";
   import BurgerButton from "@/components/BurgerButton";
-  import ForgetWallet from '@/components/Modal/ForgetWallet';
+  import ForgetWallet from '@/components/index/ForgetModal';
 
   export default {
     name: "Header",

@@ -1,36 +1,23 @@
 <template>
   <div>
-    <slot name="opener" :open="showModal"></slot>
     <transition name="modal-fade">
-      <div v-if="isShow" class="modal-backdrop">
+      <div v-if="visible" class="modal-backdrop">
         <div class="modal-outer">
-
-          <div
-            class="inline-block w-full py-10 overflow-hidden align-bottom sm:py-30 sm:align-middle"
-            :style="{ maxWidth: width ? `${width}px` : '36rem' }"
-          >
-            <div
-              v-click-outside="closeHandler ? closeHandler : onClickOutside"
-              class="modal"
-            >
+          <div class="inline-block w-full py-10 overflow-hidden align-bottom sm:py-30 sm:align-middle" :style="getStyle()">
+            <div v-click-outside="onClickOutside" class="modal">
               <header class="modal-header">
                 <slot name="header"></slot>
-                <button
-                    type="button"
-                    class="btn-close"
-                    @click="closeHandler ? closeHandler() : closeModal()"
-                    v-if="withCloseButton"
-                >
-                  <XIcon />
+                <button v-if="showCloseButton" type="button" class="btn-close" @click="close">
+                  <XIcon/>
                 </button>
               </header>
 
               <section class="modal-body">
-                <slot name="body" :close="closeModal" :open="showModal"></slot>
+                <slot name="body"></slot>
               </section>
 
               <footer class="modal-footer">
-                <slot name="footer" :close="closeModal" :open="showModal"></slot>
+                <slot name="footer"></slot>
               </footer>
             </div>
           </div>
@@ -38,7 +25,6 @@
       </div>
     </transition>
   </div>
-
 </template>
 
 <script>
@@ -46,31 +32,28 @@
   import { XIcon } from '@heroicons/vue/solid';
   export default {
     name: 'Modal',
-    props: ['disallowClickOutside', 'withCloseButton', 'opened', 'closeHandler', 'width'],
+    props: {
+      close: Function,
+      preventClickOutside: Boolean,
+      showCloseButton: Boolean,
+      visible: Boolean,
+      width: Number,
+    },
     directives: {
       clickOutside: vClickOutside.directive
     },
     components: {
       XIcon
     },
-    data: function () {
-      return {
-        isShow: !!this.opened
-      }
-    },
     methods: {
-      onClickOutside() {
-        if (disallowClickOutside) {
-
-        } else {
-          this.closeModal()
+      getStyle() {
+        return {
+          maxWidth: this.width ? `${this.width}px` : '36rem'
         }
       },
-      showModal() {
-        this.isShow = true
-      },
-      closeModal() {
-        this.isShow = false
+      onClickOutside() {
+        if (this.preventClickOutside) return
+        if (this.close) this.close()
       }
     }
   }

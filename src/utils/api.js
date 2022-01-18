@@ -111,10 +111,6 @@ const fetchTransactions = async (address, options = {}) => {
     })
 }
 
-const fetchWallet = address => {
-  return fetchData(`${BLOCKCHAIN_API_URL}/wallet/${address}`)
-}
-
 const formatTransactions = (address, data, pending) => {
   const transactions = []
 
@@ -167,6 +163,5 @@ export {
   fetchGasRates,
   fetchExchangeRates,
   fetchTransactions,
-  fetchWallet,
   formatTransactions,
 }
