@@ -15,7 +15,7 @@ import { helpers, minLength, required as _required } from '@vuelidate/validators
  * @returns ValidationRuleWithParams[]
  */
 export const amount = (b, p) => [
-  helpers.withParams({ p }, helpers.withMessage('Invalid amount.', () => !isNaN(p))),
+  helpers.withParams({ p }, helpers.withMessage('Invalid amount.', () => !isNaN(p) && p > 0)),
   helpers.withParams({ b, p }, helpers.withMessage('Insufficient funds.', () => {
     if (isNaN(p)) return false
     return p <= (b / 1e6)

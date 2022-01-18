@@ -54,7 +54,7 @@
               class="placeholder-white placeholder-opacity-100"
             />
             <span class="absolute right-0 text-xl curren top-23">EDGE</span>
-            <div class="mt-5 form-group__error" style="color: #CD5F4E" v-for="error of v$.amount.$errors" :key="error.$uid">{{error.$message}}</div>
+            <div class="mt-5 form-group__error input-error" style="color: #CD5F4E" v-for="error of v$.amount.$errors" :key="error.$uid">{{error.$message}}</div>
           </div>
         </div>
         <div class="flex flex-wrap justify-end pt-12 radio-list">
@@ -283,7 +283,7 @@ export default {
     return {
       amount: [
         required,
-        helpers.withParams({ p: this.amountParsed }, helpers.withMessage('Invalid amount.', () => !isNaN(this.amountParsed))),
+        helpers.withParams({ p: this.amountParsed }, helpers.withMessage('Invalid amount.', () => !isNaN(this.amountParsed) && this.amountParsed > 0)),
         helpers.withParams({ b: this.edgeBalance, p: this.amountParsed }, helpers.withMessage('Insufficient funds.', () => {
           if (isNaN(this.amountParsed)) return false
           return this.amountParsed <= this.edgeBalance

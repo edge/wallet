@@ -69,7 +69,7 @@
                 v-model="v$.password.$model"
               />
             </div>
-            <div class="form-group__error" v-for="error of v$.password.$errors" :key="error.$uid">{{error.$message}}</div>
+            <div class="form-group__error input-error" v-for="error of v$.password.$errors" :key="error.$uid">{{error.$message}}</div>
           </div>
           <div class="form-group" :class="{'form-group__error': v$.confirmPhrase.$error}">
             <label for="confirm-phrase">Please type '<span style="text-transform: none">{{phrase}}</span>'</label>
@@ -80,7 +80,7 @@
               id="confirm-phrase"
               v-model="v$.confirmPhrase.$model"
             />
-            <div class="form-group__error" v-for="error of v$.confirmPhrase.$errors" :key="error.$uid">{{error.$message}}</div>
+            <div class="form-group__error input-error" v-for="error of v$.confirmPhrase.$errors" :key="error.$uid">{{error.$message}}</div>
           </div>
         </form>
         <div class="grid grid-cols-1 gap-24 md:grid-cols-2">

@@ -15,7 +15,7 @@
               </span>
               <input type="password" placeholder="Your private key" id="key" v-model="v$.privateKey.$model"/>
             </div>
-            <div class="form-group__error" v-for="error of v$.privateKey.$errors" :key="error.$uid">{{error.$message}}</div>
+            <div class="form-group__error input-error" v-for="error of v$.privateKey.$errors" :key="error.$uid">{{error.$message}}</div>
           </div>
 
           <div class="form-group" :class="{'form-group__error': v$.password.$error || v$.repeatPassword.$error}">
@@ -32,7 +32,7 @@
                 v-model="v$.password.$model"
               />
             </div>
-            <div class="form-group__error" v-for="error of v$.password.$errors" :key="error.$uid">{{error.$message}}</div>
+            <div class="form-group__error input-error" v-for="error of v$.password.$errors" :key="error.$uid">{{error.$message}}</div>
 
             <label for="repeat-password" class="mt-10">REPEAT PASSWORD</label>
             <div class="relative input-wrap">
@@ -48,7 +48,7 @@
                 v-model="v$.repeatPassword.$model"
               />
             </div>
-            <div class="form-group__error" v-for="error of v$.repeatPassword.$errors" :key="error.$uid">{{error.$message}}</div>
+            <div class="form-group__error input-error" v-for="error of v$.repeatPassword.$errors" :key="error.$uid">{{error.$message}}</div>
           </div>
 
         </form>

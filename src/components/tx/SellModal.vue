@@ -22,7 +22,7 @@
             maxlength="43"
             v-model="v$.recipient.$model"
           />
-          <div class="form-group__error" v-for="error of v$.recipient.$errors" :key="error.$uid">{{error.$message}}</div>
+          <div class="form-group__error input-error" v-for="error of v$.recipient.$errors" :key="error.$uid">{{error.$message}}</div>
         </div>
 
         <div
@@ -38,7 +38,7 @@
               class="placeholder-white placeholder-opacity-100"
             />
             <span class="absolute right-0 text-xl curren top-23">XE</span>
-            <div class="mt-5 form-group__error" style="color: #CD5F4E" v-for="error of v$.amount.$errors" :key="error.$uid">{{error.$message}}</div>
+            <div class="mt-5 form-group__error input-error" style="color: #CD5F4E" v-for="error of v$.amount.$errors" :key="error.$uid">{{error.$message}}</div>
           </div>
         </div>
 
@@ -190,7 +190,7 @@
                 @keypress="sellOnEnter"
               />
             </div>
-            <div class="form-group__error" v-for="error of v$.password.$errors" :key="error.$uid">{{error.$message}}</div>
+            <div class="form-group__error input-error" v-for="error of v$.password.$errors" :key="error.$uid">{{error.$message}}</div>
           </form>
         </div>
 
@@ -206,7 +206,7 @@
         </div>
 
         <div class="grid grid-cols-1 gap-24 pt-12 md:grid-cols-2">
-          <button class="w-full button button--outline-success" @click="cancel">Back</button>
+          <button class="w-full button button--outline-success" @click="() => goto(1)">Back</button>
           <button class="w-full button button--success" :disabled="!withinSaleLimit" @click="sell">Confirm</button>
         </div>
       </div>

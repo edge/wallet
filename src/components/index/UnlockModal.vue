@@ -26,7 +26,7 @@
                 v-model="v$.password.$model"
               />
             </div>
-            <div class="form-group__error" v-for="error of v$.password.$errors" :key="error.$uid">{{error.$message}}</div>
+            <div class="form-group__error input-error" v-for="error of v$.password.$errors" :key="error.$uid">{{error.$message}}</div>
           </div>
         </form>
       </div>

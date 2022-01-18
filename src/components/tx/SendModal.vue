@@ -15,12 +15,12 @@
             type="text"
             v-model="v$.recipient.$model"
           />
-          <div class="form-group__error" v-for="error of v$.recipient.$errors" :key="error.$uid">{{error.$message}}</div>
+          <div class="form-group__error input-error" v-for="error of v$.recipient.$errors" :key="error.$uid">{{error.$message}}</div>
         </div>
         <div class="form-group" :class="{'form-group__error': v$.memo.$error}">
           <label for="memo" class="label">Memo (optional)</label>
           <input type="text" placeholder="Enter a memo" id="memo" v-model="v$.memo.$model"/>
-          <div class="form-group__error" v-for="error of v$.memo.$errors" :key="error.$uid">{{error.$message}}</div>
+          <div class="form-group__error input-error" v-for="error of v$.memo.$errors" :key="error.$uid">{{error.$message}}</div>
         </div>
         <div
           class="lg-input-group"
@@ -36,7 +36,7 @@
               class="placeholder-white placeholder-opacity-100"
             />
             <span class="absolute right-0 text-xl currentColor top-23">XE</span>
-            <div class="mt-5 form-group__error" style="color: #CD5F4E" v-for="error of v$.amount.$errors" :key="error.$uid">{{error.$message}}</div>
+            <div class="mt-5 form-group__error input-error" style="color: #CD5F4E" v-for="error of v$.amount.$errors" :key="error.$uid">{{error.$message}}</div>
           </div>
         </div>
         <div class="flex flex-wrap pt-12 radio-list">
@@ -103,7 +103,7 @@
                 v-model="v$.password.$model"
               />
             </div>
-            <div class="form-group__error" v-for="error of v$.password.$errors" :key="error.$uid">{{error.$message}}</div>
+            <div class="form-group__error input-error" v-for="error of v$.password.$errors" :key="error.$uid">{{error.$message}}</div>
           </div>
         </form>
         <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
