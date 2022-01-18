@@ -52,10 +52,10 @@
             </Tooltip>
           </label>
           <div class="flex flex-wrap mt-12 -mx-6 radio-list">
-            <Radio name="fee" :selected="speed === 'slow'" @click="() => setSpeed('slow')" id="slow" :label="gasRates.slow + ' XE'" :big="true" extraName="Slow"/>
-            <Radio name="fee" :selected="speed === 'average'" @click="() => setSpeed('average')" id="average" :label="gasRates.average + ' XE'" :big="true" extraName="Average"/>
-            <Radio name="fee" :selected="speed === 'fast'" @click="() => setSpeed('fast')" id="fast" :label="gasRates.fast + ' XE'" :big="true" extraName="Fast"/>
-            <Radio name="fee" :selected="speed === 'fastest'" @click="() => setSpeed('fastest')" id="fastest" :label="gasRates.fastest + ' XE'" :big="true" extraName="Fastest"/>
+            <Radio name="fee" :selected="speed === 'slow'" @click="() => setSpeed('slow')" id="slow" :label="(gasRates.slow || '...') + ' XE'" :big="true" extraName="Slow"/>
+            <Radio name="fee" :selected="speed === 'average'" @click="() => setSpeed('average')" id="average" :label="(gasRates.average || '...') + ' XE'" :big="true" extraName="Average"/>
+            <Radio name="fee" :selected="speed === 'fast'" @click="() => setSpeed('fast')" id="fast" :label="(gasRates.fast || '...') + ' XE'" :big="true" extraName="Fast"/>
+            <Radio name="fee" :selected="speed === 'fastest'" @click="() => setSpeed('fastest')" id="fastest" :label="(gasRates.fastest || '...') + ' XE'" :big="true" extraName="Fastest"/>
           </div>
         </div>
         <div class="mt-32 mb-8 form-group">

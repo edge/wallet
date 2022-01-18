@@ -164,13 +164,13 @@ import { LockOpenIcon } from '@heroicons/vue/outline'
 import Logo from '../Logo'
 import Modal from '../Modal'
 import Radio from '../Radio'
+import { helpers } from '@vuelidate/validators'
 import { mapState } from 'vuex'
 import { parseAmount } from '../../utils/form'
 import useVuelidate from '@vuelidate/core'
-import { helpers, maxLength } from '@vuelidate/validators'
 import { toMicroXe, xeStringFromMicroXe } from '@edge/wallet-utils'
 
-const memoRegexp = /^[a-zA-Z0-9\s-]+$/
+const memoRegexp = /^[a-zA-Z0-9\s-]{0,32}$/
 
 export default {
   name: 'SendModal',
@@ -209,7 +209,6 @@ export default {
         ...validation.amount(this.balance, this.amountParsed)
       ],
       memo: [
-        maxLength(32),
         helpers.withMessage(
           'Memo is limited to 32 characters and should include only upper and lowercase letters, numbers, hyphens and spaces.',
           v => v.length === 0 || memoRegexp.test(v)
@@ -295,7 +294,7 @@ export default {
       this.send()
     },
     setAmountAsPercent(pct) {
-      this.amount = (parseFloat(this.fromMicroXe(this.wallet.balance)) * (pct / 100)).toFixed(6)
+      this.amount = ((this.balance / 1e6) * (pct / 100)).toFixed(6)
     }
   },
   setup() {
