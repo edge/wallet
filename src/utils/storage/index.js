@@ -1,3 +1,7 @@
+// Copyright (C) 2022 Edge Network Technologies Limited
+// Use of this source code is governed by a GNU GPL-style license
+// that can be found in the LICENSE.md file. All rights reserved.
+
 import * as v0 from './v0'
 import * as v1 from './v1'
 import { clear, createStore, del, get, set } from 'idb-keyval'
@@ -204,5 +208,5 @@ export {
   setUnlockExpiry,
   setWallet,
   setWalletVersion,
-  store,
+  store
 }
