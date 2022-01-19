@@ -256,7 +256,7 @@ export default {
     return {
       step: 1,
 
-      connectError: null,
+      connectError: '',
       connectStatus: '',
 
       edgeBalance: 0,
@@ -295,7 +295,7 @@ export default {
       return ['brave', 'chrome', 'edge', 'firefox'].includes(detect().name)
     },
     hasMetaMask() {
-      return !!(ethereum && ethereum.isMetaMask)
+      return !!(window.ethereum && window.ethereum.isMetaMask)
     },
     amountParsed() {
       return parseAmount(this.amount)
@@ -353,20 +353,20 @@ export default {
       this.connectStatus = 'connecting'
       try {
         // https://eips.ethereum.org/EIPS/eip-1102#eth_requestaccounts
-        const accounts = await ethereum.request({ method: 'eth_requestAccounts' })
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
 
         // https://eips.ethereum.org/EIPS/eip-695
-        this.setChainId(await ethereum.request({ method: "eth_chainId" }))
-        ethereum.on('chainChanged', this.setChainId)
+        this.setChainId(await window.ethereum.request({ method: "eth_chainId" }))
+        window.ethereum.on('chainChanged', this.setChainId)
 
         this.setAccounts(accounts)
-        ethereum.on('accountsChanged', this.setAccounts)
+        window.ethereum.on('accountsChanged', this.setAccounts)
 
         this.goto(2)
       }
       catch (err) {
         console.error(err)
-        this.connectError = err.toString()
+        this.connectError = err.message
         return
       }
     },
@@ -422,10 +422,11 @@ export default {
       const [ethAddress] = accounts
       if (ethAddress === undefined) {
         this.connectError = 'No Ethereum address found.'
+        return
       }
       if (ethAddress === this.ethAddress) return
 
-      const provider = new ethers.providers.Web3Provider(ethereum)
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
 
       this.ethAddress = ethAddress
       this.contract = new ethers.Contract(
