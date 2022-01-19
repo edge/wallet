@@ -351,7 +351,7 @@ export default {
       return ![this.v$.recipient, this.v$.amount].map(f => f.$invalid).includes(true) && this.usdcAmount > 0
     },
     canSell() {
-      return !this.v$.$invalid && withinSaleLimit && this.usdcAmount > 0
+      return !this.v$.$invalid && this.withinSaleLimit && this.usdcAmount > 0
     },
     saleLimit() {
       return this.exchangeRate.limit || 0
