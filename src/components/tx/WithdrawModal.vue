@@ -307,7 +307,7 @@ export default {
       speed: 'average',
       password: '',
 
-      submitError: null,
+      submitError: '',
       completedTx: null,
       edgeAmountOnSubmit: 0,
     }
@@ -408,13 +408,16 @@ export default {
     },
     reset() {
       this.goto(1)
+
       this.recipient = ''
       this.amount = ''
       this.speed = 'average'
       this.password = ''
-      this.submitError = null
+
+      this.submitError = ''
       this.completedTx = null
       this.edgeAmountOnSubmit = 0
+
       this.v$.$reset()
     },
     setSpeed(speed) {
@@ -443,13 +446,19 @@ export default {
       }, privateKey)
 
       // submit tx to blockchain
-      const { metadata, results } = await xe.tx.createTransactions(process.env.VUE_APP_BLOCKCHAIN_API_URL, [tx])
-      if (metadata.accepted) {
-        this.completedTx = results[0]
-        this.edgeAmountOnSubmit = this.edgeAmount
-        this.goto(3)
-      } else {
-        this.submitError = results[0].reason
+      try {
+        const { metadata, results } = await xe.tx.createTransactions(process.env.VUE_APP_BLOCKCHAIN_API_URL, [tx])
+        if (metadata.accepted) {
+          this.completedTx = results[0]
+          this.edgeAmountOnSubmit = this.edgeAmount
+          this.goto(3)
+        } else {
+          this.submitError = results[0].reason
+        }
+      }
+      catch (err) {
+        console.error(err)
+        this.submitError = err.message
       }
     },
     withdrawOnEnter(event) {

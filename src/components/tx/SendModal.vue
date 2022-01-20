@@ -114,7 +114,16 @@
           <button class="w-full button button--outline-success" @click="() => goto(1)">Back</button>
           <button class="w-full button button--success" :disabled="!canSend" @click="send">Confirm transaction</button>
         </div>
-        <div class="form-group__error" v-if="submitError">{{ submitError }}</div>
+        <div
+          v-if="submitError"
+          class="px-20 py-20 my-20 text-center bg-black border border-gray-700 rounded convert-info md:text-left border-opacity-30 border-color"
+        >
+          <div class="">
+            <span class="flex w-full overflow-hidden text-white overflow-ellipsis">
+              {{ submitError }}
+            </span>
+          </div>
+        </div>
       </div>
     </template>
   </Modal>
@@ -264,11 +273,15 @@ export default {
     },
     reset() {
       this.goto(1)
+
       this.recipient = ''
       this.amount = ''
       this.memo = ''
       this.password = ''
+
       this.completedTx = null
+      this.submitError = ''
+
       this.v$.$reset()
     },
     async send() {
@@ -288,13 +301,19 @@ export default {
       }, privateKey)
 
       // submit tx to blockchain
-      const { metadata, results } = await xe.tx.createTransactions(process.env.VUE_APP_BLOCKCHAIN_API_URL, [tx])
-      if (metadata.accepted) {
-        this.completedTx = results[0]
-        this.goto(3)
+      try {
+        const { metadata, results } = await xe.tx.createTransactions(process.env.VUE_APP_BLOCKCHAIN_API_URL, [tx])
+        if (metadata.accepted) {
+          this.completedTx = results[0]
+          this.goto(3)
+        }
+        else {
+          this.submitError = results[0].reason
+        }
       }
-      else {
-        this.submitError = results[0].reason
+      catch (err) {
+        console.error(err)
+        this.submitError = err.message
       }
     },
     sendOnEnter(event) {

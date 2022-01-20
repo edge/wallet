@@ -7,13 +7,22 @@
     </template>
     <template v-slot:body>
       <div class="pb-15">
+        <div
+          v-if="connectError"
+          class="px-20 py-20 mb-32 text-center bg-black border border-gray-700 rounded convert-info md:text-left border-opacity-30 border-color"
+        >
+          <div class="">
+            <span class="flex w-full overflow-hidden text-white overflow-ellipsis">
+              {{ connectError }}
+            </span>
+          </div>
+        </div>
         <button v-if="connectStatus === 'onboarding'" class="w-full mb-16 button button--success" :disabled="true">Waiting for MetaMask...</button>
         <button v-else-if="connectStatus === 'connecting'" class="w-full mb-16 button button--success" :disabled="true">Connecting to MetaMask...</button>
         <button v-else-if="hasMetaMask" class="w-full mb-16 button button--success" @click="connect">Connect MetaMask</button>
         <button v-else-if="browserSupport" class="w-full mb-16 button button--success" @click="connect">Connect MetaMask</button>
         <button v-else class="w-full mb-16 button button--success" disabled>Click to install MetaMask</button>
         <button class="w-full button button--outline-success" @click="cancel">Cancel</button>
-        <div v-if="connectError">{{ connectError }}</div>
       </div>
     </template>
   </Modal>
@@ -374,6 +383,7 @@ export default {
       catch (err) {
         console.error(err)
         this.connectError = err.message
+        this.connectStatus = ''
         return
       }
     },
@@ -412,12 +422,18 @@ export default {
       onboarding.startOnboarding()
     },
     reset() {
-      this.amount = ''
+      this.goto(1)
+
+      this.connectError = ''
       this.connectStatus = ''
-      this.depositError = ''
-      this.depositInProgress = false
-      this.depositMessage = ''
+
+      this.amount = ''
+
       this.completedTx = null
+      this.depositInProgress = false
+      this.depositError = ''
+      this.depositMessage = ''
+
       this.v$.$reset()
     },
     setAccounts(accounts) {
@@ -425,6 +441,7 @@ export default {
       const [ethAddress] = accounts
       if (ethAddress === undefined) {
         this.connectError = 'No Ethereum address found.'
+        this.connectStatus = ''
         return
       }
       if (ethAddress === this.ethAddress) return
@@ -447,6 +464,7 @@ export default {
       // https://eips.ethereum.org/EIPS/eip-1193#chain-changes
       if (networks[chainId] === undefined) {
         this.connectError = 'Unsupported network. Please use Ethereum Mainnet or Rinkeby Test Network.'
+        this.connectStatus = ''
         return
       }
       // TODO ensure correct network selected for mainnet/testnet

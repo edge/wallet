@@ -324,7 +324,7 @@ export default {
       password: '',
 
       completedTx: null,
-      submitError: null,
+      submitError: '',
       feeOnSubmit: 0,
       exchangeRateOnSubmit: 0,
       usdcAmountOnSubmit: 0,
@@ -426,16 +426,19 @@ export default {
       this.goto(2)
     },
     reset() {
+      this.goto(1)
+
       this.recipient = ''
       this.amount = ''
       this.password = ''
-      this.submitError = null
+
       this.completedTx = null
+      this.submitError = ''
       this.feeOnSubmit = 0
       this.exchangeRateOnSubmit = 0
       this.usdcAmountOnSubmit = 0
+
       this.v$.$reset()
-      this.goto(1)
     },
     async sell() {
       if (!await this.v$.$validate()) return
@@ -457,15 +460,21 @@ export default {
       }, privateKey)
 
       // submit tx to blockchain
-      const { metadata, results } = await xe.tx.createTransactions(process.env.VUE_APP_BLOCKCHAIN_API_URL, [tx])
-      if (metadata.accepted) {
-        this.completedTx = results[0]
-        this.feeOnSubmit = this.fee
-        this.exchangeRateOnSubmit = this.exchangeRate.rate
-        this.usdcAmountOnSubmit = this.usdcAmount
-        this.goto(3)
-      } else {
-        this.submitError = results[0].reason
+      try {
+        const { metadata, results } = await xe.tx.createTransactions(process.env.VUE_APP_BLOCKCHAIN_API_URL, [tx])
+        if (metadata.accepted) {
+          this.completedTx = results[0]
+          this.feeOnSubmit = this.fee
+          this.exchangeRateOnSubmit = this.exchangeRate.rate
+          this.usdcAmountOnSubmit = this.usdcAmount
+          this.goto(3)
+        } else {
+          this.submitError = results[0].reason
+        }
+      }
+      catch (err) {
+        console.error(err)
+        this.submitError = err.message
       }
     },
     sellOnEnter(event) {
