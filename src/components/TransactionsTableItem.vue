@@ -18,14 +18,14 @@
     <span v-if="item.type.toLowerCase() === 'received'">
       <span class="icon icon-green mr-4"><ArrowDownIcon /></span>
       <a :href="`${explorerUrl}/wallet/${item.sender}`" target="_blank" rel="noreferrer">
-        <span class="hidden lg:pl-10 monospace md:inline-block">{{ item.sender }}</span>
+        <span class="hidden monospace md:inline-block">{{ item.sender }}</span>
       </a>
       <span class="monospace md:hidden">{{ sliceString(item.sender, 26) }}</span>
     </span>
     <span v-if="item.type.toLowerCase() === 'sent'">
       <span class="icon icon-red mr-4"><ArrowUpIcon /></span>
       <a :href="`${explorerUrl}/wallet/${item.recipient}`" target="_blank" rel="noreferrer">
-        <span class="hidden lg:pl-10 monospace md:inline-block">{{ item.recipient }}</span>
+        <span class="hidden monospace md:inline-block">{{ item.recipient }}</span>
       </a>
       <span class="monospace md:hidden">{{ sliceString(item.recipient, 26) }}</span>
     </span>
