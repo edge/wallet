@@ -1,29 +1,25 @@
 <template>
-  <div>
-    <transition name="modal-fade">
-      <div v-if="visible" class="modal-backdrop">
-        <div class="modal-outer">
-          <div class="inline-block w-full py-10 overflow-hidden align-bottom sm:py-30 sm:align-middle" :style="getStyle()">
-            <div v-click-outside="onClickOutside" class="modal">
-              <header class="modal-header">
-                <slot name="header"></slot>
-                <button v-if="showCloseButton" type="button" class="btn-close" @click="close">
-                  <XIcon/>
-                </button>
-              </header>
+  <div v-if="visible" class="modal-backdrop">
+    <div class="modal-outer">
+      <div class="inline-block w-full py-10 overflow-hidden align-bottom sm:py-30 sm:align-middle" :style="getStyle()">
+        <div v-click-outside="onClickOutside" class="modal">
+          <header class="modal-header">
+            <slot name="header"></slot>
+            <button v-if="showCloseButton" type="button" class="btn-close" @click="close">
+              <XIcon/>
+            </button>
+          </header>
 
-              <section class="modal-body">
-                <slot name="body"></slot>
-              </section>
+          <section class="modal-body">
+            <slot name="body"></slot>
+          </section>
 
-              <footer class="modal-footer">
-                <slot name="footer"></slot>
-              </footer>
-            </div>
-          </div>
+          <footer class="modal-footer">
+            <slot name="footer"></slot>
+          </footer>
         </div>
       </div>
-    </transition>
+    </div>
   </div>
 </template>
 
