@@ -236,6 +236,14 @@ export default {
       return !this.v$.$invalid
     }
   },
+  watch: {
+    visible(v, oldv) {
+      if (v === oldv) return
+      if (v) {
+        this.$store.dispatch('refresh')
+      }
+    }
+  },
   methods: {
     cancel() {
       this.reset()

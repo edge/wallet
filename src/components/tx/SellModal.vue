@@ -394,6 +394,7 @@ export default {
     visible(v, oldv) {
       if (v === oldv) return
       if (v) {
+        this.$store.dispatch('refresh')
         this.updateExchangeRate()
         this.updateGasRates()
         this.iExchangeRate = setInterval(this.updateExchangeRate, exchangeRateUpdateInterval)

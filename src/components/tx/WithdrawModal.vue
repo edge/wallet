@@ -379,6 +379,7 @@ export default {
     visible(v, oldv) {
       if (v === oldv) return
       if (v) {
+        this.$store.dispatch('refresh')
         this.updateGasRates()
         this.iGasRates = setInterval(this.updateGasRates, gasRatesUpdateInterval)
       } else {
