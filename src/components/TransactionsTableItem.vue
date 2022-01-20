@@ -1,13 +1,9 @@
 <template>
   <td data-title="Tx Hash:" :title="item.hash">
-    <a v-if="!item.pending" :href="`${explorerUrl}/transaction/${item.hash}`" target="_blank" rel="noreferrer">
+    <a :href="`${explorerUrl}/transaction/${item.hash}`" target="_blank" rel="noreferrer">
       <span class="hidden monospace md:inline-block">{{ sliceString(item.hash, 8) }}</span>
       <span class="monospace md:hidden">{{ sliceString(item.hash, 26) }}</span>
     </a>
-    <div v-else>
-      <span class="hidden monospace md:inline-block">{{ sliceString(item.hash, 8) }}</span>
-      <span class="monospace md:hidden">{{ sliceString(item.hash, 26) }}</span>
-    </div>
   </td>
   <td data-title="Date:">
     <span class="monospace md:font-sans">
