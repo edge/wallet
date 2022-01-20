@@ -17,11 +17,10 @@
             </span>
           </div>
         </div>
-        <button v-if="connectStatus === 'onboarding'" class="w-full mb-16 button button--success" :disabled="true">Waiting for MetaMask...</button>
-        <button v-else-if="connectStatus === 'connecting'" class="w-full mb-16 button button--success" :disabled="true">Connecting to MetaMask...</button>
+        <button v-if="connectStatus === 'onboarding'" class="w-full mb-16 button button--success" disabled>Waiting for MetaMask...</button>
+        <button v-else-if="connectStatus === 'connecting'" class="w-full mb-16 button button--success" disabled>Connecting to MetaMask...</button>
         <button v-else-if="hasMetaMask" class="w-full mb-16 button button--success" @click="connect">Connect MetaMask</button>
-        <button v-else-if="browserSupport" class="w-full mb-16 button button--success" @click="connect">Connect MetaMask</button>
-        <button v-else class="w-full mb-16 button button--success" disabled>Click to install MetaMask</button>
+        <button class="w-full mb-16 button button--success" @click="installMetaMask" :disabled="!browserSupport">Click to install MetaMask</button>
         <button class="w-full button button--outline-success" @click="cancel">Cancel</button>
       </div>
     </template>
@@ -311,7 +310,7 @@ export default {
       return ['brave', 'chrome', 'edge', 'firefox'].includes(detect().name)
     },
     hasMetaMask() {
-      return !!(window.ethereum && window.ethereum.isMetaMask)
+      return window.ethereum !== undefined && window.ethereum.isMetaMask
     },
     amountParsed() {
       return parseAmount(this.amount)
