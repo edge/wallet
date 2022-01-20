@@ -10,7 +10,7 @@
 
         <div class="account-panel__balance">
           <h3 class="mb-1">Balance</h3>
-          <h1>{{ formatMicroXe(balance) }}<sub>XE</sub></h1>
+          <h1><Amount :value="balance / 1e6" currency="XE" sub/></h1>
         </div>
       </div>
 
@@ -44,18 +44,19 @@
 </template>
 
 <script>
+import Amount from './Amount.vue'
 import DepositModal from './tx/DepositModal'
 import ExchangeModal from './tx/ExchangeModal'
 import SendModal from './tx/SendModal'
 import SellModal from './tx/SellModal'
 import WithdrawModal from './tx/WithdrawModal'
 import { mapState } from 'vuex'
-import { xeStringFromMicroXe } from '@edge/wallet-utils'
 import { ArrowUpIcon, SwitchHorizontalIcon } from '@heroicons/vue/outline'
 
 export default {
   name: 'AccountPanel',
   components: {
+    Amount,
     ArrowUpIcon,
     DepositModal,
     ExchangeModal,
@@ -71,9 +72,6 @@ export default {
     }
   },
   methods: {
-    formatMicroXe(mxe) {
-      return xeStringFromMicroXe(mxe || 0, true)
-    },
     reset() {
       this.modal = ''
     },
@@ -123,7 +121,7 @@ export default {
   @apply text-white mb-0 font-normal;
 }
 
-.account-panel__balance h1 sub {
+.account-panel__balance h1 >>> sub {
   @apply bottom-0 text-half;
 }
 

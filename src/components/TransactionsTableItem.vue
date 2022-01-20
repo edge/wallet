@@ -44,12 +44,13 @@
   </td>
   <td data-title="Amount:">
     <span class="monospace lg:font-sans">
-      <span v-if="item.type.toLowerCase() === 'sent'">-</span>{{ formatAmount(item.amount) }}</span>
+      <span v-if="item.type.toLowerCase() === 'sent'">-</span><Amount :value="parseFloat(item.amount)"/>
+    </span>
   </td>
 </template>
 
 <script>
-const { formatXe } = require('@edge/wallet-utils')
+import Amount from './Amount'
 import { ArrowDownIcon, ArrowUpIcon, CheckCircleIcon, ClockIcon } from "@heroicons/vue/outline"
 
 export default {
@@ -69,9 +70,6 @@ export default {
     sliceString(string, symbols) {
       return string.length > symbols ? `${string.slice(0, symbols)}…` : string;
     },
-    formatAmount(amount) {
-      return formatXe(amount, true)
-    },
     formatStatus(item) {
       if (item.pending) return 'Pending'
       if (item.confirmations === 1) return `${item.confirmations} confirmation`
@@ -86,6 +84,7 @@ export default {
     }
   },
   components: {
+    Amount,
     ArrowDownIcon,
     ArrowUpIcon,
     CheckCircleIcon,

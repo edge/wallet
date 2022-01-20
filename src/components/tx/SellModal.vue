@@ -2,7 +2,9 @@
   <Modal :close="cancel" :visible="visible && step === 1">
     <template v-slot:header>
       <h2 class="mb-8">Sell XE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
-      <span class="sub-heading d-block text-gray text-caption">{{ formatMicroXe(balance) }} XE available</span>
+      <span class="sub-heading d-block text-gray text-caption">
+        <Amount :value="balance / 1e6" currency="XE"/> available
+      </span>
     </template>
     <template v-slot:body>
       <div class="pb-4 min-h-410">
@@ -49,7 +51,7 @@
               <InformationCircleIcon class="hidden md:block button__icon w-15" />
             </Tooltip>
           </label>
-          <Amount :value="exchangeRate.rate" currency="USDC"/>
+          <Amount :value="exchangeRate.rate" currency="USDC" sub/>
         </div>
 
         <div class="mt-32 mb-8 form-group">
@@ -59,7 +61,7 @@
               <InformationCircleIcon class="hidden md:block button__icon w-15" />
             </Tooltip>
           </label>
-          <Amount :value="fee" currency="XE"/>
+          <Amount :value="fee" currency="XE" short sub/>
         </div>
       </div>
     </template>
@@ -71,7 +73,9 @@
             <div class="left md:text-right md:w-1/2 md:flex md:pr-18 md:relative">
               <div class="md:flex-grow">
                 <span class="block mb-3 text-gray">You are selling</span>
-                <span class="block text-xl text-white price">{{formatCurrency(amountParsed)}} XE</span>
+                <span class="block text-xl text-white price">
+                  <Amount :value="amountParsed" currency="XE" short/>
+                </span>
               </div>
               <span class="flex justify-center p-12 pl-12 mx-auto mt-12 border border-gray-700 rounded-full md:ml-20 md:mt-0 md:flex-shrink-0 w-52 h-52 border-opacity-30 align-center">
                 <img src="/assets/logo.svg" alt="XE" class="flex-shrink-0">
@@ -87,7 +91,9 @@
               </span>
               <div class="md:flex-grow">
                 <span class="block mb-3 text-gray">You will receive</span>
-                <span class="block text-xl text-white price">{{formatCurrency(usdcAmount)}} USDC</span>
+                <span class="block text-xl text-white price">
+                  <Amount :value="usdcAmount" currency="USDC"/>
+                </span>
               </div>
             </div>
           </div>
@@ -103,13 +109,15 @@
   <Modal :close="cancel" :visible="visible && step === 2">
     <template v-slot:header>
       <h2 class="mb-8">Sell XE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
-      <span class="sub-heading d-block text-gray text-caption">{{ formatMicroXe(balance) }} XE available</span>
+      <span class="sub-heading d-block text-gray text-caption">
+        <Amount :value="balance / 1e6" currency="XE"/> available
+      </span>
     </template>
     <template v-slot:body>
       <div class="pb-12 min-h-300">
         <div class="form-group mb-14">
           <label>You are selling</label>
-          <Amount :value="amountParsed" currency="XE"/>
+          <Amount :value="amountParsed" currency="XE" short sub/>
         </div>
 
         <div class="form-group mb-14">
@@ -137,7 +145,7 @@
               <InformationCircleIcon class="hidden md:block button__icon w-15" />
             </Tooltip>
           </label>
-          <Amount :value="fee" currency="XE"/>
+          <Amount :value="fee" currency="XE" short sub/>
         </div>
 
         <div class="form-group mb-14">
@@ -147,14 +155,14 @@
               <InformationCircleIcon class="hidden md:block button__icon w-15" />
             </Tooltip>
           </label>
-          <Amount :value="exchangeRate.rate" currency="USDC"/>
+          <Amount :value="exchangeRate.rate" currency="USDC" sub/>
         </div>
 
         <div class="form-group mb-14">
           <label class="flex items-center space-x-3">
             You will receive
           </label>
-          <Amount :value="usdcAmount" currency="USDC"/>
+          <Amount :value="usdcAmount" currency="USDC" sub/>
         </div>
       </div>
 
@@ -218,7 +226,7 @@
 
         <div class="form-group mb-14">
           <label>You are selling</label>
-          <Amount :value="completedTx.amount / 1e6" currency="XE"/>
+          <Amount :value="completedTx.amount / 1e6" currency="XE" short sub/>
         </div>
 
         <div class="form-group mb-14">
@@ -241,17 +249,17 @@
 
         <div class="form-group mb-14">
           <label>Transaction Fee</label>
-          <Amount :value="feeOnSubmit" currency="XE"/>
+          <Amount :value="feeOnSubmit" currency="XE" short sub/>
         </div>
 
         <div class="form-group mb-14">
           <label>Exchange Rate</label>
-          <Amount :value="exchangeRateOnSubmit" currency="USDC"/>
+          <Amount :value="exchangeRateOnSubmit" currency="USDC" sub/>
         </div>
 
         <div class="form-group mb-14">
           <label>You will receive</label>
-          <Amount :value="usdcAmountOnSubmit" currency="USDC"/>
+          <Amount :value="usdcAmountOnSubmit" currency="USDC" sub/>
         </div>
 
         <div class="flex items-center mt-24 leading-8 text-gray">
@@ -279,10 +287,10 @@ import Tooltip from '../Tooltip'
 import { helpers } from '@vuelidate/validators'
 import { mapState } from 'vuex'
 import { parseAmount } from '../../utils/form'
+import { toMicroXe } from '@edge/wallet-utils'
 import useVuelidate from '@vuelidate/core'
 import { ArrowDownIcon, ArrowRightIcon, LockOpenIcon } from '@heroicons/vue/outline'
 import { fetchExchangeRates, fetchGasRates } from '../../utils/api'
-import { toMicroXe, xeStringFromMicroXe } from '@edge/wallet-utils'
 
 const exchangeRateUpdateInterval = 15 * 1000
 const gasRatesUpdateInterval = 15 * 1000
@@ -406,13 +414,6 @@ export default {
     checkPassword(input) {
       return storage.comparePassword(input)
     },
-    formatCurrency(input) {
-      // TODO replace with <Amount/>
-      return Number(input).toLocaleString('en-US', { maximumFractionDigits: 6 })
-    },
-    formatMicroXe(mxe) {
-      return xeStringFromMicroXe(mxe || 0, true)
-    },
     goto(step) {
       this.step = step
     },
@@ -487,6 +488,22 @@ export default {
 </script>
 
 <style scoped>
+.sub-heading >>> .amount .currency {
+  @apply ml-5;
+}
+
+.convert-info >>> .amount .currency {
+  @apply ml-5;
+}
+
+.amount.sub {
+  @apply text-white text-3xl;
+}
+
+.amount.sub >>> .currency {
+  @apply text-half bottom-0 ml-2;
+}
+
 .testnet-header {
   color: #0ecc5f;
   padding-left: 10px;

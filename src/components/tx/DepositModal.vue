@@ -23,7 +23,9 @@
       <div class="flex justify-between">
         <div>
           <h2 class="mb-8">Deposit EDGE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
-          <span class="sub-heading d-block text-gray text-caption">{{ formatCurrency(edgeBalance) }} EDGE available</span>
+          <span class="sub-heading d-block text-gray text-caption">
+            <Amount :value="edgeBalance" currency="EDGE"/> available
+          </span>
         </div>
         <div>
           <div class="px-10 py-5 text-gray-400 border border-green-200 rounded-xl">{{ networkLabel }}</div>
@@ -69,7 +71,7 @@
               <InformationCircleIcon class="hidden md:block button__icon w-15" />
             </Tooltip>
           </label>
-          <Amount :value="fee" currency="XE"/>
+          <Amount :value="fee" currency="XE" short sub/>
         </div>
 
       </div>
@@ -83,7 +85,9 @@
             <div class="left md:text-right md:w-1/2 md:flex md:pr-18 md:relative">
               <div class="md:flex-grow">
                 <span class="block mb-3 text-gray">You are depositing</span>
-                <span class="block text-lg text-white price">{{formatCurrency(amountParsed)}} EDGE</span>
+                <span class="block text-lg text-white price">
+                  <Amount :value="amountParsed" currency="EDGE"/>
+                </span>
               </div>
               <span
                   class="flex justify-center p-12 mx-auto mt-12 border border-gray-700 rounded-full md:ml-20 md:mt-0 md:flex-shrink-0 w-52 h-52 border-opacity-30 align-center">
@@ -101,7 +105,9 @@
               </span>
               <div class="md:flex-grow">
                 <span class="block mb-3 text-gray">You should receive</span>
-                <span class="block text-lg text-white price">{{formatCurrency(xeAmount)}} XE</span>
+                <span class="block text-lg text-white price">
+                  <Amount :value="xeAmount" currency="XE" short/>
+                </span>
               </div>
             </div>
           </div>
@@ -144,7 +150,7 @@
       <div class="pb-14 min-h-410">
         <div class="form-group mb-14">
           <label>You are depositing</label>
-          <Amount :value="amount" currency="EDGE"/>
+          <Amount :value="amountParsed" currency="EDGE" sub/>
         </div>
 
         <div class="form-group mb-14">
@@ -169,14 +175,14 @@
           <span class="mb-4 label tracking text-base3">Estimated cost</span>
           <div class="relative input-wrap">
             <span class="block w-full overflow-hidden text-white input-filled overflow-ellipsis text-caption">
-              <Amount :value="fee" currency="XE"/>
+              <Amount :value="fee" currency="XE" short sub/>
             </span>
           </div>
         </div>
 
         <div class="form-group mb-14">
           <label>You should receive</label>
-          <Amount :value="xeAmount" currency="XE"/>
+          <Amount :value="xeAmount" currency="XE" short sub/>
         </div>
 
         <div class="form-group mb-14">
@@ -397,10 +403,6 @@ export default {
         }
       }
     },
-    formatCurrency(input) {
-      // TODO replace with <Amount/>
-      return Number(input).toLocaleString('en-US', { maximumFractionDigits: 6 })
-    },
     goto(step) {
       this.step = step
     },
@@ -470,6 +472,22 @@ export default {
 </script>
 
 <style scoped>
+.sub-heading >>> .amount .currency {
+  @apply ml-5;
+}
+
+.convert-info >>> .amount .currency {
+  @apply ml-5;
+}
+
+.amount.sub {
+  @apply text-white text-3xl;
+}
+
+.amount.sub >>> .currency {
+  @apply text-half bottom-0 ml-2;
+}
+
 .testnet-header {
   color: #0ecc5f;
   padding-left: 10px;

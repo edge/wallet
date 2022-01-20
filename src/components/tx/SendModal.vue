@@ -2,7 +2,9 @@
   <Modal :close="cancel" :visible="visible && step === 1">
     <template v-slot:header>
       <h2 class="mb-8">Send XE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
-      <span class="sub-heading d-block text-gray text-caption">{{ formatMicroXe(balance) }} XE available</span>
+      <span class="sub-heading d-block text-gray text-caption">
+        <Amount :value="balance / 1e6" currency="XE"/> available
+      </span>
     </template>
     <template v-slot:body>
       <div class="pb-14 min-h-410">
@@ -58,7 +60,9 @@
   <Modal :close="cancel" :visible="visible && step === 2">
     <template v-slot:header>
       <h2 class="mb-8">Send XE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
-      <span class="sub-heading d-block text-gray text-caption">{{ formatMicroXe(balance) }} XE available</span>
+      <span class="sub-heading d-block text-gray text-caption">
+        <Amount :value="balance / 1e6" currency="XE"/> available
+      </span>
     </template>
     <template v-slot:body>
       <div class="pb-14 min-h-410">
@@ -72,15 +76,15 @@
         </div>
         <div class="mb-16 form-group">
           <label>Amount</label>
-          <Amount :value="amountParsed" currency="XE"/>
+          <Amount :value="amountParsed" currency="XE" short sub/>
         </div>
         <div class="mb-16 form-group">
           <label>Fee</label>
-          <Amount :value="0" currency="XE"/>
+          <Amount :value="0" currency="XE" short sub/>
         </div>
         <div class="mb-0 form-group">
           <label>Recipient receives</label>
-          <Amount :value="amountParsed" currency="XE"/>
+          <Amount :value="amountParsed" currency="XE" short sub/>
         </div>
       </div>
     </template>
@@ -134,15 +138,15 @@
         </div>
         <div class="mb-16 form-group">
           <label>Amount</label>
-          <Amount :value="formatMicroXe(completedTx.amount)" currency="XE"/>
+          <Amount :value="completedTx.amount / 1e6" currency="XE" short sub/>
         </div>
         <div class="mb-16 form-group">
           <label>Fee</label>
-          <Amount :value="0" currency="XE"/>
+          <Amount :value="0" currency="XE" short sub/>
         </div>
         <div class="mb-0 form-group">
           <label>Recipient receives</label>
-          <Amount :value="formatMicroXe(completedTx.amount)" currency="XE"/>
+          <Amount :value="completedTx.amount / 1e6" currency="XE" short sub/>
         </div>
       </div>
     </template>
@@ -167,8 +171,8 @@ import Radio from '../Radio'
 import { helpers } from '@vuelidate/validators'
 import { mapState } from 'vuex'
 import { parseAmount } from '../../utils/form'
+import { toMicroXe } from '@edge/wallet-utils'
 import useVuelidate from '@vuelidate/core'
-import { toMicroXe, xeStringFromMicroXe } from '@edge/wallet-utils'
 
 const memoRegexp = /^[a-zA-Z0-9\s-]{0,32}$/
 
@@ -240,9 +244,6 @@ export default {
     checkPassword(input) {
       return storage.comparePassword(input)
     },
-    formatMicroXe(mxe) {
-      return xeStringFromMicroXe(mxe || 0, true)
-    },
     goto(step) {
       this.step = step
     },
@@ -306,6 +307,18 @@ export default {
 </script>
 
 <style scoped>
+.sub-heading >>> .amount .currency {
+  @apply ml-5;
+}
+
+.amount.sub {
+  @apply text-white text-3xl;
+}
+
+.amount.sub >>> .currency {
+  @apply text-half bottom-0 ml-2;
+}
+
 .testnet-header {
   color: #0ecc5f;
   padding-left: 10px;
