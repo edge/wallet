@@ -38,15 +38,6 @@ pipeline {
   agent any
   stages {
     //
-    // Notify the team
-    //
-    stage('Notify') {
-      steps {
-        slackSend channel: '#edge-deployments', color: 'good', message: "${env.JOB_NAME} (#${env.BUILD_NUMBER}) has started."
-      }
-    }
-
-    //
     // Deploy
     //
     stage('Deploy') {
@@ -80,17 +71,17 @@ pipeline {
   post {
     success {
       script {
-        slackSend channel: '#edge-deployments', color: 'good', message: "${env.JOB_NAME} (#${env.BUILD_NUMBER}) has been deployed to ${DEPLOY_TARGET}"
+        discordSend title: JOB_NAME, description: "${env.JOB_NAME} (#${env.BUILD_NUMBER}) has been deployed", result:"SUCCESS", webhookURL: DISCORD_DEPLOY_WEBHOOK
       }
     }
     failure {
       script {
-        slackSend channel: '#edge-deployments', color: 'danger', message: "${env.JOB_NAME} (#${env.BUILD_NUMBER}) failed to deploy."
+        discordSend title: JOB_NAME, description: "${env.JOB_NAME} (#${env.BUILD_NUMBER}) failed to deploy", result:"FAILURE", webhookURL: DISCORD_DEPLOY_WEBHOOK
       }
     }
     aborted {
       script {
-        slackSend channel: '#edge-deployments', color: 'warning', message: "${env.JOB_NAME} (#${env.BUILD_NUMBER}) was aborted."
+        discordSend title: JOB_NAME, description: "${env.JOB_NAME} (#${env.BUILD_NUMBER}) was aborted", result:"WARNING", webhookURL: DISCORD_DEPLOY_WEBHOOK
       }
     }
   }
