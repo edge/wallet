@@ -50,10 +50,15 @@ const ethAddressRegexp = /^0x[a-fA-F0-9]{40}$/
 export const ethAddress = helpers.withMessage('Invalid Ethereum address.', v => ethAddressRegexp.test(v))
 
 /**
+ * Required password validator,
+ */
+export const passwordRequired = helpers.withMessage('Password required.', _required)
+
+/**
  * Password validation rules.
  */
 export const password = [
-  helpers.withMessage('Password required.', _required),
+  passwordRequired,
   helpers.withMessage('Must be 10 characters or more.', minLength(10)),
 ]
 

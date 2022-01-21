@@ -69,7 +69,7 @@ export default {
   validations() {
     return {
       password: [
-        ...validation.password,
+        validation.passwordRequired,
         helpers.withAsync(helpers.withMessage('Incorrect password.', this.checkPassword))
       ]
     }
