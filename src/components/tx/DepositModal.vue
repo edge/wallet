@@ -20,7 +20,7 @@
         <button v-if="connectStatus === 'onboarding'" class="w-full mb-16 button button--success" disabled>Waiting for MetaMask...</button>
         <button v-else-if="connectStatus === 'connecting'" class="w-full mb-16 button button--success" disabled>Connecting to MetaMask...</button>
         <button v-else-if="hasMetaMask" class="w-full mb-16 button button--success" @click="connect">Connect MetaMask</button>
-        <button class="w-full mb-16 button button--success" @click="installMetaMask" :disabled="!browserSupport">Click to install MetaMask</button>
+        <button v-else class="w-full mb-16 button button--success" @click="installMetaMask" :disabled="!browserSupport">Click to install MetaMask</button>
         <button class="w-full button button--outline-success" @click="cancel">Cancel</button>
       </div>
     </template>
