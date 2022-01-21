@@ -1,6 +1,6 @@
 <template>
   <Header />
-  <AccountPanel :wallet="this.wallet" />
+  <AccountPanel/>
 
   <div class="bg-gray-200 py-35">
     <div class="container">
@@ -35,9 +35,8 @@ import AccountPanel from "@/components/AccountPanel"
 import TransactionsTable from "@/components/TransactionsTable"
 import NewsPromo from "@/components/NewsPromo"
 import RecentBlocks from "@/components/RecentBlocks"
-
-import { fetchTransactions, fetchWallet, formatTransactions } from '../utils/api'
-import { getWalletAddress } from '../utils/wallet'
+import { mapState } from 'vuex'
+import { fetchTransactions } from '../utils/api'
 
 const dayjs = require('dayjs')
 const relativeTime = require('dayjs/plugin/relativeTime')
@@ -48,7 +47,6 @@ export default {
   title: 'Overview',
   data: function () {
     return {
-      wallet: {},
       transactions: [],
       loading: true,
       error: '',
@@ -65,6 +63,7 @@ export default {
     NewsPromo,
     RecentBlocks
   },
+  computed: mapState(['address']),
   mounted() {
     this.initialise()
   },
@@ -73,21 +72,11 @@ export default {
   },
   methods: {
     async initialise() {
-      await this.updateWallet()
       await this.updateTransactions()
       this.pollData()
     },
-    async updateWallet() {
-      const walletAddress = await getWalletAddress()
-      if (!walletAddress) this.$router.push(`/`)
-
-      const wallet = await fetchWallet(walletAddress)
-
-      // Update this.wallet only once promise has resolved
-      this.wallet = wallet
-    },
     async updateTransactions() {
-      const { transactions, metadata } = await fetchTransactions(this.wallet.address, { limit: 5 })
+      const { transactions, metadata } = await fetchTransactions(this.address, { limit: 5 })
 
       // Update this.transactions & this.metadata only once promise has resolved
       this.transactions = transactions
@@ -96,7 +85,6 @@ export default {
     },
     pollData() {
       this.polling = setInterval(() => {
-        this.updateWallet()
         this.updateTransactions()
       }, this.transactionRefreshInterval)
     }

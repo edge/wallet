@@ -1,13 +1,9 @@
 <template>
   <td data-title="Tx Hash:" :title="item.hash">
-    <a v-if="!item.pending" :href="`${explorerUrl}/transaction/${item.hash}`" target="_blank" rel="noreferrer">
+    <a :href="`${explorerUrl}/transaction/${item.hash}`" target="_blank" rel="noreferrer">
       <span class="hidden monospace md:inline-block">{{ sliceString(item.hash, 8) }}</span>
       <span class="monospace md:hidden">{{ sliceString(item.hash, 26) }}</span>
     </a>
-    <div v-else>
-      <span class="hidden monospace md:inline-block">{{ sliceString(item.hash, 8) }}</span>
-      <span class="monospace md:hidden">{{ sliceString(item.hash, 26) }}</span>
-    </div>
   </td>
   <td data-title="Date:">
     <span class="monospace md:font-sans">
@@ -18,14 +14,14 @@
     <span v-if="item.type.toLowerCase() === 'received'">
       <span class="icon icon-green mr-4"><ArrowDownIcon /></span>
       <a :href="`${explorerUrl}/wallet/${item.sender}`" target="_blank" rel="noreferrer">
-        <span class="hidden lg:pl-10 monospace md:inline-block">{{ item.sender }}</span>
+        <span class="hidden monospace md:inline-block">{{ item.sender }}</span>
       </a>
       <span class="monospace md:hidden">{{ sliceString(item.sender, 26) }}</span>
     </span>
     <span v-if="item.type.toLowerCase() === 'sent'">
       <span class="icon icon-red mr-4"><ArrowUpIcon /></span>
       <a :href="`${explorerUrl}/wallet/${item.recipient}`" target="_blank" rel="noreferrer">
-        <span class="hidden lg:pl-10 monospace md:inline-block">{{ item.recipient }}</span>
+        <span class="hidden monospace md:inline-block">{{ item.recipient }}</span>
       </a>
       <span class="monospace md:hidden">{{ sliceString(item.recipient, 26) }}</span>
     </span>
@@ -44,12 +40,13 @@
   </td>
   <td data-title="Amount:">
     <span class="monospace lg:font-sans">
-      <span v-if="item.type.toLowerCase() === 'sent'">-</span>{{ formatAmount(item.amount) }}</span>
+      <span v-if="item.type.toLowerCase() === 'sent'">-</span><Amount :value="parseFloat(item.amount)"/>
+    </span>
   </td>
 </template>
 
 <script>
-const { formatXe } = require('@edge/wallet-utils')
+import Amount from './Amount'
 import { ArrowDownIcon, ArrowUpIcon, CheckCircleIcon, ClockIcon } from "@heroicons/vue/outline"
 
 export default {
@@ -69,9 +66,6 @@ export default {
     sliceString(string, symbols) {
       return string.length > symbols ? `${string.slice(0, symbols)}…` : string;
     },
-    formatAmount(amount) {
-      return formatXe(amount, true)
-    },
     formatStatus(item) {
       if (item.pending) return 'Pending'
       if (item.confirmations === 1) return `${item.confirmations} confirmation`
@@ -86,6 +80,7 @@ export default {
     }
   },
   components: {
+    Amount,
     ArrowDownIcon,
     ArrowUpIcon,
     CheckCircleIcon,

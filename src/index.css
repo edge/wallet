@@ -9,3 +9,7 @@
 .monospace {
  font-family: 'Roboto Mono', monospace;
 }
+
+.input-error + .input-error {
+  display: none;
+}

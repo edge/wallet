@@ -1,6 +1,6 @@
 <template>
   <Header />
-  <AccountPanel :wallet="this.wallet" />
+  <AccountPanel/>
 
   <div class="bg-gray-200 py-35">
     <div class="container">
@@ -15,9 +15,8 @@ import AccountPanel from "@/components/AccountPanel"
 import Header from "@/components/Header"
 import TransactionsTable from "@/components/TransactionsTable"
 import Pagination from "@/components/Pagination"
-
-import { fetchTransactions, fetchWallet } from '../utils/api'
-import { getWalletAddress } from '../utils/wallet'
+import { mapState } from 'vuex'
+import { fetchTransactions } from '../utils/api'
 
 export default {
   name: 'Transactions',
@@ -29,7 +28,6 @@ export default {
       page: 1,
       polling: null,
       transactions: [],
-      wallet: {},
       transactionRefreshInterval: 5000
     }
   },
@@ -39,6 +37,7 @@ export default {
     Pagination,
     TransactionsTable
   },
+  computed: mapState(['address']),
   mounted() {
     this.initialise()
   },
@@ -47,22 +46,12 @@ export default {
   },
   methods: {
     async initialise() {
-      await this.updateWallet()
       await this.updateTransactions()
       this.pollData()
     },
-    async updateWallet() {
-      const walletAddress = await getWalletAddress()
-      if (!walletAddress) this.$router.push(`/`)
-
-      const wallet = await fetchWallet(walletAddress)
-
-      // Update this.wallet only once promise has resolved
-      this.wallet = wallet
-    },
     async updateTransactions() {
       this.page = parseInt(this.$route.params.page || 1)
-      const { transactions, metadata } = await fetchTransactions(this.wallet.address, { page: this.page })
+      const { transactions, metadata } = await fetchTransactions(this.address, { page: this.page })
 
       // Update this.transactions & this.metadata only once promise has resolved
       this.transactions = transactions
@@ -71,7 +60,6 @@ export default {
     },
     pollData() {
       this.polling = setInterval(() => {
-        this.updateWallet()
         this.updateTransactions()
       }, this.transactionRefreshInterval)
     }

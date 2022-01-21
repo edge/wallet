@@ -3,8 +3,6 @@
 // Use of this source code is governed by a GNU GPL-style license
 // that can be found in the LICENSE.md file. All rights reserved.
 
-def imagesPushed = ''
-
 def buildAndPushImage(registry, tag, isTestnet, blockchainApi, indexApi, explorerUrl, bridgeWalletAddress) {
   docker.withRegistry("https://$registry", registry) {
     def image = docker.build("$registry/$tag",
@@ -18,15 +16,6 @@ pipeline {
   agent any
   stages {
     //
-    // Notify the team
-    //
-    stage('Notify') {
-      steps {
-        slackSend color: 'good', message: "${env.JOB_NAME} (#${env.BUILD_NUMBER}) has started."
-      }
-    }
-
-    //
     // Build image
     //
     stage('Build') {
@@ -38,11 +27,7 @@ pipeline {
           }
           steps {
             script {
-              def tag = buildAndPushImage(REGISTRY, NAME, IS_TESTNET, BLOCKCHAIN_API_URL, INDEX_API_URL, EXPLORER_URL, BRIDGE_WALLET_ADDRESS)
-
-              // Update image list for slack reporting.
-              if (imagesPushed == '') imagesPushed = "\n$tag"
-              else imagesPushed = "$imagesPushed\n$tag"
+              buildAndPushImage(REGISTRY, NAME, IS_TESTNET, BLOCKCHAIN_API_URL, INDEX_API_URL, EXPLORER_URL, BRIDGE_WALLET_ADDRESS)
             }
           }
         }
@@ -52,27 +37,17 @@ pipeline {
   post {
     success {
       script {
-        if (imagesPushed != '') {
-          slackSend color: 'good', message: "${env.JOB_NAME} (#${env.BUILD_NUMBER}) has completed successfully, pushing images $imagesPushed"
-        }
+        discordSend title: JOB_NAME, description: "${env.JOB_NAME} (#${env.BUILD_NUMBER}) has completed successfully", result:"SUCCESS", webhookURL: DISCORD_BUILD_WEBHOOK
       }
     }
     failure {
       script {
-        if (imagesPushed != '') {
-          slackSend color: 'danger', message: "${env.JOB_NAME} (#${env.BUILD_NUMBER}) has failed, but pushed images $imagesPushed\n\nView logs: ${env.BUILD_URL}console"
-        } else {
-          slackSend color: 'danger', message: "${env.JOB_NAME} (#${env.BUILD_NUMBER}) has failed.\n\nView logs: ${env.BUILD_URL}console"
-        }
+        discordSend title: JOB_NAME, description: "${env.JOB_NAME} (#${env.BUILD_NUMBER}) has failed", result:"FAILURE", webhookURL: DISCORD_BUILD_WEBHOOK
       }
     }
     aborted {
       script {
-        if (imagesPushed != '') {
-          slackSend color: 'warning', message: "${env.JOB_NAME} (#${env.BUILD_NUMBER}) was aborted, but pushed images $imagesPushed\n\nView logs: ${env.BUILD_URL}console"
-        } else {
-          slackSend color: 'warning', message: "${env.JOB_NAME} (#${env.BUILD_NUMBER}) was aborted.\n\nView logs: ${env.BUILD_URL}console"
-        }
+        discordSend title: JOB_NAME, description: "${env.JOB_NAME} (#${env.BUILD_NUMBER}) was aborted", result:"WARNING", webhookURL: DISCORD_BUILD_WEBHOOK
       }
     }
   }
