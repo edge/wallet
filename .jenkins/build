@@ -27,7 +27,7 @@ pipeline {
           }
           steps {
             script {
-              def tag = buildAndPushImage(REGISTRY, NAME, IS_TESTNET, BLOCKCHAIN_API_URL, INDEX_API_URL, EXPLORER_URL, BRIDGE_WALLET_ADDRESS)
+              buildAndPushImage(REGISTRY, NAME, IS_TESTNET, BLOCKCHAIN_API_URL, INDEX_API_URL, EXPLORER_URL, BRIDGE_WALLET_ADDRESS)
             }
           }
         }
