@@ -137,7 +137,10 @@ export default {
   },
   validations() {
     return {
-      password: validation.password,
+      password: [
+        validation.passwordRequired,
+        validation.passwordLength,
+      ],
       confirmPhrase: [
         validation.required,
         matchConfirmPhrase

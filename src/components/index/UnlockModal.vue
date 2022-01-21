@@ -11,7 +11,7 @@
             <label>wallet address</label>
             <span class="break-all">{{ address }}</span>
           </div>
-          <div class="form-group" :class="{'form-group__error': v$.password.$error}">
+          <div class="form-group" :class="{'form-group__error': v$.password.$error || (passwordError && !v$.password.$dirty)}">
             <label for="password">ENTER PASSWORD</label>
             <div class="relative input-wrap">
               <span class="icon">
@@ -27,6 +27,7 @@
               />
             </div>
             <div class="form-group__error input-error" v-for="error of v$.password.$errors" :key="error.$uid">{{error.$message}}</div>
+            <div class="form-group__error input-error" v-if="passwordError && !v$.password.$dirty">{{passwordError}}</div>
           </div>
         </form>
       </div>
@@ -53,7 +54,6 @@ import { LockOpenIcon } from '@heroicons/vue/outline'
 import Modal from '../Modal'
 import useVuelidate from '@vuelidate/core'
 import { mapState } from 'vuex'
-import { helpers } from '@vuelidate/validators'
 
 export default {
   name: 'CreateModal',
@@ -64,16 +64,15 @@ export default {
   data() {
     return {
       password: '',
+      passwordError: ''
     }
   },
   validations() {
     return {
-      password: [
-        validation.passwordRequired,
-        helpers.withAsync(helpers.withMessage('Incorrect password.', this.checkPassword))
-      ]
+      password: [validation.passwordRequired]
     }
-  },  props: {
+  },
+  props: {
     afterUnlock: Function,
     close: Function,
     switchToForgetModal: Function,
@@ -89,11 +88,20 @@ export default {
     }
   },
   methods: {
-    checkPassword(input) {
-      return storage.comparePassword(input, this.walletVersion)
+    async checkPassword() {
+      this.v$.password.$reset()
+      if (await storage.comparePassword(this.password, this.walletVersion)) {
+        this.passwordError = ''
+        return true
+      }
+      else {
+        this.passwordError = 'Incorrect password.'
+        return false
+      }
     },
     async unlock() {
       if (!await this.v$.$validate()) return
+      if (!await this.checkPassword()) return
 
       const privateKey = await storage.getPrivateKey(this.password, this.walletVersion)
       const publicKey = await storage.getPublicKey(this.walletVersion)

@@ -104,7 +104,10 @@ export default {
         validation.required,
         helpers.withMessage('Invalid private key.', v => privateKeyRegexp.test(v))
       ],
-      password: validation.password,
+      password: [
+        validation.passwordRequired,
+        validation.passwordLength,
+      ],
       repeatPassword: [
         helpers.withMessage('Passwords do not match.', sameAs(this.password))
       ]

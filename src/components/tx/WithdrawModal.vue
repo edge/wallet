@@ -170,7 +170,7 @@
 
     <template v-slot:footer>
       <div class="px-24 py-32 border-t border-gray-700 border-opacity-30">
-        <div class="mb-24 form-group" :class="{'form-group__error': v$.password.$error}">
+        <div class="mb-24 form-group" :class="{'form-group__error': v$.password.$error || (passwordError && !v$.password.$dirty)}">
           <form>
             <label for="pass-withdraw">ENTER PASSWORD</label>
             <div class="relative input-wrap">
@@ -187,6 +187,7 @@
               />
             </div>
             <div class="form-group__error input-error" v-for="error of v$.password.$errors" :key="error.$uid">{{error.$message}}</div>
+            <div class="form-group__error input-error" v-if="passwordError && !v$.password.$dirty">{{passwordError}}</div>
           </form>
         </div>
 
@@ -270,7 +271,6 @@ import Modal from '../Modal'
 import Radio from '../Radio'
 import Tooltip from '../Tooltip'
 import { fetchGasRates } from '../../utils/api'
-import { helpers } from '@vuelidate/validators'
 import { mapState } from 'vuex'
 import { parseAmount } from '../../utils/form'
 import { toMicroXe } from '@edge/wallet-utils'
@@ -306,6 +306,7 @@ export default {
       amount: '',
       speed: 'average',
       password: '',
+      passwordError: '',
 
       submitError: '',
       completedTx: null,
@@ -322,10 +323,7 @@ export default {
         validation.required,
         ...validation.amount(this.balance, this.amountParsed)
       ],
-      password: [
-        ...validation.password,
-        helpers.withAsync(helpers.withMessage('Incorrect password.', this.checkPassword))
-      ]
+      password: [validation.passwordRequired],
     }
   },
   computed: {
@@ -393,8 +391,16 @@ export default {
       this.reset()
       this.close()
     },
-    checkPassword(input) {
-      return storage.comparePassword(input)
+    async checkPassword() {
+      this.v$.password.$reset()
+      if (await storage.comparePassword(this.password)) {
+        this.passwordError = ''
+        return true
+      }
+      else {
+        this.passwordError = 'Incorrect password.'
+        return false
+      }
     },
     goto(step) {
       this.step = step
@@ -428,6 +434,7 @@ export default {
     },
     async withdraw() {
       if (!await this.v$.$validate()) return
+      if (!await this.checkPassword()) return
       const privateKey = await storage.getPrivateKey(this.password)
 
       // create tx

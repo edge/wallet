@@ -92,7 +92,7 @@
     <template v-slot:footer>
       <div class="px-24 pt-32 pb-40 border-t border-gray-700 border-opacity-30">
         <form>
-          <div class="form-group" :class="{'form-group__error': v$.password.$error}">
+          <div class="form-group" :class="{'form-group__error': v$.password.$error || (passwordError && !v$.password.$dirty)}">
             <label for="pass-step">Enter Password</label>
             <div class="relative input-wrap">
               <span class="icon">
@@ -108,6 +108,7 @@
               />
             </div>
             <div class="form-group__error input-error" v-for="error of v$.password.$errors" :key="error.$uid">{{error.$message}}</div>
+            <div class="form-group__error input-error" v-if="passwordError && !v$.password.$dirty">{{passwordError}}</div>
           </div>
         </form>
         <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
@@ -206,6 +207,7 @@ export default {
       amount: '',
       memo: '',
       password: '',
+      passwordError: '',
 
       completedTx: null,
       submitError: '',
@@ -227,10 +229,7 @@ export default {
           v => v.length === 0 || memoRegexp.test(v)
         ),
       ],
-      password: [
-        ...validation.password,
-        helpers.withAsync(helpers.withMessage('Incorrect password.', this.checkPassword))
-      ]
+      password: [validation.passwordRequired],
     }
   },
   computed: {
@@ -258,8 +257,16 @@ export default {
       this.reset()
       this.close()
     },
-    checkPassword(input) {
-      return storage.comparePassword(input)
+    async checkPassword() {
+      this.v$.password.$reset()
+      if (await storage.comparePassword(this.password)) {
+        this.passwordError = ''
+        return true
+      }
+      else {
+        this.passwordError = 'Incorrect password.'
+        return false
+      }
     },
     goto(step) {
       this.step = step
@@ -278,6 +285,7 @@ export default {
       this.amount = ''
       this.memo = ''
       this.password = ''
+      this.passwordError = ''
 
       this.completedTx = null
       this.submitError = ''
@@ -286,6 +294,7 @@ export default {
     },
     async send() {
       if (!await this.v$.$validate()) return
+      if (!await this.checkPassword()) return
       const privateKey = await storage.getPrivateKey(this.password)
 
       // create tx
