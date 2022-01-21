@@ -2,7 +2,7 @@
 
 # Wallet
 
-Web wallet for managing XE coin
+The web wallet of the XE Blockchain.
 
 ## License
 
