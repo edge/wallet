@@ -11,13 +11,13 @@
           <span class="flex items-center">
             <span class="font-mono break-all text-sm2">{{ address }}</span>
             <button
-              class="flex-shrink-0 w-20 ml-24 text-green"
+              class="flex-shrink-0 w-20 ml-24 text-green on-clicked-effect"
               v-on:click.prevent="generateWallet"
             >
               <RefreshIcon/>
             </button>
             <button
-              class="flex-shrink-0 w-24 ml-24 text-green"
+              class="flex-shrink-0 w-24 ml-24 text-green on-clicked-effect"
               v-if="canCopy"
               @click="copyToClipboard(address)"
             >
@@ -32,7 +32,7 @@
               {{ privateKey }}
             </span>
             <button
-              class="flex-shrink-0 w-24 text-green ml-18"
+              class="flex-shrink-0 w-24 text-green ml-18 on-clicked-effect"
               v-if="canCopy"
               @click="copyToClipboard(privateKey)"
             >
@@ -199,3 +199,47 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.on-clicked-effect {
+  transition: all 0.4s ease-in;
+}
+
+.on-clicked-effect:before {
+  content: '';
+  background-color: aliceblue;
+  border-radius: 50%;
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: scale(0.001, 0.001);
+}
+
+.on-clicked-effect:focus:not(:active) {
+  position: relative;
+  display: inline-block;
+  outline: 0;
+}
+
+.on-clicked-effect:focus:not(:active):before {
+  animation: clicked_animation 0.8s ease-out;
+}
+
+@keyframes clicked_animation {
+  50% {
+    transform: scale(1.5, 1.5);
+    opacity: 0;
+  }
+  99% {
+    transform: scale(0.001, 0.001);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(0.001, 0.001);
+    opacity: 1;
+  }
+}
+</style>
