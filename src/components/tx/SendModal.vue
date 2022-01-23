@@ -42,7 +42,7 @@
           </div>
         </div>
         <div class="flex flex-wrap pt-12 radio-list">
-          <Radio name="amount-send1" id="max" label="MAX" @click="setAmountAsPercent(100)" />
+          <Radio name="amount-send1" id="max" label="MAX" :selected="isMaxAmountEntered" @click="setAmountAsPercent(100)" />
         </div>
       </div>
     </template>
@@ -242,6 +242,12 @@ export default {
     },
     canSend() {
       return !this.v$.$invalid
+    },
+    isMaxAmountEntered() {
+      if(this.amountParsed === (this.balance / 1e6) && this.amountParsed != 0) {
+        return true;
+      }
+      return false;  
     }
   },
   watch: {
