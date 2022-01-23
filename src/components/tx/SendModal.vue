@@ -349,7 +349,7 @@ export default {
 </script>
 
 <style scoped>
-.sub-heading >>> .amount .currency {
+.sub-heading :deep(.amount .currency) {
   @apply ml-5;
 }
 
@@ -357,7 +357,7 @@ export default {
   @apply text-white text-3xl;
 }
 
-.amount.sub >>> .currency {
+.amount.sub :deep(.currency) {
   @apply text-half bottom-0 ml-2;
 }
 
