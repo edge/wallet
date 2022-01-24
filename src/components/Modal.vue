@@ -41,6 +41,19 @@
     components: {
       XIcon
     },
+    data() {
+      return {
+        mouseDownInsideModal: false
+      }
+    },
+    mounted()
+    {
+        window.addEventListener("mousedown", this.onMouseDown);
+    },
+    beforeUnmout()
+    {
+        window.removeEventListener("mousedown", this.onMouseDown);
+    },
     methods: {
       getStyle() {
         return {
@@ -48,8 +61,13 @@
         }
       },
       onClickOutside() {
-        if (this.preventClickOutside) return
+        if (this.preventClickOutside || this.mouseDownInsideModal) return
         if (this.close) this.close()
+      },
+      onMouseDown(mouseEvent)
+      {
+          const modalOuter = document.querySelector(".modal-outer");
+          this.mouseDownInsideModal = mouseEvent.target !== modalOuter;
       }
     }
   }
