@@ -4,6 +4,10 @@
 
 The web wallet of the XE Blockchain.
 
+## Contributing
+
+Interested in contributing to the project? Amazing! Before you do, please have a quick look at our [Contributor Guidelines](CONTRIBUTING.md) where we've got a few tips to help you get started.
+
 ## License
 
 Edge is the infrastructure of Web3. A peer-to-peer network and blockchain providing high performance decentralised web services, powered by the spare capacity all around us.
