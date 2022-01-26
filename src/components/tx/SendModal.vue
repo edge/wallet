@@ -244,10 +244,7 @@ export default {
       return !this.v$.$invalid
     },
     isMaxAmountEntered() {
-      if(this.amountParsed === (this.balance / 1e6) && this.amountParsed != 0) {
-        return true;
-      }
-      return false;  
+      return this.balance > 0 && this.amountParsed === this.balance / 1e6
     }
   },
   watch: {
