@@ -121,7 +121,7 @@ export default {
   @apply text-white mb-0 font-normal;
 }
 
-.account-panel__balance h1 >>> sub {
+.account-panel__balance h1 :deep(sub) {
   @apply bottom-0 text-half;
 }
 
