@@ -20,7 +20,7 @@
             </span>
             <input
               type="password"
-              @keypress="createOnEnter"
+              @keypress="exportOnEnter"
               autocomplete="off"
               placeholder="Your password"
               id="password"
@@ -38,7 +38,7 @@
             <button
               class="flex-shrink-0 w-24 ml-24 text-green on-clicked-effect"
               v-if="canCopy"
-              @click="copyToClipboard(address)"
+              @click.prevent="copyToClipboard(address)"
             >
               <ClipboardCopyIcon/>
             </button>
@@ -53,7 +53,7 @@
             <button
               class="flex-shrink-0 w-24 text-green ml-18 on-clicked-effect"
               v-if="canCopy && privateKey"
-              @click="copyToClipboard(privateKey)"
+              @click.prevent="copyToClipboard(privateKey)"
             >
               <ClipboardCopyIcon/>
             </button>
@@ -142,12 +142,17 @@ export default {
       
       this.privateKey = await storage.getPrivateKey(this.password);
     },
+    exportOnEnter(event) {
+      event.preventDefault;
+      if (event.charCode !== 13) return
+      event.preventDefault()
+      this.exportKey()
+    },
     copyToClipboard(input) {
       if (!this.canCopy) window.alert('Clipboard unavailable. Please copy-paste manually.')
       return navigator.clipboard.writeText(input)
     },
   },
-  
   setup() {
     return {
       v$: useVuelidate()
