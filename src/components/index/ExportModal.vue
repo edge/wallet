@@ -12,7 +12,7 @@
         </span>
         <p>Ensure you copy and store your wallet address and key securely. If you lose your details you will not be able to access your wallet. Please enter your password to confirm you have backed up your details.</p>
         </div>
-        <div class="form-group" :class="{'form-group__error': v$.password.$error}">
+        <div class="form-group" :class="{'form-group__error': v$.password.$error || (passwordError && !v$.password.$dirty)}">
           <label for="password">ENTER PASSWORD to export your private key</label>
           <div class="relative input-wrap">
             <span class="icon">
@@ -28,6 +28,7 @@
             />
           </div>
           <div class="form-group__error input-error" v-for="error of v$.password.$errors" :key="error.$uid">{{error.$message}}</div>
+          <div class="form-group__error input-error" v-if="passwordError && !v$.password.$dirty">{{passwordError}}</div>
         </div>
       </form>
       <div v-else class="pt-15">
