@@ -56,10 +56,11 @@
   import {SupportIcon} from "@heroicons/vue/solid"
   import vClickOutside from 'click-outside-vue3'
   import ForgetWallet from './index/ForgetModal.vue'
+  import ExportKey from './index/ExportModal.vue'
 
   export default {
     name: "HeaderTools",
-    components: {ArchiveIcon, ChevronDownIcon, CogIcon, KeyIcon, ForgetWallet, LockOpenIcon, LogoutIcon, SupportIcon},
+    components: {ArchiveIcon, ChevronDownIcon, CogIcon, KeyIcon, ForgetWallet, ExportKey, LockOpenIcon, LogoutIcon, SupportIcon},
     data: function () {
       return {
         showTools: false
@@ -85,11 +86,12 @@
       },
       exportKey() {
         this.showTools = false
-        // function to open Export Key Modal (not yet created)
+        this.openExportKeyModal()
       }
     },
     props: {
-      openForgetWalletModal: Function
+      openForgetWalletModal: Function,
+      openExportKeyModal: Function
     }
   }
 </script>
