@@ -68,8 +68,8 @@
         <button class="w-full button button--outline-success" @click="cancel">Cancel</button>
         <button class="w-full button button--success" :disabled="!canSubmit" @click="exportKey">Export</button>
       </div>
-      <div v-else class="grid grid-cols-1 gap-24 px-24 pt-24 border-gray-700 border-solid md:grid-cols-2 border-t-default border-opacity-30 pb-24">
-        <button class="w-full button button--success col-start-2" :disabled="!canSubmit" @click="cancel">Done</button>
+      <div v-else class="px-24 pt-5 pb-30">
+        <button class="block w-full mx-auto text-center button button--success md:w-1/2" :disabled="!canSubmit" @click="cancel">Done</button>
       </div>
     </template>
   </Modal>
