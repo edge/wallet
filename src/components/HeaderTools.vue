@@ -16,14 +16,14 @@
         Support
       </a>
     </li>
-    <!-- <li class="header-tools__item">
-      <router-link to="/" class="header-tools__link">
+    <li class="header-tools__item">
+      <div class="header-tools__link" @click="exportKey">
         <span class="header-tools__icon">
           <KeyIcon/>
         </span>
         Export Private Key
-      </router-link>
-    </li> -->
+      </div>
+    </li>
     <li class="header-tools__item">
       <div class="header-tools__link" @click="lock">
         <span class="header-tools__icon">
@@ -82,6 +82,10 @@
       lock() {
         this.$store.commit('lock')
         this.$router.push('/')
+      },
+      exportKey() {
+        this.showTools = false
+        // function to open Export Key Modal (not yet created)
       }
     },
     props: {
