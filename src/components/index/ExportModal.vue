@@ -4,37 +4,71 @@
       <h2>Export Private Key</h2>
     </template>
 
-    <template v-slot:footer>
-      <div class="px-24 pt-48 border-gray-700 border-solid border-t-default border-opacity-30 pb-54">
-        <form>
-          <div class="flex items-start leading-8 text-gray mb-14">
-          <span class="flex-shrink-0 inline-block mt-8 mr-12 text-white icon w-27">
-            <ShieldExclamationIcon/>
-          </span>
-          <p>Ensure you copy and store your wallet address and key securely. If you lose your details you will not be able to access your wallet. Please enter your password to confirm you have backed up your details.</p>
-          </div>
-          <div class="form-group" :class="{'form-group__error': v$.password.$error}">
-            <label for="password">ENTER PASSWORD to export your private key</label>
-            <div class="relative input-wrap">
-              <span class="icon">
-                <LockOpenIcon/>
-              </span>
-              <input
-                type="password"
-                @keypress="createOnEnter"
-                autocomplete="off"
-                placeholder="Your password"
-                id="password"
-                v-model="v$.password.$model"
-              />
-            </div>
-            <div class="form-group__error input-error" v-for="error of v$.password.$errors" :key="error.$uid">{{error.$message}}</div>
-          </div>
-        </form>
-        <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
-          <button class="w-full button button--outline-success" @click="cancel">Cancel</button>
-          <button class="w-full button button--success" :disabled="!canSubmit" @click.prevent="create">Export</button>
+    <template v-slot:body>
+      <form v-if="!privateKey">
+        <div class="flex items-start leading-8 text-gray mb-14">
+        <span class="flex-shrink-0 inline-block mt-8 mr-12 text-white icon w-27">
+          <ShieldExclamationIcon/>
+        </span>
+        <p>Ensure you copy and store your wallet address and key securely. If you lose your details you will not be able to access your wallet. Please enter your password to confirm you have backed up your details.</p>
         </div>
+        <div class="form-group" :class="{'form-group__error': v$.password.$error}">
+          <label for="password">ENTER PASSWORD to export your private key</label>
+          <div class="relative input-wrap">
+            <span class="icon">
+              <LockOpenIcon/>
+            </span>
+            <input
+              type="password"
+              @keypress="createOnEnter"
+              autocomplete="off"
+              placeholder="Your password"
+              id="password"
+              v-model="v$.password.$model"
+            />
+          </div>
+          <div class="form-group__error input-error" v-for="error of v$.password.$errors" :key="error.$uid">{{error.$message}}</div>
+        </div>
+      </form>
+      <div v-else class="pt-15">
+        <div class="form-group">
+          <label>wallet address</label>
+          <span class="flex items-center">
+            <span class="font-mono break-all text-sm2">{{ address }}</span>
+            <button
+              class="flex-shrink-0 w-24 ml-24 text-green on-clicked-effect"
+              v-if="canCopy"
+              @click="copyToClipboard(address)"
+            >
+              <ClipboardCopyIcon/>
+            </button>
+          </span>
+        </div>
+        <div class="form-group mb-25">
+          <label>PRIVATE KEY</label>
+          <span class="flex items-center">
+            <span class="font-mono break-all text-sm2">
+              {{ privateKey }}
+            </span>
+            <button
+              class="flex-shrink-0 w-24 text-green ml-18 on-clicked-effect"
+              v-if="canCopy && privateKey"
+              @click="copyToClipboard(privateKey)"
+            >
+              <ClipboardCopyIcon/>
+            </button>
+          </span>
+        </div>
+      </div>
+    </template>
+
+    <template v-slot:footer>
+      <div v-if="!privateKey" class="grid grid-cols-1 gap-24 px-24 pt-24 border-gray-700 border-solid md:grid-cols-2 border-t-default border-opacity-30 pb-24">
+        <button class="w-full button button--outline-success" @click="cancel">Cancel</button>
+        <button class="w-full button button--success" :disabled="!canSubmit" @click="exportKey">Export</button>
+      </div>
+      <div v-else class="grid grid-cols-1 gap-24 px-24 pt-24 border-gray-700 border-solid md:grid-cols-2 border-t-default border-opacity-30 pb-24">
+        <button class="w-full button button--success col-start-2" :disabled="!canSubmit" @click="cancel">Done</button>
       </div>
     </template>
   </Modal>
@@ -46,6 +80,7 @@ import * as storage from '../../utils/storage'
 import * as validation from '../../utils/validation'
 import useVuelidate from '@vuelidate/core'
 import { LockOpenIcon, ShieldExclamationIcon, ClipboardCopyIcon } from '@heroicons/vue/outline'
+import { mapState } from 'vuex'
 
 export default {
   name: 'ExportKey',
@@ -59,6 +94,8 @@ export default {
     return {
       password: '',
       passwordError: '',
+      privateKey: '',
+      canCopy: !!navigator.clipboard,
     }
   },
   validations() {
@@ -71,6 +108,9 @@ export default {
     visible: Boolean
   },
   computed: {
+    ...mapState({
+      address: 'address',
+    }),
     canSubmit() {
       return !this.v$.$invalid
     }
@@ -82,11 +122,12 @@ export default {
     },
     reset() {
       this.password = ''
+      this.privateKey = ''
       this.v$.$reset()
     },
     async checkPassword() {
       this.v$.password.$reset()
-      if (await storage.comparePassword(this.password, this.walletVersion)) {
+      if (await storage.comparePassword(this.password)) {
         this.passwordError = ''
         return true
       }
@@ -95,7 +136,18 @@ export default {
         return false
       }
     },
+    async exportKey() {
+      if (!await this.v$.$validate()) return
+      if (!await this.checkPassword()) return
+      
+      this.privateKey = await storage.getPrivateKey(this.password);
+    },
+    copyToClipboard(input) {
+      if (!this.canCopy) window.alert('Clipboard unavailable. Please copy-paste manually.')
+      return navigator.clipboard.writeText(input)
+    },
   },
+  
   setup() {
     return {
       v$: useVuelidate()
