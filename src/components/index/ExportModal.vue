@@ -137,13 +137,14 @@ export default {
       }
     },
     async exportKey() {
+      this.passwordError = ''
+
       if (!await this.v$.$validate()) return
       if (!await this.checkPassword()) return
-      
+
       this.privateKey = await storage.getPrivateKey(this.password)
     },
     exportOnEnter(event) {
-      event.preventDefault;
       if (event.charCode !== 13) return
       event.preventDefault()
       this.exportKey()

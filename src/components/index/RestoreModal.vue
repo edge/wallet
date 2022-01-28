@@ -1,5 +1,5 @@
 <template>
-  <Modal :close="close" :visible="visible">
+  <Modal :close="cancel" :visible="visible">
     <template v-slot:header>
       <h2>Restore a wallet</h2>
     </template>
@@ -145,7 +145,7 @@ export default {
     restoreOnEnter(event) {
       if (event.charCode !== 13) return
       event.preventDefault()
-      restore()
+      this.restore()
     }
   },
   setup() {

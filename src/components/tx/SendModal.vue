@@ -296,6 +296,8 @@ export default {
       this.v$.$reset()
     },
     async send() {
+      this.passwordError = ''
+
       if (!await this.v$.$validate()) return
       if (!await this.checkPassword()) return
       const privateKey = await storage.getPrivateKey(this.password)

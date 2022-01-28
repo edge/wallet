@@ -100,6 +100,8 @@ export default {
       }
     },
     async unlock() {
+      this.passwordError = ''
+
       if (!await this.v$.$validate()) return
       if (!await this.checkPassword()) return
 
