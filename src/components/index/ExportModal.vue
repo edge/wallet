@@ -126,6 +126,8 @@ export default {
       this.v$.$reset()
     },
     async checkPassword() {
+      this.passwordError = ''
+      
       this.v$.password.$reset()
       if (await storage.comparePassword(this.password)) {
         this.passwordError = ''
