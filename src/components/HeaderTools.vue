@@ -16,14 +16,14 @@
         Support
       </a>
     </li>
-    <!-- <li class="header-tools__item">
-      <router-link to="/" class="header-tools__link">
+    <li class="header-tools__item">
+      <div class="header-tools__link" @click="exportKey">
         <span class="header-tools__icon">
           <KeyIcon/>
         </span>
         Export Private Key
-      </router-link>
-    </li> -->
+      </div>
+    </li>
     <li class="header-tools__item">
       <div class="header-tools__link" @click="lock">
         <span class="header-tools__icon">
@@ -56,10 +56,21 @@
   import {SupportIcon} from "@heroicons/vue/solid"
   import vClickOutside from 'click-outside-vue3'
   import ForgetWallet from './index/ForgetModal.vue'
+  import ExportKey from './index/ExportModal.vue'
 
   export default {
     name: "HeaderTools",
-    components: {ArchiveIcon, ChevronDownIcon, CogIcon, KeyIcon, ForgetWallet, LockOpenIcon, LogoutIcon, SupportIcon},
+    components: {
+      ArchiveIcon, 
+      ChevronDownIcon, 
+      CogIcon, 
+      ExportKey, 
+      ForgetWallet, 
+      KeyIcon, 
+      LockOpenIcon, 
+      LogoutIcon, 
+      SupportIcon
+    },
     data: function () {
       return {
         showTools: false
@@ -82,10 +93,15 @@
       lock() {
         this.$store.commit('lock')
         this.$router.push('/')
+      },
+      exportKey() {
+        this.showTools = false
+        this.openExportKeyModal()
       }
     },
     props: {
-      openForgetWalletModal: Function
+      openForgetWalletModal: Function,
+      openExportKeyModal: Function
     }
   }
 </script>
