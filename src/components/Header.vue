@@ -1,12 +1,13 @@
 <template>
     <ForgetWallet :close="closeForgetWalletModal" :afterForget="afterForgetWallet" :visible="showForgetWalletModal"/>
+    <ExportKey :close="closeExportKeyModal" :visible="showExportKeyModal"/>
     <header class="relative z-10 py-16 header md:pb-15" :class="{'menu-open':showNav}">
       <div class="container flex items-center justify-between">
         <Logo/>
         <BurgerButton  @click="showNav = !showNav"/>
         <div class="absolute left-0 right-0 flex flex-col flex-1 pt-12 pb-24 bg-black mobile-drop top-full md:static md:flex-row md:pl-15 md:p-0">
           <Menu :mainNav="mainNav"/>
-          <HeaderTools :openForgetWalletModal="openForgetWalletModal"/>
+          <HeaderTools :openForgetWalletModal="openForgetWalletModal" :openExportKeyModal="openExportKeyModal"/>
         </div>
       </div>
     </header>
@@ -18,12 +19,14 @@
   import HeaderTools from "@/components/HeaderTools";
   import BurgerButton from "@/components/BurgerButton";
   import ForgetWallet from '@/components/index/ForgetModal';
+  import ExportKey from '@/components/index/ExportModal';
 
   export default {
     name: "Header",
     data: function () {
       return {
         showForgetWalletModal: false,
+        showExportKeyModal: false,
         showNav: false,
         mainNav: [
           {
@@ -56,14 +59,21 @@
       },
       afterForgetWallet() {
         this.$router.push('/')
-      }
+      },
+      closeExportKeyModal() {
+        this.showExportKeyModal = false
+      },
+      openExportKeyModal() {
+        this.showExportKeyModal = true
+      },
     },
     components: {
       Logo,
       Menu,
       HeaderTools,
       BurgerButton,
-      ForgetWallet
+      ForgetWallet,
+      ExportKey
     }
   }
 </script>

@@ -433,6 +433,8 @@ export default {
       this.gasRates = await fetchGasRates()
     },
     async withdraw() {
+      this.passwordError = ''
+
       if (!await this.v$.$validate()) return
       if (!await this.checkPassword()) return
       const privateKey = await storage.getPrivateKey(this.password)
@@ -483,11 +485,11 @@ export default {
 </script>
 
 <style scoped>
-.sub-heading >>> .amount .currency {
+.sub-heading :deep(.amount .currency) {
   @apply ml-5;
 }
 
-.convert-info >>> .amount .currency {
+.convert-info :deep(.amount .currency) {
   @apply ml-5;
 }
 
@@ -495,7 +497,7 @@ export default {
   @apply text-white text-3xl;
 }
 
-.amount.sub >>> .currency {
+.amount.sub :deep(.currency) {
   @apply text-half bottom-0 ml-2;
 }
 
