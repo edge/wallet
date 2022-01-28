@@ -61,14 +61,14 @@
   export default {
     name: "HeaderTools",
     components: {
-      ArchiveIcon, 
-      ChevronDownIcon, 
-      CogIcon, 
-      ExportKey, 
-      ForgetWallet, 
-      KeyIcon, 
-      LockOpenIcon, 
-      LogoutIcon, 
+      ArchiveIcon,
+      ChevronDownIcon,
+      CogIcon,
+      ExportKey,
+      ForgetWallet,
+      KeyIcon,
+      LockOpenIcon,
+      LogoutIcon,
       SupportIcon
     },
     data: function () {
