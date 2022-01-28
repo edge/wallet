@@ -143,7 +143,6 @@ export default {
       this.privateKey = await storage.getPrivateKey(this.password)
     },
     exportOnEnter(event) {
-      event.preventDefault;
       if (event.charCode !== 13) return
       event.preventDefault()
       this.exportKey()
