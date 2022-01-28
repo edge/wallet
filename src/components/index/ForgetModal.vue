@@ -1,5 +1,5 @@
 <template>
-  <Modal :close="close" :visible="visible">
+  <Modal :close="cancel" :visible="visible">
     <template v-slot:header>
       <h2>Forget wallet</h2>
     </template>
