@@ -145,7 +145,7 @@ export default {
     restoreOnEnter(event) {
       if (event.charCode !== 13) return
       event.preventDefault()
-      restore()
+      this.restore()
     }
   },
   setup() {
