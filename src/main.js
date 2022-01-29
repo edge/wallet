@@ -27,8 +27,12 @@ const init = async () => {
       }
     })
     .mount('#app')
+  
+  app.$router.beforeEach((to, from, next) => {        
+    if(store.state.locked && to.path != '/') next('/')
+    else next()
+  })
 
-  if (store.state.locked) app.$router.replace('/')
   if (store.state.address) store.dispatch('refresh')
   setInterval(() => store.dispatch('backgroundRefresh', app.$router), WALLET_REFRESH_INTERVAL)
 }
