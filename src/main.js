@@ -27,9 +27,9 @@ const init = async () => {
       }
     })
     .mount('#app')
-  
-  app.$router.beforeEach((to, from, next) => {        
-    if(store.state.locked && to.path != '/') next('/')
+
+  app.$router.beforeEach((to, from, next) => {
+    if(store.state.locked && to.path !== '/') next('/')
     else next()
   })
 
