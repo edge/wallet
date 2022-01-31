@@ -28,9 +28,9 @@ const init = async () => {
     })
     .mount('#app')
 
-  app.$router.beforeEach((to, from, next) => {
-    if(store.state.locked && to.path !== '/') next('/')
-    else next()
+  app.$router.beforeResolve(to => {
+    if (store.state.locked && to.name !== 'Index') return { name: 'Index' }
+    return true
   })
 
   if (store.state.address) store.dispatch('refresh')
