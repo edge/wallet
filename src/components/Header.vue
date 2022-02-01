@@ -40,7 +40,6 @@
           {
             link: "/staking",
             text: "Staking",
-            disabled: true
           },
           {
             link: "/governance",

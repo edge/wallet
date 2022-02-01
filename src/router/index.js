@@ -4,6 +4,7 @@
 
 import { createRouter, createWebHistory } from 'vue-router'
 import Index from '../views/Index.vue'
+import Staking from '@/views/Staking'
 import Transactions from '@/views/Transactions'
 import Overview from '@/views/Overview'
 
@@ -32,8 +33,7 @@ const routes = [
   {
     path: '/staking',
     name: 'Staking',
-    component: () => {},
-    disabled: true
+    component: Staking,
   }
 ]
 
