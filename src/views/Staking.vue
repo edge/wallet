@@ -56,7 +56,7 @@ export default {
         this.address,
         { skip: (this.page - 1) * this.pageLimit, limit: this.pageLimit }
       )
-      this.stakes = stakes
+      this.stakes = stakes.results
       this.metadata = stakes.metadata
       this.totalPages = Math.ceil(stakes.metadata.count / pageLimit)
       this.loading = false
