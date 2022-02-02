@@ -80,7 +80,7 @@ export default {
     }
   },
   watch: {
-    page(val) {
+    page() {
       this.updateStakes()
     }
   }
