@@ -7,14 +7,14 @@
       <StakesTable
         :limit="pageLimit"
         :receiveMetadata="onStakesUpdate"
-        :skip="skip"
+        :page="currentPage"
       />
       <Pagination
         v-if="totalCount > pageLimit"
         baseRoute="Staking"
+        :currentPage="currentPage"
         :limit="pageLimit"
-        :updateSkip="onPageUpdate"
-        :skip="skip"
+        :changePage="onPageUpdate"
         :totalCount="totalCount"
       />
     </div>
@@ -31,9 +31,9 @@ export default {
   name: 'Staking',
   data: function () {
     return {
+      currentPage: 1,
       metadata: null,
-      pageLimit: 2,
-      skip: 0,
+      pageLimit: 5,
       totalCount: 0
     }
   },
@@ -47,9 +47,8 @@ export default {
     onStakesUpdate(metadata) {
       this.totalCount = metadata.totalCount
     },
-    onPageUpdate(skip) {
-      this.skip = skip
-      console.log(this.skip)
+    onPageUpdate(page) {
+      this.currentPage = page
     }
   }
 }

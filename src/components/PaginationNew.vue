@@ -57,27 +57,30 @@ import {ChevronLeftIcon, ChevronRightIcon} from "@heroicons/vue/solid";
 export default {
   name: "Pagination",
   components: {ChevronRightIcon, ChevronLeftIcon},
-  props: ['baseRoute', 'limit', 'skip', 'totalCount', 'updateSkip'],
+  props: [
+    'baseRoute',
+    'changePage',
+    'currentPage',
+    'limit',
+    'totalCount'
+  ],
   computed: {
-    currentPage() {
-      return Math.floor(this.skip / this.limit) + 1
-    },
     totalPages() {
       return Math.ceil(this.totalCount / this.limit)
     }
   },
   methods: {
     setFirstPage() {
-      this.updateSkip(0)
+      this.changePage(1)
     },
     setLastPage() {
-      this.updateSkip((this.totalPages - 1) * this.limit)
+      this.changePage(this.totalPages)
     },
     setNextPage() {
-      this.updateSkip(this.skip + this.limit)
+      this.changePage(this.currentPage + 1)
     },
     setPrevPage() {
-      this.updateSkip(this.skip - this.limit)
+      this.changePage(this.currentPage - 1)
     }
   }
 }

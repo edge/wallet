@@ -47,7 +47,8 @@ export default {
   },
   props: [
     'limit',
-    'skip'
+    'page',
+    'receiveMetadata'
   ],
   computed: mapState(['address']),
   mounted() {
@@ -65,12 +66,11 @@ export default {
         this.address,
         {
           limit: this.limit,
-          skip: this.skip
+          page: this.page
         }
       )
       this.stakes = stakes.results
-      this.metadata = stakes.metadata
-      this.totalPages = Math.ceil(stakes.metadata.totalCount / this.limit)
+      this.receiveMetadata(stakes.metadata)
       this.loading = false
     },
     pollStakes() {
