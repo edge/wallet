@@ -1,42 +1,40 @@
 <template>
-  <div>
-    <table>
-      <thead class="hidden lg:table-header-group">
-        <tr v-if="hideWalletColumn">
-          <th width="22%">ID</th>
-          <th width="22%">Hash</th>
-          <th width="30%">Device</th>
-          <th width="8%">Type</th>
-          <th width="8%">Status</th>
-          <th width="10%">Amount XE</th>
-        </tr>
-        <tr v-else>
-          <th width="10%">ID</th>
-          <th width="10%">Hash</th>
-          <th width="24%">Wallet</th>
-          <th width="30%">Device</th>
-          <th width="8%">Type</th>
-          <th width="8%">Status</th>
-          <th width="10%">Amount XE</th>
-        </tr>
-      </thead>
-      <tbody v-if="stakes.length">
-        <StakesTableItem
-          v-for="item in stakes"
-          :key="item.id"
-          :item="item"
-          :hideWalletColumn="hideWalletColumn"
-        />
-      </tbody>
-      <tbody v-else>
-        <tr>
-          <td colspan="7" class="block w-full text-center bg-white lg:table-cell py-35">
-            No stakes.
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <table>
+    <thead class="hidden lg:table-header-group">
+      <tr v-if="hideWalletColumn">
+        <th width="22%">ID</th>
+        <th width="22%">Hash</th>
+        <th width="30%">Device</th>
+        <th width="8%">Type</th>
+        <th width="8%">Status</th>
+        <th width="10%">Amount XE</th>
+      </tr>
+      <tr v-else>
+        <th width="10%">ID</th>
+        <th width="10%">Hash</th>
+        <th width="24%">Wallet</th>
+        <th width="30%">Device</th>
+        <th width="8%">Type</th>
+        <th width="8%">Status</th>
+        <th width="10%">Amount XE</th>
+      </tr>
+    </thead>
+    <tbody v-if="stakes.length">
+      <StakesTableItem
+        v-for="item in stakes"
+        :key="item.id"
+        :item="item"
+        :hideWalletColumn="hideWalletColumn"
+      />
+    </tbody>
+    <tbody v-else>
+      <tr>
+        <td colspan="7" class="block w-full text-center bg-white lg:table-cell py-35">
+          No stakes.
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </template>
 
 <script>

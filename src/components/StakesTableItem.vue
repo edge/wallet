@@ -66,7 +66,7 @@
 </template>
 
 <script>
-const { formatXe } = require('@edge/wallet-utils')
+import { formatXe } from '@edge/wallet-utils'
 import { ArrowCircleDownIcon, CheckCircleIcon, ClockIcon, DotsCircleHorizontalIcon } from "@heroicons/vue/outline"
 
 export default {
@@ -104,6 +104,10 @@ td span {
   @apply w-full overflow-ellipsis overflow-hidden whitespace-nowrap
 }
 
+td a {
+  @apply overflow-ellipsis overflow-hidden whitespace-nowrap
+}
+
 td::before {
   content: attr(data-title);
   @apply font-normal mr-8 min-w-100 text-xs text-gray-600 pt-2;
@@ -120,9 +124,6 @@ td:last-child {
 td .icon {
   @apply w-15 inline-block align-middle;
 }
-td .icon--confirmed {
-  @apply w-16 md:w-18;
-}
 
 td .icon-green {
   @apply text-green;
@@ -130,14 +131,6 @@ td .icon-green {
 
 td .icon-grey {
   @apply text-gray-400;
-}
-
-td .icon-red {
-  @apply text-red;
-}
-
-td .arrow-icon {
-  @apply absolute hidden pt-px lg:block w-14 h-14 -left-14 text-green;
 }
 
 td a {
