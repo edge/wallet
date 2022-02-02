@@ -47,8 +47,8 @@ export default {
     onStakesUpdate(metadata) {
       this.totalCount = metadata.totalCount
     },
-    onPageUpdate(page) {
-      this.currentPage = page
+    onPageUpdate(newPage) {
+      this.currentPage = newPage
     }
   }
 }
