@@ -16,6 +16,15 @@
       </span>
     </td>
 
+    <td v-if="!hideWalletColumn" data-title="Wallet:">
+      <span class="hidden monospace md:inline-block">
+        {{ item.tx.recipient }}
+      </span>
+      <span class="monospace md:hidden">
+        {{ item.tx.recipient }}
+      </span>
+    </td>
+
     <td data-title="Device:">
       <span v-if="item.device">
         <span class="hidden monospace md:inline-block">
@@ -62,7 +71,7 @@ import { ArrowCircleDownIcon, CheckCircleIcon, ClockIcon, DotsCircleHorizontalIc
 
 export default {
   name: "StakesTableItem",
-  props: ['item'],
+  props: ['hideWalletColumn', 'item'],
   components: {
     ArrowCircleDownIcon,
     CheckCircleIcon,

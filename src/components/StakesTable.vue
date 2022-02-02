@@ -2,7 +2,7 @@
   <div class="transaction-table">
     <table>
       <thead class="hidden lg:table-header-group">
-        <tr>
+        <tr v-if="hideWalletColumn">
           <th width="22%">ID</th>
           <th width="22%">Hash</th>
           <th width="30%">Device</th>
@@ -10,9 +10,23 @@
           <th width="8%">Status</th>
           <th width="10%">Amount XE</th>
         </tr>
+        <tr v-else>
+          <th width="10%">ID</th>
+          <th width="10%">Hash</th>
+          <th width="24%">Wallet</th>
+          <th width="30%">Device</th>
+          <th width="8%">Type</th>
+          <th width="8%">Status</th>
+          <th width="10%">Amount XE</th>
+        </tr>
       </thead>
       <tbody v-if="stakes.length">
-        <StakesTableItem  v-for="item in stakes" :key="item.id" :item="item"/>
+        <StakesTableItem
+          v-for="item in stakes"
+          :key="item.id"
+          :item="item"
+          :hideWalletColumn="hideWalletColumn"
+        />
       </tbody>
       <tbody v-else>
         <tr>
@@ -46,6 +60,7 @@ export default {
     StakesTableItem
   },
   props: [
+    'hideWalletColumn',
     'limit',
     'page',
     'receiveMetadata'
