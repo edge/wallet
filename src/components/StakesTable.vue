@@ -14,7 +14,7 @@
       <tbody v-if="stakes.length">
         <StakesTableItem  v-for="item in stakes" :key="item.id" :item="item"/>
       </tbody>
-      <tbody v-if="!stakes.length">
+      <tbody v-else>
         <tr>
           <td colspan="7" class="block w-full text-center bg-white lg:table-cell py-35">
             No stakes.
@@ -26,12 +26,59 @@
 </template>
 
 <script>
+import * as index from '@edge/index-utils'
 import StakesTableItem from "@/components/StakesTableItem"
+import { mapState } from 'vuex'
+
+const stakesRefreshInterval = 5 * 1000
 
 export default {
   name: "StakesTable",
-  components: {StakesTableItem},
-  props: ['page', 'totalPages', 'stakes']
+  data: function () {
+    return {
+      loading: false,
+      metadata: null,
+      stakes: [],
+      iStakes: null,
+    }
+  },
+  components: {
+    StakesTableItem
+  },
+  props: [
+    'limit',
+    'skip'
+  ],
+  computed: mapState(['address']),
+  mounted() {
+    this.updateStakes()
+    this.pollStakes()
+  },
+  unmounted() {
+    clearInterval(this.iStakes)
+  },
+  methods: {
+    async updateStakes() {
+      this.loading = true
+      const stakes = await index.stake.stakes(
+        process.env.VUE_APP_INDEX_API_URL,
+        this.address,
+        {
+          limit: this.limit,
+          skip: this.skip
+        }
+      )
+      this.stakes = stakes.results
+      this.metadata = stakes.metadata
+      this.totalPages = Math.ceil(stakes.metadata.totalCount / this.limit)
+      this.loading = false
+    },
+    pollStakes() {
+      this.iStakes = setInterval(() => {
+        this.updateStakes()
+      }, stakesRefreshInterval)
+    }
+  }
 }
 </script>
 
