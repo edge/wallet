@@ -33,7 +33,7 @@
         <span>Released</span>
       </span>
       <span v-else-if="item.unlockRequested">
-        <span v-if="item.unlockRequested + item.unlockPeriod > Date.now()">
+        <span v-if="isUnlocking">
           <span class="mr-1 -mt-2 icon icon-grey"><ClockIcon/></span>
           <span>Unlocking</span>
         </span>
@@ -74,6 +74,9 @@ export default {
     formattedType() {
       return this.item.type.charAt(0).toUpperCase() + this.item.type.slice(1)
     },
+    isUnlocking() {
+      return item.unlockRequested + item.unlockPeriod > Date.now()
+    }
   }
 }
 </script>
