@@ -1,22 +1,32 @@
 <template>
   <tr>
     <td data-title="ID:" :title="item.id">
-      <span class="hidden monospace md:inline-block">{{ sliceString(item.id, 30) }}</span>
-      <span class="monospace md:hidden">{{ sliceString(item.id, 23) }}</span>
+      <span class="hidden monospace md:inline-block overflow">{{ item.id }}</span>
+      <span class="monospace md:hidden">{{ item.id }}</span>
     </td>
+
     <td data-title="Hash:">
-      <span class="hidden monospace md:inline-block">{{ sliceString(item.hash, 30) }}</span>
-      <span class="monospace md:hidden">{{ sliceString(item.hash, 23) }}</span>
+      <span class="hidden monospace md:inline-block">
+        {{ item.hash }}
+      </span>
+      <span class="monospace md:hidden">
+        {{ item.hash }}
+      </span>
     </td>
+
     <td data-title="Device:">
       <span v-if="item.device">
-        <span class="hidden monospace md:inline-block">{{ item.device }}</span>
+        <span class="hidden monospace md:inline-block">
+          {{ item.device }}
+        </span>
       </span>
       <span v-else class="text-gray-400">None</span>
     </td>
+
     <td data-title="Type:">
-      <span class="monospace md:font-sans">{{ formatType(item.type) }}</span>
+      <span class="monospace md:font-sans">{{ formattedType }}</span>
     </td>
+
     <td data-title="Status:">
       <span v-if="item.released">
         <span class="mr-1 -mt-2 icon icon-grey"><ArrowCircleDownIcon/></span>
@@ -37,8 +47,9 @@
         <span>Active</span>
       </span>
     </td>
+
     <td data-title="Amount:">
-      <span class="monospace lg:font-sans">{{ formatAmount(item.amount / 1e6) }}</span>
+      <span class="monospace lg:font-sans">{{ formattedAmount }}</span>
     </td>
   </tr>
 </template>
@@ -56,33 +67,24 @@ export default {
     ClockIcon,
     DotsCircleHorizontalIcon
   },
-  methods: {
-    sliceString(string, symbols) {
-      return string && string.length > symbols ? `${string.slice(0, symbols)}…` : string;
+  computed: {
+    formattedAmount() {
+      return formatXe(this.item.amount / 1e6, true)
     },
-    formatAmount(amount) {
-      return formatXe(amount, true)
+    formattedType() {
+      return this.item.type.charAt(0).toUpperCase() + this.item.type.slice(1)
     },
-    formatType(typ) {
-      return typ.charAt(0).toUpperCase() + typ.slice(1)
-    },
-    isConfirmed(item) {
-      if (item.pending) return false
-      if (item.confirmations === 1) return false
-      if (item.confirmations < 10) return false
-      return true
-    }
   }
 }
 </script>
 
 <style scoped>
-tr {
-  @apply block;
-}
-
 td {
   @apply bg-white text-sm2 font-normal flex items-center px-5 break-all max-w-full pb-4;
+}
+
+td span {
+  @apply w-full overflow-ellipsis overflow-hidden whitespace-nowrap
 }
 
 td::before {
@@ -126,10 +128,6 @@ td a {
 }
 
 @screen lg {
-  tr {
-    @apply table-row;
-  }
-
   td {
     @apply border-gray-200 pt-13 pb-15 table-cell border-b-2 align-middle;
   }

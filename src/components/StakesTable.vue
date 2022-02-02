@@ -3,12 +3,12 @@
     <table>
       <thead class="hidden lg:table-header-group">
         <tr>
-          <th width="23%">ID</th>
-          <th width="23%">Hash</th>
-          <th width="23%">Device</th>
+          <th width="22%">ID</th>
+          <th width="22%">Hash</th>
+          <th width="30%">Device</th>
           <th width="8%">Type</th>
           <th width="8%">Status</th>
-          <th width="15%">Amount XE</th>
+          <th width="10%">Amount XE</th>
         </tr>
       </thead>
       <tbody v-if="stakes.length">
@@ -53,7 +53,10 @@ export default {
   computed: mapState(['address']),
   mounted() {
     this.updateStakes()
-    this.pollStakes()
+    //initiate polling
+    this.iStakes = setInterval(() => {
+      this.updateStakes()
+    }, stakesRefreshInterval)
   },
   unmounted() {
     clearInterval(this.iStakes)
@@ -73,11 +76,6 @@ export default {
       this.receiveMetadata(stakes.metadata)
       this.loading = false
     },
-    pollStakes() {
-      this.iStakes = setInterval(() => {
-        this.updateStakes()
-      }, stakesRefreshInterval)
-    }
   },
   watch: {
     page() {
@@ -88,6 +86,10 @@ export default {
 </script>
 
 <style scoped>
+table {
+  @apply w-full table-fixed
+}
+
 table, tbody, tr {
   @apply block;
 }
@@ -101,12 +103,12 @@ th:last-child {
 }
 
 @screen lg {
-  tbody {
-    @apply table-row-group;
-  }
-
   table {
     @apply table;
+  }
+
+  tbody {
+    @apply table-row-group;
   }
 
   tr {
