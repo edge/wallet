@@ -1,8 +1,10 @@
 <template>
   <tr>
     <td data-title="ID:" :title="item.id">
-      <span class="hidden monospace md:inline-block overflow">{{ item.id }}</span>
-      <span class="monospace md:hidden">{{ item.id }}</span>
+      <a :href="`${explorerUrl}/stake/${item.id}`" target="_blank" rel="noreferrer">
+        <span class="hidden monospace md:inline-block overflow">{{ item.id }}</span>
+        <span class="monospace md:hidden">{{ item.id }}</span>
+      </a>
     </td>
 
     <td data-title="Hash:">
@@ -68,6 +70,9 @@ export default {
     DotsCircleHorizontalIcon
   },
   computed: {
+    explorerUrl() {
+      return process.env.VUE_APP_EXPLORER_URL || 'https://xe.network'
+    },
     formattedAmount() {
       return formatXe(this.item.amount / 1e6, true)
     },
