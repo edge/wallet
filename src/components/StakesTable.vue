@@ -1,5 +1,5 @@
 <template>
-  <div class="transaction-table">
+  <div>
     <table>
       <thead class="hidden lg:table-header-group">
         <tr v-if="hideWalletColumn">
@@ -110,7 +110,15 @@ table, tbody, tr {
 }
 
 th {
-  @apply font-normal text-sm2 text-left text-black bg-gray-100 border-b-2 border-gray-200;
+  @apply font-normal text-sm2 text-left text-black bg-gray-100 border-b-2 border-gray-200 py-13 px-5;
+}
+
+th:first-of-type {
+  @apply pl-20;
+}
+
+th:last-of-type {
+  @apply pr-30
 }
 
 th:last-child {
