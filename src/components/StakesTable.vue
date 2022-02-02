@@ -78,6 +78,11 @@ export default {
         this.updateStakes()
       }, stakesRefreshInterval)
     }
+  },
+  watch: {
+    page(val) {
+      this.updateStakes()
+    }
   }
 }
 </script>
