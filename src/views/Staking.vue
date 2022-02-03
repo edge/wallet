@@ -43,7 +43,7 @@ export default {
   },
   computed: {
     currentPage() {
-      return parseInt(this.$route.query.page) || 1
+      return Math.max(1, parseInt(this.$route.query.page) || 1)
     },
     lastPage() {
       return Math.max(1, Math.ceil(this.metadata.totalCount / this.limit))
@@ -57,9 +57,12 @@ export default {
   watch: {
     metadata() {
       // clamp pagination to available page numbers with automatic redirection
-      if (this.currentPage < 0) this.$router.push({ name: 'Staking', query: { page: 1 } })
       if (this.currentPage > this.lastPage) this.$router.push({ name: 'Staking', query: { page: this.lastPage } })
     }
+  },
+  mounted() {
+    const p = parseInt(this.$route.query.page) || 0
+    if (p < 1) this.$router.push({ name: 'Staking', query: { page: 1 } })
   }
 }
 </script>
