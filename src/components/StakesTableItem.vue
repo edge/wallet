@@ -2,26 +2,21 @@
   <tr>
     <td data-title="ID:" :title="item.id">
       <a :href="explorerStakeUrl" target="_blank" rel="noreferrer">
-        <span class="hidden monospace md:inline-block overflow">{{ item.id }}</span>
-        <span class="monospace md:hidden">{{ item.id }}</span>
+        <span class="monospace md:inline-block">
+          {{ item.id }}
+        </span>
       </a>
     </td>
 
     <td data-title="Hash:">
-      <span class="hidden monospace md:inline-block">
-        {{ item.hash }}
-      </span>
-      <span class="monospace md:hidden">
+      <span class="monospace md:inline-block">
         {{ item.hash }}
       </span>
     </td>
 
     <td v-if="showWalletColumn" data-title="Wallet:">
       <a :href="explorerWalletUrl" target="_blank" rel="noreferrer">
-        <span class="hidden monospace md:inline-block">
-          {{ item.tx.recipient }}
-        </span>
-        <span class="monospace md:hidden">
+        <span class="monospace md:inline-block">
           {{ item.tx.recipient }}
         </span>
       </a>
@@ -29,7 +24,7 @@
 
     <td data-title="Device:">
       <span v-if="item.device">
-        <span class="hidden monospace md:inline-block">
+        <span class="monospace md:inline-block">
           {{ item.device }}
         </span>
       </span>
