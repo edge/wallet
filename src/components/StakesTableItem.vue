@@ -17,7 +17,7 @@
     </td>
 
     <td v-if="!hideWalletColumn" data-title="Wallet:">
-      <a :href="exploererWalletUrl" target="_blank" rel="noreferrer">
+      <a :href="explorerWalletUrl" target="_blank" rel="noreferrer">
         <span class="hidden monospace md:inline-block">
           {{ item.tx.recipient }}
         </span>
@@ -87,7 +87,7 @@ export default {
     explorerStakeUrl() {
       return `${process.env.VUE_APP_EXPLORER_URL}/stake/${this.item.id}`
     },
-    exploererWalletUrl() {
+    explorerWalletUrl() {
       `${process.env.VUE_APP_EXPLORER_URL}/wallet/${this.address}`
     },
     formattedAmount() {
