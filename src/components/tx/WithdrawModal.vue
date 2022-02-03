@@ -7,7 +7,7 @@
       </span>
     </template>
     <template v-slot:body>
-      <div class="pb-4 min-h-410">
+      <div class="pb-4 min-h-300">
         <div class="form-group mb-8" :class="{'form-group__error': v$.recipient.$error}">
           <label for="send1" class="flex items-center space-x-3 label">
             Withdraw to
@@ -44,22 +44,6 @@
           </div>
         </div>
 
-        <div class="mt-32 mb-8 form-group">
-          <label class="flex items-center space-x-3 label">
-            Transaction speed
-            <Tooltip
-              class="ml-3" position="right" theme="dark" :wide="true"
-              text="Faster transactions cost more gas in the Ethereum network">
-              <InformationCircleIcon class="hidden md:block button__icon w-15" />
-            </Tooltip>
-          </label>
-          <div class="flex flex-wrap mt-12 -mx-6 radio-list">
-            <Radio name="speed" :selected="speed === 'slow'" @click="() => setSpeed('slow')" id="slow" :label="(gasRates.slow || '...') + ' XE'" :big="true" extraName="Slow"/>
-            <Radio name="speed" :selected="speed === 'average'" @click="() => setSpeed('average')" id="average" :label="(gasRates.average || '...') + ' XE'" :big="true" extraName="Average"/>
-            <Radio name="speed" :selected="speed === 'fast'" @click="() => setSpeed('fast')" id="fast" :label="(gasRates.fast || '...') + ' XE'" :big="true" extraName="Fast"/>
-            <Radio name="speed" :selected="speed === 'fastest'" @click="() => setSpeed('fastest')" id="fastest" :label="(gasRates.fastest || '...') + ' XE'" :big="true" extraName="Fastest"/>
-          </div>
-        </div>
         <div class="mt-32 mb-8 form-group">
           <label class="flex items-center space-x-3">
             Estimated Cost
@@ -239,7 +223,7 @@
 
         <div class="form-group mb-14">
           <label>Estimated cost</label>
-          <Amount :value="completedTx.data.fee / 1e6" currency="XE" short sub/>
+          <Amount :value="feeOnSubmit" currency="XE" short sub/>
         </div>
 
         <div class="form-group mb-14">
@@ -304,13 +288,13 @@ export default {
 
       recipient: '',
       amount: '',
-      speed: 'average',
       password: '',
       passwordError: '',
 
       submitError: '',
       completedTx: null,
       edgeAmountOnSubmit: 0,
+      feeOnSubmit: 0,
     }
   },
   validations() {
@@ -338,26 +322,7 @@ export default {
       return !this.v$.$invalid && this.edgeAmount > 0
     },
     gasRate() {
-      /*
-      this.gasRates is a reactive (data) object, and its props can't be accessed via array-style notation:
-
-          // logs undefined
-          console.log(this.gasRates[this.speed])
-
-      this computed prop works around the constraint, and simplifies access to the selected rate amount besides.
-      */
-      switch (this.speed) {
-      case 'slow':
-        return this.gasRates.slow
-      case 'average':
-        return this.gasRates.average
-      case 'fast':
-        return this.gasRates.fast
-      case 'fastest':
-        return this.gasRates.fastest
-      default:
-        return undefined
-      }
+      return this.gasRates.fee
     },
     minimumFee() {
       if (this.gasRate === undefined || this.amountParsed === NaN) return NaN
@@ -417,17 +382,14 @@ export default {
 
       this.recipient = ''
       this.amount = ''
-      this.speed = 'average'
       this.password = ''
 
       this.submitError = ''
       this.completedTx = null
       this.edgeAmountOnSubmit = 0
+      this.feeOnSubmit = 0
 
       this.v$.$reset()
-    },
-    setSpeed(speed) {
-      this.speed = speed
     },
     async updateGasRates() {
       this.gasRates = await fetchGasRates()
@@ -447,8 +409,8 @@ export default {
         amount: toMicroXe(this.amountParsed),
         data: {
           destination: this.recipient,
-          fee: toMicroXe(this.fee),
           memo: 'XE Withdrawal',
+          ref: this.gasRates.reference,
           token: 'EDGE'
         },
         nonce: this.nextNonce
@@ -456,10 +418,15 @@ export default {
 
       // submit tx to blockchain
       try {
+        const capture = {
+          edgeAmountOnSubmit: this.edgeAmount,
+          feeOnSubmit: this.fee
+        }
         const { metadata, results } = await xe.tx.createTransactions(process.env.VUE_APP_BLOCKCHAIN_API_URL, [tx])
         if (metadata.accepted) {
           this.completedTx = results[0]
-          this.edgeAmountOnSubmit = this.edgeAmount
+          this.edgeAmountOnSubmit = capture.edgeAmountOnSubmit
+          this.feeOnSubmit = capture.feeOnSubmit
           this.goto(3)
         } else {
           this.submitError = results[0].reason
