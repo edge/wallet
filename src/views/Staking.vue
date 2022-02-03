@@ -31,7 +31,7 @@ export default {
   name: 'Staking',
   data: function () {
     return {
-      metadata: {totalCount: 0},
+      metadata: { totalCount: 0 },
       limit: 5,
     }
   },
@@ -43,23 +43,23 @@ export default {
   },
   computed: {
     currentPage() {
-      const currentPage = this.clampPageNumber(parseInt(this.$route.query.page) || 1)
-      return currentPage
+      return parseInt(this.$route.query.page) || 1
     },
     lastPage() {
-      return this.metadata.totalCount ? Math.ceil(this.metadata.totalCount / this.limit) : 1
+      return Math.max(1, Math.ceil(this.metadata.totalCount / this.limit))
     }
   },
   methods: {
-    clampPageNumber(page) {
-      const clampedPageNumber = Math.min(Math.max(page, 1), this.lastPage)
-      // redirect to correct page number
-      this.$router.push({ name: 'Staking', query: { page: clampedPageNumber } })
-      return clampedPageNumber
-    },
     onStakesUpdate(metadata) {
       this.metadata = metadata
-    },
+    }
+  },
+  watch: {
+    metadata() {
+      // clamp pagination to available page numbers with automatic redirection
+      if (this.currentPage < 0) this.$router.push({ name: 'Staking', query: { page: 1 } })
+      if (this.currentPage > this.lastPage) this.$router.push({ name: 'Staking', query: { page: this.lastPage } })
+    }
   }
 }
 </script>
