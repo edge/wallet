@@ -4,44 +4,43 @@
       <li class="pagination__item">
         <router-link
           v-if="currentPage !== 1"
-          @click="setFirstPage"
-          :to="{ name: baseRoute, params: { page: 1 }}"
+          :to="getNewRoute(1)"
         >
           First
         </router-link>
         <span class="not-link" v-else>First</span>
       </li>
+
       <li class="pagination__item">
         <router-link
           v-if="currentPage !== 1"
-          @click="setPrevPage"
-          :to="{ name: baseRoute, params: { page: currentPage - 1 }}"
+          :to="getNewRoute(prevPage)"
         >
           <ChevronLeftIcon/>
         </router-link>
         <span class="not-link" v-else><ChevronLeftIcon/></span>
       </li>
+
       <li class="pagination__item">
-        <span v-if="totalPages">
-          Page {{Number(currentPage).toLocaleString()}} of {{Number(totalPages).toLocaleString()}}
+        <span>
+          Page {{ currentPage }} of {{ lastPage }}
         </span>
-        <span v-else>&nbsp;</span>
       </li>
+
       <li class="pagination__item">
         <router-link
-         v-if="currentPage < totalPages"
-          @click="setNextPage"
-         :to="{ name: baseRoute, params: { page: currentPage + 1 }}"
+          v-if="currentPage < lastPage"
+          :to="getNewRoute(nextPage)"
         >
           <ChevronRightIcon/>
         </router-link>
         <span class="not-link" v-else><ChevronRightIcon/></span>
       </li>
+
       <li class="pagination__item">
         <router-link
-          v-if="currentPage < totalPages"
-          @click="setLastPage"
-          :to="{ name: baseRoute, params: { page: totalPages }}"
+          v-if="currentPage < lastPage"
+          :to="getNewRoute(lastPage)"
         >
           Last
         </router-link>
@@ -59,29 +58,35 @@ export default {
   components: {ChevronRightIcon, ChevronLeftIcon},
   props: [
     'baseRoute',
-    'changePage',
     'currentPage',
     'limit',
+    'query',
     'totalCount'
   ],
   computed: {
-    totalPages() {
+    lastPage() {
       return Math.ceil(this.totalCount / this.limit)
+    },
+    prevPage() {
+      return this.currentPage - 1
+    },
+     queryKey() {
+      return this.query || 'page'
+    },
+    nextPage() {
+      return this.currentPage + 1
     }
   },
   methods: {
-    setFirstPage() {
-      this.changePage(1)
+    getNewRoute(newPage) {
+      return {
+        name: this.baseRoute,
+        query: {
+          ...this.$route.query,
+          [this.queryKey]: newPage
+        }
+      }
     },
-    setLastPage() {
-      this.changePage(this.totalPages)
-    },
-    setNextPage() {
-      this.changePage(this.currentPage + 1)
-    },
-    setPrevPage() {
-      this.changePage(this.currentPage - 1)
-    }
   }
 }
 </script>

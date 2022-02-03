@@ -15,7 +15,6 @@
         baseRoute="Staking"
         :currentPage="currentPage"
         :limit="pageLimit"
-        :changePage="onPageUpdate"
         :totalCount="totalCount"
       />
     </div>
@@ -32,7 +31,6 @@ export default {
   name: 'Staking',
   data: function () {
     return {
-      currentPage: 1,
       metadata: null,
       pageLimit: 5,
       totalCount: 0
@@ -44,13 +42,15 @@ export default {
     Pagination,
     StakesTable
   },
+  computed: {
+    currentPage() {
+      return Number(this.$route.query.page) || 1
+    }
+  },
   methods: {
     onStakesUpdate(metadata) {
       this.totalCount = metadata.totalCount
     },
-    onPageUpdate(newPage) {
-      this.currentPage = newPage
-    }
   }
 }
 </script>
