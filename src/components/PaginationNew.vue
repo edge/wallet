@@ -3,7 +3,7 @@
     <ol class="pagination__list">
       <li class="pagination__item">
         <router-link
-          v-if="currentPage !== 1"
+          v-if="!onFirstPage"
           :to="getNewRoute(1)"
         >
           First
@@ -13,7 +13,7 @@
 
       <li class="pagination__item">
         <router-link
-          v-if="currentPage !== 1"
+          v-if="!onFirstPage"
           :to="getNewRoute(prevPage)"
         >
           <ChevronLeftIcon/>
@@ -29,7 +29,7 @@
 
       <li class="pagination__item">
         <router-link
-          v-if="currentPage < lastPage"
+          v-if="!onLastPage"
           :to="getNewRoute(nextPage)"
         >
           <ChevronRightIcon/>
@@ -39,7 +39,7 @@
 
       <li class="pagination__item">
         <router-link
-          v-if="currentPage < lastPage"
+          v-if="!onLastPage"
           :to="getNewRoute(lastPage)"
         >
           Last
@@ -67,10 +67,17 @@ export default {
     lastPage() {
       return Math.ceil(this.totalCount / this.limit)
     },
+    onFirstPage() {
+      return this.currentPage === 1
+    },
+    onLastPage() {
+      return this.currentPage === this.lastPage
+    },
     prevPage() {
       return this.currentPage - 1
     },
      queryKey() {
+      // if a view has multiple tables with pagination, each will need a unique query to control pagination separately
       return this.query || 'page'
     },
     nextPage() {
