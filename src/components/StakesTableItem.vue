@@ -1,7 +1,7 @@
 <template>
   <tr>
     <td data-title="ID:" :title="item.id">
-      <a :href="`${explorerUrl}/stake/${item.id}`" target="_blank" rel="noreferrer">
+      <a :href="explorerStakeUrl" target="_blank" rel="noreferrer">
         <span class="hidden monospace md:inline-block overflow">{{ item.id }}</span>
         <span class="monospace md:hidden">{{ item.id }}</span>
       </a>
@@ -17,12 +17,14 @@
     </td>
 
     <td v-if="!hideWalletColumn" data-title="Wallet:">
-      <span class="hidden monospace md:inline-block">
-        {{ item.tx.recipient }}
-      </span>
-      <span class="monospace md:hidden">
-        {{ item.tx.recipient }}
-      </span>
+      <a :href="exploererWalletUrl" target="_blank" rel="noreferrer">
+        <span class="hidden monospace md:inline-block">
+          {{ item.tx.recipient }}
+        </span>
+        <span class="monospace md:hidden">
+          {{ item.tx.recipient }}
+        </span>
+      </a>
     </td>
 
     <td data-title="Device:">
@@ -79,8 +81,14 @@ export default {
     DotsCircleHorizontalIcon
   },
   computed: {
-    explorerUrl() {
-      return process.env.VUE_APP_EXPLORER_URL || 'https://xe.network'
+    address () {
+      return this.item.tx.recipient
+    },
+    explorerStakeUrl() {
+      return `${process.env.VUE_APP_EXPLORER_URL}/stake/${this.item.id}`
+    },
+    exploererWalletUrl() {
+      `${process.env.VUE_APP_EXPLORER_URL}/wallet/${this.address}`
     },
     formattedAmount() {
       return formatXe(this.item.amount / 1e6, true)
@@ -89,7 +97,7 @@ export default {
       return this.item.type.charAt(0).toUpperCase() + this.item.type.slice(1)
     },
     isUnlocking() {
-      return item.unlockRequested + item.unlockPeriod > Date.now()
+      return this.item.unlockRequested + this.item.unlockPeriod > Date.now()
     }
   }
 }
