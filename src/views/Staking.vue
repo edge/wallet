@@ -11,7 +11,7 @@
         :page="currentPage"
       />
       <Pagination
-        v-if="totalCount > limit"
+        v-if="metadata.totalCount > limit"
         baseRoute="Staking"
         :currentPage="currentPage"
         :limit="limit"
@@ -31,8 +31,8 @@ export default {
   name: 'Staking',
   data: function () {
     return {
-      metadata: null,
-      limit: 20,
+      metadata: {totalCount: 0},
+      limit: 5,
     }
   },
   components: {
@@ -43,10 +43,20 @@ export default {
   },
   computed: {
     currentPage() {
-      return parseInt(this.$route.query.page) || 1
+      const currentPage = this.clampPageNumber(parseInt(this.$route.query.page) || 1)
+      return currentPage
     },
+    lastPage() {
+      return this.metadata.totalCount ? Math.ceil(this.metadata.totalCount / this.limit) : 1
+    }
   },
   methods: {
+    clampPageNumber(page) {
+      const clampedPageNumber = Math.min(Math.max(page, 1), this.lastPage)
+      // redirect to correct page number
+      this.$router.push({ name: 'Staking', query: { page: clampedPageNumber } })
+      return clampedPageNumber
+    },
     onStakesUpdate(metadata) {
       this.metadata = metadata
     },
