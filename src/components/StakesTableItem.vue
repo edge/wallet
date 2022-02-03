@@ -16,7 +16,7 @@
       </span>
     </td>
 
-    <td v-if="!hideWalletColumn" data-title="Wallet:">
+    <td v-if="showWalletColumn" data-title="Wallet:">
       <a :href="explorerWalletUrl" target="_blank" rel="noreferrer">
         <span class="hidden monospace md:inline-block">
           {{ item.tx.recipient }}
@@ -73,7 +73,7 @@ import { ArrowCircleDownIcon, CheckCircleIcon, ClockIcon, DotsCircleHorizontalIc
 
 export default {
   name: "StakesTableItem",
-  props: ['hideWalletColumn', 'item'],
+  props: ['showWalletColumn', 'item'],
   components: {
     ArrowCircleDownIcon,
     CheckCircleIcon,

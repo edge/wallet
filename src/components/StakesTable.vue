@@ -1,18 +1,18 @@
 <template>
   <table>
     <thead class="hidden lg:table-header-group">
-      <tr v-if="hideWalletColumn">
-        <th width="22%">ID</th>
-        <th width="22%">Hash</th>
+      <tr v-if="showWalletColumn">
+        <th width="10%">ID</th>
+        <th width="10%">Hash</th>
+        <th width="24%">Wallet</th>
         <th width="30%">Device</th>
         <th width="8%">Type</th>
         <th width="8%">Status</th>
         <th width="10%">Amount XE</th>
       </tr>
       <tr v-else>
-        <th width="10%">ID</th>
-        <th width="10%">Hash</th>
-        <th width="24%">Wallet</th>
+        <th width="22%">ID</th>
+        <th width="22%">Hash</th>
         <th width="30%">Device</th>
         <th width="8%">Type</th>
         <th width="8%">Status</th>
@@ -24,7 +24,7 @@
         v-for="item in stakes"
         :key="item.id"
         :item="item"
-        :hideWalletColumn="hideWalletColumn"
+        :showWalletColumn="showWalletColumn"
       />
     </tbody>
     <tbody v-else>
@@ -58,7 +58,7 @@ export default {
     StakesTableItem
   },
   props: [
-    'hideWalletColumn',
+    'showWalletColumn',
     'limit',
     'page',
     'receiveMetadata'
