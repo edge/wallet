@@ -46,7 +46,7 @@
 
         <div class="mt-32 mb-8 form-group">
           <label class="flex items-center space-x-3">
-            Estimated Cost
+            Transaction fee
             <Tooltip class="ml-3" position="right" theme="dark" :text="`Inclusive of a ${minimumFee} XE handling fee`">
               <InformationCircleIcon class="hidden md:block button__icon w-15" />
             </Tooltip>
@@ -80,7 +80,7 @@
                 <img src="/assets/e-logo-alt.svg" alt="image description" class="flex-shrink-0">
               </span>
               <div class="md:flex-grow">
-                <span class="block mb-3 text-gray">You should receive</span>
+                <span class="block mb-3 text-gray">You will receive</span>
                 <span class="block text-xl text-white price">
                   <Amount :value="edgeAmount" currency="EDGE"/>
                 </span>
@@ -130,7 +130,7 @@
 
         <div class="form-group mb-14">
           <label class="flex items-center space-x-3">
-            Estimated Cost
+            Transaction fee
             <Tooltip class="ml-3" position="right" theme="dark" :text="`Includes handling fee of ${minimumFee} XE`">
               <InformationCircleIcon class="hidden md:block button__icon w-15" />
             </Tooltip>
@@ -140,7 +140,7 @@
 
         <div class="form-group mb-14">
           <label class="flex items-center space-x-3">
-            You should receive
+            You will receive
             <Tooltip
               class="ml-3" position="right" :wide="true" theme="dark"
               :text="`This is dependent on the final Ethereum transaction cost, you may receive more`">
@@ -222,12 +222,12 @@
         </div>
 
         <div class="form-group mb-14">
-          <label>Estimated cost</label>
+          <label>Transaction fee</label>
           <Amount :value="feeOnSubmit" currency="XE" short sub/>
         </div>
 
         <div class="form-group mb-14">
-          <label>You should receive</label>
+          <label>You will receive</label>
           <Amount :value="edgeAmountOnSubmit" currency="EDGE" sub/>
         </div>
 
