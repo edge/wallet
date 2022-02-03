@@ -32,7 +32,7 @@ export default {
   data: function () {
     return {
       metadata: null,
-      pageLimit: 5,
+      pageLimit: 20,
       totalCount: 0
     }
   },
