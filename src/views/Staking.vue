@@ -6,16 +6,16 @@
     <div class="container">
       <StakesTable
         :hideWalletColumn="true"
-        :limit="pageLimit"
+        :limit="limit"
         :receiveMetadata="onStakesUpdate"
         :page="currentPage"
       />
       <Pagination
-        v-if="totalCount > pageLimit"
+        v-if="totalCount > limit"
         baseRoute="Staking"
         :currentPage="currentPage"
-        :limit="pageLimit"
-        :totalCount="totalCount"
+        :limit="limit"
+        :totalCount="metadata.totalCount"
       />
     </div>
   </div>
@@ -32,8 +32,7 @@ export default {
   data: function () {
     return {
       metadata: null,
-      pageLimit: 20,
-      totalCount: 0
+      limit: 20,
     }
   },
   components: {
@@ -44,12 +43,12 @@ export default {
   },
   computed: {
     currentPage() {
-      return Number(this.$route.query.page) || 1
-    }
+      return parseInt(this.$route.query.page) || 1
+    },
   },
   methods: {
     onStakesUpdate(metadata) {
-      this.totalCount = metadata.totalCount
+      this.metadata = metadata
     },
   }
 }

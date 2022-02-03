@@ -64,7 +64,7 @@ export default {
     prevPage() {
       return this.currentPage - 1
     },
-     queryKey() {
+    queryKey() {
       // if a view has multiple tables with pagination, each will need a unique query to control pagination separately
       return this.query || 'page'
     },

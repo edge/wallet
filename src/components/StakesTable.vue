@@ -66,7 +66,7 @@ export default {
   computed: mapState(['address']),
   mounted() {
     this.updateStakes()
-    //initiate polling
+    // initiate polling
     this.iStakes = setInterval(() => {
       this.updateStakes()
     }, stakesRefreshInterval)
