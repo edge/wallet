@@ -1,0 +1,10 @@
+{
+  "extends": [
+    "plugin:vue/essential",
+    "@edge/eslint-config-javascript"
+  ],
+  "ignorePatterns": [
+    "src/tailwind/**/*.js",
+    "/*.js"
+  ]
+}

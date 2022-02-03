@@ -2,7 +2,7 @@
 // Use of this source code is governed by a GNU GPL-style license
 // that can be found in the LICENSE.md file. All rights reserved.
 
-import { helpers, minLength, required as _required } from '@vuelidate/validators'
+import { required as _required, helpers, minLength } from '@vuelidate/validators'
 
 /**
  * XE amount validation rules.

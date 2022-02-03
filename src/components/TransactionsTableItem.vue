@@ -1,4 +1,5 @@
 <template>
+  <!-- eslint-disable vue/no-multiple-template-root -->
   <td data-title="Tx Hash:" :title="item.hash">
     <a :href="`${explorerUrl}/transaction/${item.hash}`" target="_blank" rel="noreferrer">
       <span class="hidden monospace md:inline-block">{{ sliceString(item.hash, 8) }}</span>
@@ -36,7 +37,10 @@
     <span v-if="isConfirmed(item)" class="mr-1 -mt-2 icon icon--confirmed icon-green">
       <CheckCircleIcon />
     </span>
-    <span class="monospace md:font-sans" :class="item.confirmations < 10 || !item.confirmations ? 'text-gray-400' : ''">{{ formatStatus(item) }}</span>
+    <span
+      class="monospace md:font-sans"
+      :class="item.confirmations < 10 || !item.confirmations ? 'text-gray-400' : ''"
+    >{{ formatStatus(item) }}</span>
   </td>
   <td data-title="Amount:">
     <span class="monospace lg:font-sans">
@@ -46,31 +50,33 @@
 </template>
 
 <script>
+/*global process*/
+
 import Amount from './Amount'
-import { ArrowDownIcon, ArrowUpIcon, CheckCircleIcon, ClockIcon } from "@heroicons/vue/outline"
+import { ArrowDownIcon, ArrowUpIcon, CheckCircleIcon, ClockIcon } from '@heroicons/vue/outline'
 
 export default {
-  name: "TransactionsTableItem",
+  name: 'TransactionsTableItem',
   props: ['item'],
   data: function() {
     return {
-      explorerUrl: process.env.VUE_APP_EXPLORER_URL || 'https://xe.network',
+      explorerUrl: process.env.VUE_APP_EXPLORER_URL || 'https://xe.network'
     }
   },
   methods: {
     async copyToClipboard (input) {
-      if (!!navigator.clipboard) {
+      if (navigator.clipboard) {
         await navigator.clipboard.writeText(input)
       }
     },
     sliceString(string, symbols) {
-      return string.length > symbols ? `${string.slice(0, symbols)}…` : string;
+      return string.length > symbols ? `${string.slice(0, symbols)}…` : string
     },
     formatStatus(item) {
       if (item.pending) return 'Pending'
       if (item.confirmations === 1) return `${item.confirmations} confirmation`
       if (item.confirmations < 10) return `${item.confirmations} confirmations`
-      return `Confirmed`
+      return 'Confirmed'
     },
     isConfirmed(item) {
       if (item.pending) return false

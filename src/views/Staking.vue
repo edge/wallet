@@ -1,22 +1,24 @@
 <template>
-  <Header />
-  <AccountPanel/>
+  <div>
+    <Header />
+    <AccountPanel/>
 
-  <div class="bg-gray-200 py-35">
-    <div class="container">
-      <StakesTable
-        :hideWalletColumn="true"
-        :limit="limit"
-        :receiveMetadata="onStakesUpdate"
-        :page="currentPage"
-      />
-      <Pagination
-        v-if="metadata.totalCount > limit"
-        baseRoute="Staking"
-        :currentPage="currentPage"
-        :limit="limit"
-        :totalCount="metadata.totalCount"
-      />
+    <div class="bg-gray-200 py-35">
+      <div class="container">
+        <StakesTable
+          :hideWalletColumn="true"
+          :limit="limit"
+          :receiveMetadata="onStakesUpdate"
+          :page="currentPage"
+        />
+        <Pagination
+          v-if="metadata.totalCount > limit"
+          baseRoute="Staking"
+          :currentPage="currentPage"
+          :limit="limit"
+          :totalCount="metadata.totalCount"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -28,11 +30,11 @@ import Pagination from '@/components/PaginationNew'
 import StakesTable from '@/components/StakesTable'
 
 export default {
-  name: 'Staking',
+  name: 'ViewStaking',
   data: function () {
     return {
       metadata: { totalCount: 0 },
-      limit: 5,
+      limit: 5
     }
   },
   components: {

@@ -31,12 +31,12 @@ const store = createStore('edge', 'wallet')
 const comparePassword = (password, version) => {
   if (version === undefined) version = getHighestWalletVersion()
   switch(version) {
-    case 0:
-      return v0.comparePassword(password)
-    case 1:
-      return v1.comparePassword(password)
-    default:
-      throw invalidVersion(version)
+  case 0:
+    return v0.comparePassword(password)
+  case 1:
+    return v1.comparePassword(password)
+  default:
+    throw invalidVersion(version)
   }
 }
 
@@ -66,12 +66,12 @@ const expire = () => del(KEY_UNLOCK_EXPIRY, store)
 const getAddress = version => {
   if (version === undefined) version = getHighestWalletVersion()
   switch(version) {
-    case 0:
-      return v0.getAddress()
-    case 1:
-      return v1.getAddress()
-    default:
-      throw invalidVersion(version)
+  case 0:
+    return v0.getAddress()
+  case 1:
+    return v1.getAddress()
+  default:
+    throw invalidVersion(version)
   }
 }
 
@@ -94,12 +94,12 @@ const getHighestWalletVersion = () => 1
 const getPrivateKey = (password, version) => {
   if (version === undefined) version = getHighestWalletVersion()
   switch(version) {
-    case 0:
-      return v0.getPrivateKey()
-    case 1:
-      return v1.getPrivateKey(password)
-    default:
-      throw invalidVersion(version)
+  case 0:
+    return v0.getPrivateKey()
+  case 1:
+    return v1.getPrivateKey(password)
+  default:
+    throw invalidVersion(version)
   }
 }
 
@@ -115,12 +115,12 @@ const getPrivateKey = (password, version) => {
 const getPublicKey = version => {
   if (version === undefined) version = getHighestWalletVersion()
   switch (version) {
-    case 0:
-      return v0.getPublicKey()
-    case 1:
-      return v1.getPublicKey()
-    default:
-      throw invalidVersion(version)
+  case 0:
+    return v0.getPublicKey()
+  case 1:
+    return v1.getPublicKey()
+  default:
+    throw invalidVersion(version)
   }
 }
 
@@ -170,20 +170,20 @@ const setUnlockExpiry = (date) => set(KEY_UNLOCK_EXPIRY, date.toString(), store)
 const setWallet = async (keypair, password, version) => {
   if (version === undefined) version = getHighestWalletVersion()
   switch (version) {
-    case 0:
-      await v0.setPrivateKey(keypair.privateKey)
-      await v0.setPublicKey(keypair.publicKey)
-      await v0.setPassword(password)
-      await setWalletVersion(0)
-      break
-    case 1:
-      await v1.setPrivateKey(keypair.privateKey, password)
-      await v1.setPublicKey(keypair.publicKey)
-      await v1.setPassword(password)
-      await setWalletVersion(1)
-      break
-    default:
-      throw invalidVersion(version)
+  case 0:
+    await v0.setPrivateKey(keypair.privateKey)
+    await v0.setPublicKey(keypair.publicKey)
+    await v0.setPassword(password)
+    await setWalletVersion(0)
+    break
+  case 1:
+    await v1.setPrivateKey(keypair.privateKey, password)
+    await v1.setPublicKey(keypair.publicKey)
+    await v1.setPassword(password)
+    await setWalletVersion(1)
+    break
+  default:
+    throw invalidVersion(version)
   }
 }
 

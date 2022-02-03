@@ -1,109 +1,98 @@
 <template>
-  <button @click.prevent="showTools = !showTools" class="header-tools__expand">
-    <span class="pointer-events-none header-tools__icon--cog">
-      <CogIcon/>
-    </span>
-    <span class="pointer-events-none header-tools__icon--expand">
-      <ChevronDownIcon/>
-    </span>
-  </button>
-  <ul v-click-outside="onClickOutside" class="header-tools" :class="showTools ? 'showTools' : 'hideTools'">
-    <li class="header-tools__item">
-      <a href="https://edge.network/en/contact/" class="header-tools__link" target="_blank" rel="noreferrer">
-        <span class="header-tools__icon">
-          <SupportIcon/>
-        </span>
-        Support
-      </a>
-    </li>
-    <li class="header-tools__item">
-      <div class="header-tools__link" @click="exportKey">
-        <span class="header-tools__icon">
-          <KeyIcon/>
-        </span>
-        Export Private Key
-      </div>
-    </li>
-    <li class="header-tools__item">
-      <div class="header-tools__link" @click="lock">
-        <span class="header-tools__icon">
-          <LockOpenIcon/>
-        </span>
-        Lock Wallet
-      </div>
-    </li>
-    <!-- <li class="header-tools__item">
-      <router-link to="/" class="header-tools__link header-tools__link--red">
-        <span class="header-tools__icon">
-          <ArchiveIcon/>
-        </span>
-        Forget Wallet
-      </router-link>
-    </li> -->
-    <li class="header-tools__item">
-      <div class="header-tools__link" @click="forget">
-        <span class="header-tools__icon">
-          <LogoutIcon/>
-        </span>
-        Forget Wallet
-      </div>
-    </li>
-  </ul>
+  <div>
+    <button @click.prevent="showTools = !showTools" class="header-tools__expand">
+      <span class="pointer-events-none header-tools__icon--cog">
+        <CogIcon/>
+      </span>
+      <span class="pointer-events-none header-tools__icon--expand">
+        <ChevronDownIcon/>
+      </span>
+    </button>
+    <ul v-click-outside="onClickOutside" class="header-tools" :class="showTools ? 'showTools' : 'hideTools'">
+      <li class="header-tools__item">
+        <a href="https://edge.network/en/contact/" class="header-tools__link" target="_blank" rel="noreferrer">
+          <span class="header-tools__icon">
+            <SupportIcon/>
+          </span>
+          Support
+        </a>
+      </li>
+      <li class="header-tools__item">
+        <div class="header-tools__link" @click="exportKey">
+          <span class="header-tools__icon">
+            <KeyIcon/>
+          </span>
+          Export Private Key
+        </div>
+      </li>
+      <li class="header-tools__item">
+        <div class="header-tools__link" @click="lock">
+          <span class="header-tools__icon">
+            <LockOpenIcon/>
+          </span>
+          Lock Wallet
+        </div>
+      </li>
+      <li class="header-tools__item">
+        <div class="header-tools__link" @click="forget">
+          <span class="header-tools__icon">
+            <LogoutIcon/>
+          </span>
+          Forget Wallet
+        </div>
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script>
-  import {ArchiveIcon, ChevronDownIcon, CogIcon, KeyIcon, LockOpenIcon, LogoutIcon} from "@heroicons/vue/outline"
-  import {SupportIcon} from "@heroicons/vue/solid"
-  import vClickOutside from 'click-outside-vue3'
-  import ForgetWallet from './index/ForgetModal.vue'
-  import ExportKey from './index/ExportModal.vue'
+import { SupportIcon } from '@heroicons/vue/solid'
+import vClickOutside from 'click-outside-vue3'
+import { ChevronDownIcon, CogIcon, KeyIcon, LockOpenIcon, LogoutIcon } from '@heroicons/vue/outline'
 
-  export default {
-    name: "HeaderTools",
-    components: {
-      ArchiveIcon,
-      ChevronDownIcon,
-      CogIcon,
-      ExportKey,
-      ForgetWallet,
-      KeyIcon,
-      LockOpenIcon,
-      LogoutIcon,
-      SupportIcon
-    },
-    data: function () {
-      return {
-        showTools: false
-      }
-    },
-    directives: {
-      clickOutside: vClickOutside.directive
-    },
-    methods: {
-      onClickOutside (event) {
-        const target = event.target.className
-        if (target !== 'header-tools__expand') {
-          this.showTools = false
-        }
-      },
-      forget() {
-        this.showTools = false
-        this.openForgetWalletModal()
-      },
-      lock() {
-        this.$store.commit('lock')
-        this.$router.push('/')
-      },
-      exportKey() {
-        this.showTools = false
-        this.openExportKeyModal()
-      }
-    },
-    props: {
-      openForgetWalletModal: Function,
-      openExportKeyModal: Function
+export default {
+  name: 'HeaderTools',
+  components: {
+    ChevronDownIcon,
+    CogIcon,
+    KeyIcon,
+    LockOpenIcon,
+    LogoutIcon,
+    SupportIcon
+  },
+  data: function () {
+    return {
+      showTools: false
     }
+  },
+  directives: {
+    clickOutside: vClickOutside.directive
+  },
+  methods: {
+    onClickOutside (event) {
+      const target = event.target.className
+      if (target !== 'header-tools__expand') {
+        this.showTools = false
+      }
+    },
+    forget() {
+      this.showTools = false
+      this.openForgetWalletModal()
+    },
+    lock() {
+      this.$store.commit('lock')
+      this.$router.push('/')
+    },
+    exportKey() {
+      this.showTools = false
+      this.openExportKeyModal()
+    }
+  },
+  props: {
+    openForgetWalletModal: Function,
+    openExportKeyModal: Function
   }
+}
 </script>
 
 <style scoped>

@@ -2,11 +2,13 @@
 // Use of this source code is governed by a GNU GPL-style license
 // that can be found in the LICENSE.md file. All rights reserved.
 
-import { createRouter, createWebHistory } from 'vue-router'
+/*global process*/
+
 import Index from '../views/Index.vue'
+import Overview from '@/views/Overview'
 import Staking from '@/views/Staking'
 import Transactions from '@/views/Transactions'
-import Overview from '@/views/Overview'
+import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
   {
@@ -33,7 +35,7 @@ const routes = [
   {
     path: '/staking',
     name: 'Staking',
-    component: Staking,
+    component: Staking
   }
 ]
 

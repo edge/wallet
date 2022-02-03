@@ -39,10 +39,11 @@
 </template>
 
 <script>
-import {ChevronLeftIcon, ChevronRightIcon} from "@heroicons/vue/solid";
+import {ChevronLeftIcon, ChevronRightIcon} from '@heroicons/vue/solid'
 
 export default {
-  name: "Pagination",
+  // eslint-disable-next-line vue/multi-word-component-names
+  name: 'Pagination',
   components: {ChevronRightIcon, ChevronLeftIcon},
   props: [
     'baseRoute',
@@ -81,7 +82,7 @@ export default {
           [this.queryKey]: newPage
         }
       }
-    },
+    }
   }
 }
 </script>

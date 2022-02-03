@@ -4,8 +4,8 @@
 
 import { publicKeyToChecksumAddress } from '@edge/wallet-utils'
 import { store } from './'
-import { get, getMany, set, setMany } from 'idb-keyval'
 import { compare, createSalt, decrypt, encrypt, hash } from '../crypto'
+import { get, getMany, set, setMany } from 'idb-keyval'
 
 // v0 (legacy) wallet storage uses a fixed secret key.
 // This value is preserved solely to support automatic migration to >=v1.

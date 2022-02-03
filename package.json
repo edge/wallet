@@ -14,6 +14,8 @@
   "scripts": {
     "build": "vue-cli-service build",
     "dev": "vue-cli-service --port 8000 serve",
+    "lint": "eslint --ext js,vue src",
+    "lint:fix": "eslint --fix --ext js,vue src",
     "start": "node server/index.js",
     "testnet": "VUE_APP_IS_TESTNET=true VUE_APP_BLOCKCHAIN_API_URL=https://xe1.test.network VUE_APP_INDEX_API_URL=https://index.test.network VUE_APP_EXPLORER_URL=https://test.network VUE_APP_BRIDGE_WALLET_ADDRESS=xe_BEE3d7E5f007b662B2C886d51e2B3E08de090488 npm run dev",
     "mainnet": "VUE_APP_IS_TESTNET=false VUE_APP_BLOCKCHAIN_API_URL=https://api.xe.network VUE_APP_INDEX_API_URL=https://index.xe.network VUE_APP_EXPLORER_URL=https://xe.network VUE_APP_BRIDGE_WALLET_ADDRESS=xe_A4788d8201Fb879e3b7523a0367401D2a985D42F npm run dev"
@@ -55,10 +57,13 @@
     "vuex": "^4.0.2"
   },
   "devDependencies": {
+    "@edge/eslint-config-javascript": "^0.1.0",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "@vue/compiler-sfc": "^3.0.0",
+    "eslint": "^7.32.0",
+    "eslint-plugin-vue": "^8.4.0",
     "lodash": "^4.17.21",
     "nodemon": "^2.0.7"
   },
