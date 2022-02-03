@@ -2,13 +2,15 @@
 // Use of this source code is governed by a GNU GPL-style license
 // that can be found in the LICENSE.md file. All rights reserved.
 
-import { createApp } from 'vue'
-import App from './App.vue'
-import Store from './store'
-import router from './router'
-import titleMixin from './mixins/titleMixin'
+/*global process*/
+
 import './index.css'
 import './utils'
+import App from './App.vue'
+import Store from './store'
+import { createApp } from 'vue'
+import router from './router'
+import titleMixin from './mixins/titleMixin'
 
 const WALLET_REFRESH_INTERVAL = 30 * 1000
 

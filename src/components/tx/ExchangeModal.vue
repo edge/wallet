@@ -52,8 +52,8 @@
 </template>
 
 <script>
-import { ArrowNarrowLeftIcon, ArrowNarrowRightIcon, CurrencyDollarIcon } from '@heroicons/vue/outline'
 import Modal from '../Modal'
+import { ArrowNarrowLeftIcon, ArrowNarrowRightIcon, CurrencyDollarIcon } from '@heroicons/vue/outline'
 
 export default {
   name: 'ExchangeModal',
@@ -61,14 +61,14 @@ export default {
     ArrowNarrowLeftIcon,
     ArrowNarrowRightIcon,
     CurrencyDollarIcon,
-    Modal,
+    Modal
   },
   props: {
     close: Function,
     openDeposit: Function,
     openSell: Function,
     openWithdraw: Function,
-    visible: Boolean,
+    visible: Boolean
   }
 }
 </script>

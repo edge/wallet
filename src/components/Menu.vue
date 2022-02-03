@@ -7,6 +7,7 @@
       class="main-nav__item"
       :class="item.disabled ? 'disabled' : ''"
     >
+      <!-- eslint-disable max-len -->
       <router-link
         :to="item.link"
         class="main-nav__link"
@@ -14,14 +15,16 @@
       >
         {{item.text}}
       </router-link>
+      <!-- eslint-enable max-len -->
     </li>
   </ul>
 </template>
 
 <script>
 export default {
-  name: "Menu",
-  props: ["mainNav"],
+  // eslint-disable-next-line vue/multi-word-component-names
+  name: 'Menu',
+  props: ['mainNav'],
   data: function () {
     return {
       location: null

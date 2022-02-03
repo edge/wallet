@@ -10,12 +10,13 @@
 import { xeStringFromMicroXe } from '@edge/wallet-utils'
 
 export default {
+  // eslint-disable-next-line vue/multi-word-component-names
   name: 'Amount',
   props: {
     currency: String,
     short: Boolean,
     sub: Boolean,
-    value: [Number, String],
+    value: [Number, String]
   },
   computed: {
     isXE() {

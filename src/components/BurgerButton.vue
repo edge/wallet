@@ -6,9 +6,9 @@
 
 <script>
 
-  export default {
-    name: "BurgerButton",
-  }
+export default {
+  name: 'BurgerButton'
+}
 </script>
 <style scoped>
   .nav-opener {

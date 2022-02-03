@@ -1,25 +1,32 @@
 <template>
-  <Header />
-  <AccountPanel/>
+  <div>
+    <Header />
+    <AccountPanel/>
 
-  <div class="bg-gray-200 py-35">
-    <div class="container">
-      <TransactionsTable :transactions="transactions"/>
-      <Pagination v-if="transactions.length" baseRoute="Transactions" :currentPage="page" :totalPages="Math.ceil(metadata.totalCount/metadata.limit)" />
+    <div class="bg-gray-200 py-35">
+      <div class="container">
+        <TransactionsTable :transactions="transactions"/>
+        <Pagination
+          v-if="transactions.length"
+          baseRoute="Transactions"
+          :currentPage="page"
+          :totalPages="Math.ceil(metadata.totalCount/metadata.limit)"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import AccountPanel from "@/components/AccountPanel"
-import Header from "@/components/Header"
-import TransactionsTable from "@/components/TransactionsTable"
-import Pagination from "@/components/Pagination"
-import { mapState } from 'vuex'
+import AccountPanel from '@/components/AccountPanel'
+import Header from '@/components/Header'
+import Pagination from '@/components/Pagination'
+import TransactionsTable from '@/components/TransactionsTable'
 import { fetchTransactions } from '../utils/api'
+import { mapState } from 'vuex'
 
 export default {
-  name: 'Transactions',
+  name: 'ViewTransactions',
   title: 'Transactions',
   data: function () {
     return {

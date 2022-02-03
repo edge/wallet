@@ -15,6 +15,7 @@
               </span>
               <input type="password" placeholder="Your private key" id="key" v-model="v$.privateKey.$model"/>
             </div>
+            <!-- eslint-disable-next-line max-len -->
             <div class="form-group__error input-error" v-for="error of v$.privateKey.$errors" :key="error.$uid">{{error.$message}}</div>
           </div>
 
@@ -32,6 +33,7 @@
                 v-model="v$.password.$model"
               />
             </div>
+            <!-- eslint-disable-next-line max-len -->
             <div class="form-group__error input-error" v-for="error of v$.password.$errors" :key="error.$uid">{{error.$message}}</div>
 
             <label for="repeat-password" class="mt-10">REPEAT PASSWORD</label>
@@ -48,6 +50,7 @@
                 v-model="v$.repeatPassword.$model"
               />
             </div>
+            <!-- eslint-disable-next-line max-len -->
             <div class="form-group__error input-error" v-for="error of v$.repeatPassword.$errors" :key="error.$uid">{{error.$message}}</div>
           </div>
 
@@ -56,6 +59,7 @@
     </template>
 
     <template v-slot:footer>
+      <!-- eslint-disable-next-line max-len -->
       <div class="grid grid-cols-1 gap-24 px-24 pt-48 border-gray-700 border-solid md:grid-cols-2 border-t-default border-opacity-30 pb-54">
         <button class="w-full button button--outline-success" @click="cancel">Cancel</button>
         <button class="w-full button button--success" :disabled="!canSubmit" @click="restore">Restore</button>
@@ -83,7 +87,7 @@ export default {
   components: {
     KeyIcon,
     LockOpenIcon,
-    Modal,
+    Modal
   },
   props: {
     afterRestore: Function,
@@ -106,7 +110,7 @@ export default {
       ],
       password: [
         validation.passwordRequired,
-        validation.passwordLength,
+        validation.passwordLength
       ],
       repeatPassword: [
         helpers.withMessage('Passwords do not match.', sameAs(this.password))

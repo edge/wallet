@@ -28,10 +28,10 @@
 </template>
 
 <script>
-import TransactionsTableItem from "@/components/TransactionsTableItem"
+import TransactionsTableItem from '@/components/TransactionsTableItem'
 
 export default {
-  name: "TransactionsTable",
+  name: 'TransactionsTable',
   components: {TransactionsTableItem},
   props: ['transactions'],
   methods: {

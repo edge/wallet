@@ -69,6 +69,7 @@
                 v-model="v$.password.$model"
               />
             </div>
+            <!-- eslint-disable-next-line max-len -->
             <div class="form-group__error input-error" v-for="error of v$.password.$errors" :key="error.$uid">{{error.$message}}</div>
           </div>
           <div class="form-group" :class="{'form-group__error': v$.confirmPhrase.$error}">
@@ -80,6 +81,7 @@
               id="confirm-phrase"
               v-model="v$.confirmPhrase.$model"
             />
+            <!-- eslint-disable-next-line max-len -->
             <div class="form-group__error input-error" v-for="error of v$.confirmPhrase.$errors" :key="error.$uid">{{error.$message}}</div>
           </div>
         </form>
@@ -115,7 +117,7 @@ export default {
     LockOpenIcon,
     Modal,
     RefreshIcon,
-    ShieldExclamationIcon,
+    ShieldExclamationIcon
   },
   props: {
     afterCreate: Function,
@@ -132,14 +134,14 @@ export default {
       confirmPhrase: '',
 
       canCopy: !!navigator.clipboard,
-      phrase: confirmPhrase,
+      phrase: confirmPhrase
     }
   },
   validations() {
     return {
       password: [
         validation.passwordRequired,
-        validation.passwordLength,
+        validation.passwordLength
       ],
       confirmPhrase: [
         validation.required,

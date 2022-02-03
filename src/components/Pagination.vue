@@ -12,6 +12,7 @@
         <span class="not-link" v-else><ChevronLeftIcon/></span>
       </li>
       <li class="pagination__item">
+        <!-- eslint-disable-next-line max-len -->
         <span v-if="totalPages">Page {{Number(currentPage).toLocaleString()}} of {{Number(totalPages).toLocaleString()}}</span>
         <span v-else>&nbsp;</span>
       </li>
@@ -32,10 +33,11 @@
 </template>
 
 <script>
-import {ChevronLeftIcon, ChevronRightIcon} from "@heroicons/vue/solid";
+import {ChevronLeftIcon, ChevronRightIcon} from '@heroicons/vue/solid'
 
 export default {
-  name: "Pagination",
+  // eslint-disable-next-line vue/multi-word-component-names
+  name: 'Pagination',
   components: {ChevronRightIcon, ChevronLeftIcon},
   props: ['baseRoute', 'currentPage', 'totalPages']
 }

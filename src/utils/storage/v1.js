@@ -4,8 +4,8 @@
 
 import * as xe from '@edge/xe-utils'
 import { store } from './'
-import { get, getMany, set, setMany } from 'idb-keyval'
 import { compare, createSalt, decrypt, encrypt, hash } from '../crypto'
+import { get, getMany, set, setMany } from 'idb-keyval'
 
 const comparePassword = async password => {
   const [hash, salt] = await getMany(['h', 's'], store)

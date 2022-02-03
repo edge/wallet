@@ -2,9 +2,9 @@
 // Use of this source code is governed by a GNU GPL-style license
 // that can be found in the LICENSE.md file. All rights reserved.
 
-const {
-  xeStringFromMicroXe
-} = require('@edge/wallet-utils')
+/*global process*/
+
+import { xeStringFromMicroXe } from '@edge/wallet-utils'
 
 const BLOCKCHAIN_API_URL = process.env.VUE_APP_BLOCKCHAIN_API_URL
 const INDEX_API_URL = process.env.VUE_APP_INDEX_API_URL
@@ -54,27 +54,21 @@ const fetchData = (url, options = {}, payload) => {
 
       return res.json()
     })
-    .catch(err => {
-      return {
-        results: [],
-        metdata: {}
-      }
-    })
+    .catch(() => ({
+      results: [],
+      metdata: {}
+    }))
 }
 
-const fetchPendingTransactions = (address, options = {}) => {
+const fetchPendingTransactions = (address) => {
   const url = `${BLOCKCHAIN_API_URL}/transactions/pending/${address}`
 
   return fetchData(url)
 }
 
-const fetchGasRates = async () => {
-  return fetchData(`${INDEX_API_URL}/gasrates`)
-}
+const fetchGasRates = async () => fetchData(`${INDEX_API_URL}/gasrates`)
 
-const fetchExchangeRates = async () => {
-  return await fetchData(`${INDEX_API_URL}/exchangerate`)
-}
+const fetchExchangeRates = async () => await fetchData(`${INDEX_API_URL}/exchangerate`)
 
 const fetchTransactions = async (address, options = {}) => {
   if (!options.page) {
@@ -119,7 +113,8 @@ const formatTransactions = (address, data, pending) => {
       const rcvTx = {
         address: tx.sender === address ? tx.recipient : tx.sender,
         amount: xeStringFromMicroXe(tx.amount),
-        date: new Date(tx.timestamp).toLocaleString(), // '16/04/2021 13:06',
+        // '16/04/2021 13:06',
+        date: new Date(tx.timestamp).toLocaleString(),
         description: tx.data.memo || 'None',
         hash: tx.hash,
         recipient: tx.recipient,
@@ -137,20 +132,22 @@ const formatTransactions = (address, data, pending) => {
 
       transactions.push(rcvTx)
       transactions.push(sendTx)
-    } else {
-    transactions.push({
-      address: tx.sender === address ? tx.recipient : tx.sender,
-      amount: xeStringFromMicroXe(tx.amount),
-      date: new Date(tx.timestamp).toLocaleString(), // '16/04/2021 13:06',
-      description: tx.data.memo || 'None',
-      hash: tx.hash,
-      recipient: tx.recipient,
-      sender: tx.sender,
-      timestamp: tx.timestamp,
-      type: tx.sender === address ? 'Sent' : 'Received',
-      confirmations: tx.confirmations,
-      pending
-    })
+    }
+    else {
+      transactions.push({
+        address: tx.sender === address ? tx.recipient : tx.sender,
+        amount: xeStringFromMicroXe(tx.amount),
+        // '16/04/2021 13:06',
+        date: new Date(tx.timestamp).toLocaleString(),
+        description: tx.data.memo || 'None',
+        hash: tx.hash,
+        recipient: tx.recipient,
+        sender: tx.sender,
+        timestamp: tx.timestamp,
+        type: tx.sender === address ? 'Sent' : 'Received',
+        confirmations: tx.confirmations,
+        pending
+      })
     }
   })
 
@@ -163,5 +160,5 @@ export {
   fetchGasRates,
   fetchExchangeRates,
   fetchTransactions,
-  formatTransactions,
+  formatTransactions
 }

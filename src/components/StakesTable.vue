@@ -38,20 +38,22 @@
 </template>
 
 <script>
+/*global process*/
+
 import * as index from '@edge/index-utils'
-import StakesTableItem from "@/components/StakesTableItem"
+import StakesTableItem from '@/components/StakesTableItem'
 import { mapState } from 'vuex'
 
 const stakesRefreshInterval = 5 * 1000
 
 export default {
-  name: "StakesTable",
+  name: 'StakesTable',
   data: function () {
     return {
       loading: false,
       metadata: null,
       stakes: [],
-      iStakes: null,
+      iStakes: null
     }
   },
   components: {
@@ -88,7 +90,7 @@ export default {
       this.stakes = stakes.results
       this.receiveMetadata(stakes.metadata)
       this.loading = false
-    },
+    }
   },
   watch: {
     page() {

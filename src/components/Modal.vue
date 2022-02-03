@@ -1,4 +1,4 @@
-<template>
+å<template>
   <div v-if="visible" class="modal-backdrop">
     <div class="modal-outer">
       <div class="inline-block w-full py-10 overflow-hidden align-bottom sm:py-30 sm:align-middle" :style="getStyle()">
@@ -24,26 +24,27 @@
 </template>
 
 <script>
-  import { XIcon } from '@heroicons/vue/solid';
-  export default {
-    name: 'Modal',
-    props: {
-      close: Function,
-      showCloseButton: Boolean,
-      visible: Boolean,
-      width: Number,
-    },
-    components: {
-      XIcon
-    },
-    methods: {
-      getStyle() {
-        return {
-          maxWidth: this.width ? `${this.width}px` : '36rem'
-        }
-      },
+import { XIcon } from '@heroicons/vue/solid'
+export default {
+  // eslint-disable-next-line vue/multi-word-component-names
+  name: 'Modal',
+  props: {
+    close: Function,
+    showCloseButton: Boolean,
+    visible: Boolean,
+    width: Number
+  },
+  components: {
+    XIcon
+  },
+  methods: {
+    getStyle() {
+      return {
+        maxWidth: this.width ? `${this.width}px` : '36rem'
+      }
     }
   }
+}
 </script>
 
 <style scoped>

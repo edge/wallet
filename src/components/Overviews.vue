@@ -1,26 +1,27 @@
 <template>
-  <div class="overview-items" v-if="overviews">
-    <OverviewItem
-      v-for="(item, index) in overviews"
-      :key="index"
-      :setting="item" />
-  </div>
+  <div>
+    <div class="overview-items" v-if="overviews">
+      <OverviewItem
+        v-for="(item, index) in overviews"
+        :key="index"
+        :setting="item" />
+    </div>
 
-  <div class="transactions-items" v-if="transactions">
-    <TransactionsTable :transactions="transactions"/>
+    <div class="transactions-items" v-if="transactions">
+      <TransactionsTable :transactions="transactions"/>
+    </div>
   </div>
 </template>
 
 <script>
-import OverviewItem from "@/components/OverviewItem"
-import Pagination from "@/components/Pagination"
-import TransactionsTable from "@/components/TransactionsTable"
+import OverviewItem from '@/components/OverviewItem'
+import TransactionsTable from '@/components/TransactionsTable'
 
 export default {
-  name: "Overviews",
+  // eslint-disable-next-line vue/multi-word-component-names
+  name: 'Overviews',
   components: {
     OverviewItem,
-    Pagination,
     TransactionsTable
   },
   props: ['overviews', 'transactions'],

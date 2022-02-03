@@ -63,11 +63,13 @@
 </template>
 
 <script>
+/*global process*/
+
 import { formatXe } from '@edge/wallet-utils'
-import { ArrowCircleDownIcon, CheckCircleIcon, ClockIcon, DotsCircleHorizontalIcon } from "@heroicons/vue/outline"
+import { ArrowCircleDownIcon, CheckCircleIcon, ClockIcon, DotsCircleHorizontalIcon } from '@heroicons/vue/outline'
 
 export default {
-  name: "StakesTableItem",
+  name: 'StakesTableItem',
   props: ['showWalletColumn', 'item'],
   components: {
     ArrowCircleDownIcon,
@@ -83,7 +85,7 @@ export default {
       return `${process.env.VUE_APP_EXPLORER_URL}/stake/${this.item.id}`
     },
     explorerWalletUrl() {
-      `${process.env.VUE_APP_EXPLORER_URL}/wallet/${this.address}`
+      return `${process.env.VUE_APP_EXPLORER_URL}/wallet/${this.address}`
     },
     formattedAmount() {
       return formatXe(this.item.amount / 1e6, true)
