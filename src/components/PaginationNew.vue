@@ -2,20 +2,14 @@
   <nav class="pagination">
     <ol class="pagination__list">
       <li class="pagination__item">
-        <router-link
-          v-if="!onFirstPage"
-          :to="getNewRoute(1)"
-        >
+        <router-link v-if="!onFirstPage" :to="getNewRoute(1)">
           First
         </router-link>
         <span class="not-link" v-else>First</span>
       </li>
 
       <li class="pagination__item">
-        <router-link
-          v-if="!onFirstPage"
-          :to="getNewRoute(prevPage)"
-        >
+        <router-link v-if="!onFirstPage" :to="getNewRoute(prevPage)">
           <ChevronLeftIcon/>
         </router-link>
         <span class="not-link" v-else><ChevronLeftIcon/></span>
@@ -28,20 +22,14 @@
       </li>
 
       <li class="pagination__item">
-        <router-link
-          v-if="!onLastPage"
-          :to="getNewRoute(nextPage)"
-        >
+        <router-link v-if="!onLastPage" :to="getNewRoute(nextPage)">
           <ChevronRightIcon/>
         </router-link>
         <span class="not-link" v-else><ChevronRightIcon/></span>
       </li>
 
       <li class="pagination__item">
-        <router-link
-          v-if="!onLastPage"
-          :to="getNewRoute(lastPage)"
-        >
+        <router-link v-if="!onLastPage" :to="getNewRoute(lastPage)">
           Last
         </router-link>
         <span class="not-link" v-else>Last</span>
