@@ -34,7 +34,7 @@ export default {
   data: function () {
     return {
       metadata: { totalCount: 0 },
-      limit: 5
+      limit: 20
     }
   },
   components: {
