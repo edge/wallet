@@ -79,7 +79,7 @@
 
           <div class="form-group">
             <label class="flex items-center space-x-3">
-              Estimated Cost
+              Transaction fee
               <!-- eslint-disable-next-line max-len -->
               <Tooltip class="ml-3" position="right" theme="dark" :text="`Inclusive of a ${minimumFee} XE handling fee`">
                 <InformationCircleIcon class="hidden md:block button__icon w-15" />
@@ -187,7 +187,7 @@
           </div>
 
           <div class="form-group mb-14">
-            <span class="mb-4 label tracking text-base3">Estimated cost</span>
+            <span class="mb-4 label tracking text-base3">Transaction fee</span>
             <div class="relative input-wrap">
               <span class="block w-full overflow-hidden text-white input-filled overflow-ellipsis text-caption">
                 <Amount :value="fee" currency="XE" short sub/>
