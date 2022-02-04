@@ -10,7 +10,7 @@
           <RecentBlocks />
         </div>
 
-        <div class="mt-15">
+        <div class="mt-35">
           <h3>Recent transactions</h3>
           <p v-if="loading">
             Loading...
