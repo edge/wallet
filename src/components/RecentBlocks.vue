@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full mb-25">
+  <div class="w-full">
     <h3>RECENT BLOCKS</h3>
 
     <table class="w-full">
@@ -61,7 +61,7 @@ export default {
   },
   methods: {
     async fetchBlocks() {
-      const { blocks } = await fetchBlocks({ limit: 5 })
+      const { blocks } = await fetchBlocks({ limit: 7 })
       this.blocks = blocks
       this.loading = false
     },
