@@ -354,7 +354,7 @@ export default {
     },
     fee() {
       if (this.gasRate === undefined || isNaN(this.amountParsed)) return NaN
-      return this.minimumFee + this.gasRate
+      return Math.round(this.minimumFee + this.gasRate)
     },
     edgeAmount() {
       return Math.max(0, this.amountParsed - this.fee)
