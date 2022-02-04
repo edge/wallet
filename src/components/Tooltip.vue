@@ -1,7 +1,7 @@
 <template>
   <div class="tooltip-box">
     <slot />
-    <div class="tooltip" :class="theme === 'dark' ? 'dark' : 'light', position || 'top', wide ? 'wide' : ''">
+    <div class="tooltip" :class="[theme === 'dark' ? 'dark' : 'light', position || 'top', wide ? 'wide' : '']">
       <span class="text">{{ text }}</span>
     </div>
   </div>
@@ -10,6 +10,7 @@
 <script>
 
 export default {
+  // eslint-disable-next-line vue/multi-word-component-names
   name: 'Tooltip',
   props: {
     text: {

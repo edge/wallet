@@ -6,10 +6,10 @@
 </template>
 
 <script>
-  export default {
-    name: "Radio",
-    props: ['name', 'label', 'id', 'extraName', 'big', 'selected']
-  }
+export default {
+  name: 'RadioButton',
+  props: ['name', 'label', 'id', 'extraName', 'big', 'selected']
+}
 </script>
 <style scoped>
   .fake-radio input[type=radio]:checked+.fake-input {

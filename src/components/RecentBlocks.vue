@@ -39,8 +39,10 @@
 </template>
 
 <script>
-import moment from 'moment'
+/*global process*/
+
 import { fetchBlocks } from '../utils/api'
+import moment from 'moment'
 
 export default {
   name: 'RecentBlocks',

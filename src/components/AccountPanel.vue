@@ -35,7 +35,13 @@
 
     <div class="account-panel__modals">
       <SendModal :close="reset" :visible="modal === 'send'"/>
-      <ExchangeModal :close="reset" :openDeposit="openDeposit" :openWithdraw="openWithdraw" :openSell="openSell" :visible="modal === 'exchange'"/>
+      <ExchangeModal
+        :close="reset"
+        :openDeposit="openDeposit"
+        :openWithdraw="openWithdraw"
+        :openSell="openSell"
+        :visible="modal === 'exchange'"
+      />
       <DepositModal :close="reset" :visible="modal === 'deposit'"/>
       <WithdrawModal :close="reset" :visible="modal === 'withdraw'"/>
       <SellModal :close="reset" :visible="modal === 'sell'"/>
@@ -47,8 +53,8 @@
 import Amount from './Amount.vue'
 import DepositModal from './tx/DepositModal'
 import ExchangeModal from './tx/ExchangeModal'
-import SendModal from './tx/SendModal'
 import SellModal from './tx/SellModal'
+import SendModal from './tx/SendModal'
 import WithdrawModal from './tx/WithdrawModal'
 import { mapState } from 'vuex'
 import { ArrowUpIcon, SwitchHorizontalIcon } from '@heroicons/vue/outline'
@@ -63,7 +69,7 @@ export default {
     SendModal,
     SellModal,
     SwitchHorizontalIcon,
-    WithdrawModal,
+    WithdrawModal
   },
   computed: mapState(['address', 'balance']),
   data() {
@@ -89,7 +95,7 @@ export default {
     },
     openWithdraw() {
       this.modal = 'withdraw'
-    },
+    }
   }
 }
 

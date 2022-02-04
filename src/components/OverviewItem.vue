@@ -71,46 +71,44 @@
 </template>
 
 <script>
-import {ArrowRightIcon, ArrowDownIcon, ArrowUpIcon, ChevronDownIcon} from "@heroicons/vue/outline"
+import {ArrowDownIcon, ArrowUpIcon, ChevronDownIcon} from '@heroicons/vue/outline'
 
 export default {
-  name: "OverviewItem",
+  name: 'OverviewItem',
   props: ['setting'],
   data() {
     return {
-      activeIndex: "",
-    };
+      activeIndex: ''
+    }
   },
   methods: {
     sliceString(string, symbols) {
-      return string.length > symbols ? string.slice(0, symbols) + '...' : string;
+      return string.length > symbols ? string.slice(0, symbols) + '...' : string
     },
     clickHandler(index) {
-      this.activeIndex = index === this.activeIndex ? -1 : index;
+      this.activeIndex = index === this.activeIndex ? -1 : index
     },
     start() {
-      this.desktopFlag = window.innerWidth > this.breakpoint;
+      this.desktopFlag = window.innerWidth > this.breakpoint
     },
     enter(el, done) {
-      el.style.height = el.scrollHeight + "px";
-      done();
+      el.style.height = el.scrollHeight + 'px'
+      done()
     },
-    beforeEnter(el) {
-
+    beforeEnter() {
     },
     beforeLeave(el) {
-      el.style.height = el.scrollHeight + "px";
+      el.style.height = el.scrollHeight + 'px'
     },
     leave(el) {
-      el.style.height = "0";
+      el.style.height = '0'
     },
     afterLeave(el) {
-      el.style.height = "auto";
-    },
+      el.style.height = 'auto'
+    }
   },
   components: {
     ArrowDownIcon,
-    ArrowRightIcon,
     ArrowUpIcon,
     ChevronDownIcon
   }

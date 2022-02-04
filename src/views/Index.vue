@@ -43,7 +43,12 @@
           </div>
 
           <div>
-            <UnlockModal :afterUnlock="gotoOverview" :switchToForgetModal="openForgetModal" :close="resetAuto" :visible="modal === 'unlock'"/>
+            <UnlockModal
+              :afterUnlock="gotoOverview"
+              :close="resetAuto"
+              :switchToForgetModal="openForgetModal"
+              :visible="modal === 'unlock'"
+            />
             <ForgetModal :afterForget="reset" :close="resetAuto" :visible="modal === 'forget'"/>
           </div>
         </div>
@@ -61,14 +66,14 @@ import UnlockModal from '@/components/index/UnlockModal'
 import { mapState } from 'vuex'
 
 export default {
-  name: 'Index',
+  name: 'ViewIndex',
   title: 'Create or restore a wallet',
   components: {
     CreateModal,
     ForgetModal,
     Logo,
     RestoreModal,
-    UnlockModal,
+    UnlockModal
   },
   data: function () {
     return {

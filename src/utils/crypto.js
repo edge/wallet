@@ -2,7 +2,9 @@
 // Use of this source code is governed by a GNU GPL-style license
 // that can be found in the LICENSE.md file. All rights reserved.
 
-const crypto = require('crypto')
+/*global Buffer*/
+
+import crypto from 'crypto'
 
 const algorithm = 'aes-256-ctr'
 
@@ -14,7 +16,7 @@ const algorithm = 'aes-256-ctr'
  * @param {string} input Data to hash and compare
  * @returns boolean
  */
- const compare = (hash, salt, input) => {
+export const compare = (hash, salt, input) => {
   const inputHash = crypto
     .pbkdf2Sync(input, salt, 1000, 64, 'sha512')
     .toString('hex')
@@ -26,7 +28,7 @@ const algorithm = 'aes-256-ctr'
  *
  * @returns string
  */
-const createSalt = () => crypto.randomBytes(16).toString('hex')
+export const createSalt = () => crypto.randomBytes(16).toString('hex')
 
 /**
  * Decrypt some encrypted data.
@@ -35,7 +37,7 @@ const createSalt = () => crypto.randomBytes(16).toString('hex')
  * @param {string} secret Secret key (or, passphrase) for decryption
  * @returns string
  */
-const decrypt = (enc, secret) => {
+export const decrypt = (enc, secret) => {
   const decipher = crypto.createDecipheriv(algorithm, secret, Buffer.from(enc.iv, 'hex'))
   const decrypted = Buffer.concat([
     decipher.update(Buffer.from(enc.content, 'hex')),
@@ -51,7 +53,7 @@ const decrypt = (enc, secret) => {
  * @param {string} secret Secret key (or, passphrase) for encryption
  * @returns {{ content: string, iv: string }}
  */
-const encrypt = (data, secret) => {
+export const encrypt = (data, secret) => {
   const iv = crypto.randomBytes(16)
   const cipher = crypto.createCipheriv(algorithm, secret, iv)
   const encrypted = Buffer.concat([cipher.update(data), cipher.final()])
@@ -68,14 +70,6 @@ const encrypt = (data, secret) => {
  * @param {string} salt Hash salt
  * @returns string
  */
-const hash = (input, salt) => crypto
+export const hash = (input, salt) => crypto
   .pbkdf2Sync(input, salt, 1000, 64, 'sha512')
   .toString('hex')
-
-module.exports = {
-  compare,
-  createSalt,
-  decrypt,
-  encrypt,
-  hash
-}
