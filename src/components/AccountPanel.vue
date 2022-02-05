@@ -11,7 +11,7 @@
         <div class="account-panel__balance">
           <h3 class="mb-1">Balance</h3>
           <h1><Amount :value="balance / 1e6" currency="XE" sub/></h1>
-          <h2><Amount :value="balanceInUsd" currency="USD" /></h2>
+          <h2><Amount :value="balanceInUsd" currency="USD" :maxFractDigits="2" /></h2>
         </div>
       </div>
 

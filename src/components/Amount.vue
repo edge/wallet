@@ -16,7 +16,8 @@ export default {
     currency: String,
     short: Boolean,
     sub: Boolean,
-    value: [Number, String]
+    value: [Number, String],
+    maxFractDigits: Number
   },
   computed: {
     isXE() {
@@ -30,7 +31,7 @@ export default {
       if (this.isXE && !this.short) {
         return xeStringFromMicroXe(this.value * 1e6, true)
       }
-      return this.value.toLocaleString('en-US', { maximumFractionDigits: 6 })
+      return this.value.toLocaleString('en-US', { maximumFractionDigits: this.maxFractDigits || 6 })
     }
   }
 }
