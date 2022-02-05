@@ -11,6 +11,7 @@
         <div class="account-panel__balance">
           <h3 class="mb-1">Balance</h3>
           <h1><Amount :value="balance / 1e6" currency="XE" sub/></h1>
+          <h2><Amount :value="balanceInUsd" currency="USD" /></h2>
         </div>
       </div>
 
@@ -56,6 +57,7 @@ import ExchangeModal from './tx/ExchangeModal'
 import SellModal from './tx/SellModal'
 import SendModal from './tx/SendModal'
 import WithdrawModal from './tx/WithdrawModal'
+import { fetchTokenValue } from '../utils/api'
 import { mapState } from 'vuex'
 import { ArrowUpIcon, SwitchHorizontalIcon } from '@heroicons/vue/outline'
 
@@ -74,8 +76,12 @@ export default {
   computed: mapState(['address', 'balance']),
   data() {
     return {
-      modal: ''
+      modal: '',
+      balanceInUsd: 0
     }
+  },
+  mounted () {
+    this.setTokenValue()
   },
   methods: {
     reset() {
@@ -95,6 +101,10 @@ export default {
     },
     openWithdraw() {
       this.modal = 'withdraw'
+    },
+    async setTokenValue() {
+      const { usdPerXE } = await fetchTokenValue()
+      this.balanceInUsd = usdPerXE * (this.balance / 1e6)
     }
   }
 }
@@ -121,6 +131,10 @@ export default {
 
 .account-panel__balance h3 {
   @apply text-green mb-5;
+}
+
+.account-panel__balance h2 {
+  @apply text-gray-300 text-md mb-0;
 }
 
 .account-panel__balance h1 {

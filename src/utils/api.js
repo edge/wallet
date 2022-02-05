@@ -154,11 +154,14 @@ const formatTransactions = (address, data, pending) => {
   return transactions
 }
 
+const fetchTokenValue = async () => fetchData(`${INDEX_API_URL}/token/current`)
+
 export {
   fetchBlocks,
   fetchPendingTransactions,
   fetchGasRates,
   fetchExchangeRates,
   fetchTransactions,
-  formatTransactions
+  formatTransactions,
+  fetchTokenValue
 }
