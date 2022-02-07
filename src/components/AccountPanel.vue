@@ -11,6 +11,7 @@
         <div class="account-panel__balance">
           <h3 class="mb-1">Balance</h3>
           <h1><Amount :value="balance / 1e6" currency="XE" sub/></h1>
+          <h2><Amount :value="usdBalance" currency="USD" :decimalPlaces="2"/></h2>
         </div>
       </div>
 
@@ -71,7 +72,7 @@ export default {
     SwitchHorizontalIcon,
     WithdrawModal
   },
-  computed: mapState(['address', 'balance']),
+  computed: mapState(['address', 'balance', 'usdBalance']),
   data() {
     return {
       modal: ''
@@ -121,6 +122,10 @@ export default {
 
 .account-panel__balance h3 {
   @apply text-green mb-5;
+}
+
+.account-panel__balance h2 {
+  @apply text-gray-300 text-md mb-0;
 }
 
 .account-panel__balance h1 {
