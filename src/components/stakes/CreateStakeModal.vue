@@ -1,0 +1,358 @@
+<template>
+  <div>
+    <Modal :close="cancel" :visible="visible && step === 1">
+      <template v-slot:header>
+        <h2 class="mb-8">Create Stake<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
+        <span class="sub-heading d-block text-gray text-caption">
+          <Amount :value="balance / 1e6" currency="XE"/> available
+        </span>
+      </template>
+      <template v-slot:body>
+        <div class="pb-14 min-h-410">
+          <div class="flex flex-col flex-wrap pt-12 radio-list">
+            <p>Please select a stake type</p>
+            <div class="stake-type">
+              <Radio
+                name="stake-type-host"
+                id="host"
+                label="Host"
+                :selected="stakeType === 'host'"
+                @click="setStakeType('host')"
+              />
+              <Amount :value="hostStakeAmount" currency="XE"/>
+            </div>
+            <div class="stake-type">
+              <Radio
+                name="stake-type-gateway"
+                id="gateway"
+                label="Gateway"
+                :selected="stakeType === 'gateway'"
+                @click="setStakeType('gateway')"
+              />
+              <Amount :value="gatewayStakeAmount" currency="XE"/>
+            </div>
+            <div class="stake-type">
+              <Radio
+                name="stake-type-stargate"
+                id="stargate" label="Stargate"
+                :selected="stakeType === 'stargate'"
+                @click="setStakeType('stargate')"
+              />
+              <Amount :value="stargateStakeAmount" currency="XE"/>
+            </div>
+          </div>
+        </div>
+      </template>
+
+      <template v-slot:footer>
+        <div class="px-24 pt-32 pb-40 border-t border-gray-700 border-opacity-30">
+          <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
+            <button class="w-full button button--outline-success" @click="cancel">Cancel</button>
+            <button
+              class="w-full button button--success"
+              :disabled="!canReadyCreate"
+              @click="readyCreate">Create
+            </button>
+          </div>
+        </div>
+      </template>
+    </Modal>
+
+    <Modal :close="cancel" :visible="visible && step === 2">
+      <template v-slot:header>
+        <h2 class="mb-8">Create Stake<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
+      </template>
+      <template v-slot:body>
+        <div class="pb-14 min-h-410">
+          <div class="form-group mb-25">
+            <label class="label">Stake type</label>
+            <span class="break-all">{{ stakeType.toUpperCase() }}</span>
+          </div>
+          <div class="mb-16 form-group">
+            <label>Current balance</label>
+            <Amount :value="balance / 1e6" currency="XE" short sub/>
+          </div>
+          <div class="form-group mb-25">
+            <label class="label">Stake amount</label>
+            <Amount :value="stakeAmount / 1e6" currency="XE" short sub/>
+          </div>
+          <div class="mb-16 form-group">
+            <label>Remaining Balance</label>
+            <Amount :value="(balance - stakeAmount) / 1e6" currency="XE" short sub/>
+          </div>
+        </div>
+      </template>
+
+      <template v-slot:footer>
+        <div class="px-24 pt-32 pb-40 border-t border-gray-700 border-opacity-30">
+          <form>
+            <!-- eslint-disable-next-line max-len -->
+            <div class="form-group" :class="{'form-group__error': v$.password.$error || (passwordError && !v$.password.$dirty)}">
+              <label for="pass-step">Enter Password</label>
+              <div class="relative input-wrap">
+                <span class="icon">
+                  <LockOpenIcon/>
+                </span>
+                <input
+                  type="password"
+                  autocomplete="off"
+                  @keypress="sendOnEnter"
+                  placeholder="Your password"
+                  id="pass-step"
+                  v-model="v$.password.$model"
+                />
+              </div>
+              <!-- eslint-disable-next-line max-len -->
+              <div class="form-group__error input-error" v-for="error of v$.password.$errors" :key="error.$uid">{{error.$message}}</div>
+              <!-- eslint-disable-next-line max-len -->
+              <div class="form-group__error input-error" v-if="passwordError && !v$.password.$dirty">{{passwordError}}</div>
+            </div>
+          </form>
+          <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
+            <button class="w-full button button--outline-success" @click="() => goto(1)">Back</button>
+            <button
+              :disabled="!canSend"
+              @click="send"
+              class="w-full button button--success"
+            >Confirm stake</button>
+          </div>
+          <!-- eslint-disable-next-line max-len -->
+          <div v-if="submitError" class="px-20 py-20 my-20 text-center bg-black border border-gray-700 rounded convert-info md:text-left border-opacity-30 border-color">
+            <div class="">
+              <span class="flex w-full overflow-hidden text-white overflow-ellipsis">
+                {{ submitError }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </template>
+    </Modal>
+
+    <Modal :close="cancel" :visible="visible && step === 3">
+      <template v-slot:header>
+        <Logo/>
+      </template>
+      <template v-slot:body>
+        <div class="pb-14 min-h-410">
+          <div class="pb-4 mb-20 border-b border-gray-700 decor-block border-opacity-30">
+            <!-- <CheckIcon class="w-52 text-green"/> -->
+          </div>
+          <div class="form-group mb-25">
+            <label class="label">Recipient</label>
+            <span class="break-all">{{ completedTx.recipient }}</span>
+          </div>
+          <div class="form-group mb-25">
+            <label class="label">Memo</label>
+            <span class="break-all">{{ completedTx.data.memo || 'None' }}</span>
+          </div>
+          <div class="mb-16 form-group">
+            <label>Amount</label>
+            <Amount :value="completedTx.amount / 1e6" currency="XE" short sub/>
+          </div>
+          <div class="mb-16 form-group">
+            <label>Fee</label>
+            <Amount :value="0" currency="XE" short sub/>
+          </div>
+          <div class="mb-0 form-group">
+            <label>Recipient receives</label>
+            <Amount :value="completedTx.amount / 1e6" currency="XE" short sub/>
+          </div>
+        </div>
+      </template>
+
+      <template v-slot:footer>
+        <div class="px-24 pt-40 pb-40 border-t border-gray-700 border-opacity-30">
+          <button
+            @click="cancel"
+            class="block w-full mx-auto text-center button button--success md:w-1/2"
+          >Close</button>
+        </div>
+      </template>
+    </Modal>
+  </div>
+</template>
+
+<script>
+/*global process*/
+
+import * as storage from '../../utils/storage'
+import * as validation from '../../utils/validation'
+import * as xe from '@edge/xe-utils'
+import Amount from '../Amount'
+import { LockOpenIcon } from '@heroicons/vue/outline'
+import Logo from '../Logo'
+import Modal from '../Modal'
+import Radio from '../Radio'
+import { formatXe } from '@edge/wallet-utils'
+import { helpers } from '@vuelidate/validators'
+import { mapState } from 'vuex'
+import { parseAmount } from '../../utils/form'
+import useVuelidate from '@vuelidate/core'
+
+const memoRegexp = /^[a-zA-Z0-9\s-]{0,32}$/
+
+export default {
+  name: 'CreateStakeModal',
+  components: {
+    Amount,
+    LockOpenIcon,
+    Logo,
+    Modal,
+    Radio
+  },
+  props: {
+    close: Function,
+    visible: Boolean
+  },
+  data() {
+    return {
+      step: 1,
+
+      recipient: '',
+      amount: '',
+      memo: '',
+      password: '',
+      passwordError: '',
+
+      completedTx: null,
+      submitError: '',
+
+      stakeType: '',
+      vars: null
+    }
+  },
+  validations() {
+    return {
+      recipient: [
+        validation.required,
+        validation.xeAddress
+      ],
+      amount: [
+        validation.required,
+        ...validation.amount(this.balance, this.amountParsed)
+      ],
+      memo: [
+        helpers.withMessage(
+          // eslint-disable-next-line max-len
+          'Memo is limited to 32 characters and should include only upper and lowercase letters, numbers, hyphens and spaces.',
+          v => v.length === 0 || memoRegexp.test(v)
+        )
+      ],
+      password: [validation.passwordRequired]
+    }
+  },
+  computed: {
+    ...mapState(['address', 'balance', 'nextNonce']),
+    amountParsed() {
+      return parseAmount(this.amount)
+    },
+    canReadyCreate() {
+      return this.stakeType && this.balance - this.stakeAmount > 0
+    },
+    canSend() {
+      return !this.v$.$invalid
+    },
+    hostStakeAmount() {
+      return this.vars.host_stake_amount / 1e6
+    },
+    gatewayStakeAmount() {
+      return this.vars.gateway_stake_amount / 1e6
+    },
+    stargateStakeAmount() {
+      return this.vars.stargate_stake_amount / 1e6
+    },
+    stakeAmount() {
+      if (this.stakeType === 'host') return this.vars.host_stake_amount
+      else if (this.stakeType === 'gateway') return this.vars.gateway_stake_amount
+      else if (this.stakeType === 'stargate') return this.vars.stargate_stake_amount
+      else return 0
+    }
+  },
+  watch: {
+    visible(v, oldv) {
+      if (v === oldv) return
+      if (v) {
+        this.$store.dispatch('refresh')
+      }
+    }
+  },
+  mounted() {
+    this.getXeVars()
+  },
+  methods: {
+    cancel() {
+      this.reset()
+      this.close()
+    },
+    async checkPassword() {
+      this.v$.password.$reset()
+      if (await storage.comparePassword(this.password)) {
+        this.passwordError = ''
+        return true
+      }
+      else {
+        this.passwordError = 'Incorrect password.'
+        return false
+      }
+    },
+    goto(step) {
+      this.step = step
+    },
+    async getXeVars() {
+      this.vars = await xe.vars(process.env.VUE_APP_BLOCKCHAIN_API_URL)
+    },
+    readyCreate() {
+      // validate only step 1
+      if (this.canReadyCreate) return this.goto(2)
+    },
+    reset() {
+      this.goto(1)
+
+      this.stakeType = ''
+      this.password = ''
+      this.passwordError = ''
+
+      this.v$.$reset()
+    },
+    sendOnEnter(event) {
+      if (event.charCode !== 13) return
+      event.preventDefault()
+      this.send()
+    },
+    setStakeType(type) {
+      this.stakeType = type
+    }
+  },
+  setup() {
+    return {
+      v$: useVuelidate()
+    }
+  }
+}
+</script>
+
+<style scoped>
+.stake-type {
+  @apply flex flex-row justify-between
+}
+
+
+
+
+.sub-heading :deep(.amount .currency) {
+  @apply ml-5;
+}
+
+.amount.sub {
+  @apply text-white text-3xl;
+}
+
+.amount.sub :deep(.currency) {
+  @apply text-half bottom-0 ml-2;
+}
+
+.testnet-header {
+  color: #0ecc5f;
+  padding-left: 10px;
+}
+</style>

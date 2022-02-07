@@ -42,6 +42,7 @@
     </div>
 
     <div class="account-panel__modals">
+      <CreateStakeModal :close="reset" :visible="modal === 'createStake'"/>
       <SendModal :close="reset" :visible="modal === 'send'"/>
       <ExchangeModal
         :close="reset"
@@ -59,6 +60,7 @@
 
 <script>
 import Amount from './Amount.vue'
+import CreateStakeModal from './stakes/CreateStakeModal'
 import DepositModal from './tx/DepositModal'
 import ExchangeModal from './tx/ExchangeModal'
 import SellModal from './tx/SellModal'
@@ -73,6 +75,7 @@ export default {
   components: {
     Amount,
     ArrowUpIcon,
+    CreateStakeModal,
     DepositModal,
     ExchangeModal,
     PlusIcon,
