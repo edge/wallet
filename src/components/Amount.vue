@@ -14,10 +14,10 @@ export default {
   name: 'Amount',
   props: {
     currency: String,
+    decimalPlaces: Number,
     short: Boolean,
     sub: Boolean,
-    value: [Number, String],
-    maxFractDigits: Number
+    value: [Number, String]
   },
   computed: {
     isXE() {
@@ -31,7 +31,7 @@ export default {
       if (this.isXE && !this.short) {
         return xeStringFromMicroXe(this.value * 1e6, true)
       }
-      return this.value.toLocaleString('en-US', { maximumFractionDigits: this.maxFractDigits || 6 })
+      return this.value.toLocaleString('en-US', { maximumFractionDigits: this.decimalPlaces || 6 })
     }
   }
 }
