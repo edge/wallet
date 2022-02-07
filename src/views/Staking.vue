@@ -1,7 +1,7 @@
 <template>
   <div>
     <Header />
-    <AccountPanel/>
+    <AccountPanel view="staking" />
 
     <div class="bg-gray-200 py-35">
       <div class="container">
