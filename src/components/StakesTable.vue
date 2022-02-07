@@ -9,7 +9,7 @@
         <th width="8%">Type</th>
         <th width="8%">Status</th>
         <th width="10%">Amount XE</th>
-        <th width="10%">Actions</th>
+        <th width="10%">&nbsp;</th>
       </tr>
       <tr v-else>
         <th width="19%">ID</th>
@@ -18,7 +18,7 @@
         <th width="8%">Type</th>
         <th width="8%">Status</th>
         <th width="10%">Amount XE</th>
-        <th width="10%">Actions</th>
+        <th width="10%">&nbsp;</th>
       </tr>
     </thead>
     <tbody v-if="stakes.length">

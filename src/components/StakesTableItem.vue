@@ -60,8 +60,8 @@
       <span class="monospace lg:font-sans">{{ formattedAmount }}</span>
     </td>
 
-    <td data-title="Actions:">
-      <button class="w-full table-button button--outline-success">{{ action }}</button>
+    <td data-title="">
+      <button class="w-full table-button button--outline">{{ action }}</button>
     </td>
   </tr>
 </template>
@@ -152,7 +152,7 @@ td a {
 }
 
 button.table-button {
-  @apply py-2 rounded text-black border-solid border-2 font-medium
+  @apply py-2 rounded text-black border-solid border border-gray-400 text-gray-500 hover:border-green hover:text-green
 }
 
 @screen lg {
