@@ -6,6 +6,7 @@
 
 import * as xe from '@edge/xe-utils'
 import { createStore } from 'vuex'
+import { fetchTokenValue } from './utils/api'
 import {
   empty,
   expire,
@@ -42,6 +43,8 @@ const init = async () => {
       balance: 0,
       nextNonce: 0,
 
+      usdBalance: undefined,
+
       // TODO investigate whether we can set these in app mixin instead
       config: {
         blockchain: {
@@ -72,6 +75,9 @@ const init = async () => {
       setNextNonce(state, nextNonce) {
         state.nextNonce = nextNonce
       },
+      setUSDBalance(state, usdBalance) {
+        state.usdBalance = usdBalance
+      },
       unlock(state) {
         state.locked = false
         setUnlockExpiry(new Date(Date.now() + WALLET_EXPIRY))
@@ -98,12 +104,17 @@ const init = async () => {
         empty()
         commit('reset')
       },
-      async refresh({ commit, state }) {
+      async refresh({ commit, dispatch, state }) {
         if (!state.address) return
         if (state.locked) return
         const info = await xe.wallet.infoWithNextNonce(state.config.blockchain.baseURL, state.address)
         commit('setBalance', info.balance)
         commit('setNextNonce', info.nonce)
+        dispatch('refreshTokenValue')
+      },
+      async refreshTokenValue({ commit, state }) {
+        const tokenValue = await fetchTokenValue()
+        commit('setUSDBalance', tokenValue.usdPerXE * (state.balance / 1e6))
       }
     }
   })
