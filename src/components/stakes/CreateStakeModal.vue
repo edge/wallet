@@ -3,43 +3,48 @@
     <Modal :close="cancel" :visible="visible && step === 1">
       <template v-slot:header>
         <h2 class="mb-8">Create Stake<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
-        <span class="sub-heading d-block text-gray text-caption">
-          <Amount :value="balance / 1e6" currency="XE"/> available
-        </span>
       </template>
       <template v-slot:body>
-        <div class="pb-14 min-h-410">
-          <div class="flex flex-col flex-wrap pt-12 radio-list">
-            <p>Please select a stake type</p>
-            <div class="stake-type">
+        <div class="pb-14">
+          <div class="mb-16 form-group">
+            <label>Current balance</label>
+            <Amount :value="balance / 1e6" currency="XE" short sub/>
+          </div>
+          <div class="mb-16 form-group">
+            <label>Stake Type</label>
+            <div class="flex flex-wrap mt-12 -mx-6 radio-list">
               <Radio
                 name="stake-type-host"
                 id="host"
-                label="Host"
+                extraName="Host"
+                :label="hostStakeAmount"
                 :selected="stakeType === 'host'"
+                :big="true"
                 @click="setStakeType('host')"
               />
-              <Amount :value="hostStakeAmount" currency="XE"/>
-            </div>
-            <div class="stake-type">
               <Radio
                 name="stake-type-gateway"
                 id="gateway"
-                label="Gateway"
+                extraName="Gateway"
+                :label="gatewayStakeAmount"
                 :selected="stakeType === 'gateway'"
+                :big="true"
                 @click="setStakeType('gateway')"
               />
-              <Amount :value="gatewayStakeAmount" currency="XE"/>
-            </div>
-            <div class="stake-type">
               <Radio
                 name="stake-type-stargate"
-                id="stargate" label="Stargate"
+                id="stargate"
+                extraName="Stargate"
+                :label="stargateStakeAmount"
                 :selected="stakeType === 'stargate'"
+                :big="true"
                 @click="setStakeType('stargate')"
               />
-              <Amount :value="stargateStakeAmount" currency="XE"/>
             </div>
+          </div>
+          <div class="mb-16 form-group">
+            <label>Remaining Balance</label>
+            <Amount :value="(balance - stakeAmount) / 1e6" currency="XE" short sub/>
           </div>
         </div>
       </template>
@@ -63,11 +68,7 @@
         <h2 class="mb-8">Create Stake<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
       </template>
       <template v-slot:body>
-        <div class="pb-14 min-h-410">
-          <div class="form-group mb-25">
-            <label class="label">Stake type</label>
-            <span class="break-all">{{ stakeType.toUpperCase() }}</span>
-          </div>
+        <div class="pb-14">
           <div class="mb-16 form-group">
             <label>Current balance</label>
             <Amount :value="balance / 1e6" currency="XE" short sub/>
@@ -133,7 +134,7 @@
         <Logo/>
       </template>
       <template v-slot:body>
-        <div class="pb-14 min-h-410">
+        <div class="pb-14">
           <div class="pb-4 mb-20 border-b border-gray-700 decor-block border-opacity-30">
             <!-- <CheckIcon class="w-52 text-green"/> -->
           </div>
@@ -234,13 +235,13 @@ export default {
       return !this.v$.$invalid
     },
     hostStakeAmount() {
-      return this.vars.host_stake_amount / 1e6
+      return this.vars.host_stake_amount
     },
     gatewayStakeAmount() {
-      return this.vars.gateway_stake_amount / 1e6
+      return this.vars.gateway_stake_amount
     },
     stargateStakeAmount() {
-      return this.vars.stargate_stake_amount / 1e6
+      return this.vars.stargate_stake_amount
     },
     stakeAmount() {
       if (this.stakeType === 'host') return this.vars.host_stake_amount
@@ -320,6 +321,9 @@ export default {
   @apply flex flex-row justify-between
 }
 
+button:selected {
+  color: red
+}
 
 
 
