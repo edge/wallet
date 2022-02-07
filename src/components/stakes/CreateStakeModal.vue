@@ -111,8 +111,8 @@
           <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
             <button class="w-full button button--outline-success" @click="() => goto(1)">Back</button>
             <button
-              :disabled="!canSend"
-              @click="send"
+              :disabled="!canCreate"
+              @click="create"
               class="w-full button button--success"
             >Confirm stake</button>
           </div>
@@ -183,13 +183,8 @@ import { LockOpenIcon } from '@heroicons/vue/outline'
 import Logo from '../Logo'
 import Modal from '../Modal'
 import Radio from '../Radio'
-import { formatXe } from '@edge/wallet-utils'
-import { helpers } from '@vuelidate/validators'
 import { mapState } from 'vuex'
-import { parseAmount } from '../../utils/form'
 import useVuelidate from '@vuelidate/core'
-
-const memoRegexp = /^[a-zA-Z0-9\s-]{0,32}$/
 
 export default {
   name: 'CreateStakeModal',
@@ -223,33 +218,19 @@ export default {
   },
   validations() {
     return {
-      recipient: [
+      stakeAmount: [
         validation.required,
-        validation.xeAddress
-      ],
-      amount: [
-        validation.required,
-        ...validation.amount(this.balance, this.amountParsed)
-      ],
-      memo: [
-        helpers.withMessage(
-          // eslint-disable-next-line max-len
-          'Memo is limited to 32 characters and should include only upper and lowercase letters, numbers, hyphens and spaces.',
-          v => v.length === 0 || memoRegexp.test(v)
-        )
+        ...validation.amount(this.balance, this.stakeAmountParsed)
       ],
       password: [validation.passwordRequired]
     }
   },
   computed: {
     ...mapState(['address', 'balance', 'nextNonce']),
-    amountParsed() {
-      return parseAmount(this.amount)
-    },
     canReadyCreate() {
       return this.stakeType && this.balance - this.stakeAmount > 0
     },
-    canSend() {
+    canCreate() {
       return !this.v$.$invalid
     },
     hostStakeAmount() {
@@ -266,6 +247,9 @@ export default {
       else if (this.stakeType === 'gateway') return this.vars.gateway_stake_amount
       else if (this.stakeType === 'stargate') return this.vars.stargate_stake_amount
       else return 0
+    },
+    stakeAmountParsed() {
+      return this.stakeAmount / 1e6
     }
   },
   watch: {
