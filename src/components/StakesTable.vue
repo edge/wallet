@@ -1,22 +1,24 @@
 <template>
   <table>
     <thead class="hidden lg:table-header-group">
-      <tr v-if="showWalletColumn">
+      <tr v-if="!hideWalletColumn">
         <th width="10%">ID</th>
         <th width="10%">Hash</th>
-        <th width="24%">Wallet</th>
-        <th width="30%">Device</th>
+        <th width="20%">Wallet</th>
+        <th width="24%">Device</th>
         <th width="8%">Type</th>
         <th width="8%">Status</th>
         <th width="10%">Amount XE</th>
+        <th width="10%">Actions</th>
       </tr>
       <tr v-else>
-        <th width="22%">ID</th>
-        <th width="22%">Hash</th>
-        <th width="30%">Device</th>
+        <th width="19%">ID</th>
+        <th width="19%">Hash</th>
+        <th width="26%">Device</th>
         <th width="8%">Type</th>
         <th width="8%">Status</th>
         <th width="10%">Amount XE</th>
+        <th width="10%">Actions</th>
       </tr>
     </thead>
     <tbody v-if="stakes.length">
@@ -24,7 +26,7 @@
         v-for="item in stakes"
         :key="item.id"
         :item="item"
-        :showWalletColumn="showWalletColumn"
+        :hideWalletColumn="hideWalletColumn"
       />
     </tbody>
     <tbody v-else>
@@ -60,7 +62,7 @@ export default {
     StakesTableItem
   },
   props: [
-    'showWalletColumn',
+    'hideWalletColumn',
     'limit',
     'page',
     'receiveMetadata'
@@ -115,14 +117,6 @@ th {
 
 th:first-of-type {
   @apply pl-20;
-}
-
-th:last-of-type {
-  @apply pr-30
-}
-
-th:last-child {
-  @apply rounded-r-4 text-right;
 }
 
 @screen lg {

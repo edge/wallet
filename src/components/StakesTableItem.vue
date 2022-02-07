@@ -14,7 +14,7 @@
       </span>
     </td>
 
-    <td v-if="showWalletColumn" data-title="Wallet:">
+    <td v-if="!hideWalletColumn" data-title="Wallet:">
       <a :href="explorerWalletUrl" target="_blank" rel="noreferrer">
         <span class="monospace md:inline-block">
           {{ item.tx.recipient }}
@@ -56,8 +56,12 @@
       </span>
     </td>
 
-    <td data-title="Amount:">
+    <td data-title="Amount (XE):">
       <span class="monospace lg:font-sans">{{ formattedAmount }}</span>
+    </td>
+
+    <td data-title="Actions:">
+      <button class="w-full table-button button--outline-success">{{ action }}</button>
     </td>
   </tr>
 </template>
@@ -70,7 +74,7 @@ import { ArrowCircleDownIcon, CheckCircleIcon, ClockIcon, DotsCircleHorizontalIc
 
 export default {
   name: 'StakesTableItem',
-  props: ['showWalletColumn', 'item'],
+  props: ['hideWalletColumn', 'item'],
   components: {
     ArrowCircleDownIcon,
     CheckCircleIcon,
@@ -78,6 +82,11 @@ export default {
     DotsCircleHorizontalIcon
   },
   computed: {
+    action() {
+      if (this.item.unlockRequested) return 'Release'
+      else if (this.item.released) return ''
+      else return 'Unlock'
+    },
     address () {
       return this.item.tx.recipient
     },
@@ -140,6 +149,10 @@ td .icon-grey {
 
 td a {
   @apply leading-none border-b border-black border-opacity-25 hover:border-green hover:border-opacity-25 hover:text-green align-middle;
+}
+
+button.table-button {
+  @apply py-2 rounded text-black border-solid border-2 font-medium
 }
 
 @screen lg {
