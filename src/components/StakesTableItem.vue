@@ -61,7 +61,12 @@
     </td>
 
     <td data-title="">
-      <button class="w-full table-button button--outline">{{ action }}</button>
+      <button
+        class="w-full table-button button--outline"
+        @click="openUnlockStakeModal(item)"
+      >
+        {{ action }}
+      </button>
     </td>
   </tr>
 </template>
@@ -74,7 +79,7 @@ import { ArrowCircleDownIcon, CheckCircleIcon, ClockIcon, DotsCircleHorizontalIc
 
 export default {
   name: 'StakesTableItem',
-  props: ['hideWalletColumn', 'item'],
+  props: ['hideWalletColumn', 'item', 'openUnlockStakeModal'],
   components: {
     ArrowCircleDownIcon,
     CheckCircleIcon,

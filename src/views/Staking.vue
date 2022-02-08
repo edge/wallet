@@ -3,6 +3,12 @@
     <Header />
     <AccountPanel view="staking" />
 
+    <UnlockStakeModal
+      :close="closeUnlockStakeModal"
+      :visible="showUnlockStakeModal"
+      :stake="stakeToUnlock"
+    />
+
     <div class="bg-gray-200 py-35">
       <div class="container">
         <StakesTable
@@ -10,6 +16,7 @@
           :limit="limit"
           :receiveMetadata="onStakesUpdate"
           :page="currentPage"
+          :openUnlockStakeModal="openUnlockStakeModal"
         />
         <Pagination
           v-if="metadata.totalCount > limit"
@@ -28,11 +35,15 @@ import AccountPanel from '@/components/AccountPanel'
 import Header from '@/components/Header'
 import Pagination from '@/components/PaginationNew'
 import StakesTable from '@/components/StakesTable'
+import UnlockStakeModal from '@/components/stakes/UnlockStakeModal'
 
 export default {
   name: 'ViewStaking',
   data: function () {
     return {
+      showUnlockStakeModal: false,
+      stakeToUnlock: null,
+
       metadata: { totalCount: 0 },
       limit: 20
     }
@@ -41,7 +52,8 @@ export default {
     AccountPanel,
     Header,
     Pagination,
-    StakesTable
+    StakesTable,
+    UnlockStakeModal
   },
   computed: {
     currentPage() {
@@ -52,8 +64,16 @@ export default {
     }
   },
   methods: {
+    closeUnlockStakeModal() {
+      this.stakeToUnlock = null
+      this.showUnlockStakeModal = false
+    },
     onStakesUpdate(metadata) {
       this.metadata = metadata
+    },
+    openUnlockStakeModal(stake) {
+      this.stakeToUnlock = stake
+      this.showUnlockStakeModal = true
     }
   },
   watch: {

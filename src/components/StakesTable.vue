@@ -27,6 +27,7 @@
         :key="item.id"
         :item="item"
         :hideWalletColumn="hideWalletColumn"
+        :openUnlockStakeModal="openUnlockStakeModal"
       />
     </tbody>
     <tbody v-else>
@@ -65,7 +66,8 @@ export default {
     'hideWalletColumn',
     'limit',
     'page',
-    'receiveMetadata'
+    'receiveMetadata',
+    'openUnlockStakeModal'
   ],
   computed: mapState(['address']),
   mounted() {
