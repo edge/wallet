@@ -17,7 +17,7 @@
                 name="stake-type-host"
                 id="host"
                 extraName="Host"
-                :label="`${shortHostAmount} XE`"
+                :label="`${shortHostStakeAmount} XE`"
                 :selected="stakeType === 'host'"
                 :disabled="!isStakeAffordable('host')"
                 :big="true"
@@ -27,7 +27,7 @@
                 name="stake-type-gateway"
                 id="gateway"
                 extraName="Gateway"
-                :label="`${shortGatewayAmount} XE`"
+                :label="`${shortGatewayStakeAmount} XE`"
                 :selected="stakeType === 'gateway'"
                 :disabled="!isStakeAffordable('gateway')"
                 :big="true"
@@ -37,7 +37,7 @@
                 name="stake-type-stargate"
                 id="stargate"
                 extraName="Stargate"
-                :label="`${shortStargateAmount} XE`"
+                :label="`${shortStargateStakeAmount} XE`"
                 :selected="stakeType === 'stargate'"
                 :disabled="!isStakeAffordable('stargate')"
                 :big="true"
@@ -249,6 +249,44 @@ export default {
       else {
         this.passwordError = 'Incorrect password.'
         return false
+      }
+    },
+    async create() {
+      this.passwordError = ''
+
+      if (!await this.v$.$validate()) return
+      if (!await this.checkPassword()) return
+      const privateKey = await storage.getPrivateKey(this.password)
+
+      const memo = `Create ${this.stakeType[0].toUpperCase() + this.stakeType.slice(1)} Stake`
+
+      // create tx
+      const tx = xe.tx.sign({
+        timestamp: Date.now(),
+        sender: this.address,
+        recipient: this.address,
+        amount: this.stakeAmount,
+        data: {
+          action: 'create_stake',
+          memo
+        },
+        nonce: this.nextNonce
+      }, privateKey)
+
+      // submit tx to blockchain
+      try {
+        const { metadata, results } = await xe.tx.createTransactions(process.env.VUE_APP_BLOCKCHAIN_API_URL, [tx])
+        if (metadata.accepted) {
+          this.completedTx = results[0]
+          this.goto(2)
+        }
+        else {
+          this.submitError = results[0].reason
+        }
+      }
+      catch (err) {
+        console.error(err)
+        this.submitError = err.message
       }
     },
     formatShortAmount(amount) {
