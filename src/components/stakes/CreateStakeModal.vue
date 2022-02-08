@@ -112,7 +112,7 @@
           </div>
           <div class="form-group mb-25">
             <label class="label">Stake Amount</label>
-            <Amount :value="vars.host_stake_amount / 1e6" currency="XE" short sub/>
+            <Amount :value="stakeAmount / 1e6" currency="XE" short sub/>
           </div>
           <div class="mb-16 form-group">
             <label>Fee</label>
