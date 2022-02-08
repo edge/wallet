@@ -17,7 +17,7 @@
                 name="stake-type-host"
                 id="host"
                 extraName="Host"
-                :label="`${formattedHostAmount} XE`"
+                :label="`${shortHostAmount} XE`"
                 :selected="stakeType === 'host'"
                 :disabled="!isStakeAffordable('host')"
                 :big="true"
@@ -27,7 +27,7 @@
                 name="stake-type-gateway"
                 id="gateway"
                 extraName="Gateway"
-                :label="`${formattedGatewayAmount} XE`"
+                :label="`${shortGatewayAmount} XE`"
                 :selected="stakeType === 'gateway'"
                 :disabled="!isStakeAffordable('gateway')"
                 :big="true"
@@ -37,7 +37,7 @@
                 name="stake-type-stargate"
                 id="stargate"
                 extraName="Stargate"
-                :label="`${formattedStargateAmount} XE`"
+                :label="`${shortStargateAmount} XE`"
                 :selected="stakeType === 'stargate'"
                 :disabled="!isStakeAffordable('stargate')"
                 :big="true"
@@ -196,20 +196,17 @@ export default {
   },
   computed: {
     ...mapState(['address', 'balance', 'nextNonce']),
-    canReadyCreate() {
-      return this.stakeType && this.balance - this.stakeAmount > 0
-    },
     canCreate() {
       return !this.v$.$invalid
     },
-    formattedHostAmount() {
+    shortHostStakeAmount() {
       return this.formatShortAmount(this.vars.host_stake_amount)
     },
-    formattedGatewayAmount() {
-      return this.formatShortAmount(this.vars.gateway_stake_amount, true)
+    shortGatewayStakeAmount() {
+      return this.formatShortAmount(this.vars.gateway_stake_amount)
     },
-    formattedStargateAmount() {
-      return this.formatShortAmount(this.vars.stargate_stake_amount, true)
+    shortStargateStakeAmount() {
+      return this.formatShortAmount(this.vars.stargate_stake_amount)
     },
     stakeAmount() {
       switch (this.stakeType) {
@@ -279,10 +276,10 @@ export default {
 
       this.v$.$reset()
     },
-    sendOnEnter(event) {
+    createOnEnter(event) {
       if (event.charCode !== 13) return
       event.preventDefault()
-      this.send()
+      this.create()
     },
     setStakeType(type) {
       if (this.isStakeAffordable(type)) {
