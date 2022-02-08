@@ -19,6 +19,7 @@
                 extraName="Host"
                 :label="`${formattedHostAmount} XE`"
                 :selected="stakeType === 'host'"
+                :disabled="!isStakeAffordable('host')"
                 :big="true"
                 @click="setStakeType('host')"
               />
@@ -28,6 +29,7 @@
                 extraName="Gateway"
                 :label="`${formattedGatewayAmount} XE`"
                 :selected="stakeType === 'gateway'"
+                :disabled="!isStakeAffordable('gateway')"
                 :big="true"
                 @click="setStakeType('gateway')"
               />
@@ -37,6 +39,7 @@
                 extraName="Stargate"
                 :label="`${formattedStargateAmount} XE`"
                 :selected="stakeType === 'stargate'"
+                :disabled="!isStakeAffordable('stargate')"
                 :big="true"
                 @click="setStakeType('stargate')"
               />
@@ -209,10 +212,16 @@ export default {
       return this.formatShortAmount(this.vars.stargate_stake_amount, true)
     },
     stakeAmount() {
-      if (this.stakeType === 'host') return this.vars.host_stake_amount
-      else if (this.stakeType === 'gateway') return this.vars.gateway_stake_amount
-      else if (this.stakeType === 'stargate') return this.vars.stargate_stake_amount
-      else return 0
+      switch (this.stakeType) {
+      case 'host':
+        return this.vars.host_stake_amount
+      case 'gateway':
+        return this.vars.gateway_stake_amount
+      case 'stargate':
+        return this.vars.stargate_stake_amount
+      default:
+        return 0
+      }
     },
     stakeAmountParsed() {
       return this.stakeAmount / 1e6
@@ -254,6 +263,9 @@ export default {
     async getXeVars() {
       this.vars = await xe.vars(process.env.VUE_APP_BLOCKCHAIN_API_URL)
     },
+    isStakeAffordable(type) {
+      return this.balance - this.vars[type + '_stake_amount'] > 0
+    },
     readyCreate() {
       // validate only step 1
       if (this.canReadyCreate) return this.goto(2)
@@ -273,7 +285,9 @@ export default {
       this.send()
     },
     setStakeType(type) {
-      this.stakeType = type
+      if (this.balance - this.vars[type + '_stake_amount'] > 0) {
+        this.stakeType = type
+      }
     }
   },
   setup() {
@@ -288,8 +302,6 @@ export default {
 .fake-radio.fake-radio--big {
   flex-grow: 1;
 }
-
-
 
 .sub-heading :deep(.amount .currency) {
   @apply ml-5;
