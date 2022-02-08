@@ -65,7 +65,7 @@
                 <input
                   type="password"
                   autocomplete="off"
-                  @keypress="sendOnEnter"
+                  @keypress="createOnEnter"
                   placeholder="Your password"
                   id="pass-step"
                   v-model="v$.password.$model"
@@ -99,7 +99,7 @@
 
     <Modal :close="cancel" :visible="visible && step === 2">
       <template v-slot:header>
-        <h2 class="mb-8">Stake created<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
+        <h2 class="mb-8">Stake accepted<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
       </template>
       <template v-slot:body>
         <div class="pb-14">
@@ -108,7 +108,7 @@
           </div>
           <div class="form-group mb-25">
             <label class="label">Stake Type</label>
-            <span class="break-all text-xl">{{ stakeType[0].toUpperCase() + stakeType.slice(1) }}</span>
+            <span class="break-all text-lg">{{ stakeType[0].toUpperCase() + stakeType.slice(1) }}</span>
           </div>
           <div class="form-group mb-25">
             <label class="label">Stake Amount</label>
@@ -121,6 +121,24 @@
           <div class="mb-16 form-group">
             <label>Remaining Balance</label>
             <Amount :value="(balance - stakeAmount) / 1e6" currency="XE" short sub/>
+          </div>
+          <div class="form-group mb-14">
+            <label>Transaction hash</label>
+            <span class="flex w-full overflow-hidden text-white overflow-ellipsis">
+              <a
+                class="text-lg text-white underline"
+                :href="`${explorerUrl}/transaction/${completedTx.hash}`"
+                target="_blank"
+              >
+                {{ completedTxShortHash }}
+              </a>
+              <!-- eslint-disable-next-line max-len -->
+              <svg class="w-20 h-20 mt-2 ml-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+            </span>
+          </div>
+          <div class="flex items-center mt-24 leading-8 text-gray">
+            <!-- eslint-disable-next-line max-len -->
+            <p class="mb-0">Your transaction has been submitted. Once processed, your stake will be created. This may take a minute or two.</p>
           </div>
         </div>
       </template>
@@ -145,7 +163,6 @@ import * as validation from '../../utils/validation'
 import * as xe from '@edge/xe-utils'
 import Amount from '../Amount'
 import { LockOpenIcon } from '@heroicons/vue/outline'
-import Logo from '../Logo'
 import Modal from '../Modal'
 import Radio from '../Radio'
 import { mapState } from 'vuex'
@@ -156,7 +173,6 @@ export default {
   components: {
     Amount,
     LockOpenIcon,
-    Logo,
     Modal,
     Radio
   },
@@ -168,16 +184,13 @@ export default {
     return {
       step: 1,
 
-      recipient: '',
-      amount: '',
-      memo: '',
       password: '',
       passwordError: '',
+      stakeType: '',
 
       completedTx: null,
       submitError: '',
 
-      stakeType: '',
       vars: null
     }
   },
@@ -194,6 +207,19 @@ export default {
     ...mapState(['address', 'balance', 'nextNonce']),
     canCreate() {
       return !this.v$.$invalid
+    },
+    completedTxShortHash() {
+      if (this.completedTx === null) return ''
+      return [
+        this.completedTx.hash.substring(0, 6),
+        this.completedTx.hash.substring(this.completedTx.hash.length - 4)
+      ].join('...')
+    },
+    explorerUrl() {
+      return process.env.VUE_APP_EXPLORER_URL
+    },
+    memo() {
+      return `Create ${this.stakeType[0].toUpperCase() + this.stakeType.slice(1)} Stake`
     },
     shortHostStakeAmount() {
       return this.formatShortAmount(this.vars.host_stake_amount)
@@ -254,8 +280,6 @@ export default {
       if (!await this.checkPassword()) return
       const privateKey = await storage.getPrivateKey(this.password)
 
-      const memo = `Create ${this.stakeType[0].toUpperCase() + this.stakeType.slice(1)} Stake`
-
       // create tx
       const tx = xe.tx.sign({
         timestamp: Date.now(),
@@ -264,7 +288,7 @@ export default {
         amount: this.stakeAmount,
         data: {
           action: 'create_stake',
-          memo
+          memo: this.memo
         },
         nonce: this.nextNonce
       }, privateKey)
