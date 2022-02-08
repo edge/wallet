@@ -285,7 +285,7 @@ export default {
       this.send()
     },
     setStakeType(type) {
-      if (this.balance - this.vars[type + '_stake_amount'] > 0) {
+      if (this.isStakeAffordable(type)) {
         this.stakeType = type
       }
     }
