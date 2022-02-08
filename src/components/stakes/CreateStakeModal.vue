@@ -12,12 +12,12 @@
           </div>
           <div class="mb-16 form-group">
             <label>Stake Type</label>
-            <div class="flex flex-wrap mt-12 -mx-6 radio-list">
+            <div class="flex flex-wrap justify-between mt-12 -mx-6 radio-list">
               <Radio
                 name="stake-type-host"
                 id="host"
                 extraName="Host"
-                :label="hostStakeAmount"
+                :label="`${formattedHostAmount} XE`"
                 :selected="stakeType === 'host'"
                 :big="true"
                 @click="setStakeType('host')"
@@ -26,7 +26,7 @@
                 name="stake-type-gateway"
                 id="gateway"
                 extraName="Gateway"
-                :label="gatewayStakeAmount"
+                :label="`${formattedGatewayAmount} XE`"
                 :selected="stakeType === 'gateway'"
                 :big="true"
                 @click="setStakeType('gateway')"
@@ -35,7 +35,7 @@
                 name="stake-type-stargate"
                 id="stargate"
                 extraName="Stargate"
-                :label="stargateStakeAmount"
+                :label="`${formattedStargateAmount} XE`"
                 :selected="stakeType === 'stargate'"
                 :big="true"
                 @click="setStakeType('stargate')"
@@ -234,14 +234,14 @@ export default {
     canCreate() {
       return !this.v$.$invalid
     },
-    hostStakeAmount() {
-      return this.vars.host_stake_amount
+    formattedHostAmount() {
+      return this.formatShortAmount(this.vars.host_stake_amount)
     },
-    gatewayStakeAmount() {
-      return this.vars.gateway_stake_amount
+    formattedGatewayAmount() {
+      return this.formatShortAmount(this.vars.gateway_stake_amount, true)
     },
-    stargateStakeAmount() {
-      return this.vars.stargate_stake_amount
+    formattedStargateAmount() {
+      return this.formatShortAmount(this.vars.stargate_stake_amount, true)
     },
     stakeAmount() {
       if (this.stakeType === 'host') return this.vars.host_stake_amount
@@ -280,6 +280,9 @@ export default {
         return false
       }
     },
+    formatShortAmount(amount) {
+      return (amount / 1e6).toLocaleString('en-US', { maximumFractionDigits: 6 })
+    },
     goto(step) {
       this.step = step
     },
@@ -317,12 +320,8 @@ export default {
 </script>
 
 <style scoped>
-.stake-type {
-  @apply flex flex-row justify-between
-}
-
-button:selected {
-  color: red
+.fake-radio.fake-radio--big {
+  flex-grow: 1;
 }
 
 
