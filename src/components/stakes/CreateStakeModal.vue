@@ -51,41 +51,6 @@
 
       <template v-slot:footer>
         <div class="px-24 pt-32 pb-40 border-t border-gray-700 border-opacity-30">
-          <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
-            <button class="w-full button button--outline-success" @click="cancel">Cancel</button>
-            <button
-              class="w-full button button--success"
-              :disabled="!canReadyCreate"
-              @click="readyCreate">Create
-            </button>
-          </div>
-        </div>
-      </template>
-    </Modal>
-
-    <Modal :close="cancel" :visible="visible && step === 2">
-      <template v-slot:header>
-        <h2 class="mb-8">Create Stake<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
-      </template>
-      <template v-slot:body>
-        <div class="pb-14">
-          <div class="mb-16 form-group">
-            <label>Current balance</label>
-            <Amount :value="balance / 1e6" currency="XE" short sub/>
-          </div>
-          <div class="form-group mb-25">
-            <label class="label">Stake amount</label>
-            <Amount :value="stakeAmount / 1e6" currency="XE" short sub/>
-          </div>
-          <div class="mb-16 form-group">
-            <label>Remaining Balance</label>
-            <Amount :value="(balance - stakeAmount) / 1e6" currency="XE" short sub/>
-          </div>
-        </div>
-      </template>
-
-      <template v-slot:footer>
-        <div class="px-24 pt-32 pb-40 border-t border-gray-700 border-opacity-30">
           <form>
             <!-- eslint-disable-next-line max-len -->
             <div class="form-group" :class="{'form-group__error': v$.password.$error || (passwordError && !v$.password.$dirty)}">
@@ -110,7 +75,7 @@
             </div>
           </form>
           <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
-            <button class="w-full button button--outline-success" @click="() => goto(1)">Back</button>
+            <button class="w-full button button--outline-success" @click="cancel">Cancel</button>
             <button
               :disabled="!canCreate"
               @click="create"
@@ -129,7 +94,7 @@
       </template>
     </Modal>
 
-    <Modal :close="cancel" :visible="visible && step === 3">
+    <Modal :close="cancel" :visible="visible && step === 2">
       <template v-slot:header>
         <Logo/>
       </template>
