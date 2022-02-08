@@ -99,7 +99,7 @@
 
     <Modal :close="cancel" :visible="visible && step === 2">
       <template v-slot:header>
-        <Logo/>
+        <h2 class="mb-8">Stake created<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
       </template>
       <template v-slot:body>
         <div class="pb-14">
@@ -107,24 +107,20 @@
             <!-- <CheckIcon class="w-52 text-green"/> -->
           </div>
           <div class="form-group mb-25">
-            <label class="label">Recipient</label>
-            <span class="break-all">{{ completedTx.recipient }}</span>
+            <label class="label">Stake Type</label>
+            <span class="break-all text-xl">{{ stakeType[0].toUpperCase() + stakeType.slice(1) }}</span>
           </div>
           <div class="form-group mb-25">
-            <label class="label">Memo</label>
-            <span class="break-all">{{ completedTx.data.memo || 'None' }}</span>
-          </div>
-          <div class="mb-16 form-group">
-            <label>Amount</label>
-            <Amount :value="completedTx.amount / 1e6" currency="XE" short sub/>
+            <label class="label">Stake Amount</label>
+            <Amount :value="vars.host_stake_amount / 1e6" currency="XE" short sub/>
           </div>
           <div class="mb-16 form-group">
             <label>Fee</label>
             <Amount :value="0" currency="XE" short sub/>
           </div>
-          <div class="mb-0 form-group">
-            <label>Recipient receives</label>
-            <Amount :value="completedTx.amount / 1e6" currency="XE" short sub/>
+          <div class="mb-16 form-group">
+            <label>Remaining Balance</label>
+            <Amount :value="(balance - stakeAmount) / 1e6" currency="XE" short sub/>
           </div>
         </div>
       </template>
