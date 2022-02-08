@@ -32,11 +32,19 @@ const hasWallet = async () => {
 }
 
 /**
- * Resize password to minimum length for cipher.
+ * Resize password to 32 characters for cipher.
  *
  * @param {string} password Password to resize
  */
-const resize = password => password.length >= 32 ? password : password.padEnd(32, '0')
+const resize = password => {
+  if (password.length < 32) {
+    return password.padEnd(32, '0')
+  }
+  else if (password.length > 32) {
+    return password.slice(0, 32)
+  }
+  return password
+}
 
 const setPassword = password => {
   const s = createSalt()
