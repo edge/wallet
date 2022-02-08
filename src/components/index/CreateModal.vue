@@ -28,7 +28,7 @@
         <div class="form-group mb-25">
           <label>PRIVATE KEY</label>
           <span class="flex items-center">
-            <span class="font-mono break-all text-sm2">
+            <span class="private-key font-mono break-all text-sm2">
               {{ privateKey }}
             </span>
             <button
@@ -203,6 +203,10 @@ export default {
 </script>
 
 <style scoped>
+.private-key {
+  width: 32ch
+}
+
 .on-clicked-effect {
   transition: all 0.4s ease-in;
 }
