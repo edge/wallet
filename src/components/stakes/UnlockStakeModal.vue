@@ -6,7 +6,7 @@
       </template>
       <template v-slot:body>
         <div class="pb-14">
-        <div class="form-group mb-14">
+          <div class="form-group mb-14">
             <label>Stake ID</label>
             <span class="flex w-full overflow-hidden text-white overflow-ellipsis">
               <a
@@ -97,10 +97,6 @@
             <label>Fee</label>
             <Amount :value="0" currency="XE" short sub/>
           </div>
-          <div class="mb-16 form-group text-3xl">
-            <label>Unlocks at</label>
-            <span class="break-all">{{ unlockAtDateTime }}</span>
-          </div>
           <div class="form-group mb-14">
             <label>Transaction hash</label>
             <span class="flex w-full overflow-hidden text-white overflow-ellipsis">
@@ -117,7 +113,7 @@
           </div>
           <div class="flex items-center mt-24 leading-8 text-gray">
             <!-- eslint-disable-next-line max-len -->
-            <p class="mb-0">Your transaction has been submitted. Once processed, your stake will be unlocked. This may take a minute or two.</p>
+            <p class="mb-0">Your transaction has been submitted. Once the transaction is confirmed, your stake will begin to unlock. It will unlock on {{ unlocksAtDate }} at {{ unlocksAtTime }}.</p>
           </div>
         </div>
       </template>
@@ -175,7 +171,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['address', 'balance', 'nextNonce']),
+    ...mapState(['address', 'nextNonce']),
     canUnlock() {
       return !this.v$.$invalid
     },
@@ -208,9 +204,17 @@ export default {
     unlockPeriodInDays() {
       return this.stake.unlockPeriod / 1000 / 3600 / 24
     },
-    unlockAtDateTime() {
-      const unlockDate = new Date(this.completedTx.timestamp)
-      return unlockDate.toLocaleString()
+    unlocksAt() {
+      if (this.stake) return this.completedTx.timestamp + this.stake.unlockPeriod
+      else return null
+    },
+    unlocksAtDate() {
+      const unlockDate = new Date(this.unlocksAt)
+      return unlockDate.toLocaleString().split(', ')[0]
+    },
+    unlocksAtTime() {
+      const unlockDate = new Date(this.unlocksAt)
+      return unlockDate.toLocaleString().split(', ')[1]
     }
   },
   watch: {
