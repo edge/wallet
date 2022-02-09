@@ -3,6 +3,11 @@
     <Header />
     <AccountPanel view="staking" />
 
+    <ReleaseStakeModal
+      :close="closeReleaseStakeModal"
+      :visible="showReleaseStakeModal"
+      :stake="stakeToUnlock"
+    />
     <UnlockStakeModal
       :close="closeUnlockStakeModal"
       :visible="showUnlockStakeModal"
@@ -16,6 +21,7 @@
           :limit="limit"
           :receiveMetadata="onStakesUpdate"
           :page="currentPage"
+          :openReleaseStakeModal="openReleaseStakeModal"
           :openUnlockStakeModal="openUnlockStakeModal"
         />
         <Pagination
@@ -34,6 +40,7 @@
 import AccountPanel from '@/components/AccountPanel'
 import Header from '@/components/Header'
 import Pagination from '@/components/PaginationNew'
+import ReleaseStakeModal from '@/components/stakes/ReleaseStakeModal'
 import StakesTable from '@/components/StakesTable'
 import UnlockStakeModal from '@/components/stakes/UnlockStakeModal'
 
@@ -41,6 +48,7 @@ export default {
   name: 'ViewStaking',
   data: function () {
     return {
+      showReleaseStakeModal: false,
       showUnlockStakeModal: false,
       stakeToUnlock: null,
 
@@ -52,6 +60,7 @@ export default {
     AccountPanel,
     Header,
     Pagination,
+    ReleaseStakeModal,
     StakesTable,
     UnlockStakeModal
   },
@@ -64,12 +73,20 @@ export default {
     }
   },
   methods: {
+    closeReleaseStakeModal() {
+      this.stakeToUnlock = null
+      this.showReleaseStakeModal = false
+    },
     closeUnlockStakeModal() {
       this.stakeToUnlock = null
       this.showUnlockStakeModal = false
     },
     onStakesUpdate(metadata) {
       this.metadata = metadata
+    },
+    openReleaseStakeModal(stake) {
+      this.stakeToUnlock = stake
+      this.showReleaseStakeModal = true
     },
     openUnlockStakeModal(stake) {
       this.stakeToUnlock = stake

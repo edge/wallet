@@ -63,7 +63,7 @@
     <td data-title="">
       <button
         class="w-full table-button button--outline"
-        @click="openUnlockStakeModal(item)"
+        @click="openModal"
       >
         {{ action }}
       </button>
@@ -79,7 +79,7 @@ import { ArrowCircleDownIcon, CheckCircleIcon, ClockIcon, DotsCircleHorizontalIc
 
 export default {
   name: 'StakesTableItem',
-  props: ['hideWalletColumn', 'item', 'openUnlockStakeModal'],
+  props: ['hideWalletColumn', 'item', 'openReleaseStakeModal', 'openUnlockStakeModal'],
   components: {
     ArrowCircleDownIcon,
     CheckCircleIcon,
@@ -109,6 +109,12 @@ export default {
     },
     isUnlocking() {
       return this.item.unlockRequested + this.item.unlockPeriod > Date.now()
+    }
+  },
+  methods: {
+    openModal() {
+      if (this.action === 'Unlock') return this.openUnlockStakeModal(this.item)
+      else if ( this.action === 'Release') return this.openReleaseStakeModal(this.item)
     }
   }
 }

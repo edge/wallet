@@ -27,6 +27,7 @@
         :key="item.id"
         :item="item"
         :hideWalletColumn="hideWalletColumn"
+        :openReleaseStakeModal="openReleaseStakeModal"
         :openUnlockStakeModal="openUnlockStakeModal"
       />
     </tbody>
@@ -67,6 +68,7 @@ export default {
     'limit',
     'page',
     'receiveMetadata',
+    'openReleaseStakeModal',
     'openUnlockStakeModal'
   ],
   computed: mapState(['address']),
