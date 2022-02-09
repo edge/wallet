@@ -274,10 +274,12 @@ export default {
       passwordError: '',
       confirmPhrase: '',
 
+      phrase: confirmPhrase,
+
       completedTx: null,
       submitError: '',
 
-      phrase: confirmPhrase
+      vars: null
     }
   },
   computed: {
@@ -303,11 +305,11 @@ export default {
       return this.unlocksAt < Date.now()
     },
     releaseFeeParsed() {
-      return this.stake.amount * 0.25 / 1e6
+      return this.stake.amount * this.vars.stake_express_release_fee / 1e6
     },
     releasePc() {
       if (this.isUnlocked) return 0
-      else return 0.25 * 100
+      else return this.vars.stake_express_release_fee * 100
     },
     returnAmountParsed() {
       return this.stakeAmountParsed - this.releaseFeeParsed
@@ -370,6 +372,9 @@ export default {
         this.passwordError = 'Incorrect password.'
         return false
       }
+    },
+    async getXeVars() {
+      this.vars = await xe.vars(process.env.VUE_APP_BLOCKCHAIN_API_URL)
     },
     goto(step) {
       this.step = step
@@ -440,6 +445,9 @@ export default {
       }
     }
   },
+  mounted() {
+    this.getXeVars()
+  },
   setup() {
     return {
       v$: useVuelidate()
@@ -459,6 +467,7 @@ export default {
       if (v === oldv) return
       if (v) {
         this.$store.dispatch('refresh')
+        this.getXeVars()
       }
     },
     stake() {
