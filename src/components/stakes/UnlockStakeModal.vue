@@ -26,11 +26,7 @@
           </div>
           <div class="mb-16 form-group text-3xl">
             <label>Unlock period</label>
-            <span class="break-all">{{ unlockPeriodInDays }} days</span>
-          </div>
-          <div class="flex items-center mt-24 leading-8 text-gray">
-            <!-- eslint-disable-next-line max-len -->
-            <p class="mb-0">The unlock period can be reduced up by paying a fee.</p>
+            <span class="break-all">{{ unlockPeriodInDays }}</span><span class="text-lg"> days</span>
           </div>
         </div>
       </template>
@@ -82,7 +78,7 @@
 
     <Modal :close="cancel" :visible="visible && step === 2">
       <template v-slot:header>
-        <h2 class="mb-8">Stake unlocked<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
+        <h2 class="mb-8">Unlock requested<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
       </template>
       <template v-slot:body>
         <div class="pb-14">
@@ -102,8 +98,8 @@
             <Amount :value="0" currency="XE" short sub/>
           </div>
           <div class="mb-16 form-group text-3xl">
-            <label>Unlock period</label>
-            <span class="break-all">{{ unlockPeriodInDays }} days</span>
+            <label>Unlocks at</label>
+            <span class="break-all">{{ unlockAtDateTime }}</span>
           </div>
           <div class="form-group mb-14">
             <label>Transaction hash</label>
@@ -211,6 +207,10 @@ export default {
     },
     unlockPeriodInDays() {
       return this.stake.unlockPeriod / 1000 / 3600 / 24
+    },
+    unlockAtDateTime() {
+      const unlockDate = new Date(this.completedTx.timestamp)
+      return unlockDate.toLocaleString()
     }
   },
   watch: {
