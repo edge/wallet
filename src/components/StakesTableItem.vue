@@ -62,6 +62,7 @@
 
     <td data-title="">
       <button
+        v-if="action"
         class="w-full table-button button--outline"
         @click="openModal"
       >
@@ -88,8 +89,8 @@ export default {
   },
   computed: {
     action() {
-      if (this.item.unlockRequested) return 'Release'
-      else if (this.item.released) return ''
+      if (this.item.released) return null
+      else if (this.item.unlockRequested) return 'Release'
       else return 'Unlock'
     },
     address () {
