@@ -16,7 +16,7 @@
 
       <div class="account-panel__right">
         <div v-if="view === 'staking'" class="account-panel__buttons">
-          <button class="w-full button button--success col-start-2" @click="openCreateStake">
+          <button class="w-full button button--success col-start-1 col-span-2" @click="openCreateStake">
             <span class="w-12 button__icon">
               <PlusIcon class="w-15" />
             </span>
