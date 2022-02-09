@@ -48,7 +48,8 @@
           </div>
           <div class="mb-16 form-group">
             <label>Remaining Balance</label>
-            <Amount :value="remainingBalanceParsed" currency="XE" short sub/>
+            <Amount v-if="canAffordHost" :value="remainingBalanceParsed" currency="XE" short sub/>
+            <span v-else class="break-all text-lg">You balance is currently too low to create a stake</span>
           </div>
         </div>
       </template>
@@ -198,6 +199,9 @@ export default {
   },
   computed: {
     ...mapState(['address', 'balance', 'nextNonce']),
+    canAffordHost() {
+      return this.balance >= this.vars.host_stake_amount
+    },
     canCreate() {
       return !this.v$.$invalid
     },
@@ -352,6 +356,8 @@ export default {
       if (v === oldv) return
       if (v) {
         this.$store.dispatch('refresh')
+        this.getXeVars()
+        this.stakeType = 'host'
       }
     }
   }
