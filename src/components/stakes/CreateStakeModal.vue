@@ -85,7 +85,7 @@
               :disabled="!canCreate"
               @click="create"
               class="w-full button button--success"
-            >Confirm stake</button>
+            >Create stake</button>
           </div>
           <!-- eslint-disable-next-line max-len -->
           <div v-if="submitError" class="px-20 py-20 my-20 text-center bg-black border border-gray-700 rounded convert-info md:text-left border-opacity-30 border-color">
@@ -111,7 +111,7 @@
           </div>
           <div class="form-group mb-25">
             <label class="label">Stake Type</label>
-            <span class="break-all text-lg">{{ stakeType[0].toUpperCase() + stakeType.slice(1) }}</span>
+            <span class="break-all text-3xl">{{ stakeTypeFormatted }}</span>
           </div>
           <div class="form-group mb-25">
             <label class="label">Stake Amount</label>
@@ -216,7 +216,7 @@ export default {
       return process.env.VUE_APP_EXPLORER_URL
     },
     memo() {
-      return `Create ${this.stakeType[0].toUpperCase() + this.stakeType.slice(1)} Stake`
+      return `Create ${this.stakeTypeFormatted} Stake`
     },
     remainingBalanceParsed() {
       return (this.balance - this.stakeAmount) / 1e6
@@ -244,6 +244,9 @@ export default {
     },
     stakeAmountParsed() {
       return this.stakeAmount / 1e6
+    },
+    stakeTypeFormatted() {
+      return this.stakeType[0].toUpperCase() + this.stakeType.slice(1)
     }
   },
   methods: {

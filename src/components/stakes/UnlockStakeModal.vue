@@ -21,6 +21,10 @@
               <svg class="w-20 h-20 mt-2 ml-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
             </span>
           </div>
+          <div class="form-group mb-25">
+            <label class="label">Stake Type</label>
+            <span class="break-all text-3xl">{{ stakeTypeFormatted }}</span>
+          </div>
           <div class="mb-16 form-group">
             <label>Stake amount</label>
             <Amount :value="stakeAmountParsed" currency="XE" short sub/>
@@ -89,7 +93,7 @@
           </div>
           <div class="form-group mb-25">
             <label class="label">Stake Type</label>
-            <span class="break-all text-lg">{{ stakeTypeFormatted }}</span>
+            <span class="break-all text-3xl">{{ stakeTypeFormatted }}</span>
           </div>
           <div class="form-group mb-25">
             <label class="label">Stake Amount</label>
