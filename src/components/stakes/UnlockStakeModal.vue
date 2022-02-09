@@ -4,6 +4,7 @@
       <template v-slot:header>
         <h2 class="mb-8">Unlock Stake<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
       </template>
+
       <template v-slot:body>
         <div class="pb-14">
           <div class="form-group mb-14">
@@ -80,6 +81,7 @@
       <template v-slot:header>
         <h2 class="mb-8">Unlock requested<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
       </template>
+
       <template v-slot:body>
         <div class="pb-14">
           <div class="pb-4 mb-20 border-b border-gray-700 decor-block border-opacity-30">
@@ -165,11 +167,6 @@ export default {
       submitError: ''
     }
   },
-  validations() {
-    return {
-      password: [validation.passwordRequired]
-    }
-  },
   computed: {
     ...mapState(['address', 'nextNonce']),
     canUnlock() {
@@ -215,14 +212,6 @@ export default {
     unlocksAtTime() {
       const unlockDate = new Date(this.unlocksAt)
       return unlockDate.toLocaleString().split(', ')[1]
-    }
-  },
-  watch: {
-    visible(v, oldv) {
-      if (v === oldv) return
-      if (v) {
-        this.$store.dispatch('refresh')
-      }
     }
   },
   methods: {
@@ -296,16 +285,24 @@ export default {
       if (event.charCode !== 13) return
       event.preventDefault()
       this.unlock()
-    },
-    setStakeType(type) {
-      if (this.isStakeAffordable(type)) {
-        this.stakeType = type
-      }
     }
   },
   setup() {
     return {
       v$: useVuelidate()
+    }
+  },
+  validations() {
+    return {
+      password: [validation.passwordRequired]
+    }
+  },
+  watch: {
+    visible(v, oldv) {
+      if (v === oldv) return
+      if (v) {
+        this.$store.dispatch('refresh')
+      }
     }
   }
 }

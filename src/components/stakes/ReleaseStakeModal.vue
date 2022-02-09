@@ -4,6 +4,7 @@
       <template v-slot:header>
         <h2 class="mb-8">Release Stake<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
       </template>
+
       <template v-slot:body>
         <div class="pb-14">
           <div class="form-group mb-14">
@@ -38,6 +39,7 @@
           </div>
         </div>
       </template>
+
       <template v-slot:footer>
         <div class="px-24 pt-32 pb-40 border-t border-gray-700 border-opacity-30">
           <form v-if="isUnlocked">
@@ -97,6 +99,7 @@
       <template v-slot:header>
         <h2 class="mb-8">Express Release<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
       </template>
+
       <template v-slot:body>
         <div class="pb-14">
           <div class="mb-16 form-group">
@@ -109,10 +112,11 @@
           </div>
           <div class="mb-16 form-group text-3xl">
             <label>You'll receive</label>
-            <Amount :value="stakeAmountParsed - releaseFeeParsed" currency="XE" short sub/>
+            <Amount :value="returnAmountParsed" currency="XE" short sub/>
           </div>
         </div>
       </template>
+
       <template v-slot:footer>
         <div class="px-24 pt-32 pb-40 border-t border-gray-700 border-opacity-30">
           <form>
@@ -174,6 +178,7 @@
       <template v-slot:header>
         <h2 class="mb-8">Release requested<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
       </template>
+
       <template v-slot:body>
         <div class="pb-14">
           <div class="pb-4 mb-20 border-b border-gray-700 decor-block border-opacity-30">
@@ -193,7 +198,7 @@
           </div>
           <div class="mb-16 form-group text-3xl">
             <label>You'll receive</label>
-            <Amount :value="stakeAmountParsed - releaseFeeParsed" currency="XE" short sub/>
+            <Amount :value="returnAmountParsed" currency="XE" short sub/>
           </div>
           <div class="form-group mb-14">
             <label>Transaction hash</label>
@@ -271,17 +276,8 @@ export default {
       phrase: confirmPhrase
     }
   },
-  validations() {
-    return {
-      password: [validation.passwordRequired],
-      confirmPhrase: [
-        validation.required,
-        matchConfirmPhrase
-      ]
-    }
-  },
   computed: {
-    ...mapState(['address', 'balance', 'nextNonce']),
+    ...mapState(['address', 'nextNonce']),
     canRelease() {
       if (this.isUnlocked) return !this.v$.password.$invalid
       else return !this.v$.$invalid
@@ -308,6 +304,9 @@ export default {
     releasePc() {
       if (this.isUnlocked) return 0
       else return 0.25 * 100
+    },
+    returnAmountParsed() {
+      return this.stakeAmountParsed - this.releaseFeeParsed
     },
     stakeAmountParsed() {
       return this.stake.amount / 1e6
@@ -345,28 +344,11 @@ export default {
       const s = Math.floor(this.secondsUntilUnlock % 60)
 
       const dDisplay = d > 0 ? d + 'd ' : ''
-      const hDisplay = dDisplay != '' ? h + 'h ' : h > 0 ? h + 'h ' : ''
-      const mDisplay = hDisplay != '' ? m + 'm ' : m > 0 ? m + 'm ' : ''
-      const sDisplay = s + 's'
+      const hDisplay = dDisplay != '' ? this.padTime(h) + 'h ' : this.padTime(h) > 0 ? this.padTime(h) + 'h ' : ''
+      const mDisplay = hDisplay != '' ? this.padTime(m) + 'm ' : this.padTime(m) > 0 ? this.padTime(m) + 'm ' : ''
+      const sDisplay = this.padTime(s) + 's'
 
       return dDisplay + hDisplay + mDisplay + sDisplay
-    }
-  },
-  watch: {
-    visible(v, oldv) {
-      if (v === oldv) return
-      if (v) {
-        this.$store.dispatch('refresh')
-      }
-    },
-    stake() {
-      if (this.iSecondsUntilUnlock) {
-        clearInterval(this.iSecondsUntilUnlock)
-      }
-      if (!this.isUnlocked) {
-        this.updateSecondsUntilUnlock()
-        this.iSecondsUntilUnlock = setInterval(this.updateSecondsUntilUnlock, 1000)
-      }
     }
   },
   methods: {
@@ -387,6 +369,10 @@ export default {
     },
     goto(step) {
       this.step = step
+    },
+    padTime(num) {
+      if (num < 10) return '0' + num
+      else return num
     },
     readyExpressRelease() {
       this.goto(2)
@@ -448,16 +434,37 @@ export default {
       if (this.isUnlocked) {
         clearInterval(this.iSecondsUntilUnlock)
       }
-    },
-    setStakeType(type) {
-      if (this.isStakeAffordable(type)) {
-        this.stakeType = type
-      }
     }
   },
   setup() {
     return {
       v$: useVuelidate()
+    }
+  },
+  validations() {
+    return {
+      password: [validation.passwordRequired],
+      confirmPhrase: [
+        validation.required,
+        matchConfirmPhrase
+      ]
+    }
+  },
+  watch: {
+    visible(v, oldv) {
+      if (v === oldv) return
+      if (v) {
+        this.$store.dispatch('refresh')
+      }
+    },
+    stake() {
+      if (this.iSecondsUntilUnlock) {
+        clearInterval(this.iSecondsUntilUnlock)
+      }
+      if (!this.isUnlocked) {
+        this.updateSecondsUntilUnlock()
+        this.iSecondsUntilUnlock = setInterval(this.updateSecondsUntilUnlock, 1000)
+      }
     }
   }
 }

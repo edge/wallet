@@ -4,6 +4,7 @@
       <template v-slot:header>
         <h2 class="mb-8">Create Stake<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
       </template>
+
       <template v-slot:body>
         <div class="pb-14">
           <div class="mb-16 form-group">
@@ -47,7 +48,7 @@
           </div>
           <div class="mb-16 form-group">
             <label>Remaining Balance</label>
-            <Amount :value="(balance - stakeAmount) / 1e6" currency="XE" short sub/>
+            <Amount :value="remainingBalanceParsed" currency="XE" short sub/>
           </div>
         </div>
       </template>
@@ -99,8 +100,9 @@
 
     <Modal :close="cancel" :visible="visible && step === 2">
       <template v-slot:header>
-        <h2 class="mb-8">Stake accepted<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
+        <h2 class="mb-8">Stake created<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
       </template>
+
       <template v-slot:body>
         <div class="pb-14">
           <div class="pb-4 mb-20 border-b border-gray-700 decor-block border-opacity-30">
@@ -112,7 +114,7 @@
           </div>
           <div class="form-group mb-25">
             <label class="label">Stake Amount</label>
-            <Amount :value="stakeAmount / 1e6" currency="XE" short sub/>
+            <Amount :value="stakeAmountParsed" currency="XE" short sub/>
           </div>
           <div class="mb-16 form-group">
             <label>Fee</label>
@@ -120,7 +122,7 @@
           </div>
           <div class="mb-16 form-group">
             <label>Remaining Balance</label>
-            <Amount :value="(balance - stakeAmount) / 1e6" currency="XE" short sub/>
+            <Amount :value="remainingBalanceParsed" currency="XE" short sub/>
           </div>
           <div class="form-group mb-14">
             <label>Transaction hash</label>
@@ -194,15 +196,6 @@ export default {
       vars: null
     }
   },
-  validations() {
-    return {
-      stakeAmount: [
-        validation.required,
-        ...validation.amount(this.balance, this.stakeAmountParsed)
-      ],
-      password: [validation.passwordRequired]
-    }
-  },
   computed: {
     ...mapState(['address', 'balance', 'nextNonce']),
     canCreate() {
@@ -220,6 +213,9 @@ export default {
     },
     memo() {
       return `Create ${this.stakeType[0].toUpperCase() + this.stakeType.slice(1)} Stake`
+    },
+    remainingBalanceParsed() {
+      return (this.balance - this.stakeAmount) / 1e6
     },
     shortHostStakeAmount() {
       return this.formatShortAmount(this.vars.host_stake_amount)
@@ -245,17 +241,6 @@ export default {
     stakeAmountParsed() {
       return this.stakeAmount / 1e6
     }
-  },
-  watch: {
-    visible(v, oldv) {
-      if (v === oldv) return
-      if (v) {
-        this.$store.dispatch('refresh')
-      }
-    }
-  },
-  mounted() {
-    this.getXeVars()
   },
   methods: {
     cancel() {
@@ -309,6 +294,11 @@ export default {
         this.submitError = err.message
       }
     },
+    createOnEnter(event) {
+      if (event.charCode !== 13) return
+      event.preventDefault()
+      this.create()
+    },
     formatShortAmount(amount) {
       return (amount / 1e6).toLocaleString('en-US', { maximumFractionDigits: 6 })
     },
@@ -334,20 +324,35 @@ export default {
 
       this.v$.$reset()
     },
-    createOnEnter(event) {
-      if (event.charCode !== 13) return
-      event.preventDefault()
-      this.create()
-    },
     setStakeType(type) {
       if (this.isStakeAffordable(type)) {
         this.stakeType = type
       }
     }
   },
+  mounted() {
+    this.getXeVars()
+  },
   setup() {
     return {
       v$: useVuelidate()
+    }
+  },
+  validations() {
+    return {
+      stakeAmount: [
+        validation.required,
+        ...validation.amount(this.balance, this.stakeAmountParsed)
+      ],
+      password: [validation.passwordRequired]
+    }
+  },
+  watch: {
+    visible(v, oldv) {
+      if (v === oldv) return
+      if (v) {
+        this.$store.dispatch('refresh')
+      }
     }
   }
 }
