@@ -8,7 +8,7 @@
         <th width="24%">Device</th>
         <th width="8%">Type</th>
         <th width="8%">Status</th>
-        <th width="10%">Amount XE</th>
+        <th class="amount-col" width="10%">Amount XE</th>
         <th width="10%">&nbsp;</th>
       </tr>
       <tr v-else>
@@ -17,7 +17,7 @@
         <th width="26%">Device</th>
         <th width="8%">Type</th>
         <th width="8%">Status</th>
-        <th width="10%">Amount XE</th>
+        <th class="amount-col" width="10%">Amount XE</th>
         <th width="10%">&nbsp;</th>
       </tr>
     </thead>
@@ -121,6 +121,10 @@ th {
 
 th:first-of-type {
   @apply pl-20;
+}
+
+th.amount-col {
+  @apply text-right
 }
 
 @screen lg {

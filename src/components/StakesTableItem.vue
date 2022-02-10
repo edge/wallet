@@ -56,7 +56,7 @@
       </span>
     </td>
 
-    <td data-title="Amount (XE):">
+    <td data-title="Amount (XE):" class="amount-col">
       <span class="monospace lg:font-sans">{{ formattedAmount }}</span>
     </td>
 
@@ -176,8 +176,12 @@ button.table-button {
     @apply pl-20 pt-13;
   }
 
+  td.amount-col {
+    @apply text-right
+  }
+
   td:last-child {
-    @apply pr-30 pb-13 text-right border-b-2;
+    @apply pb-13 border-b-2;
   }
 
   td:before {
