@@ -16,7 +16,15 @@
       </div>
 
       <div class="account-panel__right">
-        <div class="account-panel__buttons">
+        <div v-if="view === 'staking'" class="account-panel__buttons">
+          <button class="w-full button button--success col-start-1 col-span-2" @click="openCreateStake">
+            <span class="w-12 button__icon">
+              <PlusIcon class="w-15" />
+            </span>
+            Create Stake
+          </button>
+        </div>
+        <div v-else class="account-panel__buttons">
           <button class="w-full button button--success" @click="openSend">
             <span class="w-12 button__icon">
               <ArrowUpIcon/>
@@ -35,6 +43,7 @@
     </div>
 
     <div class="account-panel__modals">
+      <CreateStakeModal :close="reset" :visible="modal === 'createStake'"/>
       <SendModal :close="reset" :visible="modal === 'send'"/>
       <ExchangeModal
         :close="reset"
@@ -52,21 +61,25 @@
 
 <script>
 import Amount from './Amount.vue'
+import CreateStakeModal from './stakes/CreateStakeModal'
 import DepositModal from './tx/DepositModal'
 import ExchangeModal from './tx/ExchangeModal'
 import SellModal from './tx/SellModal'
 import SendModal from './tx/SendModal'
 import WithdrawModal from './tx/WithdrawModal'
 import { mapState } from 'vuex'
-import { ArrowUpIcon, SwitchHorizontalIcon } from '@heroicons/vue/outline'
+import { ArrowUpIcon, PlusIcon, SwitchHorizontalIcon } from '@heroicons/vue/outline'
 
 export default {
   name: 'AccountPanel',
+  props: ['view'],
   components: {
     Amount,
     ArrowUpIcon,
+    CreateStakeModal,
     DepositModal,
     ExchangeModal,
+    PlusIcon,
     SendModal,
     SellModal,
     SwitchHorizontalIcon,
@@ -81,6 +94,9 @@ export default {
   methods: {
     reset() {
       this.modal = ''
+    },
+    openCreateStake() {
+      this.modal = 'createStake'
     },
     openDeposit() {
       this.modal = 'deposit'
