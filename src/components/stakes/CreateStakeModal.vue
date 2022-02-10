@@ -115,7 +115,7 @@
           </div>
           <div class="form-group mb-25">
             <label class="label">Stake Amount</label>
-            <Amount :value="stakeAmountParsed" currency="XE" short sub/>
+            <Amount :value="stakeAmountXe" currency="XE" short sub/>
           </div>
           <div class="mb-16 form-group">
             <label>Fee</label>
@@ -201,7 +201,7 @@ export default {
     return {
       stakeAmount: [
         validation.required,
-        ...validation.amount(this.balance, this.stakeAmountParsed)
+        ...validation.amount(this.balance, this.stakeAmountXe)
       ],
       password: [validation.passwordRequired]
     }
@@ -248,7 +248,7 @@ export default {
         return 0
       }
     },
-    stakeAmountParsed() {
+    stakeAmountXe() {
       return this.stakeAmount / 1e6
     },
     stakeTypeFormatted() {
