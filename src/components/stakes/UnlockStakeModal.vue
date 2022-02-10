@@ -171,6 +171,11 @@ export default {
       submitError: ''
     }
   },
+  validations() {
+    return {
+      password: [validation.passwordRequired]
+    }
+  },
   computed: {
     ...mapState(['address', 'nextNonce']),
     canUnlock() {
@@ -234,9 +239,6 @@ export default {
         return false
       }
     },
-    formatShortAmount(amount) {
-      return (amount / 1e6).toLocaleString('en-US', { maximumFractionDigits: 6 })
-    },
     goto(step) {
       this.step = step
     },
@@ -245,6 +247,8 @@ export default {
 
       this.password = ''
       this.passwordError = ''
+      this.submitError = ''
+      this.completedTx = undefined
 
       this.v$.$reset()
     },
@@ -294,11 +298,6 @@ export default {
   setup() {
     return {
       v$: useVuelidate()
-    }
-  },
-  validations() {
-    return {
-      password: [validation.passwordRequired]
     }
   },
   watch: {

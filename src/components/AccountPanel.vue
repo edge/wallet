@@ -95,7 +95,7 @@ export default {
       this.modal = ''
     },
     openCreateStake() {
-      this.modal='createStake'
+      this.modal = 'createStake'
     },
     openDeposit() {
       this.modal = 'deposit'

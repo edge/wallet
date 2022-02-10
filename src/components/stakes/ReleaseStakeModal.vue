@@ -282,6 +282,15 @@ export default {
       vars: null
     }
   },
+  validations() {
+    return {
+      password: [validation.passwordRequired],
+      confirmPhrase: [
+        validation.required,
+        matchConfirmPhrase
+      ]
+    }
+  },
   computed: {
     ...mapState(['address', 'nextNonce']),
     canRelease() {
@@ -451,15 +460,6 @@ export default {
   setup() {
     return {
       v$: useVuelidate()
-    }
-  },
-  validations() {
-    return {
-      password: [validation.passwordRequired],
-      confirmPhrase: [
-        validation.required,
-        matchConfirmPhrase
-      ]
     }
   },
   watch: {

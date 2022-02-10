@@ -48,7 +48,7 @@
           </div>
           <div class="mb-16 form-group">
             <label>Remaining Balance</label>
-            <Amount v-if="canAffordHost" :value="remainingBalanceParsed" currency="XE" short sub/>
+            <Amount v-if="canAffordStake" :value="remainingBalance" currency="XE" short sub/>
             <span v-else class="break-all text-lg">You balance is currently too low to create a stake</span>
           </div>
         </div>
@@ -69,7 +69,7 @@
                   autocomplete="off"
                   @keypress="createOnEnter"
                   placeholder="Your password"
-                  id="pass-step"
+                  id="password"
                   v-model="v$.password.$model"
                 />
               </div>
@@ -123,7 +123,7 @@
           </div>
           <div class="mb-16 form-group">
             <label>Remaining Balance</label>
-            <Amount :value="remainingBalanceParsed" currency="XE" short sub/>
+            <Amount :value="remainingBalance" currency="XE" short sub/>
           </div>
           <div class="form-group mb-14">
             <label>Transaction hash</label>
@@ -197,9 +197,18 @@ export default {
       vars: null
     }
   },
+  validations() {
+    return {
+      stakeAmount: [
+        validation.required,
+        ...validation.amount(this.balance, this.stakeAmountParsed)
+      ],
+      password: [validation.passwordRequired]
+    }
+  },
   computed: {
     ...mapState(['address', 'balance', 'nextNonce']),
-    canAffordHost() {
+    canAffordStake() {
       return this.balance >= this.vars.host_stake_amount
     },
     canCreate() {
@@ -215,10 +224,7 @@ export default {
     explorerUrl() {
       return process.env.VUE_APP_EXPLORER_URL
     },
-    memo() {
-      return `Create ${this.stakeTypeFormatted} Stake`
-    },
-    remainingBalanceParsed() {
+    remainingBalance() {
       return (this.balance - this.stakeAmount) / 1e6
     },
     shortHostStakeAmount() {
@@ -280,7 +286,7 @@ export default {
         amount: this.stakeAmount,
         data: {
           action: 'create_stake',
-          memo: this.memo
+          memo: `Create ${this.stakeTypeFormatted} Stake`
         },
         nonce: this.nextNonce
       }, privateKey)
@@ -312,15 +318,11 @@ export default {
     goto(step) {
       this.step = step
     },
-    async getXeVars() {
+    async updateVars() {
       this.vars = await xe.vars(process.env.VUE_APP_BLOCKCHAIN_API_URL)
     },
     isStakeAffordable(type) {
       return this.balance - this.vars[type + '_stake_amount'] > 0
-    },
-    readyCreate() {
-      // validate only step 1
-      if (this.canReadyCreate) return this.goto(2)
     },
     reset() {
       this.goto(1)
@@ -328,6 +330,8 @@ export default {
       this.stakeType = ''
       this.password = ''
       this.passwordError = ''
+      this.submitError = ''
+      this.completedTx = undefined
 
       this.v$.$reset()
     },
@@ -338,20 +342,11 @@ export default {
     }
   },
   mounted() {
-    this.getXeVars()
+    this.updateVars()
   },
   setup() {
     return {
       v$: useVuelidate()
-    }
-  },
-  validations() {
-    return {
-      stakeAmount: [
-        validation.required,
-        ...validation.amount(this.balance, this.stakeAmountParsed)
-      ],
-      password: [validation.passwordRequired]
     }
   },
   watch: {
@@ -359,7 +354,7 @@ export default {
       if (v === oldv) return
       if (v) {
         this.$store.dispatch('refresh')
-        this.getXeVars()
+        this.updateVars()
         this.stakeType = 'host'
       }
     }

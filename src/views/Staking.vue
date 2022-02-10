@@ -6,12 +6,12 @@
     <ReleaseStakeModal
       :close="closeReleaseStakeModal"
       :visible="showReleaseStakeModal"
-      :stake="stakeToUnlock"
+      :stake="stake"
     />
     <UnlockStakeModal
       :close="closeUnlockStakeModal"
       :visible="showUnlockStakeModal"
-      :stake="stakeToUnlock"
+      :stake="stake"
     />
 
     <div class="bg-gray-200 py-35">
@@ -50,7 +50,7 @@ export default {
     return {
       showReleaseStakeModal: false,
       showUnlockStakeModal: false,
-      stakeToUnlock: null,
+      stake: null,
 
       metadata: { totalCount: 0 },
       limit: 20
@@ -74,22 +74,22 @@ export default {
   },
   methods: {
     closeReleaseStakeModal() {
-      this.stakeToUnlock = null
+      this.stake = null
       this.showReleaseStakeModal = false
     },
     closeUnlockStakeModal() {
-      this.stakeToUnlock = null
+      this.stake = null
       this.showUnlockStakeModal = false
     },
     onStakesUpdate(metadata) {
       this.metadata = metadata
     },
     openReleaseStakeModal(stake) {
-      this.stakeToUnlock = stake
+      this.stake = stake
       this.showReleaseStakeModal = true
     },
     openUnlockStakeModal(stake) {
-      this.stakeToUnlock = stake
+      this.stake = stake
       this.showUnlockStakeModal = true
     }
   },
