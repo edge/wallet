@@ -245,11 +245,9 @@ import * as xe from '@edge/xe-utils'
 import Amount from '../Amount'
 import { LockOpenIcon } from '@heroicons/vue/outline'
 import Modal from '../Modal'
+import { helpers } from '@vuelidate/validators'
 import { mapState } from 'vuex'
 import useVuelidate from '@vuelidate/core'
-
-const confirmPhrase = 'I confirm I am willing to burn 25% to release early'
-const matchConfirmPhrase = validation.caseInsensitive(confirmPhrase, 'Confirmation phrase does not match.')
 
 export default {
   name: 'ReleaseStakeModal',
@@ -274,8 +272,6 @@ export default {
       passwordError: '',
       confirmPhrase: '',
 
-      phrase: confirmPhrase,
-
       completedTx: null,
       submitError: '',
 
@@ -294,6 +290,10 @@ export default {
         this.completedTx.hash.substring(0, 6),
         this.completedTx.hash.substring(this.completedTx.hash.length - 4)
       ].join('...')
+    },
+    phrase() {
+      if (this.vars === null) return ''
+      return `I confirm I am willing to burn ${this.vars.stake_express_release_fee * 100}% to release early`
     },
     explorerStakeUrl() {
       return `${process.env.VUE_APP_EXPLORER_URL}/stake/${this.stake.id}`
@@ -458,7 +458,10 @@ export default {
       password: [validation.passwordRequired],
       confirmPhrase: [
         validation.required,
-        matchConfirmPhrase
+        helpers.withParams(
+          { phrase: this.phrase },
+          validation.caseInsensitive(this.phrase, 'Confirmation phrase does not match.')
+        )
       ]
     }
   },
