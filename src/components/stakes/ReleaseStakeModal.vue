@@ -350,8 +350,8 @@ export default {
       const s = Math.floor(this.secondsUntilUnlock % 60)
 
       const dDisplay = d > 0 ? d + 'd ' : ''
-      const hDisplay = dDisplay != '' ? this.padTime(h) + 'h ' : this.padTime(h) > 0 ? this.padTime(h) + 'h ' : ''
-      const mDisplay = hDisplay != '' ? this.padTime(m) + 'm ' : this.padTime(m) > 0 ? this.padTime(m) + 'm ' : ''
+      const hDisplay = dDisplay != '' ? this.padTime(h) + 'h ' : h > 0 ? this.padTime(h) + 'h ' : ''
+      const mDisplay = hDisplay != '' ? this.padTime(m) + 'm ' : m > 0 ? this.padTime(m) + 'm ' : ''
       const sDisplay = this.padTime(s) + 's'
 
       return dDisplay + hDisplay + mDisplay + sDisplay
