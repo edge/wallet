@@ -77,14 +77,14 @@
               @click="release"
               class="w-full button button--success"
             >
-              Release stake
+              Release Stake
             </button>
             <button
               v-else
               @click="readyExpressRelease"
               class="w-full button button--success"
             >
-              Express release
+              Express Release
             </button>
           </div>
           <!-- eslint-disable-next-line max-len -->
@@ -164,7 +164,7 @@
               :disabled="!canRelease"
               @click="release"
               class="w-full button button--success"
-            >Release stake</button>
+            >Release Stake</button>
           </div>
           <!-- eslint-disable-next-line max-len -->
           <div v-if="submitError" class="px-20 py-20 my-20 text-center bg-black border border-gray-700 rounded convert-info md:text-left border-opacity-30 border-color">
@@ -409,8 +409,7 @@ export default {
     },
     async release() {
       this.passwordError = ''
-
-      if (!await this.v$.$validate()) return
+      if (!this.canRelease) return
       if (!await this.checkPassword()) return
       const privateKey = await storage.getPrivateKey(this.password)
 

@@ -85,7 +85,7 @@
               :disabled="!canCreate"
               @click="create"
               class="w-full button button--success"
-            >Create stake</button>
+            >Create Stake</button>
           </div>
           <!-- eslint-disable-next-line max-len -->
           <div v-if="submitError" class="px-20 py-20 my-20 text-center bg-black border border-gray-700 rounded convert-info md:text-left border-opacity-30 border-color">
