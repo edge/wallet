@@ -13,7 +13,7 @@
           </div>
           <div class="mb-16 form-group">
             <label>Stake Type</label>
-            <div class="flex flex-wrap justify-between mt-12 -mx-6 radio-list">
+            <div class="flex justify-between mt-12 -mx-6 radio-list">
               <Radio
                 name="stake-type-host"
                 id="host"
