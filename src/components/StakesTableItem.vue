@@ -14,7 +14,7 @@
       </span>
     </td>
 
-    <td v-if="showWalletColumn" data-title="Wallet:">
+    <td v-if="!hideWalletColumn" data-title="Wallet:">
       <a :href="explorerWalletUrl" target="_blank" rel="noreferrer">
         <span class="monospace md:inline-block">
           {{ item.tx.recipient }}
@@ -56,8 +56,18 @@
       </span>
     </td>
 
-    <td data-title="Amount:">
+    <td data-title="Amount (XE):" class="amount-col">
       <span class="monospace lg:font-sans">{{ formattedAmount }}</span>
+    </td>
+
+    <td data-title="">
+      <button
+        v-if="action"
+        class="w-full table-button button--outline"
+        @click="openModal"
+      >
+        {{ action }}
+      </button>
     </td>
   </tr>
 </template>
@@ -70,7 +80,7 @@ import { ArrowCircleDownIcon, CheckCircleIcon, ClockIcon, DotsCircleHorizontalIc
 
 export default {
   name: 'StakesTableItem',
-  props: ['showWalletColumn', 'item'],
+  props: ['hideWalletColumn', 'item', 'openReleaseStakeModal', 'openUnlockStakeModal'],
   components: {
     ArrowCircleDownIcon,
     CheckCircleIcon,
@@ -78,6 +88,11 @@ export default {
     DotsCircleHorizontalIcon
   },
   computed: {
+    action() {
+      if (this.item.released) return null
+      else if (this.item.unlockRequested) return 'Release'
+      else return 'Unlock'
+    },
     address () {
       return this.item.tx.recipient
     },
@@ -95,6 +110,12 @@ export default {
     },
     isUnlocking() {
       return this.item.unlockRequested + this.item.unlockPeriod > Date.now()
+    }
+  },
+  methods: {
+    openModal() {
+      if (this.action === 'Unlock') return this.openUnlockStakeModal(this.item)
+      else if ( this.action === 'Release') return this.openReleaseStakeModal(this.item)
     }
   }
 }
@@ -142,6 +163,10 @@ td a {
   @apply leading-none border-b border-black border-opacity-25 hover:border-green hover:border-opacity-25 hover:text-green align-middle;
 }
 
+button.table-button {
+  @apply py-2 rounded text-black border-solid border border-gray-400 text-gray-500 hover:border-green hover:text-green
+}
+
 @screen lg {
   td {
     @apply border-gray-200 pt-13 pb-15 table-cell border-b-2 align-middle;
@@ -151,8 +176,12 @@ td a {
     @apply pl-20 pt-13;
   }
 
+  td.amount-col {
+    @apply text-right
+  }
+
   td:last-child {
-    @apply pr-30 pb-13 text-right border-b-2;
+    @apply pb-13 border-b-2;
   }
 
   td:before {

@@ -1,15 +1,28 @@
 <template>
   <div>
     <Header />
-    <AccountPanel/>
+    <AccountPanel view="staking" />
+
+    <ReleaseStakeModal
+      :close="closeReleaseStakeModal"
+      :visible="showReleaseStakeModal"
+      :stake="stake"
+    />
+    <UnlockStakeModal
+      :close="closeUnlockStakeModal"
+      :visible="showUnlockStakeModal"
+      :stake="stake"
+    />
 
     <div class="bg-gray-200 py-35">
       <div class="container">
         <StakesTable
-          :hideWalletColumn="true"
+          :hideWalletColumn="false"
           :limit="limit"
           :receiveMetadata="onStakesUpdate"
           :page="currentPage"
+          :openReleaseStakeModal="openReleaseStakeModal"
+          :openUnlockStakeModal="openUnlockStakeModal"
         />
         <Pagination
           v-if="metadata.totalCount > limit"
@@ -27,12 +40,18 @@
 import AccountPanel from '@/components/AccountPanel'
 import Header from '@/components/Header'
 import Pagination from '@/components/PaginationNew'
+import ReleaseStakeModal from '@/components/stakes/ReleaseStakeModal'
 import StakesTable from '@/components/StakesTable'
+import UnlockStakeModal from '@/components/stakes/UnlockStakeModal'
 
 export default {
   name: 'ViewStaking',
   data: function () {
     return {
+      showReleaseStakeModal: false,
+      showUnlockStakeModal: false,
+      stake: null,
+
       metadata: { totalCount: 0 },
       limit: 20
     }
@@ -41,7 +60,9 @@ export default {
     AccountPanel,
     Header,
     Pagination,
-    StakesTable
+    ReleaseStakeModal,
+    StakesTable,
+    UnlockStakeModal
   },
   computed: {
     currentPage() {
@@ -52,8 +73,24 @@ export default {
     }
   },
   methods: {
+    closeReleaseStakeModal() {
+      this.stake = null
+      this.showReleaseStakeModal = false
+    },
+    closeUnlockStakeModal() {
+      this.stake = null
+      this.showUnlockStakeModal = false
+    },
     onStakesUpdate(metadata) {
       this.metadata = metadata
+    },
+    openReleaseStakeModal(stake) {
+      this.stake = stake
+      this.showReleaseStakeModal = true
+    },
+    openUnlockStakeModal(stake) {
+      this.stake = stake
+      this.showUnlockStakeModal = true
     }
   },
   watch: {
