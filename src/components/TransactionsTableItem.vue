@@ -43,7 +43,7 @@
     >{{ formatStatus(item) }}</span>
   </td>
   <td data-title="Amount:">
-    <span class="monospace lg:font-sans">
+    <span class="monospace">
       <span v-if="item.type.toLowerCase() === 'sent'">-</span><Amount :value="parseFloat(item.amount)"/>
     </span>
   </td>
