@@ -268,6 +268,8 @@ export default {
       iSecondsUntilUnlock: null,
       secondsUntilUnlock: null,
 
+      currentTime: Date.now(),
+
       password: '',
       passwordError: '',
       confirmPhrase: '',
@@ -314,7 +316,7 @@ export default {
       return `${process.env.VUE_APP_EXPLORER_URL}/transaction/${this.completedTx.hash}`
     },
     isUnlocked() {
-      return this.unlocksAt < Date.now()
+      return this.unlocksAt < this.currentTime
     },
     releaseFeeParsed() {
       return this.stake.amount * this.vars.stake_express_release_fee / 1e6
@@ -385,7 +387,7 @@ export default {
         return false
       }
     },
-    async getXeVars() {
+    async updateVars() {
       this.vars = await xe.vars(process.env.VUE_APP_BLOCKCHAIN_API_URL)
     },
     goto(step) {
@@ -450,14 +452,15 @@ export default {
       this.release()
     },
     updateSecondsUntilUnlock() {
+      this.currentTime = Date.now()
       this.secondsUntilUnlock = Math.floor((this.unlocksAt - Date.now()) / 1000)
-      if (this.isUnlocked) {
+      if (this.unlocksAt <= Date.now()) {
         clearInterval(this.iSecondsUntilUnlock)
       }
     }
   },
   mounted() {
-    this.getXeVars()
+    this.updateVars()
   },
   setup() {
     return {
@@ -469,14 +472,14 @@ export default {
       if (v === oldv) return
       if (v) {
         this.$store.dispatch('refresh')
-        this.getXeVars()
+        this.updateVars()
       }
     },
     stake() {
       if (this.iSecondsUntilUnlock) {
         clearInterval(this.iSecondsUntilUnlock)
       }
-      if (!this.isUnlocked) {
+      if (this.unlocksAt && !this.isUnlocked) {
         this.updateSecondsUntilUnlock()
         this.iSecondsUntilUnlock = setInterval(this.updateSecondsUntilUnlock, 1000)
       }
