@@ -41,7 +41,7 @@ export default {
     },
     hashType() {
       if (this.transaction) {
-        return this.to === 'explorer' ? 'tranasction' : 'tx'
+        return this.to === 'explorer' ? 'transaction' : 'tx'
       }
       if (this.wallet) {
         return this.to === 'explorer' ? 'wallet' : 'address'
