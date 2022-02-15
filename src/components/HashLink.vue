@@ -54,7 +54,7 @@ export default {
       switch (this.to) {
       case 'explorer':
         return `${explorerUrl}/${this.hashType}/${this.hash}`
-      case 'ethernet':
+      case 'etherscan':
         return `${etherscanUrls[this.chainId]}/tx/${this.hash}`
       default:
         return ''
