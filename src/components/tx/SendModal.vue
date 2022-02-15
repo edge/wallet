@@ -71,11 +71,11 @@
       </template>
       <template v-slot:body>
         <div class="pb-14 min-h-410">
-          <div class="form-group mb-25">
+          <div class="form-group mb-14">
             <label class="label">Send to</label>
-            <span class="break-all">{{ recipient }}</span>
+            <HashLink to="explorer" :wallet="recipient" />
           </div>
-          <div class="form-group mb-25">
+          <div class="form-group mb-14 text-xl">
             <label class="label">Memo</label>
             <span class="break-all">{{ memo || 'None' }}</span>
           </div>
@@ -148,11 +148,11 @@
           <div class="pb-4 mb-20 border-b border-gray-700 decor-block border-opacity-30">
             <!-- <CheckIcon class="w-52 text-green"/> -->
           </div>
-          <div class="form-group mb-25">
+          <div class="form-group mb-14">
             <label class="label">Recipient</label>
-            <span class="break-all">{{ completedTx.recipient }}</span>
+            <HashLink to="explorer" :wallet="completedTx.recipient" />
           </div>
-          <div class="form-group mb-25">
+          <div class="form-group mb-14 text-xl">
             <label class="label">Memo</label>
             <span class="break-all">{{ completedTx.data.memo || 'None' }}</span>
           </div>

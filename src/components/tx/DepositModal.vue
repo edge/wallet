@@ -44,19 +44,14 @@
         </div>
       </template>
       <template v-slot:body>
-        <div class="pb-14 min-h-410">
-          <div class="form-group">
+        <div>
+          <div class="form-group mb-30">
             <span class="label">Depositing from</span>
-            <div class="relative input-wrap">
-              <!-- eslint-disable-next-line max-len -->
-              <span class="block w-full overflow-hidden text-white input-filled overflow-ellipsis">{{ ethAddress }}</span>
-            </div>
+            <HashLink to="etherscan" :wallet="ethAddress" />
           </div>
-          <div class="form-group">
+          <div class="form-group mb-30">
             <span class="label">Depositing to</span>
-            <div class="relative input-wrap">
-              <span class="block w-full overflow-hidden text-white input-filled overflow-ellipsis">{{ address }}</span>
-            </div>
+            <HashLink to="etherscan" :wallet="address" />
           </div>
           <div class="lg-input-group" :class="{'form-group__error': v$.amount.$error}">
             <label for="key">AMOUNT</label>
@@ -77,7 +72,7 @@
             <Radio name="currency" id="max" label="MAX" @click="setAmountAsPercent(100);" />
           </div>
 
-          <div class="form-group">
+          <div class="form-group mb-14">
             <label class="flex items-center space-x-3">
               Transaction fee
               <!-- eslint-disable-next-line max-len -->
@@ -162,7 +157,7 @@
         <h2 class="mb-8">Deposit accepted<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
       </template>
       <template v-slot:body>
-        <div class="pb-14 min-h-410">
+        <div>
           <div class="form-group mb-14">
             <label>You are depositing</label>
             <Amount :value="amountParsed" currency="EDGE" sub/>
@@ -170,20 +165,12 @@
 
           <div class="form-group mb-14">
             <label>From</label>
-            <div class="relative input-wrap">
-              <span class="block w-full overflow-hidden text-white input-filled overflow-ellipsis text-caption">
-                {{ completedTx.from }}
-              </span>
-            </div>
+            <HashLink to="etherscan" :wallet="completedTx.from" />
           </div>
 
           <div class="form-group mb-14">
             <label>To</label>
-            <div class="relative input-wrap">
-              <span class="block w-full overflow-hidden text-white input-filled overflow-ellipsis text-caption">
-                {{ address }}
-              </span>
-            </div>
+            <HashLink to="explorer" :wallet="address" />
           </div>
 
           <div class="form-group mb-14">
@@ -202,7 +189,7 @@
 
           <div class="form-group mb-14">
             <label>Transaction hash</label>
-            <HashLink to="etherscan" :transaction="completedTx.hash" :chainId="chainId" truncated />
+            <HashLink to="etherscan" :transaction="completedTx.hash" truncated />
           </div>
 
           <div class="flex items-center mt-24 leading-8 text-gray">

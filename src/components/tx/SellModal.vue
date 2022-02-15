@@ -130,20 +130,12 @@
 
           <div class="form-group mb-14">
             <label class="label">From</label>
-            <div class="relative input-wrap">
-              <span class="block w-full overflow-hidden text-white input-filled overflow-ellipsis text-caption">
-                {{ address }}
-              </span>
-            </div>
+            <HashLink to="explorer" :wallet="address" />
           </div>
 
           <div class="form-group mb-14">
             <label class="label">To</label>
-            <div class="relative input-wrap">
-              <span class="block w-full overflow-hidden text-white input-filled overflow-ellipsis text-caption">
-                {{ recipient }}
-              </span>
-            </div>
+            <HashLink to="etherscan" :wallet="recipient" />
           </div>
 
           <div class="form-group mb-14">
@@ -242,20 +234,12 @@
 
           <div class="form-group mb-14">
             <label>From</label>
-            <div class="relative input-wrap">
-              <span class="block w-full overflow-hidden text-white input-filled overflow-ellipsis text-caption">
-                {{ address }}
-              </span>
-            </div>
+            <HashLink to="explorer" :wallet="address" />
           </div>
 
           <div class="form-group mb-14">
             <label>To</label>
-            <div class="relative input-wrap">
-              <span class="block w-full overflow-hidden text-white input-filled overflow-ellipsis text-caption">
-                {{ completedTx.data.destination }}
-              </span>
-            </div>
+            <HashLink to="etherscan" :wallet="completedTx.data.destination" />
           </div>
 
           <div class="form-group mb-14">
