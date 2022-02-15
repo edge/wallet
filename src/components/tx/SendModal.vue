@@ -156,17 +156,21 @@
             <label class="label">Memo</label>
             <span class="break-all">{{ completedTx.data.memo || 'None' }}</span>
           </div>
-          <div class="mb-16 form-group">
+          <div class="mb-14 form-group">
             <label>Amount</label>
             <Amount :value="completedTx.amount / 1e6" currency="XE" short sub/>
           </div>
-          <div class="mb-16 form-group">
+          <div class="mb-14 form-group">
             <label>Fee</label>
             <Amount :value="0" currency="XE" short sub/>
           </div>
-          <div class="mb-0 form-group">
+          <div class="mb-14 form-group">
             <label>Recipient receives</label>
             <Amount :value="completedTx.amount / 1e6" currency="XE" short sub/>
+          </div>
+          <div class="form-group mb-14">
+            <label>Transaction hash</label>
+            <HashLink to="explorer" :transaction="completedTx.hash" truncated />
           </div>
         </div>
       </template>
@@ -190,6 +194,7 @@ import * as storage from '../../utils/storage'
 import * as validation from '../../utils/validation'
 import * as xe from '@edge/xe-utils'
 import Amount from '../Amount'
+import HashLink from '../HashLink'
 import { LockOpenIcon } from '@heroicons/vue/outline'
 import Logo from '../Logo'
 import Modal from '../Modal'
@@ -206,6 +211,7 @@ export default {
   name: 'SendModal',
   components: {
     Amount,
+    HashLink,
     LockOpenIcon,
     Logo,
     Modal,

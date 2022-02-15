@@ -273,6 +273,11 @@
             <Amount :value="usdcAmountOnSubmit" currency="USDC" sub/>
           </div>
 
+          <div class="form-group mb-14">
+            <label>Transaction hash</label>
+            <HashLink to="explorer" :transaction="completedTx.hash" truncated />
+          </div>
+
           <div class="flex items-center mt-24 leading-8 text-gray">
             <!-- eslint-disable-next-line max-len -->
             <p class="mb-0">Your request has been accepted and should be processed soon. If your request cannot be processed for any reason, your XE will be returned.</p>
@@ -299,6 +304,7 @@ import * as storage from '../../utils/storage'
 import * as validation from '../../utils/validation'
 import * as xe from '@edge/xe-utils'
 import Amount from '../Amount'
+import HashLink from '../HashLink'
 import { InformationCircleIcon } from '@heroicons/vue/solid'
 import Modal from '../Modal'
 import Tooltip from '../Tooltip'
@@ -319,6 +325,7 @@ export default {
     Amount,
     ArrowDownIcon,
     ArrowRightIcon,
+    HashLink,
     InformationCircleIcon,
     LockOpenIcon,
     Modal,

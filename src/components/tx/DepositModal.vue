@@ -202,11 +202,7 @@
 
           <div class="form-group mb-14">
             <label>Transaction hash</label>
-            <span class="flex w-full overflow-hidden text-white overflow-ellipsis">
-              <a class="text-lg text-white underline" :href="ethTxUrl" target="_blank">{{ethTxShortHash}}</a>
-              <!-- eslint-disable-next-line max-len -->
-              <svg class="w-20 h-20 mt-2 ml-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-            </span>
+            <HashLink to="etherscan" :transaction="completedTx.hash" :chainId="chainId" truncated />
           </div>
 
           <div class="flex items-center mt-24 leading-8 text-gray">
@@ -229,6 +225,7 @@
 import * as storage from '../../utils/storage'
 import * as validation from '../../utils/validation'
 import Amount from '../Amount'
+import HashLink from '../HashLink'
 import { InformationCircleIcon } from '@heroicons/vue/solid'
 import MetaMaskOnboarding from '@metamask/onboarding'
 import Modal from '../Modal'
@@ -268,6 +265,7 @@ export default {
     Amount,
     ArrowDownIcon,
     ArrowRightIcon,
+    HashLink,
     InformationCircleIcon,
     Modal,
     Radio,

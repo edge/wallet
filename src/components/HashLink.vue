@@ -16,17 +16,12 @@
 /*global process*/
 
 const explorerUrl = process.env.VUE_APP_EXPLORER_URL
-
-const etherscanUrls = {
-  '0x1': 'https://etherscan.io',
-  '0x4': 'https://rinkeby.etherscan.io'
-}
+const etherscanUrl = process.env.VUE_APP_IS_TESTNET ? 'https://rinkeby.etherscan.io' : 'https://etherscan.io'
 
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: 'HashLink',
   props: {
-    chainId: String,
     stake: String,
     to: String,
     transaction: String,
@@ -45,17 +40,23 @@ export default {
       ].join('...')
     },
     hashType() {
-      if (this.transaction) return 'transaction'
-      else if (this.stake) return 'stake'
-      else if (this.wallet) return 'wallet'
-      else return ''
+      if (this.transaction) {
+        return this.to === 'explorer' ? 'tranasction' : 'tx'
+      }
+      if (this.wallet) {
+        return this.to === 'explorer' ? 'wallet' : 'address'
+      }
+      if (this.stake) {
+        return this.to === 'explorer' ? 'stake' : null
+      }
+      return null
     },
     url() {
       switch (this.to) {
       case 'explorer':
         return `${explorerUrl}/${this.hashType}/${this.hash}`
       case 'etherscan':
-        return `${etherscanUrls[this.chainId]}/tx/${this.hash}`
+        return `${etherscanUrl}/${this.hashType}/${this.hash}`
       default:
         return ''
       }
