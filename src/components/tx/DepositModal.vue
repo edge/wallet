@@ -131,7 +131,7 @@
           <!-- eslint-disable-next-line max-len -->
           <div v-if="depositMessage" class="px-20 py-20 mb-32 text-center bg-black border border-gray-700 rounded convert-info md:text-left border-opacity-30 border-color">
             <div class="">
-              <span class="flex w-full overflow-hidden text-white overflow-ellipsis">
+              <span class="deposit-message flex w-full overflow-hidden text-white overflow-ellipsis">
                 {{ depositMessage }}
               </span>
             </div>
@@ -147,7 +147,6 @@
 
           <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
             <button
-              :disabled="depositInProgress"
               @click="cancel"
               class="w-full button button--outline-success"
             >Cancel</button>
@@ -375,8 +374,13 @@ export default {
   },
   methods: {
     cancel() {
-      this.reset()
-      this.close()
+      if (this.depositInProgress) {
+        this.flashWarning()
+      }
+      else {
+        this.reset()
+        this.close()
+      }
     },
     checkPassword(input) {
       return storage.comparePassword(input)
@@ -428,6 +432,12 @@ export default {
           this.depositError = err.toString()
         }
       }
+    },
+    flashWarning() {
+      document.querySelector('.deposit-message').classList.toggle('flash')
+      setTimeout(() => {
+        document.querySelector('.deposit-message').classList.toggle('flash')
+      }, 800)
     },
     goto(step) {
       this.step = step
@@ -525,5 +535,15 @@ export default {
 .testnet-header {
   color: #0ecc5f;
   padding-left: 10px;
+}
+
+@keyframes flash-red {
+  50% {
+    color: red;
+  }
+}
+
+.flash {
+  animation: flash-red 800ms 1;
 }
 </style>
