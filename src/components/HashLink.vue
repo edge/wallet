@@ -1,7 +1,7 @@
 <template>
   <span class="flex w-full overflow-hidden text-white overflow-ellipsis">
     <a
-      class="text-lg text-white underline w-max-full overflow-hidden overflow-ellipsis"
+      class="text-lg text-w hite underline w-max-full overflow-hidden overflow-ellipsis"
       :href="url"
       target="_blank"
     >
@@ -40,26 +40,15 @@ export default {
       ].join('...')
     },
     hashType() {
-      if (this.transaction) {
-        return this.to === 'explorer' ? 'transaction' : 'tx'
-      }
-      if (this.wallet) {
-        return this.to === 'explorer' ? 'wallet' : 'address'
-      }
-      if (this.stake) {
-        return this.to === 'explorer' ? 'stake' : null
-      }
+      if (this.transaction) return this.to === 'explorer' ? 'transaction' : 'tx'
+      if (this.wallet) return this.to === 'explorer' ? 'wallet' : 'address'
+      if (this.stake) return this.to === 'explorer' ? 'stake' : null
       return null
     },
     url() {
-      switch (this.to) {
-      case 'explorer':
-        return `${explorerUrl}/${this.hashType}/${this.hash}`
-      case 'etherscan':
-        return `${etherscanUrl}/${this.hashType}/${this.hash}`
-      default:
-        return ''
-      }
+      if (this.to === 'explorer') return `${explorerUrl}/${this.hashType}/${this.hash}`
+      if (this.to === 'etherscan') return `${etherscanUrl}/${this.hashType}/${this.hash}`
+      return ''
     }
   }
 }
