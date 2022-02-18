@@ -433,7 +433,7 @@ export default {
         data: {
           destination: this.recipient,
           memo: 'XE Withdrawal',
-          ref: this.gasRates.reference,
+          ref: this.gasRates.ref,
           token: 'EDGE'
         },
         nonce: this.nextNonce
