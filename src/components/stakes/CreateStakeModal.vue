@@ -127,17 +127,7 @@
           </div>
           <div class="form-group mb-14">
             <label>Transaction hash</label>
-            <span class="flex w-full overflow-hidden text-white overflow-ellipsis">
-              <a
-                class="text-lg text-white underline"
-                :href="`${explorerUrl}/transaction/${completedTx.hash}`"
-                target="_blank"
-              >
-                {{ completedTxShortHash }}
-              </a>
-              <!-- eslint-disable-next-line max-len -->
-              <svg class="w-20 h-20 mt-2 ml-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-            </span>
+            <HashLink to="explorer" :transaction="completedTx.hash" truncated />
           </div>
           <div class="flex items-center mt-24 leading-8 text-gray">
             <!-- eslint-disable-next-line max-len -->
@@ -165,6 +155,7 @@ import * as storage from '../../utils/storage'
 import * as validation from '../../utils/validation'
 import * as xe from '@edge/xe-utils'
 import Amount from '../Amount'
+import HashLink from '../HashLink'
 import { LockOpenIcon } from '@heroicons/vue/outline'
 import Modal from '../Modal'
 import Radio from '../Radio'
@@ -175,6 +166,7 @@ export default {
   name: 'CreateStakeModal',
   components: {
     Amount,
+    HashLink,
     LockOpenIcon,
     Modal,
     Radio
@@ -213,16 +205,6 @@ export default {
     },
     canCreate() {
       return !this.v$.$invalid
-    },
-    completedTxShortHash() {
-      if (this.completedTx === null) return ''
-      return [
-        this.completedTx.hash.substring(0, 6),
-        this.completedTx.hash.substring(this.completedTx.hash.length - 4)
-      ].join('...')
-    },
-    explorerUrl() {
-      return process.env.VUE_APP_EXPLORER_URL
     },
     remainingBalance() {
       return (this.balance - this.stakeAmount) / 1e6

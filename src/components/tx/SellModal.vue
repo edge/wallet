@@ -130,20 +130,12 @@
 
           <div class="form-group mb-14">
             <label class="label">From</label>
-            <div class="relative input-wrap">
-              <span class="block w-full overflow-hidden text-white input-filled overflow-ellipsis text-caption">
-                {{ address }}
-              </span>
-            </div>
+            <HashLink to="explorer" :wallet="address" />
           </div>
 
           <div class="form-group mb-14">
             <label class="label">To</label>
-            <div class="relative input-wrap">
-              <span class="block w-full overflow-hidden text-white input-filled overflow-ellipsis text-caption">
-                {{ recipient }}
-              </span>
-            </div>
+            <HashLink to="etherscan" :wallet="recipient" />
           </div>
 
           <div class="form-group mb-14">
@@ -242,20 +234,12 @@
 
           <div class="form-group mb-14">
             <label>From</label>
-            <div class="relative input-wrap">
-              <span class="block w-full overflow-hidden text-white input-filled overflow-ellipsis text-caption">
-                {{ address }}
-              </span>
-            </div>
+            <HashLink to="explorer" :wallet="address" />
           </div>
 
           <div class="form-group mb-14">
             <label>To</label>
-            <div class="relative input-wrap">
-              <span class="block w-full overflow-hidden text-white input-filled overflow-ellipsis text-caption">
-                {{ completedTx.data.destination }}
-              </span>
-            </div>
+            <HashLink to="etherscan" :wallet="completedTx.data.destination" />
           </div>
 
           <div class="form-group mb-14">
@@ -271,6 +255,11 @@
           <div class="form-group mb-14">
             <label>You will receive</label>
             <Amount :value="usdcAmountOnSubmit" currency="USDC" sub/>
+          </div>
+
+          <div class="form-group mb-14">
+            <label>Transaction hash</label>
+            <HashLink to="explorer" :transaction="completedTx.hash" truncated />
           </div>
 
           <div class="flex items-center mt-24 leading-8 text-gray">
@@ -299,6 +288,7 @@ import * as storage from '../../utils/storage'
 import * as validation from '../../utils/validation'
 import * as xe from '@edge/xe-utils'
 import Amount from '../Amount'
+import HashLink from '../HashLink'
 import { InformationCircleIcon } from '@heroicons/vue/solid'
 import Modal from '../Modal'
 import Tooltip from '../Tooltip'
@@ -319,6 +309,7 @@ export default {
     Amount,
     ArrowDownIcon,
     ArrowRightIcon,
+    HashLink,
     InformationCircleIcon,
     LockOpenIcon,
     Modal,

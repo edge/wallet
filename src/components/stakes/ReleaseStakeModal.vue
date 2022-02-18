@@ -9,17 +9,7 @@
         <div class="pb-14">
           <div class="form-group mb-14">
             <label>Stake ID</label>
-            <span class="flex w-full overflow-hidden text-white overflow-ellipsis">
-              <a
-                class="text-lg text-white underline"
-                :href="explorerStakeUrl"
-                target="_blank"
-              >
-                {{ stakeShortId }}
-              </a>
-              <!-- eslint-disable-next-line max-len -->
-              <svg class="w-20 h-20 mt-2 ml-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-            </span>
+            <HashLink to="explorer" :stake="stake.id" truncated />
           </div>
           <div class="form-group mb-25">
             <label class="label">Stake Type</label>
@@ -206,17 +196,7 @@
           </div>
           <div class="form-group mb-14">
             <label>Transaction hash</label>
-            <span class="flex w-full overflow-hidden text-white overflow-ellipsis">
-              <a
-                class="text-lg text-white underline"
-                :href="explorerTxUrl"
-                target="_blank"
-              >
-                {{ completedTxShortHash }}
-              </a>
-              <!-- eslint-disable-next-line max-len -->
-              <svg class="w-20 h-20 mt-2 ml-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-            </span>
+            <HashLink to="explorer" :transaction="completedTx.hash" truncated />
           </div>
           <div class="flex items-center mt-24 leading-8 text-gray">
             <!-- eslint-disable-next-line max-len -->
@@ -243,6 +223,7 @@ import * as storage from '../../utils/storage'
 import * as validation from '../../utils/validation'
 import * as xe from '@edge/xe-utils'
 import Amount from '../Amount'
+import HashLink from '../HashLink'
 import { LockOpenIcon } from '@heroicons/vue/outline'
 import Modal from '../Modal'
 import { helpers } from '@vuelidate/validators'
@@ -253,6 +234,7 @@ export default {
   name: 'ReleaseStakeModal',
   components: {
     Amount,
+    HashLink,
     LockOpenIcon,
     Modal
   },
@@ -296,22 +278,9 @@ export default {
       if (this.isUnlocked) return !this.v$.password.$invalid
       else return !this.v$.$invalid
     },
-    completedTxShortHash() {
-      if (this.completedTx === null) return ''
-      return [
-        this.completedTx.hash.substring(0, 6),
-        this.completedTx.hash.substring(this.completedTx.hash.length - 4)
-      ].join('...')
-    },
     phrase() {
       if (this.vars === null) return ''
       return `I confirm I am willing to burn ${this.vars.stake_express_release_fee * 100}% to release early`
-    },
-    explorerStakeUrl() {
-      return `${process.env.VUE_APP_EXPLORER_URL}/stake/${this.stake.id}`
-    },
-    explorerTxUrl() {
-      return `${process.env.VUE_APP_EXPLORER_URL}/transaction/${this.completedTx.hash}`
     },
     isUnlocked() {
       return this.unlocksAt < Date.now()
@@ -328,13 +297,6 @@ export default {
     },
     stakeAmountParsed() {
       return this.stake.amount / 1e6
-    },
-    stakeShortId() {
-      if (this.stake === null) return ''
-      return [
-        this.stake.id.substring(0, 6),
-        this.stake.id.substring(this.stake.id.length - 4)
-      ].join('...')
     },
     stakeTypeFormatted() {
       return this.stake.type[0].toUpperCase() + this.stake.type.slice(1)
