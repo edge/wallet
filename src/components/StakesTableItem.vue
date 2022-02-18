@@ -38,26 +38,26 @@
     <td data-title="Status:">
       <span v-if="item.released">
         <span class="mr-1 -mt-2 icon icon-grey"><ArrowCircleDownIcon/></span>
-        <span>Released</span>
+        <span class="monospace md:font-sans">Released</span>
       </span>
       <span v-else-if="item.unlockRequested">
         <span v-if="isUnlocking">
           <span class="mr-1 -mt-2 icon icon-grey"><ClockIcon/></span>
-          <span>Unlocking</span>
+          <span class="monospace md:font-sans">Unlocking</span>
         </span>
         <span v-else>
           <span class="mr-1 -mt-2 icon icon-grey"><DotsCircleHorizontalIcon/></span>
-          <span>Unlocked</span>
+          <span class="monospace md:font-sans">Unlocked</span>
         </span>
       </span>
       <span v-else>
         <span class="mr-1 -mt-2 icon icon-green"><CheckCircleIcon/></span>
-        <span>Active</span>
+        <span class="monospace md:font-sans">Active</span>
       </span>
     </td>
 
     <td data-title="Amount (XE):" class="amount-col">
-      <span class="monospace lg:font-sans">{{ formattedAmount }}</span>
+      <span class="monospace">{{ formattedAmount }}</span>
     </td>
 
     <td data-title="">

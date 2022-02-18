@@ -44,19 +44,14 @@
         </div>
       </template>
       <template v-slot:body>
-        <div class="pb-14 min-h-410">
-          <div class="form-group">
+        <div>
+          <div class="form-group mb-30">
             <span class="label">Depositing from</span>
-            <div class="relative input-wrap">
-              <!-- eslint-disable-next-line max-len -->
-              <span class="block w-full overflow-hidden text-white input-filled overflow-ellipsis">{{ ethAddress }}</span>
-            </div>
+            <HashLink to="etherscan" :wallet="ethAddress" />
           </div>
-          <div class="form-group">
+          <div class="form-group mb-30">
             <span class="label">Depositing to</span>
-            <div class="relative input-wrap">
-              <span class="block w-full overflow-hidden text-white input-filled overflow-ellipsis">{{ address }}</span>
-            </div>
+            <HashLink to="etherscan" :wallet="address" />
           </div>
           <div class="lg-input-group" :class="{'form-group__error': v$.amount.$error}">
             <label for="key">AMOUNT</label>
@@ -77,7 +72,7 @@
             <Radio name="currency" id="max" label="MAX" @click="setAmountAsPercent(100);" />
           </div>
 
-          <div class="form-group">
+          <div class="form-group mb-14">
             <label class="flex items-center space-x-3">
               Transaction fee
               <!-- eslint-disable-next-line max-len -->
@@ -131,7 +126,7 @@
           <!-- eslint-disable-next-line max-len -->
           <div v-if="depositMessage" class="px-20 py-20 mb-32 text-center bg-black border border-gray-700 rounded convert-info md:text-left border-opacity-30 border-color">
             <div class="">
-              <span class="flex w-full overflow-hidden text-white overflow-ellipsis">
+              <span class="deposit-message flex w-full overflow-hidden text-white overflow-ellipsis">
                 {{ depositMessage }}
               </span>
             </div>
@@ -147,7 +142,6 @@
 
           <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
             <button
-              :disabled="depositInProgress"
               @click="cancel"
               class="w-full button button--outline-success"
             >Cancel</button>
@@ -162,7 +156,7 @@
         <h2 class="mb-8">Deposit accepted<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
       </template>
       <template v-slot:body>
-        <div class="pb-14 min-h-410">
+        <div>
           <div class="form-group mb-14">
             <label>You are depositing</label>
             <Amount :value="amountParsed" currency="EDGE" sub/>
@@ -170,20 +164,12 @@
 
           <div class="form-group mb-14">
             <label>From</label>
-            <div class="relative input-wrap">
-              <span class="block w-full overflow-hidden text-white input-filled overflow-ellipsis text-caption">
-                {{ completedTx.from }}
-              </span>
-            </div>
+            <HashLink to="etherscan" :wallet="completedTx.from" />
           </div>
 
           <div class="form-group mb-14">
             <label>To</label>
-            <div class="relative input-wrap">
-              <span class="block w-full overflow-hidden text-white input-filled overflow-ellipsis text-caption">
-                {{ address }}
-              </span>
-            </div>
+            <HashLink to="explorer" :wallet="address" />
           </div>
 
           <div class="form-group mb-14">
@@ -202,11 +188,7 @@
 
           <div class="form-group mb-14">
             <label>Transaction hash</label>
-            <span class="flex w-full overflow-hidden text-white overflow-ellipsis">
-              <a class="text-lg text-white underline" :href="ethTxUrl" target="_blank">{{ethTxShortHash}}</a>
-              <!-- eslint-disable-next-line max-len -->
-              <svg class="w-20 h-20 mt-2 ml-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-            </span>
+            <HashLink to="etherscan" :transaction="completedTx.hash" truncated />
           </div>
 
           <div class="flex items-center mt-24 leading-8 text-gray">
@@ -229,6 +211,7 @@
 import * as storage from '../../utils/storage'
 import * as validation from '../../utils/validation'
 import Amount from '../Amount'
+import HashLink from '../HashLink'
 import { InformationCircleIcon } from '@heroicons/vue/solid'
 import MetaMaskOnboarding from '@metamask/onboarding'
 import Modal from '../Modal'
@@ -268,6 +251,7 @@ export default {
     Amount,
     ArrowDownIcon,
     ArrowRightIcon,
+    HashLink,
     InformationCircleIcon,
     Modal,
     Radio,
@@ -375,8 +359,13 @@ export default {
   },
   methods: {
     cancel() {
-      this.reset()
-      this.close()
+      if (this.depositInProgress) {
+        this.flashWarning()
+      }
+      else {
+        this.reset()
+        this.close()
+      }
     },
     checkPassword(input) {
       return storage.comparePassword(input)
@@ -428,6 +417,12 @@ export default {
           this.depositError = err.toString()
         }
       }
+    },
+    flashWarning() {
+      document.querySelector('.deposit-message').classList.toggle('flash')
+      setTimeout(() => {
+        document.querySelector('.deposit-message').classList.toggle('flash')
+      }, 800)
     },
     goto(step) {
       this.step = step
@@ -525,5 +520,15 @@ export default {
 .testnet-header {
   color: #0ecc5f;
   padding-left: 10px;
+}
+
+@keyframes flash-red {
+  50% {
+    color: red;
+  }
+}
+
+.flash {
+  animation: flash-red 800ms 1;
 }
 </style>

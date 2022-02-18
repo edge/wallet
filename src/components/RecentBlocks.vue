@@ -19,7 +19,7 @@
       </tbody>
       <tbody v-if="blocks.length">
         <tr v-for="block in blocks" :key="block.hash">
-          <td data-title="Height:">
+          <td data-title="Height:" class="monospace">
             <a :href="`${explorerUrl}/block/${block.height}`" target="_blank" rel="noreferrer">
               {{ block.height }}
             </a>
