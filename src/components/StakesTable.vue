@@ -2,22 +2,22 @@
   <table>
     <thead class="hidden lg:table-header-group">
       <tr v-if="!hideWalletColumn">
-        <th width="10%">ID</th>
-        <th width="10%">Hash</th>
-        <th width="20%">Wallet</th>
-        <th width="24%">Device</th>
-        <th width="8%">Type</th>
-        <th width="8%">Status</th>
-        <th class="amount-col" width="10%">Amount XE</th>
+        <th width="10%" @click="updateSorting('id')">ID</th>
+        <th width="10%" @click="updateSorting('hash')">Hash</th>
+        <th width="20%" @click="updateSorting('wallet')">Wallet</th>
+        <th width="24%" @click="updateSorting('device')">Device</th>
+        <th width="8%" @click="updateSorting('type')">Type</th>
+        <th width="8%" @click="updateSorting('released,unlockRequested')">Status</th>
+        <th class="amount-col" width="10%" @click="updateSorting('amount')">Amount XE</th>
         <th width="10%" v-if="stakes.length">&nbsp;</th>
       </tr>
       <tr v-else>
-        <th width="19%">ID</th>
-        <th width="19%">Hash</th>
-        <th width="26%">Device</th>
-        <th width="8%">Type</th>
-        <th width="8%">Status</th>
-        <th class="amount-col" width="10%">Amount XE</th>
+        <th width="19%" @click="updateSorting('id')">ID</th>
+        <th width="19%" @click="updateSorting('hash')">Hash</th>
+        <th width="26%" @click="updateSorting('device')">Device</th>
+        <th width="8%" @click="updateSorting('type')">Type</th>
+        <th width="8%" @click="updateSorting('released,unlockRequested')">Status</th>
+        <th class="amount-col" width="10%" @click="updateSorting('amount')">Amount XE</th>
         <th width="10%" v-if="stakes.length">&nbsp;</th>
       </tr>
     </thead>
@@ -56,6 +56,7 @@ export default {
     return {
       loading: false,
       metadata: null,
+      sorting: '-created',
       stakes: [],
       iStakes: null
     }
@@ -90,16 +91,27 @@ export default {
         this.address,
         {
           limit: this.limit,
-          page: this.page
+          page: this.page,
+          sort: this.sorting
         }
       )
       this.stakes = stakes.results
       this.receiveMetadata(stakes.metadata)
       this.loading = false
+    },
+    updateSorting(expression) {
+      if (this.sorting.includes(expression)) {
+        if (this.sorting[0] === '-') this.sorting = expression
+        else this.sorting = '-' + expression
+      }
+      else this.sorting = expression
     }
   },
   watch: {
     page() {
+      this.updateStakes()
+    },
+    sorting() {
       this.updateStakes()
     }
   }
