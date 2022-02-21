@@ -34,7 +34,7 @@ export default {
       return this.sorting.includes(expression)
     },
     isDescending(expression) {
-      return this.sorting.includes('-' + expression)
+      return this.sorting.includes('-' + expression.split(',').join(',-'))
     },
     updateSorting(sortParam) {
       // sorting logic is:
