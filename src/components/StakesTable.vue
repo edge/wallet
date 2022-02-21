@@ -12,12 +12,48 @@
         <th width="10%" v-if="stakes.length">&nbsp;</th>
       </tr>
       <tr v-else>
-        <th width="19%" @click="updateSorting('id')">ID</th>
-        <th width="19%" @click="updateSorting('hash')">Hash</th>
-        <th width="26%" @click="updateSorting('device')">Device</th>
-        <th width="8%" @click="updateSorting('type')">Type</th>
-        <th width="8%" @click="updateSorting('released,unlockRequested')">Status</th>
-        <th class="amount-col" width="10%" @click="updateSorting('amount')">Amount XE</th>
+        <th width="19%" @click="updateSorting('id')">
+          ID
+          <span class="mr-1 -mt-2 icon">
+            <ChevronUpIcon v-if="isAscending('id')" />
+            <ChevronDownIcon v-else-if="isDescending('id')"/>
+          </span>
+        </th>
+        <th width="19%" @click="updateSorting('hash')">
+          Hash
+          <span class="mr-1 -mt-2 icon">
+            <ChevronUpIcon v-if="isAscending('hash')" />
+            <ChevronDownIcon v-else-if="isDescending('hash')"/>
+          </span>
+        </th>
+        <th width="26%" @click="updateSorting('device')">
+          Device
+          <span class="mr-1 -mt-2 icon">
+            <ChevronUpIcon v-if="isAscending('device')" />
+            <ChevronDownIcon v-else-if="isDescending('device')"/>
+          </span>
+        </th>
+        <th width="8%" @click="updateSorting('type')">
+          Type
+          <span class="mr-1 -mt-2 icon">
+            <ChevronUpIcon v-if="isAscending('type')" />
+            <ChevronDownIcon v-else-if="isDescending('type')"/>
+          </span>
+        </th>
+        <th width="8%" @click="updateSorting('released,unlockRequested')">
+          Status
+          <span class="mr-1 -mt-2 icon">
+            <ChevronUpIcon v-if="isAscending('released,unlockRequested')" />
+            <ChevronDownIcon v-else-if="isDescending('released,unlockRequested')"/>
+          </span>
+        </th>
+        <th class="amount-col" width="10%" @click="updateSorting('amount')">
+          Amount XE
+          <span class="mr-1 -mt-2 icon">
+            <ChevronUpIcon v-if="isAscending('amount')" />
+            <ChevronDownIcon v-else-if="isDescending('amount')"/>
+          </span>
+        </th>
         <th width="10%" v-if="stakes.length">&nbsp;</th>
       </tr>
     </thead>
@@ -46,6 +82,7 @@
 
 import * as index from '@edge/index-utils'
 import StakesTableItem from '@/components/StakesTableItem'
+import { ChevronDownIcon, ChevronUpIcon} from '@heroicons/vue/outline'
 import { mapState } from 'vuex'
 
 const stakesRefreshInterval = 5 * 1000
@@ -56,12 +93,14 @@ export default {
     return {
       loading: false,
       metadata: null,
-      sorting: '-created',
+      sorting: ['-created'],
       stakes: [],
       iStakes: null
     }
   },
   components: {
+    ChevronDownIcon,
+    ChevronUpIcon,
     StakesTableItem
   },
   props: [
@@ -84,6 +123,12 @@ export default {
     clearInterval(this.iStakes)
   },
   methods: {
+    isAscending(expression) {
+      return this.sorting.includes(expression)
+    },
+    isDescending(expression) {
+      return this.sorting.includes('-' + expression)
+    },
     async updateStakes() {
       this.loading = true
       const stakes = await index.stake.stakes(
@@ -92,7 +137,7 @@ export default {
         {
           limit: this.limit,
           page: this.page,
-          sort: this.sorting
+          sort: this.sorting.join(',')
         }
       )
       this.stakes = stakes.results
@@ -100,11 +145,15 @@ export default {
       this.loading = false
     },
     updateSorting(expression) {
-      if (this.sorting.includes(expression)) {
-        if (this.sorting[0] === '-') this.sorting = expression
-        else this.sorting = '-' + expression
+      const regex = new RegExp('-?' + expression, 'g')
+      const firstSort = this.sorting[0]
+      if (regex.test(firstSort)) {
+        if (firstSort[0] === '-') this.sorting = [expression, ...this.sorting.slice(1)]
+        else this.sorting = this.sorting.slice(1)
       }
-      else this.sorting = expression
+      else {
+        this.sorting = ['-' + expression, ...this.sorting.filter(item => !regex.test(item))]
+      }
     }
   },
   watch: {
@@ -137,6 +186,14 @@ th:first-of-type {
 
 th.amount-col {
   @apply text-right
+}
+
+th .icon {
+  @apply w-15 inline-block align-middle text-gray-400;
+}
+
+th .icon-active {
+  @apply text-green
 }
 
 @screen lg {
