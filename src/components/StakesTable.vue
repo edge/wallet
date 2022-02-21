@@ -82,8 +82,8 @@
 
 import * as index from '@edge/index-utils'
 import StakesTableItem from '@/components/StakesTableItem'
-import { ChevronDownIcon, ChevronUpIcon} from '@heroicons/vue/outline'
 import { mapState } from 'vuex'
+import { ChevronDownIcon, ChevronUpIcon} from '@heroicons/vue/outline'
 
 const stakesRefreshInterval = 5 * 1000
 
@@ -144,15 +144,24 @@ export default {
       this.receiveMetadata(stakes.metadata)
       this.loading = false
     },
-    updateSorting(expression) {
-      const regex = new RegExp('-?' + expression, 'g')
-      const firstSort = this.sorting[0]
-      if (regex.test(firstSort)) {
-        if (firstSort[0] === '-') this.sorting = [expression, ...this.sorting.slice(1)]
+    updateSorting(sortParam) {
+      // sorting logic is:
+      // - if param not in list, add to front of list (as descending)
+      // - if param already in sorting list, bring to front (as descending)
+      // - if already at front of list, toggle between descending > ascending > remove > descending
+
+      // some sortParams will have multiple params (e.g. 'released,unlockRequested')
+      // regex needs to include a - before every param
+      const regex = new RegExp('-?' + sortParam.split(',').join(',-?'), 'g')
+
+      const firstSortParam = this.sorting[0]
+      if (regex.test(firstSortParam)) {
+        if (firstSortParam[0] === '-') this.sorting = [sortParam, ...this.sorting.slice(1)]
         else this.sorting = this.sorting.slice(1)
       }
       else {
-        this.sorting = ['-' + expression, ...this.sorting.filter(item => !regex.test(item))]
+        const descExpression = '-' + sortParam.split(',').join(',-')
+        this.sorting = [descExpression, ...this.sorting.filter(item => !regex.test(item))]
       }
     }
   },
