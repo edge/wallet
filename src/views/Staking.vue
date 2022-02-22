@@ -17,7 +17,7 @@
     <div class="bg-gray-200 py-35">
       <div class="container">
         <StakesTable
-          :hideWalletColumn="false"
+          :hideWalletColumn="true"
           :limit="limit"
           :receiveMetadata="onStakesUpdate"
           :page="currentPage"
