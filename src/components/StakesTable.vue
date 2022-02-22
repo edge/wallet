@@ -2,46 +2,46 @@
   <table>
     <thead class="hidden lg:table-header-group">
       <tr v-if="!hideWalletColumn">
-        <TableHeader width="10%" header="ID" :sorting="sorting"
+        <TableHeader width="10%" header="ID" :sortQuery="sortQuery"
           sortParam="id" :onSortingUpdate="updateSorting"
         />
-        <TableHeader width="10%" header="Hash" :sorting="sorting"
+        <TableHeader width="10%" header="Hash" :sortQuery="sortQuery"
           sortParam="hash" :onSortingUpdate="updateSorting"
         />
-        <TableHeader width="20%" header="Wallet" :sorting="sorting"
+        <TableHeader width="20%" header="Wallet" :sortQuery="sortQuery"
           sortParam="wallet" :onSortingUpdate="updateSorting"
         />
-        <TableHeader width="24%" header="Device" :sorting="sorting"
+        <TableHeader width="24%" header="Device" :sortQuery="sortQuery"
           sortParam="device" :onSortingUpdate="updateSorting"
         />
-        <TableHeader width="8%" header="Type" :sorting="sorting"
+        <TableHeader width="8%" header="Type" :sortQuery="sortQuery"
           sortParam="type" :onSortingUpdate="updateSorting"
         />
-        <TableHeader width="8%" header="Status" :sorting="sorting"
+        <TableHeader width="8%" header="Status" :sortQuery="sortQuery"
           sortParam="released,unlockRequested" :onSortingUpdate="updateSorting"
         />
-        <TableHeader class="amount-col" width="10%" header="Amount XE" :sorting="sorting"
+        <TableHeader class="amount-col" width="10%" header="Amount XE" :sortQuery="sortQuery"
           sortParam="amount" :onSortingUpdate="updateSorting"
         />
         <th width="10%" v-if="stakes.length">&nbsp;</th>
       </tr>
       <tr v-else>
-        <TableHeader width="19%" header="ID" :sorting="sorting"
+        <TableHeader width="19%" header="ID" :sortQuery="sortQuery"
           sortParam="id" :onSortingUpdate="updateSorting"
         />
-        <TableHeader width="19%" header="Hash" :sorting="sorting"
+        <TableHeader width="19%" header="Hash" :sortQuery="sortQuery"
           sortParam="hash" :onSortingUpdate="updateSorting"
         />
-        <TableHeader width="26%" header="Device" :sorting="sorting"
+        <TableHeader width="26%" header="Device" :sortQuery="sortQuery"
           sortParam="device" :onSortingUpdate="updateSorting"
         />
-        <TableHeader width="8%" header="Type" :sorting="sorting"
+        <TableHeader width="8%" header="Type" :sortQuery="sortQuery"
           sortParam="type" :onSortingUpdate="updateSorting"
         />
-        <TableHeader width="8%" header="Status" :sorting="sorting"
+        <TableHeader width="8%" header="Status" :sortQuery="sortQuery"
           sortParam="released,unlockRequested" :onSortingUpdate="updateSorting"
         />
-        <TableHeader class="amount-col" width="10%" header="Amount XE" :sorting="sorting"
+        <TableHeader class="amount-col" width="10%" header="Amount XE" :sortQuery="sortQuery"
           sortParam="amount" :onSortingUpdate="updateSorting"
         />
         <th width="10%" v-if="stakes.length">&nbsp;</th>
@@ -83,7 +83,6 @@ export default {
     return {
       loading: false,
       metadata: null,
-      sorting: ['-created'],
       stakes: [],
       iStakes: null
     }
@@ -100,7 +99,13 @@ export default {
     'openReleaseStakeModal',
     'openUnlockStakeModal'
   ],
-  computed: mapState(['address']),
+  computed: {
+    ...mapState(['address']),
+    sortQuery() {
+      if (this.$route.query.sort) return this.$route.query.sort
+      else return '-created'
+    }
+  },
   mounted() {
     this.updateStakes()
     // initiate polling
@@ -120,22 +125,22 @@ export default {
         {
           limit: this.limit,
           page: this.page,
-          sort: this.sorting.join(',')
+          sort: this.sortQuery
         }
       )
       this.stakes = stakes.results
       this.receiveMetadata(stakes.metadata)
       this.loading = false
     },
-    updateSorting(newSorting) {
-      this.sorting = newSorting
+    updateSorting(newSortQuery) {
+      this.$router.push({ name: 'Staking', query: { ...this.$route.query, sort: newSortQuery } })
     }
   },
   watch: {
     page() {
       this.updateStakes()
     },
-    sorting() {
+    sortQuery() {
       this.updateStakes()
     }
   }
