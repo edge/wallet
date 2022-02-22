@@ -67,7 +67,7 @@ export default {
 
 <style scoped>
 th {
-  @apply font-normal text-sm2 text-left text-black bg-gray-100 border-b-2 border-gray-200 py-13 px-5;
+  @apply font-normal text-sm2 text-left text-black bg-gray-100 border-b-2 border-gray-200 py-13 px-5 cursor-pointer;
 }
 
 th.amount-col {
