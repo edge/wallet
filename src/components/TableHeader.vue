@@ -46,19 +46,26 @@ export default {
       // - if param already in sorting list, bring to front (as descending)
       // - if param not in list, add to front of list (as descending)
 
+      if (!this.sortQuery) {
+        this.onSortingUpdate('-' + sortParam.replace(',', ',-'))
+      }
+
       // some sortParams will have multiple words (e.g. 'released,unlockRequested') so need hyphen at start of each word
-      const sortRegexStr = '-?' + sortParam.replace(',', ',-?') + ','
+      const sortRegexStr = '-?' + sortParam.replace(',', ',-?') + ',?'
       const startRegex = new RegExp('^' + sortRegexStr)
       const midRegex = new RegExp(sortRegexStr)
 
       if (startRegex.test(this.sortQuery)) {
-        if (this.sortQuery[0] === '-') this.onSortingUpdate(this.sortQuery.replace(startRegex, sortParam + ','))
+        let replaceString = sortParam
+        if (!new RegExp('^' + sortRegexStr + '$').test(this.sortQuery)) replaceString += ','
+        if (this.sortQuery[0] === '-') this.onSortingUpdate(this.sortQuery.replace(startRegex, replaceString))
         else this.onSortingUpdate(this.sortQuery.replace(startRegex, ''))
       }
       else {
-        const sortParamDesc = '-' + sortParam.replace(',', ',-')
-        const newQuery = sortParamDesc + ',' + this.sortQuery.replace(midRegex, '')
-        this.onSortingUpdate(newQuery)
+        let sortParamDesc = '-' + sortParam.replace(',', ',-')
+        // if there are more sort params, add comma after new sort param, plus remove any trailing commas and whitespace
+        if (this.sortQuery) sortParamDesc += ',' + this.sortQuery.replace(midRegex, '').replace(/,\s*$/, '')
+        this.onSortingUpdate(sortParamDesc)
       }
     }
   }
