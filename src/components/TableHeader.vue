@@ -46,13 +46,10 @@ export default {
       // - if param already in sorting list, bring to front (as descending)
       // - if param not in list, add to front of list (as descending)
 
-
-      // some sortParams will have multiple params (e.g. 'released,unlockRequested')
-      // regex needs to include a hyphen before every param
-
-      const sortRegexStr = '-?' + sortParam.replace(',', ',-?')
-      const startRegex = new RegExp('^' + sortRegexStr + ',')
-      const midRegex = new RegExp(sortRegexStr + ',')
+      // some sortParams will have multiple words (e.g. 'released,unlockRequested') so need hyphen at start of each word
+      const sortRegexStr = '-?' + sortParam.replace(',', ',-?') + ','
+      const startRegex = new RegExp('^' + sortRegexStr)
+      const midRegex = new RegExp(sortRegexStr)
 
       if (startRegex.test(this.sortQuery)) {
         if (this.sortQuery[0] === '-') this.onSortingUpdate(this.sortQuery.replace(startRegex, sortParam + ','))

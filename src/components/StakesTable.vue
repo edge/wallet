@@ -133,7 +133,7 @@ export default {
       this.loading = false
     },
     updateSorting(newSortQuery) {
-      this.$router.push({ name: 'Staking', query: { ...this.$route.query, sort: newSortQuery } })
+      this.$router.replace({ name: 'Staking', query: { ...this.$route.query, sort: newSortQuery } })
     }
   },
   watch: {
