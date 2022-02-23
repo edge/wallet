@@ -37,7 +37,7 @@ export default {
       return regex.test(this.sortQuery)
     },
     isDescending(expression) {
-      const regex = new RegExp('-' + expression.replace(',', ',-'))
+      const regex = new RegExp(`-${expression.replace(',', ',-')}`)
       return regex.test(this.sortQuery)
     },
     updateSorting(sortParam) {
@@ -48,18 +48,22 @@ export default {
 
       // some sortParams will have multiple words (e.g. 'released,unlockRequested') so need hyphen at start of each word
       const sortRegexStr = '-?' + sortParam.replace(',', ',-?') + ',?'
+      // startRegex - expression at start of sort query only
+      // midRegex - expression in middle or at end of sort query
+      // fullRegex - expression matches full query (i.e. only one sort param present)
       const startRegex = new RegExp('^' + sortRegexStr)
       const midRegex = new RegExp(sortRegexStr)
+      const fullRegex = new RegExp(`^${sortRegexStr}$`)
 
-      if (!this.sortQuery) this.onSortingUpdate('-' + sortParam.replace(',', ',-'))
+      if (!this.sortQuery) this.onSortingUpdate(`-${sortParam.replace(',', ',-')}`)
       else if (startRegex.test(this.sortQuery)) {
         let replaceString = sortParam
-        if (!new RegExp('^' + sortRegexStr + '$').test(this.sortQuery)) replaceString += ','
+        if (!fullRegex.test(this.sortQuery)) replaceString += ','
         if (this.sortQuery[0] === '-') this.onSortingUpdate(this.sortQuery.replace(startRegex, replaceString))
         else this.onSortingUpdate(this.sortQuery.replace(startRegex, ''))
       }
       else {
-        let sortParamDesc = '-' + sortParam.replace(',', ',-')
+        let sortParamDesc = `-${sortParam.replace(',', ',-')}`
         // if there are more sort params, add comma after new sort param, plus remove any trailing commas and whitespace
         if (this.sortQuery) sortParamDesc += ',' + this.sortQuery.replace(midRegex, '').replace(/,$/, '')
         this.onSortingUpdate(sortParamDesc)
