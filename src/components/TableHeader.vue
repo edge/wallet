@@ -1,9 +1,9 @@
 <template>
-  <th :class="classes" :width="width" @click="updateSorting(sortParam)">
+  <th :class="classes" :width="width" @click="updateSorting">
     {{ header }}
     <span class="mr-1 -mt-2 icon">
-      <ChevronUpIcon v-if="isAscending(sortParam)" />
-      <ChevronDownIcon v-else-if="isDescending(sortParam)"/>
+      <ChevronUpIcon v-if="isAscending" />
+      <ChevronDownIcon v-else-if="isDescending"/>
     </span>
   </th>
 </template>
@@ -29,44 +29,55 @@ export default {
     'sortParam',
     'width'
   ],
-  methods: {
-    isAscending(expression) {
+  computed: {
+    isAscending() {
       // check if expression is present is sorting query, but not preceded by a hyphen
       // also, for multi-word expressions, check no word is preceded by hyphen
-      const regex = new RegExp('(?<!-)' + expression.replace(',', ',(?<!-)'))
+      const regex = new RegExp('(?<!-)' + this.sortParam.replace(',', ',(?<!-)'))
       return regex.test(this.sortQuery)
     },
-    isDescending(expression) {
-      const regex = new RegExp(`-${expression.replace(',', ',-')}`)
+    isDescending() {
+      const regex = new RegExp(`-${this.sortParam.replace(',', ',-')}`)
       return regex.test(this.sortQuery)
     },
-    updateSorting(sortParam) {
+    sortRegexStr() {
+      // some sortParams will have multiple words (e.g. 'released,unlockRequested')
+      // regex needs hyphen at start of each word
+      return `-?${this.sortParam.replace(',', ',-?')},?`
+    },
+    startRegex() {
+      // sort param found at start of sort query only
+      return new RegExp('^' + this.sortRegexStr)
+    },
+    midRegex() {
+      // sort param found in middle or at end of sort query
+      return new RegExp(this.sortRegexStr)
+    },
+    fullRegex() {
+      // sort param matches full sort query (i.e. only one sort param present)
+      return new RegExp(`^${this.sortRegexStr}$`)
+    },
+    sortParamDesc() {
+      return `-${this.sortParam.replace(',', ',-')}`
+    }
+  },
+  methods: {
+    updateSorting() {
       // sorting logic is:
       // - if param already at front of list, toggle between descending > ascending > remove > descending
       // - if param already in sorting list, bring to front (as descending)
       // - if param not in list, add to front of list (as descending)
-
-      // some sortParams will have multiple words (e.g. 'released,unlockRequested') so need hyphen at start of each word
-      const sortRegexStr = '-?' + sortParam.replace(',', ',-?') + ',?'
-      // startRegex - expression at start of sort query only
-      // midRegex - expression in middle or at end of sort query
-      // fullRegex - expression matches full query (i.e. only one sort param present)
-      const startRegex = new RegExp('^' + sortRegexStr)
-      const midRegex = new RegExp(sortRegexStr)
-      const fullRegex = new RegExp(`^${sortRegexStr}$`)
-
-      if (!this.sortQuery) this.onSortingUpdate(`-${sortParam.replace(',', ',-')}`)
-      else if (startRegex.test(this.sortQuery)) {
-        let replaceString = sortParam
-        if (!fullRegex.test(this.sortQuery)) replaceString += ','
-        if (this.sortQuery[0] === '-') this.onSortingUpdate(this.sortQuery.replace(startRegex, replaceString))
-        else this.onSortingUpdate(this.sortQuery.replace(startRegex, ''))
+      if (!this.sortQuery) this.onSortingUpdate(this.sortParamDesc)
+      else if (this.startRegex.test(this.sortQuery)) {
+        let replaceString = this.sortParam
+        if (!this.fullRegex.test(this.sortQuery)) replaceString += ','
+        if (this.sortQuery[0] === '-') this.onSortingUpdate(this.sortQuery.replace(this.startRegex, replaceString))
+        else this.onSortingUpdate(this.sortQuery.replace(this.startRegex, ''))
       }
       else {
-        let sortParamDesc = `-${sortParam.replace(',', ',-')}`
-        // if there are more sort params, add comma after new sort param, plus remove any trailing commas and whitespace
-        if (this.sortQuery) sortParamDesc += ',' + this.sortQuery.replace(midRegex, '').replace(/,$/, '')
-        this.onSortingUpdate(sortParamDesc)
+        let newSortQuery = this.sortParamDesc
+        if (this.sortQuery) newSortQuery += `,${this.sortQuery.replace(this.midRegex, '').replace(/,$/, '')}`
+        this.onSortingUpdate(newSortQuery)
       }
     }
   }
