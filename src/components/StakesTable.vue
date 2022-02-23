@@ -102,8 +102,7 @@ export default {
   computed: {
     ...mapState(['address']),
     sortQuery() {
-      if (this.$route.query.sort) return this.$route.query.sort
-      else return '-created'
+      return this.$route.query.sort
     }
   },
   mounted() {
@@ -119,13 +118,15 @@ export default {
   methods: {
     async updateStakes() {
       this.loading = true
+      // the sort query sent to index needs to include "-created", but this is hidden from user in browser url
+      const sortQuery = this.$route.query.sort ? `${this.$route.query.sort},-created` : '-created'
       const stakes = await index.stake.stakes(
         process.env.VUE_APP_INDEX_API_URL,
         this.address,
         {
           limit: this.limit,
           page: this.page,
-          sort: this.sortQuery
+          sort: sortQuery
         }
       )
       this.stakes = stakes.results
@@ -133,7 +134,9 @@ export default {
       this.loading = false
     },
     updateSorting(newSortQuery) {
-      this.$router.replace({ name: 'Staking', query: { ...this.$route.query, sort: newSortQuery } })
+      const query = { ...this.$route.query, sort: newSortQuery }
+      if (!newSortQuery) delete query.sort
+      this.$router.replace({ query })
     }
   },
   watch: {
