@@ -5,12 +5,18 @@
 
     <div class="bg-gray-200 py-35">
       <div class="container">
-        <TransactionsTable :transactions="transactions"/>
+        <TransactionsTable
+          :hideWalletColumn="true"
+          :limit="limit"
+          :receiveMetadata="onTransactionsUpdate"
+          :page="currentPage"
+        />
         <Pagination
-          v-if="transactions.length"
+          v-if="metadata.totalCount > limit"
           baseRoute="Transactions"
-          :currentPage="page"
-          :totalPages="Math.ceil(metadata.totalCount/metadata.limit)"
+          :currentPage="currentPage"
+          :limit="limit"
+          :totalCount="metadata.totalCount"
         />
       </div>
     </div>
@@ -20,22 +26,16 @@
 <script>
 import AccountPanel from '@/components/AccountPanel'
 import Header from '@/components/Header'
-import Pagination from '@/components/Pagination'
+import Pagination from '@/components/PaginationNew'
 import TransactionsTable from '@/components/TransactionsTable'
-import { fetchTransactions } from '../utils/api'
-import { mapState } from 'vuex'
 
 export default {
   name: 'ViewTransactions',
   title: 'Transactions',
   data: function () {
     return {
-      loading: true,
-      metadata: {},
-      page: 1,
-      polling: null,
-      transactions: [],
-      transactionRefreshInterval: 5000
+      metadata: { totalCount: 0 },
+      limit: 20
     }
   },
   components: {
@@ -44,32 +44,28 @@ export default {
     Pagination,
     TransactionsTable
   },
-  computed: mapState(['address']),
-  mounted() {
-    this.initialise()
-  },
-  unmounted() {
-    clearInterval(this.polling)
+  computed: {
+    currentPage() {
+      return Math.max(1, parseInt(this.$route.query.page) || 1)
+    },
+    lastPage() {
+      return Math.max(1, Math.ceil(this.metadata.totalCount / this.limit))
+    }
   },
   methods: {
-    async initialise() {
-      await this.updateTransactions()
-      this.pollData()
-    },
-    async updateTransactions() {
-      this.page = parseInt(this.$route.params.page || 1)
-      const { transactions, metadata } = await fetchTransactions(this.address, { page: this.page })
-
-      // Update this.transactions & this.metadata only once promise has resolved
-      this.transactions = transactions
+    onTransactionsUpdate(metadata) {
       this.metadata = metadata
-      this.loading = false
-    },
-    pollData() {
-      this.polling = setInterval(() => {
-        this.updateTransactions()
-      }, this.transactionRefreshInterval)
     }
+  },
+  watch: {
+    metadata() {
+      // clamp pagination to available page numbers with automatic redirection
+      if (this.currentPage > this.lastPage) this.$router.push({ name: 'Transactions', query: { page: this.lastPage } })
+    }
+  },
+  mounted() {
+    const p = parseInt(this.$route.query.page) || 0
+    if (p < 1) this.$router.push({ name: 'Transactions', query: { page: 1 } })
   }
 }
 </script>
