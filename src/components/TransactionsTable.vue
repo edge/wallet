@@ -4,9 +4,9 @@
       <thead class="hidden lg:table-header-group">
         <tr>
           <th width="10%">Tx Hash</th>
-          <th width="15%">Date</th>
           <th width="30%">From/To</th>
           <th width="20%">Memo</th>
+          <th width="15%">Date</th>
           <th width="10%">Status</th>
           <th width="15%" class="amount-col">Amount XE</th>
         </tr>
@@ -16,7 +16,6 @@
           v-for="item in transactions"
           :key="item.hash"
           :item="item"
-          :hideWalletColumn="hideWalletColumn"
         />
       </tbody>
       <tbody v-else>
@@ -55,7 +54,6 @@ export default {
     TransactionsTableItem
   },
   props: [
-    'hideWalletColumn',
     'limit',
     'page',
     'receiveMetadata'

@@ -8,24 +8,18 @@
       </a>
     </td>
 
-    <td data-title="Date:">
-      <span class="md:inline-block">
-        {{ date }}
-      </span>
-    </td>
-
-    <td v-if="type === 'sent'" data-title="To:">
-      <div class="icon-wrap">
+    <td v-if="sent" data-title="To:">
+      <span class="icon-wrap">
         <span class="mr-1 -mt-2 icon icon-red"><ArrowUpIcon /></span>
         <a :href="explorerToAddressUrl" target="_blank" rel="noreferrer">
           <span class="monospace md:inline-block">
             {{ item.recipient }}
           </span>
         </a>
-      </div>
+      </span>
     </td>
     <td v-else data-title="From:">
-      <span>
+      <span class="icon-wrap">
         <span class="mr-1 -mt-2 icon icon-green"><ArrowDownIcon /></span>
         <a :href="explorerFromAddressUrl" target="_blank" rel="noreferrer">
           <span class="monospace md:inline-block">
@@ -37,6 +31,12 @@
 
     <td data-title="Memo:">
       <span class="monospace md:font-sans">{{ item.data.memo }}</span>
+    </td>
+
+    <td data-title="Date:">
+      <span class="md:inline-block">
+        {{ date }}
+      </span>
     </td>
 
     <td data-title="Status:">
@@ -54,7 +54,7 @@
 
     <td data-title="Amount (XE):" class="amount-col">
       <span class="monospace">
-        <span v-if="type === 'sent'">-</span>
+        <span v-if="sent">-</span>
         {{ formattedAmount }}
       </span>
     </td>
@@ -70,7 +70,11 @@ import { ArrowDownIcon, ArrowUpIcon, CheckCircleIcon, ClockIcon } from '@heroico
 
 export default {
   name: 'StakesTableItem',
-  props: ['hideWalletColumn', 'item', 'openReleaseStakeModal', 'openUnlockStakeModal'],
+  props: [
+    'item',
+    'openReleaseStakeModal',
+    'openUnlockStakeModal'
+  ],
   components: {
     ArrowDownIcon,
     ArrowUpIcon,
@@ -102,10 +106,8 @@ export default {
       if (this.item.confirmations < 10) return `${this.item.confirmations} confirmations`
       return 'Confirmed'
     },
-    type() {
-      if (this.item.sender === this.item.recipient) return 'received'
-      else if (this.address === this.sender) return 'sent'
-      else return 'received'
+    sent() {
+      return this.item.sender === this.item.recipient || this.address === this.item.sender
     }
   }
 }

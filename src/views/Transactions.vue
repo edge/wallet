@@ -6,7 +6,6 @@
     <div class="bg-gray-200 py-35">
       <div class="container">
         <TransactionsTable
-          :hideWalletColumn="true"
           :limit="limit"
           :receiveMetadata="onTransactionsUpdate"
           :page="currentPage"
