@@ -1,5 +1,5 @@
 <template>
-  <tr>
+  <tr :class="isPending && 'pending'">
     <td data-title="Tx Hash:" :title="item.hash">
       <a :href="explorerTxUrl" target="_blank" rel="noreferrer">
         <span class="monospace md:inline-block">
@@ -100,10 +100,13 @@ export default {
       return formatXe(this.item.amount / 1e6, true)
     },
     isConfirmed() {
-      return (!this.item.block || !this.item.confirmations < 10)
+      return (!this.isPending || !this.item.confirmations < 10)
+    },
+    isPending() {
+      return !this.item.block
     },
     statusFormatted() {
-      if (!this.item.block) return 'Pending'
+      if (this.isPending) return 'Pending'
       if (this.item.confirmations === 1) return `${this.item.confirmations} confirmation`
       if (this.item.confirmations < 10) return `${this.item.confirmations} confirmations`
       return 'Confirmed'
@@ -165,8 +168,12 @@ td a {
   @apply leading-none border-b border-black border-opacity-25 hover:border-green hover:border-opacity-25 hover:text-green align-middle;
 }
 
-button.table-button {
-  @apply py-2 rounded text-black border-solid border border-gray-400 text-gray-500 hover:border-green hover:text-green
+tr.pending {
+  @apply italic text-gray-400
+}
+
+tr.pending a {
+  @apply italic text-gray-400
 }
 
 @screen lg {
