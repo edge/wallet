@@ -7,7 +7,7 @@
             sortParam="hash" :onSortingUpdate="updateSorting"
           />
           <TableHeader width="30%" header="From/To" :sortQuery="sortQuery"
-            sortParam="toOrFrom" :onSortingUpdate="updateSorting"
+            sortParam="sortAddress" :onSortingUpdate="updateSorting"
           />
           <TableHeader width="20%" header="Memo" :sortQuery="sortQuery"
             sortParam="data.memo" :onSortingUpdate="updateSorting"
