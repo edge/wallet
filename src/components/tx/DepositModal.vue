@@ -405,6 +405,7 @@ export default {
         const tx = await this.contract.approveAndCall(bridgeAddress, amount, this.address)
 
         this.completedTx = tx
+        this.depositInProgress = false
         this.goto(3)
       }
       catch (err) {
