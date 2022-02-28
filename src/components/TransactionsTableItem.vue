@@ -66,6 +66,7 @@
 /*global process*/
 
 import { formatXe } from '@edge/wallet-utils'
+import { mapState } from 'vuex'
 import { ArrowDownIcon, ArrowUpIcon, CheckCircleIcon, ClockIcon } from '@heroicons/vue/outline'
 
 export default {
@@ -82,6 +83,7 @@ export default {
     ClockIcon
   },
   computed: {
+    ...mapState(['address']),
     date() {
       return new Date(this.item.timestamp).toLocaleString()
     },
@@ -98,10 +100,10 @@ export default {
       return formatXe(this.item.amount / 1e6, true)
     },
     isConfirmed() {
-      return (!this.pending || !this.confirmations < 10)
+      return (!this.item.block || !this.item.confirmations < 10)
     },
     statusFormatted() {
-      if (this.item.pending) return 'Pending'
+      if (!this.item.block) return 'Pending'
       if (this.item.confirmations === 1) return `${this.item.confirmations} confirmation`
       if (this.item.confirmations < 10) return `${this.item.confirmations} confirmations`
       return 'Confirmed'
