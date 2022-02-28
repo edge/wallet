@@ -18,7 +18,7 @@
           sortParam="type" :onSortingUpdate="updateSorting"
         />
         <TableHeader width="8%" header="Status" :sortQuery="sortQuery"
-          sortParam="released,unlockRequested" :onSortingUpdate="updateSorting"
+          sortParam="sortStatus" :onSortingUpdate="updateSorting"
         />
         <TableHeader class="amount-col" width="10%" header="Amount XE" :sortQuery="sortQuery"
           sortParam="amount" :onSortingUpdate="updateSorting"
@@ -39,7 +39,7 @@
           sortParam="type" :onSortingUpdate="updateSorting"
         />
         <TableHeader width="8%" header="Status" :sortQuery="sortQuery"
-          sortParam="released,unlockRequested" :onSortingUpdate="updateSorting"
+          sortParam="sortStatus" :onSortingUpdate="updateSorting"
         />
         <TableHeader class="amount-col" width="10%" header="Amount XE" :sortQuery="sortQuery"
           sortParam="amount" :onSortingUpdate="updateSorting"
