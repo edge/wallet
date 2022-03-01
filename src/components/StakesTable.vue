@@ -37,7 +37,6 @@
         v-for="item in stakes"
         :key="item.id"
         :item="item"
-        :sortable="sortable"
         :openReleaseStakeModal="openReleaseStakeModal"
         :openUnlockStakeModal="openUnlockStakeModal"
       />
