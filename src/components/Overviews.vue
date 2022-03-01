@@ -8,7 +8,7 @@
     </div>
 
     <div class="transactions-items" v-if="transactions">
-      <TransactionsTable :transactions="transactions"/>
+      <TransactionsTable :transactions="transactions" :limit="10" />
     </div>
   </div>
 </template>

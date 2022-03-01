@@ -2,7 +2,7 @@
   <div class="transaction-table">
     <table>
       <thead class="hidden lg:table-header-group">
-        <tr>
+        <tr v-if="sortable">
           <TableHeader width="10%" header="Tx Hash" :sortQuery="sortQuery"
             sortParam="hash" :onSortingUpdate="updateSorting"
           />
@@ -21,6 +21,14 @@
           <TableHeader  class="amount-col" width="15%" header="Amount XE" :sortQuery="sortQuery"
             sortParam="amount" :onSortingUpdate="updateSorting"
           />
+        </tr>
+        <tr v-else>
+          <th width="10%">Tx Hash</th>
+          <th width="30%">From/To</th>
+          <th width="20%">Memo</th>
+          <th width="15%">Date</th>
+          <th width="10%">Status</th>
+          <th class="amount-col" width="15%">Amount XE</th>
         </tr>
       </thead>
       <tbody v-if="transactions.length">
@@ -68,7 +76,8 @@ export default {
   props: [
     'limit',
     'page',
-    'receiveMetadata'
+    'receiveMetadata',
+    'sortable'
   ],
   computed: {
     ...mapState(['address']),
@@ -101,7 +110,7 @@ export default {
         }
       )
       this.transactions = transactions.results
-      this.receiveMetadata(transactions.metadata)
+      if (this.receiveMetadata) this.receiveMetadata(transactions.metadata)
       this.loading = false
     },
     updateSorting(newSortQuery) {

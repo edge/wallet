@@ -9,6 +9,7 @@
           :limit="limit"
           :receiveMetadata="onTransactionsUpdate"
           :page="currentPage"
+          :sortable="true"
         />
         <Pagination
           v-if="metadata.totalCount > limit"
