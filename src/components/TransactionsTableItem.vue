@@ -72,9 +72,7 @@ import { ArrowDownIcon, ArrowUpIcon, CheckCircleIcon, ClockIcon } from '@heroico
 export default {
   name: 'StakesTableItem',
   props: [
-    'item',
-    'openReleaseStakeModal',
-    'openUnlockStakeModal'
+    'item'
   ],
   components: {
     ArrowDownIcon,

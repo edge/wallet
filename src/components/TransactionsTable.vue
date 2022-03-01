@@ -40,7 +40,7 @@
       </tbody>
       <tbody v-else>
         <tr>
-          <td colspan="7" class="block w-full text-center bg-white lg:table-cell py-35">
+          <td colspan="6" class="block w-full text-center bg-white lg:table-cell py-35">
             No transactions.
           </td>
         </tr>
@@ -88,12 +88,12 @@ export default {
   mounted() {
     this.updateTransactions()
     // initiate polling
-    this.iStakes = setInterval(() => {
+    this.iTransactions = setInterval(() => {
       this.updateTransactions()
     }, txsRefreshInterval)
   },
   unmounted() {
-    clearInterval(this.iStakes)
+    clearInterval(this.iTransactions)
   },
   methods: {
     async updateTransactions() {
