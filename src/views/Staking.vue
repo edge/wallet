@@ -17,10 +17,10 @@
     <div class="bg-gray-200 py-35">
       <div class="container">
         <StakesTable
-          :hideWalletColumn="true"
           :limit="limit"
           :receiveMetadata="onStakesUpdate"
           :page="currentPage"
+          :sortable="true"
           :openReleaseStakeModal="openReleaseStakeModal"
           :openUnlockStakeModal="openUnlockStakeModal"
         />

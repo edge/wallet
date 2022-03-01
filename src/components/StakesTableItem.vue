@@ -14,14 +14,6 @@
       </span>
     </td>
 
-    <td v-if="!hideWalletColumn" data-title="Wallet:">
-      <a :href="explorerWalletUrl" target="_blank" rel="noreferrer">
-        <span class="monospace md:inline-block">
-          {{ item.tx.recipient }}
-        </span>
-      </a>
-    </td>
-
     <td data-title="Device:">
       <span v-if="item.device">
         <span class="monospace md:inline-block">
@@ -80,7 +72,7 @@ import { ArrowCircleDownIcon, CheckCircleIcon, ClockIcon, DotsCircleHorizontalIc
 
 export default {
   name: 'StakesTableItem',
-  props: ['hideWalletColumn', 'item', 'openReleaseStakeModal', 'openUnlockStakeModal'],
+  props: ['item', 'openReleaseStakeModal', 'openUnlockStakeModal'],
   components: {
     ArrowCircleDownIcon,
     CheckCircleIcon,
