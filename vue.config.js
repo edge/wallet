@@ -12,5 +12,9 @@ module.exports = {
         args[0].title = process.env.VUE_APP_IS_TESTNET === 'true' ? 'Testnet (XE) Wallet' : 'Edge (XE) Wallet'
         return args
       })
+
+    config.resolve.alias
+      .set('crypto', 'crypto-browserify')
+      .set('stream', 'stream-browserify')
   }
 }
