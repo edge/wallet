@@ -1,5 +1,11 @@
 <template>
   <tr :class="isPending && 'pending'">
+    <td data-title="Date:">
+      <span class="md:inline-block">
+        {{ date }}
+      </span>
+    </td>
+
     <td data-title="Tx Hash:" :title="item.hash">
       <a :href="explorerTxUrl" target="_blank" rel="noreferrer">
         <span class="monospace md:inline-block">
@@ -30,16 +36,12 @@
     </td>
 
     <td data-title="Memo:">
-      <span class="monospace md:font-sans">{{ item.data.memo }}</span>
-    </td>
-
-    <td data-title="Date:">
-      <span class="md:inline-block">
-        {{ date }}
+      <span class="monospace md:font-sans" :class="!item.data.memo && 'text-gray'">
+        {{ item.data.memo || 'None' }}
       </span>
     </td>
 
-    <td data-title="Status:">
+  <td data-title="Status:">
       <span v-if="isConfirmed && item.confirmations > 10">
         <span class="mr-1 -mt-2 icon icon-green"><CheckCircleIcon /></span>
         <span
@@ -54,8 +56,7 @@
 
     <td data-title="Amount (XE):" class="amount-col">
       <span class="monospace">
-        <span v-if="sent">-</span>
-        {{ formattedAmount }}
+        {{ `${sent ? '-' : ''}${formattedAmount}` }}
       </span>
     </td>
 

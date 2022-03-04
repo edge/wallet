@@ -3,6 +3,9 @@
     <table>
       <thead class="hidden lg:table-header-group">
         <tr v-if="sortable">
+          <TableHeader width="15%" header="Date" :sortQuery="sortQuery"
+            sortParam="timestamp" :onSortingUpdate="updateSorting"
+          />
           <TableHeader width="10%" header="Tx Hash" :sortQuery="sortQuery"
             sortParam="hash" :onSortingUpdate="updateSorting"
           />
@@ -11,9 +14,6 @@
           />
           <TableHeader width="20%" header="Memo" :sortQuery="sortQuery"
             sortParam="data.memo" :onSortingUpdate="updateSorting"
-          />
-          <TableHeader width="15%" header="Date" :sortQuery="sortQuery"
-            sortParam="timestamp" :onSortingUpdate="updateSorting"
           />
           <TableHeader width="10%" header="Status" :sortQuery="sortQuery"
             sortParam="block.height" :onSortingUpdate="updateSorting"
@@ -37,6 +37,11 @@
           :key="item.hash"
           :item="item"
         />
+      </tbody>
+      <tbody v-else-if="!loaded && loading">
+        <td :colspan="!wallet ? 8 : 6" class="block w-full text-center bg-white lg:table-cell py-35">
+          Loading...
+        </td>
       </tbody>
       <tbody v-else>
         <tr>
@@ -63,6 +68,7 @@ export default {
   name: 'TransactionsTable',
   data: function () {
     return {
+      loaded: false,
       loading: false,
       metadata: null,
       transactions: [],
@@ -111,6 +117,7 @@ export default {
       )
       this.transactions = transactions.results
       if (this.receiveMetadata) this.receiveMetadata(transactions.metadata)
+      this.loaded = true
       this.loading = false
     },
     updateSorting(newSortQuery) {
