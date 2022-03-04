@@ -41,6 +41,11 @@
         :openUnlockStakeModal="openUnlockStakeModal"
       />
     </tbody>
+    <tbody v-else-if="!loaded && loading">
+      <td :colspan="!wallet ? 8 : 6" class="block w-full text-center bg-white lg:table-cell py-35">
+        Loading...
+      </td>
+    </tbody>
     <tbody v-else>
       <tr>
         <td colspan="7" class="block w-full text-center bg-white lg:table-cell py-35">
@@ -65,6 +70,7 @@ export default {
   name: 'StakesTable',
   data: function () {
     return {
+      loaded: false,
       loading: false,
       metadata: null,
       stakes: [],
@@ -115,6 +121,7 @@ export default {
       )
       this.stakes = stakes.results
       this.receiveMetadata(stakes.metadata)
+      this.loaded = true
       this.loading = false
     },
     updateSorting(newSortQuery) {

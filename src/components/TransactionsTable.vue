@@ -38,6 +38,11 @@
           :item="item"
         />
       </tbody>
+      <tbody v-else-if="!loaded && loading">
+        <td :colspan="!wallet ? 8 : 6" class="block w-full text-center bg-white lg:table-cell py-35">
+          Loading...
+        </td>
+      </tbody>
       <tbody v-else>
         <tr>
           <td colspan="6" class="block w-full text-center bg-white lg:table-cell py-35">
@@ -63,6 +68,7 @@ export default {
   name: 'TransactionsTable',
   data: function () {
     return {
+      loaded: false,
       loading: false,
       metadata: null,
       transactions: [],
@@ -111,6 +117,7 @@ export default {
       )
       this.transactions = transactions.results
       if (this.receiveMetadata) this.receiveMetadata(transactions.metadata)
+      this.loaded = true
       this.loading = false
     },
     updateSorting(newSortQuery) {
