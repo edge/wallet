@@ -23,10 +23,10 @@
           />
         </tr>
         <tr v-else>
+          <th width="15%">Date</th>
           <th width="10%">Tx Hash</th>
           <th width="30%">From/To</th>
           <th width="20%">Memo</th>
-          <th width="15%">Date</th>
           <th width="10%">Status</th>
           <th class="amount-col" width="15%">Amount XE</th>
         </tr>
