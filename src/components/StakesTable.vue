@@ -20,7 +20,7 @@
         <TableHeader class="amount-col" width="10%" header="Amount XE" :sortQuery="sortQuery"
           sortParam="amount" :onSortingUpdate="updateSorting"
         />
-        <th width="10%" v-if="stakes.length">&nbsp;</th>
+        <th width="10%">&nbsp;</th>
       </tr>
       <tr v-else>
         <th width="19%">ID</th>
@@ -29,7 +29,7 @@
         <th width="8%">Type</th>
         <th width="8%">Status</th>
         <th class="amount-col" width="10%">Amount XE</th>
-        <th width="10%" v-if="stakes.length">&nbsp;</th>
+        <th width="10%">&nbsp;</th>
       </tr>
     </thead>
     <tbody v-if="stakes.length">
@@ -42,13 +42,13 @@
       />
     </tbody>
     <tbody v-else-if="!loaded && loading">
-      <td :colspan="!wallet ? 8 : 6" class="block w-full text-center bg-white lg:table-cell py-35">
+      <td colspan="6" class="block w-full text-center bg-white lg:table-cell py-35">
         Loading...
       </td>
     </tbody>
     <tbody v-else>
       <tr>
-        <td colspan="7" class="block w-full text-center bg-white lg:table-cell py-35">
+        <td colspan="6" class="block w-full text-center bg-white lg:table-cell py-35">
           No stakes.
         </td>
       </tr>
