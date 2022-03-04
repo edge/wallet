@@ -4,7 +4,7 @@
       <template v-slot:header>
         <h2 class="mb-8">Deposit EDGE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
         <!-- eslint-disable max-len -->
-        <span v-if="browserSupport" class="sub-heading d-block text-gray text-caption">Connect to MetaMask to deposit EDGE for exchange.</span>
+        <span v-if="browserSupport" class="sub-heading d-block text-gray text-caption">Connect to MetaMask to deposit EDGE for swap.</span>
         <span v-else class="sub-heading d-block text-gray text-caption">Your browser doesn't support the MetaMask browser extension. Please use Brave, Chrome, Edge or Firefox for depositing EDGE.</span>
         <!-- eslint-enable max-len -->
       </template>
@@ -405,6 +405,7 @@ export default {
         const tx = await this.contract.approveAndCall(bridgeAddress, amount, this.address)
 
         this.completedTx = tx
+        this.depositInProgress = false
         this.goto(3)
       }
       catch (err) {

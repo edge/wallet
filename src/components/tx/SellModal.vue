@@ -171,7 +171,7 @@
         <div v-if="!withinSaleLimit" class="px-20 py-20 mb-24 text-center bg-black border border-gray-700 rounded convert-info md:text-left red border-opacity-30 border-color">
           <div class="">
             <span class="flex w-full overflow-hidden overflow-ellipsis text-red">
-              Exchange rate has been updated. The exchange maximum is now {{exchangeRate.limit}} XE.
+              Exchange rate has been updated. The swap maximum is now {{exchangeRate.limit}} XE.
             </span>
           </div>
         </div>

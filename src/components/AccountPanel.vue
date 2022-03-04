@@ -11,7 +11,7 @@
         <div class="account-panel__balance">
           <h3 class="mb-1">Balance</h3>
           <h1><Amount :value="balance / 1e6" currency="XE" sub/></h1>
-          <h2><Amount :value="usdBalance" currency="USD" :decimalPlaces="2"/></h2>
+          <h2>$ <Amount :value="usdBalance" currency=" USD" :decimalPlaces="2"/></h2>
         </div>
       </div>
 
@@ -32,11 +32,11 @@
             Send
           </button>
 
-          <button class="w-full button button--outline-success" @click="openExchange">
+          <button class="w-full button button--outline-success" @click="openSwap">
             <span class="button__icon w-15">
               <SwitchHorizontalIcon/>
             </span>
-            Exchange
+            Swap
           </button>
         </div>
       </div>
@@ -45,12 +45,12 @@
     <div class="account-panel__modals">
       <CreateStakeModal :close="reset" :visible="modal === 'createStake'"/>
       <SendModal :close="reset" :visible="modal === 'send'"/>
-      <ExchangeModal
+      <SwapModal
         :close="reset"
         :openDeposit="openDeposit"
         :openWithdraw="openWithdraw"
         :openSell="openSell"
-        :visible="modal === 'exchange'"
+        :visible="modal === 'swap'"
       />
       <DepositModal :close="reset" :visible="modal === 'deposit'"/>
       <WithdrawModal :close="reset" :visible="modal === 'withdraw'"/>
@@ -63,9 +63,9 @@
 import Amount from './Amount.vue'
 import CreateStakeModal from './stakes/CreateStakeModal'
 import DepositModal from './tx/DepositModal'
-import ExchangeModal from './tx/ExchangeModal'
 import SellModal from './tx/SellModal'
 import SendModal from './tx/SendModal'
+import SwapModal from './tx/SwapModal'
 import WithdrawModal from './tx/WithdrawModal'
 import { mapState } from 'vuex'
 import { ArrowUpIcon, PlusIcon, SwitchHorizontalIcon } from '@heroicons/vue/outline'
@@ -78,7 +78,7 @@ export default {
     ArrowUpIcon,
     CreateStakeModal,
     DepositModal,
-    ExchangeModal,
+    SwapModal,
     PlusIcon,
     SendModal,
     SellModal,
@@ -101,8 +101,8 @@ export default {
     openDeposit() {
       this.modal = 'deposit'
     },
-    openExchange() {
-      this.modal = 'exchange'
+    openSwap() {
+      this.modal = 'swap'
     },
     openSell() {
       this.modal = 'sell'

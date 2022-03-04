@@ -1,96 +1,118 @@
 <template>
-  <!-- eslint-disable vue/no-multiple-template-root -->
-  <td data-title="Tx Hash:" :title="item.hash">
-    <a :href="`${explorerUrl}/transaction/${item.hash}`" target="_blank" rel="noreferrer">
-      <span class="hidden monospace md:inline-block">{{ sliceString(item.hash, 8) }}</span>
-      <span class="monospace md:hidden">{{ sliceString(item.hash, 26) }}</span>
-    </a>
-  </td>
-  <td data-title="Date:">
-    <span class="monospace md:font-sans">
-      {{ item.date }}
-    </span>
-  </td>
-  <td data-title="Address:">
-    <span v-if="item.type.toLowerCase() === 'received'">
-      <span class="icon icon-green mr-4"><ArrowDownIcon /></span>
-      <a :href="`${explorerUrl}/wallet/${item.sender}`" target="_blank" rel="noreferrer">
-        <span class="hidden monospace md:inline-block">{{ item.sender }}</span>
+  <tr :class="isPending && 'pending'">
+    <td data-title="Date:">
+      <span class="md:inline-block">
+        {{ date }}
+      </span>
+    </td>
+
+    <td data-title="Tx Hash:" :title="item.hash">
+      <a :href="explorerTxUrl" target="_blank" rel="noreferrer">
+        <span class="monospace md:inline-block">
+          {{ item.hash }}
+        </span>
       </a>
-      <span class="monospace md:hidden">{{ sliceString(item.sender, 26) }}</span>
-    </span>
-    <span v-if="item.type.toLowerCase() === 'sent'">
-      <span class="icon icon-red mr-4"><ArrowUpIcon /></span>
-      <a :href="`${explorerUrl}/wallet/${item.recipient}`" target="_blank" rel="noreferrer">
-        <span class="hidden monospace md:inline-block">{{ item.recipient }}</span>
-      </a>
-      <span class="monospace md:hidden">{{ sliceString(item.recipient, 26) }}</span>
-    </span>
-  </td>
-  <td :title="item.description" data-title="Memo:" :class="item.description === 'None' ? 'text-gray-400' : ''">
-    <span class="monospace md:font-sans">{{ sliceString(item.description, 26) }}</span>
-  </td>
+    </td>
+
+    <td v-if="sent" data-title="To:">
+      <span class="icon-wrap">
+        <span class="mr-1 -mt-2 icon icon-red"><ArrowUpIcon /></span>
+        <a :href="explorerToAddressUrl" target="_blank" rel="noreferrer">
+          <span class="monospace md:inline-block">
+            {{ item.recipient }}
+          </span>
+        </a>
+      </span>
+    </td>
+    <td v-else data-title="From:">
+      <span class="icon-wrap">
+        <span class="mr-1 -mt-2 icon icon-green"><ArrowDownIcon /></span>
+        <a :href="explorerFromAddressUrl" target="_blank" rel="noreferrer">
+          <span class="monospace md:inline-block">
+            {{ item.sender }}
+          </span>
+        </a>
+      </span>
+    </td>
+
+    <td data-title="Memo:">
+      <span class="monospace md:font-sans" :class="!item.data.memo && 'text-gray'">
+        {{ item.data.memo || 'None' }}
+      </span>
+    </td>
+
   <td data-title="Status:">
-    <span v-if="!isConfirmed(item)" class="mr-1 -mt-2 icon icon--confirmed icon-grey">
-      <ClockIcon />
-    </span>
-    <span v-if="isConfirmed(item)" class="mr-1 -mt-2 icon icon--confirmed icon-green">
-      <CheckCircleIcon />
-    </span>
-    <span
-      class="monospace md:font-sans"
-      :class="item.confirmations < 10 || !item.confirmations ? 'text-gray-400' : ''"
-    >{{ formatStatus(item) }}</span>
-  </td>
-  <td data-title="Amount:">
-    <span class="monospace">
-      <span v-if="item.type.toLowerCase() === 'sent'">-</span><Amount :value="parseFloat(item.amount)"/>
-    </span>
-  </td>
+      <span v-if="isConfirmed && item.confirmations > 10">
+        <span class="mr-1 -mt-2 icon icon-green"><CheckCircleIcon /></span>
+        <span
+          class="monospace md:font-sans">{{ statusFormatted }}</span>
+      </span>
+      <span v-else>
+        <span class="mr-1 -mt-2 icon icon-grey"><ClockIcon/></span>
+        <span
+          class="monospace md:font-sans text-gray-400">{{ statusFormatted }}</span>
+      </span>
+    </td>
+
+    <td data-title="Amount (XE):" class="amount-col">
+      <span class="monospace">
+        {{ `${sent ? '-' : ''}${formattedAmount}` }}
+      </span>
+    </td>
+
+  </tr>
 </template>
 
 <script>
 /*global process*/
 
-import Amount from './Amount'
+import { formatXe } from '@edge/wallet-utils'
+import { mapState } from 'vuex'
 import { ArrowDownIcon, ArrowUpIcon, CheckCircleIcon, ClockIcon } from '@heroicons/vue/outline'
 
 export default {
-  name: 'TransactionsTableItem',
-  props: ['item'],
-  data: function() {
-    return {
-      explorerUrl: process.env.VUE_APP_EXPLORER_URL || 'https://xe.network'
-    }
-  },
-  methods: {
-    async copyToClipboard (input) {
-      if (navigator.clipboard) {
-        await navigator.clipboard.writeText(input)
-      }
-    },
-    sliceString(string, symbols) {
-      return string.length > symbols ? `${string.slice(0, symbols)}…` : string
-    },
-    formatStatus(item) {
-      if (item.pending) return 'Pending'
-      if (item.confirmations === 1) return `${item.confirmations} confirmation`
-      if (item.confirmations < 10) return `${item.confirmations} confirmations`
-      return 'Confirmed'
-    },
-    isConfirmed(item) {
-      if (item.pending) return false
-      if (item.confirmations === 1) return false
-      if (item.confirmations < 10) return false
-      return true
-    }
-  },
+  name: 'StakesTableItem',
+  props: [
+    'item'
+  ],
   components: {
-    Amount,
     ArrowDownIcon,
     ArrowUpIcon,
     CheckCircleIcon,
     ClockIcon
+  },
+  computed: {
+    ...mapState(['address']),
+    date() {
+      return new Date(this.item.timestamp).toLocaleString()
+    },
+    explorerFromAddressUrl() {
+      return `${process.env.VUE_APP_EXPLORER_URL}/wallet/${this.item.sender}`
+    },
+    explorerToAddressUrl() {
+      return `${process.env.VUE_APP_EXPLORER_URL}/wallet/${this.item.recipient}`
+    },
+    explorerTxUrl() {
+      return `${process.env.VUE_APP_EXPLORER_URL}/transaction/${this.item.hash}`
+    },
+    formattedAmount() {
+      return formatXe(this.item.amount / 1e6, true)
+    },
+    isConfirmed() {
+      return (!this.isPending || !this.item.confirmations < 10)
+    },
+    isPending() {
+      return !this.item.block
+    },
+    statusFormatted() {
+      if (this.isPending) return 'Pending'
+      if (this.item.confirmations === 1) return `${this.item.confirmations} confirmation`
+      if (this.item.confirmations < 10) return `${this.item.confirmations} confirmations`
+      return 'Confirmed'
+    },
+    sent() {
+      return this.item.sender === this.item.recipient || this.address === this.item.sender
+    }
   }
 }
 </script>
@@ -98,6 +120,18 @@ export default {
 <style scoped>
 td {
   @apply bg-white text-sm2 font-normal flex items-center px-5 break-all max-w-full pb-4;
+}
+
+td span {
+  @apply w-full overflow-ellipsis overflow-hidden whitespace-nowrap
+}
+
+td a {
+  @apply overflow-ellipsis overflow-hidden whitespace-nowrap
+}
+
+.icon-wrap {
+  @apply flex overflow-ellipsis overflow-hidden whitespace-nowrap
 }
 
 td::before {
@@ -116,9 +150,6 @@ td:last-child {
 td .icon {
   @apply w-15 inline-block align-middle;
 }
-td .icon--confirmed {
-  @apply w-16 md:w-18;
-}
 
 td .icon-green {
   @apply text-green;
@@ -132,12 +163,16 @@ td .icon-red {
   @apply text-red;
 }
 
-td .arrow-icon {
-  @apply absolute hidden pt-px lg:block w-14 h-14 -left-14 text-green;
-}
-
 td a {
   @apply leading-none border-b border-black border-opacity-25 hover:border-green hover:border-opacity-25 hover:text-green align-middle;
+}
+
+tr.pending {
+  @apply italic text-gray-400
+}
+
+tr.pending a {
+  @apply italic text-gray-400
 }
 
 @screen lg {
@@ -147,6 +182,10 @@ td a {
 
   td:first-child {
     @apply pl-20 pt-13;
+  }
+
+  td.amount-col {
+    @apply text-right
   }
 
   td:last-child {
