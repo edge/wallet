@@ -96,12 +96,13 @@ export default {
   watch: {
     metadata() {
       // clamp pagination to available page numbers with automatic redirection
-      if (this.currentPage > this.lastPage) this.$router.push({ name: 'Staking', query: { page: this.lastPage } })
+      // eslint-disable-next-line max-len
+      if (this.currentPage > this.lastPage) this.$router.replace({ query: { ...this.$route.query, page: this.lastPage } })
     }
   },
   mounted() {
     const p = parseInt(this.$route.query.page) || 0
-    if (p < 1) this.$router.push({ name: 'Staking', query: { page: 1 } })
+    if (p < 1) this.$router.replace({ query: { ...this.$route.query, page: 1 } })
   }
 }
 </script>
