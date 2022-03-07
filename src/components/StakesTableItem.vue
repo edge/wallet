@@ -115,7 +115,7 @@ export default {
 
 <style scoped>
 td {
-  @apply bg-white text-sm2 font-normal flex items-center px-5 break-all max-w-full pb-4;
+  @apply bg-white text-sm2 font-normal flex items-center px-5 break-all max-w-full pb-4 leading-none;
 }
 
 td span {
