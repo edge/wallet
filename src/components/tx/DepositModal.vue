@@ -51,7 +51,7 @@
           </div>
           <div class="form-group mb-30">
             <span class="label">Depositing to</span>
-            <HashLink to="etherscan" :wallet="address" />
+            <HashLink to="explorer" :wallet="address" />
           </div>
           <div class="lg-input-group" :class="{'form-group__error': v$.amount.$error}">
             <label for="key">AMOUNT</label>
