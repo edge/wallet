@@ -42,7 +42,7 @@
     </td>
 
   <td data-title="Status:">
-      <span v-if="isConfirmed && item.confirmations > 10">
+      <span v-if="isConfirmed">
         <span class="mr-1 -mt-2 icon icon-green"><CheckCircleIcon /></span>
         <span
           class="monospace md:font-sans">{{ statusFormatted }}</span>
