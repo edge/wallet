@@ -1,5 +1,5 @@
 <template>
-  <tr :class="isPending && 'pending'">
+  <tr :class="item.pending && 'pending'">
     <td data-title="Date:">
       <span class="md:inline-block">
         {{ date }}
@@ -99,13 +99,10 @@ export default {
       return formatXe(this.item.amount / 1e6, true)
     },
     isConfirmed() {
-      return (!this.isPending || !this.item.confirmations < 10)
-    },
-    isPending() {
-      return !this.item.block
+      return ((this.item.confirmations || 0) >= 10)
     },
     statusFormatted() {
-      if (this.isPending) return 'Pending'
+      if (this.item.pending) return 'Pending'
       if (this.item.confirmations === 1) return `${this.item.confirmations} confirmation`
       if (this.item.confirmations < 10) return `${this.item.confirmations} confirmations`
       return 'Confirmed'
