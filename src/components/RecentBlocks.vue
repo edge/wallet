@@ -30,7 +30,7 @@
             </a>
           </td>
           <td data-title="Mined:" class="text-gray-600 lg:text-gray">
-            <span class="mr-1 -mt-2 icon icon-grey"><ClockIcon /></span>
+            <span class="mr-1 lg:-mt-2 icon icon-grey"><ClockIcon /></span>
             {{ timeSince(block.timestamp) }}
           </td>
         </tr>
@@ -89,7 +89,7 @@ table, tbody, tr {
 }
 
 th {
-  @apply font-normal text-sm2 text-left text-black bg-gray-100 px-5 border-b-2 border-gray-200 py-8;
+  @apply font-normal text-sm2 text-left text-black bg-gray-100 px-5 border-b-2 border-gray-200 py-8 leading-tight;
 }
 
 th:last-child {
@@ -101,7 +101,7 @@ td {
 }
 
 td a {
-  @apply leading-none border-b border-black border-opacity-25 hover:border-green hover:border-opacity-25 hover:text-green align-middle;
+  @apply border-b border-black border-opacity-25 hover:border-green hover:border-opacity-25 hover:text-green align-middle;
 }
 
 td span {
@@ -155,7 +155,7 @@ td .icon-grey {
   }
 
   td {
-    @apply border-gray-200 pt-13 pb-14 table-cell border-b-2 align-middle;
+    @apply border-gray-200 pt-13 pb-10 table-cell border-b-2 align-middle;
   }
 
   td:first-child {
@@ -163,7 +163,7 @@ td .icon-grey {
   }
 
   td:last-child {
-    @apply pr-30 pb-13 border-b-2;
+    @apply pr-30 pb-10 border-b-2;
   }
 
   td:before {

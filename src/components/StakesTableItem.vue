@@ -15,41 +15,41 @@
     </td>
 
     <td data-title="Device:" :title="item.device">
-      <span v-if="item.device">
-        <span class="monospace md:inline-block">
+      <span v-if="item.device" class="md:inline-block">
+        <span class="monospace">
           {{ item.device }}
         </span>
       </span>
-      <span v-else class="text-gray-400">None</span>
+      <span v-else class="text-gray-400 md:inline-block">None</span>
     </td>
 
     <td data-title="Type:">
-      <span class="monospace lg:font-sans">{{ formattedType }}</span>
+      <span class="md:inline-block"><span class="monospace lg:font-sans">{{ formattedType }}</span></span>
     </td>
 
     <td data-title="Status:">
-      <span v-if="item.released">
+      <span v-if="item.released" class="md:inline-block">
         <span class="mr-1 -mt-2 icon icon-grey"><ArrowCircleDownIcon/></span>
         <span class="monospace lg:font-sans">Released</span>
       </span>
       <span v-else-if="item.unlockRequested">
-        <span v-if="isUnlocking">
+        <span v-if="isUnlocking" class="md:inline-block">
           <span class="mr-1 -mt-2 icon icon-grey"><ClockIcon/></span>
           <span class="monospace lg:font-sans">Unlocking</span>
         </span>
-        <span v-else>
+        <span v-else class="md:inline-block">
           <span class="mr-1 -mt-2 icon icon-grey"><DotsCircleHorizontalIcon/></span>
           <span class="monospace lg:font-sans">Unlocked</span>
         </span>
       </span>
-      <span v-else>
+      <span v-else class="md:inline-block">
         <span class="mr-1 -mt-2 icon icon-green"><CheckCircleIcon/></span>
         <span class="monospace lg:font-sans">Active</span>
       </span>
     </td>
 
     <td data-title="Amount (XE):" class="amount-col" :title="formattedAmount">
-      <span class="monospace">{{ formattedAmount }}</span>
+      <span class="monospace md:inline-block">{{ formattedAmount }}</span>
     </td>
 
     <td data-title="">
@@ -115,7 +115,7 @@ export default {
 
 <style scoped>
 td {
-  @apply bg-white text-sm2 font-normal flex items-center px-5 break-all max-w-full pb-4 leading-none;
+  @apply bg-white text-sm2 font-normal flex items-center px-5 break-all max-w-full pb-4 leading-tight;
 }
 
 td span {
@@ -152,7 +152,7 @@ td .icon-grey {
 }
 
 td a {
-  @apply leading-none border-b border-black border-opacity-25 hover:border-green hover:border-opacity-25 hover:text-green align-middle;
+  @apply border-b border-black border-opacity-25 hover:border-green hover:border-opacity-25 hover:text-green align-middle;
 }
 
 button.table-button {
@@ -161,7 +161,7 @@ button.table-button {
 
 @screen lg {
   td {
-    @apply border-gray-200 pt-13 pb-15 table-cell border-b-2 align-middle;
+    @apply border-gray-200 pt-13 pb-10 table-cell border-b-2 align-middle;
   }
 
   td:first-child {
@@ -173,7 +173,7 @@ button.table-button {
   }
 
   td:last-child {
-    @apply pb-13 border-b-2;
+    @apply pb-10 border-b-2;
   }
 
   td:before {
