@@ -1,7 +1,7 @@
 <template>
   <tr :class="item.pending && 'pending'">
     <td data-title="Date:">
-      <span class="md:inline-block">
+      <span class="monospace lg:font-sans md:inline-block">
         {{ date }}
       </span>
     </td>
@@ -36,7 +36,7 @@
     </td>
 
     <td data-title="Memo:" :title="item.data.memo || 'None'">
-      <span class="monospace md:font-sans" :class="!item.data.memo && 'text-gray'">
+      <span class="monospace lg:font-sans" :class="!item.data.memo && 'text-gray'">
         {{ item.data.memo || 'None' }}
       </span>
     </td>
@@ -44,13 +44,11 @@
   <td data-title="Status:">
       <span v-if="isConfirmed">
         <span class="mr-1 -mt-2 icon icon-green"><CheckCircleIcon /></span>
-        <span
-          class="monospace md:font-sans">{{ statusFormatted }}</span>
+        <span class="monospace lg:font-sans">{{ statusFormatted }}</span>
       </span>
       <span v-else>
         <span class="mr-1 -mt-2 icon icon-grey"><ClockIcon/></span>
-        <span
-          class="monospace md:font-sans text-gray-400">{{ statusFormatted }}</span>
+        <span class="monospace lg:font-sans text-gray-400">{{ statusFormatted }}</span>
       </span>
     </td>
 
@@ -59,7 +57,6 @@
         {{ `${sent ? '-' : ''}${formattedAmount}` }}
       </span>
     </td>
-
   </tr>
 </template>
 

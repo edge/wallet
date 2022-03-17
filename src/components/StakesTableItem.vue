@@ -24,27 +24,27 @@
     </td>
 
     <td data-title="Type:">
-      <span class="monospace md:font-sans">{{ formattedType }}</span>
+      <span class="monospace lg:font-sans">{{ formattedType }}</span>
     </td>
 
     <td data-title="Status:">
       <span v-if="item.released">
         <span class="mr-1 -mt-2 icon icon-grey"><ArrowCircleDownIcon/></span>
-        <span class="monospace md:font-sans">Released</span>
+        <span class="monospace lg:font-sans">Released</span>
       </span>
       <span v-else-if="item.unlockRequested">
         <span v-if="isUnlocking">
           <span class="mr-1 -mt-2 icon icon-grey"><ClockIcon/></span>
-          <span class="monospace md:font-sans">Unlocking</span>
+          <span class="monospace lg:font-sans">Unlocking</span>
         </span>
         <span v-else>
           <span class="mr-1 -mt-2 icon icon-grey"><DotsCircleHorizontalIcon/></span>
-          <span class="monospace md:font-sans">Unlocked</span>
+          <span class="monospace lg:font-sans">Unlocked</span>
         </span>
       </span>
       <span v-else>
         <span class="mr-1 -mt-2 icon icon-green"><CheckCircleIcon/></span>
-        <span class="monospace md:font-sans">Active</span>
+        <span class="monospace lg:font-sans">Active</span>
       </span>
     </td>
 

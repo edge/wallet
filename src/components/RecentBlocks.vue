@@ -19,8 +19,8 @@
       </tbody>
       <tbody v-if="blocks.length">
         <tr v-for="block in blocks" :key="block.hash">
-          <td data-title="Height:" class="monospace">
-            <a :href="`${explorerUrl}/block/${block.height}`" target="_blank" rel="noreferrer">
+          <td data-title="Height:">
+            <a :href="`${explorerUrl}/block/${block.height}`" target="_blank" rel="noreferrer" class="monospace">
               {{ block.height }}
             </a>
           </td>
@@ -29,7 +29,8 @@
               <span class="monospace">{{ block.hash.substr(0, 32) }}</span>
             </a>
           </td>
-          <td data-title="Mined:">
+          <td data-title="Mined:" class="text-gray-600 lg:text-gray">
+            <span class="mr-1 -mt-2 icon icon-grey"><ClockIcon /></span>
             {{ timeSince(block.timestamp) }}
           </td>
         </tr>
@@ -40,6 +41,7 @@
 
 <script>
 /*global process*/
+import { ClockIcon } from '@heroicons/vue/outline'
 import { fetchBlocks } from '../utils/api'
 import moment from 'moment'
 
@@ -53,6 +55,9 @@ export default {
       blocks: [],
       isTestnet: process.env.VUE_APP_IS_TESTNET === 'true'
     }
+  },
+  components: {
+    ClockIcon
   },
   mounted() {
     this.loading = true
@@ -87,10 +92,6 @@ th {
   @apply font-normal text-sm2 text-left text-black bg-gray-100 px-5 border-b-2 border-gray-200 py-8;
 }
 
-/* th:first-child {
-  @apply pt-8;
-} */
-
 th:last-child {
   @apply rounded-r-4;
 }
@@ -103,9 +104,17 @@ td a {
   @apply leading-none border-b border-black border-opacity-25 hover:border-green hover:border-opacity-25 hover:text-green align-middle;
 }
 
+td span {
+  @apply w-full overflow-ellipsis overflow-hidden whitespace-nowrap
+}
+
+td a {
+  @apply overflow-ellipsis overflow-hidden whitespace-nowrap
+}
+
 td::before {
   content: attr(data-title);
-  @apply font-bold mr-8 min-w-100;
+  @apply font-normal mr-8 min-w-100 text-xs text-gray-600 pt-2;
 }
 
 td:first-child {
@@ -114,6 +123,14 @@ td:first-child {
 
 td:last-child {
   @apply rounded-r-4 pb-8 border-b-4 border-gray-200;
+}
+
+td .icon {
+  @apply w-15 inline-block align-middle;
+}
+
+td .icon-grey {
+  @apply lg:text-gray-400;
 }
 
 @screen lg {
