@@ -61,7 +61,7 @@ export default {
   },
   methods: {
     async fetchBlocks() {
-      const { blocks } = await fetchBlocks({ limit: 7 })
+      const { blocks } = await fetchBlocks({ limit: 5 })
       this.blocks = blocks
       this.loading = false
     },

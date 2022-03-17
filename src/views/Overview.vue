@@ -6,7 +6,7 @@
     <div class="bg-gray-200 py-35">
       <div class="container">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-24 items-center">
-          <NewsPromo />
+          <TestnetFaucet />
           <RecentBlocks />
         </div>
 
@@ -33,9 +33,9 @@
 <script>
 import AccountPanel from '@/components/AccountPanel'
 import Header from '@/components/Header'
-import NewsPromo from '@/components/NewsPromo'
 import Overviews from '@/components/Overviews'
 import RecentBlocks from '@/components/RecentBlocks'
+import TestnetFaucet from '@/components/Faucet'
 import dayjs from 'dayjs'
 import { fetchTransactions } from '../utils/api'
 import { mapState } from 'vuex'
@@ -60,8 +60,8 @@ export default {
     AccountPanel,
     Overviews,
     Header,
-    NewsPromo,
-    RecentBlocks
+    RecentBlocks,
+    TestnetFaucet
   },
   computed: mapState(['address']),
   mounted() {
