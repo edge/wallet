@@ -40,7 +40,6 @@
 
 <script>
 /*global process*/
-
 import { fetchBlocks } from '../utils/api'
 import moment from 'moment'
 
@@ -51,7 +50,8 @@ export default {
       explorerUrl: process.env.VUE_APP_EXPLORER_URL || 'https://xe.network',
       loading: false,
       polling: null,
-      blocks: []
+      blocks: [],
+      isTestnet: process.env.VUE_APP_IS_TESTNET === 'true'
     }
   },
   mounted() {
@@ -61,7 +61,8 @@ export default {
   },
   methods: {
     async fetchBlocks() {
-      const { blocks } = await fetchBlocks({ limit: 5 })
+      const limit = this.isTestnet ? 5 : 7
+      const { blocks } = await fetchBlocks({ limit })
       this.blocks = blocks
       this.loading = false
     },

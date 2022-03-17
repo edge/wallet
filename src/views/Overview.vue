@@ -5,8 +5,12 @@
 
     <div class="bg-gray-200 py-35">
       <div class="container">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-24 items-center">
+        <div v-if="isTestnet" class="grid grid-cols-1 md:grid-cols-2 gap-24 items-center">
           <TestnetFaucet />
+          <RecentBlocks />
+        </div>
+        <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-24 items-center">
+          <NewsPromo />
           <RecentBlocks />
         </div>
 
@@ -31,8 +35,10 @@
 </template>
 
 <script>
+/*global process*/
 import AccountPanel from '@/components/AccountPanel'
 import Header from '@/components/Header'
+import NewsPromo from '@/components/NewsPromo'
 import Overviews from '@/components/Overviews'
 import RecentBlocks from '@/components/RecentBlocks'
 import TestnetFaucet from '@/components/Faucet'
@@ -53,13 +59,15 @@ export default {
       error: '',
       polling: null,
       overviews: [],
-      transactionRefreshInterval: 5000
+      transactionRefreshInterval: 5000,
+      isTestnet: process.env.VUE_APP_IS_TESTNET === 'true'
     }
   },
   components: {
     AccountPanel,
     Overviews,
     Header,
+    NewsPromo,
     RecentBlocks,
     TestnetFaucet
   },
