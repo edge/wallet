@@ -14,12 +14,12 @@
       </span>
     </td>
 
-    <td data-title="Device:" :title="item.device">
-      <span v-if="item.device" class="md:inline-block">
-        <span class="monospace">
+    <td data-title="Node:" :title="item.device">
+      <a v-if="item.device" :href="explorerNodeUrl">
+        <span class="monospace md:inline-block">
           {{ item.device }}
         </span>
-      </span>
+      </a>
       <span v-else class="text-gray-400 md:inline-block">None</span>
     </td>
 
@@ -66,7 +66,6 @@
 
 <script>
 /*global process*/
-
 import { formatXe } from '@edge/wallet-utils'
 import { ArrowCircleDownIcon, CheckCircleIcon, ClockIcon, DotsCircleHorizontalIcon } from '@heroicons/vue/outline'
 
@@ -87,6 +86,9 @@ export default {
     },
     address () {
       return this.item.tx.recipient
+    },
+    explorerNodeUrl() {
+      return `${process.env.VUE_APP_EXPLORER_URL}/node/${this.item.device}`
     },
     explorerStakeUrl() {
       return `${process.env.VUE_APP_EXPLORER_URL}/stake/${this.item.id}`
