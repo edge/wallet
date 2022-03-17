@@ -14,7 +14,7 @@
       </a>
     </td>
 
-    <td v-if="sent" data-title="To:">
+    <td v-if="sent" data-title="To:" :title="item.recipient">
       <span class="icon-wrap">
         <span class="mr-1 -mt-2 icon icon-red"><ArrowUpIcon /></span>
         <a :href="explorerToAddressUrl" target="_blank" rel="noreferrer">
@@ -24,7 +24,7 @@
         </a>
       </span>
     </td>
-    <td v-else data-title="From:">
+    <td v-else data-title="From:" :title="item.sender">
       <span class="icon-wrap">
         <span class="mr-1 -mt-2 icon icon-green"><ArrowDownIcon /></span>
         <a :href="explorerFromAddressUrl" target="_blank" rel="noreferrer">
@@ -35,7 +35,7 @@
       </span>
     </td>
 
-    <td data-title="Memo:">
+    <td data-title="Memo:" :title="item.data.memo || 'None'">
       <span class="monospace md:font-sans" :class="!item.data.memo && 'text-gray'">
         {{ item.data.memo || 'None' }}
       </span>
@@ -54,7 +54,7 @@
       </span>
     </td>
 
-    <td data-title="Amount (XE):" class="amount-col">
+    <td data-title="Amount (XE):" class="amount-col" :title="`${sent ? '-' : ''}${formattedAmount}`">
       <span class="monospace">
         {{ `${sent ? '-' : ''}${formattedAmount}` }}
       </span>

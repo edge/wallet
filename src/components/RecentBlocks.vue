@@ -24,7 +24,7 @@
               {{ block.height }}
             </a>
           </td>
-          <td data-title="Hash:">
+          <td data-title="Hash:" :title="block.hash">
             <a :href="`${explorerUrl}/block/${block.hash}`" target="_blank" rel="noreferrer">
               <span class="monospace">{{ block.hash.substr(0, 32) }}</span>
             </a>

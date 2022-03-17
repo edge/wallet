@@ -8,13 +8,13 @@
       </a>
     </td>
 
-    <td data-title="Hash:">
+    <td data-title="Hash:" :title="item.hash">
       <span class="monospace md:inline-block">
         {{ item.hash }}
       </span>
     </td>
 
-    <td data-title="Device:">
+    <td data-title="Device:" :title="item.device">
       <span v-if="item.device">
         <span class="monospace md:inline-block">
           {{ item.device }}
@@ -48,7 +48,7 @@
       </span>
     </td>
 
-    <td data-title="Amount (XE):" class="amount-col">
+    <td data-title="Amount (XE):" class="amount-col" :title="formattedAmount">
       <span class="monospace">{{ formattedAmount }}</span>
     </td>
 
