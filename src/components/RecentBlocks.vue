@@ -155,7 +155,7 @@ td .icon-grey {
   }
 
   td {
-    @apply border-gray-200 pt-13 pb-10 table-cell border-b-2 align-middle;
+    @apply border-gray-200 pt-13 pb-13 table-cell border-b-2 align-middle;
   }
 
   td:first-child {
@@ -163,7 +163,7 @@ td .icon-grey {
   }
 
   td:last-child {
-    @apply pr-30 pb-10 border-b-2;
+    @apply pr-30 pb-13 border-b-2;
   }
 
   td:before {
