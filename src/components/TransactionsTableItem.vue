@@ -1,14 +1,14 @@
 <template>
   <tr :class="item.pending && 'pending'">
     <td data-title="Date:">
-      <span class="monospace lg:font-sans md:inline-block">
+      <span class="monospace lg:font-sans lg:inline-block">
         {{ date }}
       </span>
     </td>
 
     <td data-title="Tx Hash:" :title="item.hash">
       <a :href="explorerTxUrl" target="_blank" rel="noreferrer">
-        <span class="monospace md:inline-block">
+        <span class="monospace lg:inline-block">
           {{ item.hash }}
         </span>
       </a>

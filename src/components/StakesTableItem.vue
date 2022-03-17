@@ -2,54 +2,54 @@
   <tr>
     <td data-title="ID:" :title="item.id">
       <a :href="explorerStakeUrl" target="_blank" rel="noreferrer">
-        <span class="monospace md:inline-block">
+        <span class="monospace lg:inline-block">
           {{ item.id }}
         </span>
       </a>
     </td>
 
     <td data-title="Hash:" :title="item.hash">
-      <span class="monospace md:inline-block">
+      <span class="monospace lg:inline-block">
         {{ item.hash }}
       </span>
     </td>
 
     <td data-title="Node:" :title="item.device">
       <a v-if="item.device" :href="explorerNodeUrl">
-        <span class="monospace md:inline-block">
+        <span class="monospace lg:inline-block">
           {{ item.device }}
         </span>
       </a>
-      <span v-else class="text-gray-400 md:inline-block">None</span>
+      <span v-else class="text-gray-400 lg:inline-block">None</span>
     </td>
 
     <td data-title="Type:">
-      <span class="md:inline-block"><span class="monospace lg:font-sans">{{ formattedType }}</span></span>
+      <span class="lg:inline-block"><span class="monospace lg:font-sans">{{ formattedType }}</span></span>
     </td>
 
     <td data-title="Status:">
-      <span v-if="item.released" class="md:inline-block">
+      <span v-if="item.released" class="lg:inline-block">
         <span class="mr-1 -mt-2 icon icon-grey"><ArrowCircleDownIcon/></span>
         <span class="monospace lg:font-sans">Released</span>
       </span>
       <span v-else-if="item.unlockRequested">
-        <span v-if="isUnlocking" class="md:inline-block">
+        <span v-if="isUnlocking" class="lg:inline-block">
           <span class="mr-1 -mt-2 icon icon-grey"><ClockIcon/></span>
           <span class="monospace lg:font-sans">Unlocking</span>
         </span>
-        <span v-else class="md:inline-block">
+        <span v-else class="lg:inline-block">
           <span class="mr-1 -mt-2 icon icon-grey"><DotsCircleHorizontalIcon/></span>
           <span class="monospace lg:font-sans">Unlocked</span>
         </span>
       </span>
-      <span v-else class="md:inline-block">
+      <span v-else class="lg:inline-block">
         <span class="mr-1 -mt-2 icon icon-green"><CheckCircleIcon/></span>
         <span class="monospace lg:font-sans">Active</span>
       </span>
     </td>
 
     <td data-title="Amount (XE):" class="amount-col" :title="formattedAmount">
-      <span class="monospace md:inline-block">{{ formattedAmount }}</span>
+      <span class="monospace lg:inline-block">{{ formattedAmount }}</span>
     </td>
 
     <td data-title="">
