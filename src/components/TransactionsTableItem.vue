@@ -54,7 +54,7 @@
 
     <td data-title="Amount (XE):" class="amount-col" :title="`${sent ? '-' : ''}${formattedAmount}`">
       <span class="monospace">
-        {{ `${sent ? '-' : ''}${formattedAmount}` }}
+        {{ `${sent && formattedAmount < 0 ? '-' : ''}${formattedAmount}` }}
       </span>
     </td>
   </tr>
