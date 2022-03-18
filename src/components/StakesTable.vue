@@ -25,7 +25,7 @@
       <tr v-else>
         <th width="19%">ID</th>
         <th width="19%">Hash</th>
-        <th width="26%">Device</th>
+        <th width="26%">Node</th>
         <th width="8%">Type</th>
         <th width="8%">Status</th>
         <th class="amount-col" width="10%">Amount XE</th>
