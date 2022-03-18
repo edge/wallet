@@ -95,9 +95,11 @@ export default {
   },
   watch: {
     metadata() {
-      if (this.lastPage > 1) {
-        const p = parseInt(this.$route.query.page) || 0
-        if (p < 1) this.$router.replace({ query: { page: 1 } })
+      const numRegEx = /^[-+]?\d*$/
+      if (this.$route.query.page) {
+        if (this.$route.query.page < 1 || !numRegEx.test(this.$route.query.page)) {
+          this.$router.replace({ query: { ...this.$route.query, page: 1 } })
+        }
       }
       if (this.currentPage > this.lastPage) this.$router.replace({ query: { page: this.lastPage } })
     }
