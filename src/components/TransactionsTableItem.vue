@@ -1,42 +1,42 @@
 <template>
   <tr :class="item.pending && 'pending'">
     <td data-title="Date:">
-      <span class="md:inline-block">
+      <span class="monospace lg:font-sans lg:inline-block">
         {{ date }}
       </span>
     </td>
 
     <td data-title="Tx Hash:" :title="item.hash">
       <a :href="explorerTxUrl" target="_blank" rel="noreferrer">
-        <span class="monospace md:inline-block">
+        <span class="monospace lg:inline-block">
           {{ item.hash }}
         </span>
       </a>
     </td>
 
-    <td v-if="sent" data-title="To:">
-      <span class="icon-wrap">
-        <span class="mr-1 -mt-2 icon icon-red"><ArrowUpIcon /></span>
+    <td v-if="sent" data-title="To:" class="from-to" :title="item.recipient">
+      <span>
+        <span class="icon-wrap"><ArrowUpIcon class="icon inline-icon icon-red" /></span>
         <a :href="explorerToAddressUrl" target="_blank" rel="noreferrer">
-          <span class="monospace md:inline-block">
+          <span class="monospace lg:inline-block">
             {{ item.recipient }}
           </span>
         </a>
       </span>
     </td>
-    <td v-else data-title="From:">
-      <span class="icon-wrap">
-        <span class="mr-1 -mt-2 icon icon-green"><ArrowDownIcon /></span>
+    <td v-else data-title="From:" class="from-to" :title="item.sender">
+      <span>
+        <span class="icon-wrap"><ArrowDownIcon class="icon inline-icon icon-red" /></span>
         <a :href="explorerFromAddressUrl" target="_blank" rel="noreferrer">
-          <span class="monospace md:inline-block">
+          <span class="monospace lg:inline-block">
             {{ item.sender }}
           </span>
         </a>
       </span>
     </td>
 
-    <td data-title="Memo:">
-      <span class="monospace md:font-sans" :class="!item.data.memo && 'text-gray'">
+    <td data-title="Memo:" :title="item.data.memo || 'None'">
+      <span class="monospace lg:font-sans" :class="!item.data.memo && 'text-gray'">
         {{ item.data.memo || 'None' }}
       </span>
     </td>
@@ -44,22 +44,19 @@
   <td data-title="Status:">
       <span v-if="isConfirmed">
         <span class="mr-1 -mt-2 icon icon-green"><CheckCircleIcon /></span>
-        <span
-          class="monospace md:font-sans">{{ statusFormatted }}</span>
+        <span class="monospace lg:font-sans">{{ statusFormatted }}</span>
       </span>
       <span v-else>
         <span class="mr-1 -mt-2 icon icon-grey"><ClockIcon/></span>
-        <span
-          class="monospace md:font-sans text-gray-400">{{ statusFormatted }}</span>
+        <span class="monospace lg:font-sans text-gray-400">{{ statusFormatted }}</span>
       </span>
     </td>
 
-    <td data-title="Amount (XE):" class="amount-col">
+    <td data-title="Amount (XE):" class="amount-col" :title="`${sent ? '-' : ''}${formattedAmount}`">
       <span class="monospace">
         {{ `${sent ? '-' : ''}${formattedAmount}` }}
       </span>
     </td>
-
   </tr>
 </template>
 
@@ -116,7 +113,7 @@ export default {
 
 <style scoped>
 td {
-  @apply bg-white text-sm2 font-normal flex items-center px-5 break-all max-w-full pb-4 leading-none;
+  @apply bg-white text-sm2 font-normal flex items-center px-5 break-all max-w-full pb-4 leading-tight;
 }
 
 td span {
@@ -125,10 +122,6 @@ td span {
 
 td a {
   @apply overflow-ellipsis overflow-hidden whitespace-nowrap
-}
-
-.icon-wrap {
-  @apply flex overflow-ellipsis overflow-hidden whitespace-nowrap
 }
 
 td::before {
@@ -148,6 +141,10 @@ td .icon {
   @apply w-15 inline-block align-middle;
 }
 
+td .inline-icon {
+  @apply inline-block mb-2 lg:mb-0
+}
+
 td .icon-green {
   @apply text-green;
 }
@@ -161,7 +158,7 @@ td .icon-red {
 }
 
 td a {
-  @apply leading-none border-b border-black border-opacity-25 hover:border-green hover:border-opacity-25 hover:text-green align-middle;
+  @apply border-b border-black border-opacity-25 hover:border-green hover:border-opacity-25 hover:text-green align-middle;
 }
 
 tr.pending {
@@ -172,9 +169,17 @@ tr.pending a {
   @apply italic text-gray-400
 }
 
+td.from-to span {
+  @apply lg:w-11/12;
+}
+
+.icon-wrap {
+  @apply max-w-max
+}
+
 @screen lg {
   td {
-    @apply border-gray-200 pt-13 pb-15 table-cell border-b-2 align-middle;
+    @apply border-gray-200 pt-13 pb-10 table-cell border-b-2 align-middle;
   }
 
   td:first-child {
@@ -186,7 +191,7 @@ tr.pending a {
   }
 
   td:last-child {
-    @apply pr-30 pb-13 text-right border-b-2;
+    @apply pr-30 pb-10 text-right border-b-2;
   }
 
   td:before {

@@ -2,54 +2,54 @@
   <tr>
     <td data-title="ID:" :title="item.id">
       <a :href="explorerStakeUrl" target="_blank" rel="noreferrer">
-        <span class="monospace md:inline-block">
+        <span class="monospace lg:inline-block">
           {{ item.id }}
         </span>
       </a>
     </td>
 
-    <td data-title="Hash:">
-      <span class="monospace md:inline-block">
+    <td data-title="Hash:" :title="item.hash">
+      <span class="monospace lg:inline-block">
         {{ item.hash }}
       </span>
     </td>
 
-    <td data-title="Device:">
-      <span v-if="item.device">
-        <span class="monospace md:inline-block">
+    <td data-title="Node:" :title="item.device">
+      <a v-if="item.device" :href="explorerNodeUrl">
+        <span class="monospace lg:inline-block">
           {{ item.device }}
         </span>
-      </span>
-      <span v-else class="text-gray-400">None</span>
+      </a>
+      <span v-else class="text-gray-400 lg:inline-block">None</span>
     </td>
 
     <td data-title="Type:">
-      <span class="monospace md:font-sans">{{ formattedType }}</span>
+      <span class="lg:inline-block"><span class="monospace lg:font-sans">{{ formattedType }}</span></span>
     </td>
 
     <td data-title="Status:">
-      <span v-if="item.released">
+      <span v-if="item.released" class="lg:inline-block">
         <span class="mr-1 -mt-2 icon icon-grey"><ArrowCircleDownIcon/></span>
-        <span class="monospace md:font-sans">Released</span>
+        <span class="monospace lg:font-sans">Released</span>
       </span>
       <span v-else-if="item.unlockRequested">
-        <span v-if="isUnlocking">
+        <span v-if="isUnlocking" class="lg:inline-block">
           <span class="mr-1 -mt-2 icon icon-grey"><ClockIcon/></span>
-          <span class="monospace md:font-sans">Unlocking</span>
+          <span class="monospace lg:font-sans">Unlocking</span>
         </span>
-        <span v-else>
+        <span v-else class="lg:inline-block">
           <span class="mr-1 -mt-2 icon icon-grey"><DotsCircleHorizontalIcon/></span>
-          <span class="monospace md:font-sans">Unlocked</span>
+          <span class="monospace lg:font-sans">Unlocked</span>
         </span>
       </span>
-      <span v-else>
+      <span v-else class="lg:inline-block">
         <span class="mr-1 -mt-2 icon icon-green"><CheckCircleIcon/></span>
-        <span class="monospace md:font-sans">Active</span>
+        <span class="monospace lg:font-sans">Active</span>
       </span>
     </td>
 
-    <td data-title="Amount (XE):" class="amount-col">
-      <span class="monospace">{{ formattedAmount }}</span>
+    <td data-title="Amount (XE):" class="amount-col" :title="formattedAmount">
+      <span class="monospace lg:inline-block">{{ formattedAmount }}</span>
     </td>
 
     <td data-title="">
@@ -66,7 +66,6 @@
 
 <script>
 /*global process*/
-
 import { formatXe } from '@edge/wallet-utils'
 import { ArrowCircleDownIcon, CheckCircleIcon, ClockIcon, DotsCircleHorizontalIcon } from '@heroicons/vue/outline'
 
@@ -87,6 +86,9 @@ export default {
     },
     address () {
       return this.item.tx.recipient
+    },
+    explorerNodeUrl() {
+      return `${process.env.VUE_APP_EXPLORER_URL}/node/${this.item.device}`
     },
     explorerStakeUrl() {
       return `${process.env.VUE_APP_EXPLORER_URL}/stake/${this.item.id}`
@@ -115,7 +117,7 @@ export default {
 
 <style scoped>
 td {
-  @apply bg-white text-sm2 font-normal flex items-center px-5 break-all max-w-full pb-4 leading-none;
+  @apply bg-white text-sm2 font-normal flex items-center px-5 break-all max-w-full pb-4 leading-tight;
 }
 
 td span {
@@ -152,7 +154,7 @@ td .icon-grey {
 }
 
 td a {
-  @apply leading-none border-b border-black border-opacity-25 hover:border-green hover:border-opacity-25 hover:text-green align-middle;
+  @apply border-b border-black border-opacity-25 hover:border-green hover:border-opacity-25 hover:text-green align-middle;
 }
 
 button.table-button {
@@ -161,7 +163,7 @@ button.table-button {
 
 @screen lg {
   td {
-    @apply border-gray-200 pt-13 pb-15 table-cell border-b-2 align-middle;
+    @apply border-gray-200 pt-13 pb-10 table-cell border-b-2 align-middle;
   }
 
   td:first-child {
@@ -173,7 +175,7 @@ button.table-button {
   }
 
   td:last-child {
-    @apply pb-13 border-b-2;
+    @apply pb-10 border-b-2;
   }
 
   td:before {

@@ -95,14 +95,13 @@ export default {
   },
   watch: {
     metadata() {
-      // clamp pagination to available page numbers with automatic redirection
+      if (this.lastPage > 1) {
+        const p = parseInt(this.$route.query.page) || 0
+        if (p < 1) this.$router.replace({ ...this.$route.query, query: { page: 1 } })
+      }
       // eslint-disable-next-line max-len
       if (this.currentPage > this.lastPage) this.$router.replace({ query: { ...this.$route.query, page: this.lastPage } })
     }
-  },
-  mounted() {
-    const p = parseInt(this.$route.query.page) || 0
-    if (p < 1) this.$router.replace({ query: { ...this.$route.query, page: 1 } })
   }
 }
 </script>
