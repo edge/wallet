@@ -122,7 +122,7 @@ th:last-child {
 }
 
 td {
-  @apply bg-white text-sm2 font-normal flex items-center px-5 break-all max-w-full;
+  @apply bg-white text-sm2 font-normal flex items-center px-5 break-all max-w-full leading-tight;
 }
 
 td a {
