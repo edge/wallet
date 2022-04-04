@@ -59,7 +59,7 @@
 
 <script>
 /*global process*/
-import * as index from '../../../index-utils'
+import * as index from '@edge/index-utils'
 import NodesTableItem from '@/components/NodesTableItem'
 import TableHeader from '@/components/TableHeader'
 import { mapState } from 'vuex'
