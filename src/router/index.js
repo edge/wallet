@@ -5,6 +5,7 @@
 /*global process*/
 
 import Index from '../views/Index.vue'
+import Nodes from '@/views/Nodes'
 import Overview from '@/views/Overview'
 import Staking from '@/views/Staking'
 import Transactions from '@/views/Transactions'
@@ -15,6 +16,11 @@ const routes = [
     path: '/',
     name: 'Index',
     component: Index
+  },
+  {
+    path: '/nodes',
+    name: 'Nodes',
+    component: Nodes
   },
   {
     path: '/overview',

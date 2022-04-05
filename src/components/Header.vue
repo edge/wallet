@@ -46,6 +46,10 @@ export default {
           text: 'Staking'
         },
         {
+          link: '/nodes',
+          text: 'Nodes'
+        },
+        {
           link: '/governance',
           text: 'Governance',
           disabled: true

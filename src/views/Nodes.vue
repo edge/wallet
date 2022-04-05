@@ -1,19 +1,18 @@
 <template>
   <div>
     <Header />
-    <AccountPanel/>
-
+    <AccountPanel view="staking" />
     <div class="bg-gray-200 py-35">
       <div class="container">
-        <TransactionsTable
+        <NodesTable
           :limit="limit"
-          :receiveMetadata="onTransactionsUpdate"
+          :receiveMetadata="onNodesUpdate"
           :page="currentPage"
           :sortable="true"
         />
         <Pagination
           v-if="metadata.totalCount > limit"
-          baseRoute="Transactions"
+          baseRoute="Nodes"
           :currentPage="currentPage"
           :limit="limit"
           :totalCount="metadata.totalCount"
@@ -26,12 +25,11 @@
 <script>
 import AccountPanel from '@/components/AccountPanel'
 import Header from '@/components/Header'
+import NodesTable from '@/components/NodesTable'
 import Pagination from '@/components/PaginationNew'
-import TransactionsTable from '@/components/TransactionsTable'
 
 export default {
-  name: 'ViewTransactions',
-  title: 'Transactions',
+  name: 'ViewNodes',
   data: function () {
     return {
       metadata: { totalCount: 0 },
@@ -41,8 +39,8 @@ export default {
   components: {
     AccountPanel,
     Header,
-    Pagination,
-    TransactionsTable
+    NodesTable,
+    Pagination
   },
   computed: {
     currentPage() {
@@ -53,7 +51,7 @@ export default {
     }
   },
   methods: {
-    onTransactionsUpdate(metadata) {
+    onNodesUpdate(metadata) {
       this.metadata = metadata
     }
   },
@@ -65,9 +63,9 @@ export default {
           this.$router.replace({ query: { ...this.$route.query, page: 1 } })
         }
       }
-      // eslint-disable-next-line max-len
-      if (this.currentPage > this.lastPage) this.$router.replace({ query: { ...this.$route.query, page: this.lastPage } })
+      if (this.currentPage > this.lastPage) this.$router.replace({ query: { page: this.lastPage } })
     }
   }
 }
 </script>
+
