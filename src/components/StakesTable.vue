@@ -8,7 +8,7 @@
         <TableHeader width="19%" header="Hash" :sortQuery="sortQuery"
           sortParam="hash" :onSortingUpdate="updateSorting"
         />
-        <TableHeader width="26%" header="Device" :sortQuery="sortQuery"
+        <TableHeader width="26%" header="Node" :sortQuery="sortQuery"
           sortParam="device" :onSortingUpdate="updateSorting"
         />
         <TableHeader width="8%" header="Type" :sortQuery="sortQuery"

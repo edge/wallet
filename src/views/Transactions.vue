@@ -65,7 +65,8 @@ export default {
           this.$router.replace({ query: { ...this.$route.query, page: 1 } })
         }
       }
-      if (this.currentPage > this.lastPage) this.$router.replace({ query: { page: this.lastPage } })
+      // eslint-disable-next-line max-len
+      if (this.currentPage > this.lastPage) this.$router.replace({ query: { ...this.$route.query, page: this.lastPage } })
     }
   }
 }
