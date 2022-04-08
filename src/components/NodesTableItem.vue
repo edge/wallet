@@ -1,30 +1,30 @@
 <template>
   <tr>
     <td data-title="Address:" :title="item.node.address">
-      <router-link :to="addressRoute">
+      <a :href="explorerAddressUrl" target="_blank" rel="noreferrer">
         <span class="monospace lg:inline-block">
           {{ item.node.address }}
         </span>
-      </router-link>
+      </a>
     </td>
 
     <td data-title="Gateway:" :title="item.node.gateway">
-      <router-link v-if="item.node.gateway" :to="gatewayRoute">
+      <a v-if="item.node.gateway" :href="explorerGatewayUrl" target="_blank" rel="noreferrer">
         <span class="monospace lg:inline-block">
           {{ item.node.gateway }}
         </span>
-      </router-link>
+      </a>
       <span v-else class="monospace lg:inline-block text-gray">
         N/A
       </span>
     </td>
 
     <td data-title="Stargate:" :title="item.node.stargate">
-      <router-link v-if="item.node.stargate" :to="stargateRoute">
+      <a v-if="item.node.stargate" :href="explorerStargateUrl" target="_blank" rel="noreferrer">
         <span class="monospace lg:inline-block">
           {{ item.node.stargate }}
         </span>
-      </router-link>
+      </a>
       <span v-else class="monospace lg:inline-block text-gray">
         N/A
       </span>
@@ -67,6 +67,8 @@
 </template>
 
 <script>
+/*global process*/
+
 import moment from 'moment'
 import { ClockIcon, StatusOfflineIcon, StatusOnlineIcon } from '@heroicons/vue/outline'
 
@@ -80,13 +82,13 @@ export default {
   },
   computed: {
     addressRoute() {
-      return {name: 'Node', params: {nodeAddress: this.item.node.address}}
+      return `${process.env.VUE_APP_EXPLORER_URL}/node/${this.item.node.address}`
     },
     gatewayRoute() {
-      return {name: 'Node', params: {nodeAddress: this.item.node.gateway}}
+      return `${process.env.VUE_APP_EXPLORER_URL}/node/${this.item.node.fateway}`
     },
     stargateRoute() {
-      return {name: 'Node', params: {nodeAddress: this.item.node.stargate}}
+      return `${process.env.VUE_APP_EXPLORER_URL}/node/${this.item.node.stargate}`
     },
     formattedType() {
       return this.item.node.type.charAt(0).toUpperCase() + this.item.node.type.slice(1)
