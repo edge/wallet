@@ -2,54 +2,55 @@
   <table>
     <thead class="hidden lg:table-header-group">
       <tr v-if="sortable">
-        <TableHeader width="19%" header="ID" :sortQuery="sortQuery"
-          sortParam="id" :onSortingUpdate="updateSorting"
+        <TableHeader width="16%" header="Address" :sortQuery="sortQuery"
+          sortParam="node.address" :onSortingUpdate="updateSorting" :sortAscFirst="true"
         />
-        <TableHeader width="19%" header="Hash" :sortQuery="sortQuery"
-          sortParam="hash" :onSortingUpdate="updateSorting"
-        />
-        <TableHeader width="26%" header="Node" :sortQuery="sortQuery"
-          sortParam="device" :onSortingUpdate="updateSorting"
-        />
+        <!-- currently no sorting on gateway and stargate columns as stargate isn't included in host node's data -->
+        <th width="15%">Gateway</th>
+        <th width="15%">Stargate</th>
         <TableHeader width="8%" header="Type" :sortQuery="sortQuery"
-          sortParam="type" :onSortingUpdate="updateSorting"
+          sortParam="node.type" :onSortingUpdate="updateSorting" :sortAscFirst="true"
+        />
+        <TableHeader width="20%" header="Location" :sortQuery="sortQuery"
+          sortParam="node.geo.country,node.geo.city" :onSortingUpdate="updateSorting" :sortAscFirst="true"
+        />
+        <TableHeader width="98" header="Availability" :sortQuery="sortQuery"
+          sortParam="sortAvailability" :onSortingUpdate="updateSorting"
         />
         <TableHeader width="8%" header="Status" :sortQuery="sortQuery"
-          sortParam="sortStatus" :onSortingUpdate="updateSorting"
+          sortParam="lastActive" :onSortingUpdate="updateSorting"
         />
-        <TableHeader class="amount-col" width="10%" header="Amount XE" :sortQuery="sortQuery"
-          sortParam="amount" :onSortingUpdate="updateSorting"
+        <TableHeader width="15%" header="Last Seen" :sortQuery="sortQuery"
+          sortParam="lastActive" :onSortingUpdate="updateSorting"
         />
-        <th width="10%">&nbsp;</th>
       </tr>
       <tr v-else>
-        <th width="19%">ID</th>
-        <th width="19%">Hash</th>
-        <th width="26%">Node</th>
+        <th width="16%">Address</th>
+        <th width="15%">Gateway</th>
+        <th width="15%">Stargate</th>
         <th width="8%">Type</th>
+        <th width="20%">Location</th>
+        <th width="98">Availability</th>
         <th width="8%">Status</th>
-        <th class="amount-col" width="10%">Amount XE</th>
-        <th width="10%">&nbsp;</th>
+        <th width="12%">Last Seen</th>
       </tr>
     </thead>
-    <tbody v-if="stakes.length">
-      <StakesTableItem
-        v-for="item in stakes"
+    <tbody v-if="nodes.length">
+      <NodesTableItem
+        v-for="item in nodes"
         :key="item.id"
         :item="item"
-        :openReleaseStakeModal="openReleaseStakeModal"
-        :openUnlockStakeModal="openUnlockStakeModal"
       />
     </tbody>
     <tbody v-else-if="!loaded && loading">
-      <td colspan="6" class="block w-full text-center bg-white lg:table-cell py-35">
+      <td colspan="8" class="block w-full text-center bg-white lg:table-cell py-35">
         Loading...
       </td>
     </tbody>
     <tbody v-else>
       <tr>
-        <td colspan="6" class="block w-full text-center bg-white lg:table-cell py-35">
-          No stakes.
+        <td colspan="8" class="block w-full text-center bg-white lg:table-cell py-35">
+          No Nodes.
         </td>
       </tr>
     </tbody>
@@ -58,36 +59,33 @@
 
 <script>
 /*global process*/
-
 import * as index from '@edge/index-utils'
-import StakesTableItem from '@/components/StakesTableItem'
+import NodesTableItem from '@/components/NodesTableItem'
 import TableHeader from '@/components/TableHeader'
 import { mapState } from 'vuex'
 
-const stakesRefreshInterval = 5 * 1000
+const nodesRefreshInterval = 30 * 1000
 
 export default {
-  name: 'StakesTable',
+  name: 'NodesTable',
   data: function () {
     return {
       loaded: false,
       loading: false,
       metadata: null,
-      stakes: [],
-      iStakes: null
+      nodes: [],
+      iNodes: null
     }
   },
   components: {
-    StakesTableItem,
+    NodesTableItem,
     TableHeader
   },
   props: [
     'limit',
     'page',
     'receiveMetadata',
-    'sortable',
-    'openReleaseStakeModal',
-    'openUnlockStakeModal'
+    'sortable'
   ],
   computed: {
     ...mapState(['address']),
@@ -96,21 +94,21 @@ export default {
     }
   },
   mounted() {
-    this.updateStakes()
+    this.updateNodes()
     // initiate polling
-    this.iStakes = setInterval(() => {
-      this.updateStakes()
-    }, stakesRefreshInterval)
+    this.iNodes = setInterval(() => {
+      this.updateNodes()
+    }, nodesRefreshInterval)
   },
   unmounted() {
-    clearInterval(this.iStakes)
+    clearInterval(this.iNodes)
   },
   methods: {
-    async updateStakes() {
+    async updateNodes() {
       this.loading = true
       // the sort query sent to index needs to include "-created", but this is hidden from user in browser url
-      const sortQuery = this.$route.query.sort ? `${this.$route.query.sort},-created` : '-created'
-      const stakes = await index.stake.stakes(
+      const sortQuery = this.$route.query.sort ? `${this.$route.query.sort},-sortAvailability` : '-sortAvailability'
+      const nodes = await index.session.sessions(
         process.env.VUE_APP_INDEX_API_URL,
         this.address,
         {
@@ -119,8 +117,8 @@ export default {
           sort: sortQuery
         }
       )
-      this.stakes = stakes.results
-      this.receiveMetadata(stakes.metadata)
+      this.nodes = nodes.results
+      this.receiveMetadata(nodes.metadata)
       this.loaded = true
       this.loading = false
     },
@@ -132,10 +130,10 @@ export default {
   },
   watch: {
     page() {
-      this.updateStakes()
+      this.updateNodes()
     },
     sortQuery() {
-      this.updateStakes()
+      this.updateNodes()
     }
   }
 }
