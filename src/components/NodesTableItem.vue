@@ -1,7 +1,7 @@
 <template>
   <tr>
     <td data-title="Address:" :title="item.node.address">
-      <a :href="explorerAddressUrl" target="_blank" rel="noreferrer">
+      <a :href="explorerUrl" target="_blank" rel="noreferrer">
         <span class="monospace lg:inline-block">
           {{ item.node.address }}
         </span>
@@ -9,7 +9,7 @@
     </td>
 
     <td data-title="Gateway:" :title="item.node.gateway">
-      <a v-if="item.node.gateway" :href="explorerGatewayUrl" target="_blank" rel="noreferrer">
+      <a v-if="item.node.gateway" :href="gatewayUrl" target="_blank" rel="noreferrer">
         <span class="monospace lg:inline-block">
           {{ item.node.gateway }}
         </span>
@@ -20,7 +20,7 @@
     </td>
 
     <td data-title="Stargate:" :title="item.node.stargate">
-      <a v-if="item.node.stargate" :href="explorerStargateUrl" target="_blank" rel="noreferrer">
+      <a v-if="item.node.stargate" :href="stargateUrl" target="_blank" rel="noreferrer">
         <span class="monospace lg:inline-block">
           {{ item.node.stargate }}
         </span>
@@ -81,13 +81,13 @@ export default {
     StatusOnlineIcon
   },
   computed: {
-    addressRoute() {
+    explorerUrl() {
       return `${process.env.VUE_APP_EXPLORER_URL}/node/${this.item.node.address}`
     },
-    gatewayRoute() {
-      return `${process.env.VUE_APP_EXPLORER_URL}/node/${this.item.node.fateway}`
+    gatewayUrl() {
+      return `${process.env.VUE_APP_EXPLORER_URL}/node/${this.item.node.gateway}`
     },
-    stargateRoute() {
+    stargateUrl() {
       return `${process.env.VUE_APP_EXPLORER_URL}/node/${this.item.node.stargate}`
     },
     formattedType() {
