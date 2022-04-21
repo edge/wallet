@@ -37,7 +37,12 @@
         <div class="px-24 pt-32 pb-40 border-t border-gray-700 border-opacity-30">
           <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
             <button class="w-full button button--outline-success" @click="cancel">Cancel</button>
-            <Tooltip position="top" theme="dark" :text="'Copied to clipboard'" :clickToDisplay="true" :display="displayTooltip">
+            <Tooltip
+              position="top" theme="dark"
+              :text="'Copied to clipboard'"
+              :clickToDisplay="true"
+              :display="displayTooltip"
+            >
               <button @click="copy" class="w-full button button--success">Copy</button>
             </Tooltip>
           </div>
@@ -147,5 +152,15 @@ export default {
   transform: translate(-50%, -50%);
   width: 25%;
   padding: 3px;
+}
+
+@media only screen and (max-width: 500px) {
+  .wrapper {
+    @apply flex-col items-center
+  }
+
+  .address {
+    @apply mt-14
+  }
 }
 </style>
