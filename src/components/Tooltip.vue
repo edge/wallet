@@ -1,5 +1,5 @@
 <template>
-  <div class="tooltip-box">
+  <div class="tooltip-box" :class="!clickToDisplay ? 'hover' : display ? 'display' : ''">
     <slot />
     <div class="tooltip" :class="[theme === 'dark' ? 'dark' : 'light', position || 'top', wide ? 'wide' : '']">
       <span class="text">{{ text }}</span>
@@ -13,15 +13,23 @@ export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: 'Tooltip',
   props: {
+    clickToDisplay: {
+      type: Boolean,
+      required: false
+    },
+    display: {
+      type: Boolean,
+      required: false
+    },
+    position: {
+      type: String,
+      required: false
+    },
     text: {
       type: String,
       required: true
     },
     theme: {
-      type: String,
-      required: false
-    },
-    position: {
       type: String,
       required: false
     },
@@ -38,23 +46,43 @@ export default {
     @apply relative inline-block cursor-pointer;
   }
 
-  /* visible states */
-  .tooltip-box:hover .tooltip {
+  /* visible states on hover */
+  .tooltip-box.hover:hover .tooltip {
     @apply opacity-100 visible;
   }
-  .tooltip-box:hover .tooltip.top {
+  .tooltip-box.hover:hover .tooltip.top {
     @apply -translate-y-8;
   }
 
-  .tooltip-box:hover .tooltip.bottom {
+  .tooltip-box.hover:hover .tooltip.bottom {
     @apply translate-y-8;
   }
 
-  .tooltip-box:hover .tooltip.right {
+  .tooltip-box.hover:hover .tooltip.right {
     @apply translate-x-5;
   }
 
-  .tooltip-box:hover .tooltip.left {
+  .tooltip-box.hover:hover .tooltip.left {
+    @apply -translate-x-5;
+  }
+
+  /* visible states on click */
+  .tooltip-box.display .tooltip {
+    @apply opacity-100 visible;
+  }
+  .tooltip-box.display .tooltip.top {
+    @apply -translate-y-8;
+  }
+
+  .tooltip-box.display .tooltip.bottom {
+    @apply translate-y-8;
+  }
+
+  .tooltip-box.display .tooltip.right {
+    @apply translate-x-5;
+  }
+
+  .tooltip-box.display .tooltip.left {
     @apply -translate-x-5;
   }
 
