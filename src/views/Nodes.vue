@@ -20,6 +20,7 @@
       </div>
       <!-- CHART COMPONENTS -->
       <div class="container mt-40">
+        <NodesChartTimeToggle :period="chartPeriod" :onPeriodUpdate="updateChartPeriod" />
         <div class="row mb-25">
           <NodesChartAvailability
             v-if="sessionStats.length"
@@ -63,6 +64,7 @@ import Header from '@/components/Header'
 import NodesChartAvailability from '@/components/NodesChartAvailability'
 import NodesChartDataInOut from '@/components/NodesChartDataInOut'
 import NodesChartRequests from '@/components/NodesChartRequests'
+import NodesChartTimeToggle from '@/components/NodesChartTimeToggle'
 
 import NodesTable from '@/components/NodesTable'
 import Pagination from '@/components/PaginationNew'
@@ -101,6 +103,7 @@ export default {
     NodesChartAvailability,
     NodesChartDataInOut,
     NodesChartRequests,
+    NodesChartTimeToggle,
 
     NodesTable,
     Pagination
