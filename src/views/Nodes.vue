@@ -19,35 +19,37 @@
         />
       </div>
       <!-- CHART COMPONENTS -->
-      <div class="row mb-25">
-        <NodesChartAvailability
-          v-if="sessionStats.length"
-          :data="chartAvailabilityMetrics"
-          :xLabel="xLabel"
-          :timeSeries="timeSeries"
-          :height="isSmView ? 400 : 200"
-          :pointRadius="isSmView ? 2 : 3"
-        />
-        <NodesChartRequests
-          v-if="sessionStats.length"
-          :data="chartRequestsMetrics"
-          :xLabel="xLabel"
-          :timeSeries="timeSeries"
-          :height="isSmView ? 400 : 200"
-          :pointRadius="isSmView ? 2 : 3"
-        />
-      </div>
-      <div class="row full mb-25">
-        <NodesChartDataInOut
-          v-if="sessionStats.length"
-          :dataIn="chartDataInMetrics"
-          :dataOut="chartDataOutMetrics"
-          :xLabel="xLabel"
-          :timeSeries="timeSeries"
-          :height="isSmView ? 400 : isMdView ? 200 : 100"
-          :pointRadius="isSmView ? 2 : 3"
-          :yLabel="chartDataInOutMb ? 'Data (MB)' : 'Data (KB)'"
-        />
+      <div class="container mt-40">
+        <div class="row mb-25">
+          <NodesChartAvailability
+            v-if="sessionStats.length"
+            :data="chartAvailabilityMetrics"
+            :xLabel="xLabel"
+            :timeSeries="timeSeries"
+            :height="isSmView ? 400 : 200"
+            :pointRadius="isSmView ? 2 : 3"
+          />
+          <NodesChartRequests
+            v-if="sessionStats.length"
+            :data="chartRequestsMetrics"
+            :xLabel="xLabel"
+            :timeSeries="timeSeries"
+            :height="isSmView ? 400 : 200"
+            :pointRadius="isSmView ? 2 : 3"
+          />
+        </div>
+        <div class="row full mb-25">
+          <NodesChartDataInOut
+            v-if="sessionStats.length"
+            :dataIn="chartDataInMetrics"
+            :dataOut="chartDataOutMetrics"
+            :xLabel="xLabel"
+            :timeSeries="timeSeries"
+            :height="isSmView ? 400 : isMdView ? 200 : 100"
+            :pointRadius="isSmView ? 2 : 3"
+            :yLabel="chartDataInOutMb ? 'Data (MB)' : 'Data (KB)'"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -196,12 +198,13 @@ export default {
         range: this.chartRange,
         count: this.chartSteps
       }
-      const sessionsStats = await Promise.all(testNodes.map(async node => {
-        const snapshots = await fetchSessionStats(node, options)
-        return snapshots.results
-      }))
-      await this.updateTimeSeries(sessionsStats[0])
-      this.sessionStats = sessionsStats
+      // const sessionsStats = await Promise.all(testNodes.map(async node => {
+      //   const snapshots = await fetchSessionStats(node, options)
+      //   return snapshots.results
+      // }))
+      const snapshots = await fetchSessionStats(testNodes[0], options)
+      await this.updateTimeSeries(snapshots.results)
+      this.sessionStats = snapshots.results
     },
     updateTimeSeries(stats) {
       let latestSnapshotPeriod = new Date(stats[0].end)
@@ -248,3 +251,13 @@ export default {
 }
 </script>
 
+<style scoped>
+.row {
+  @apply grid items-start grid-cols-1 gap-24;
+  @apply lg:grid-cols-2;
+}
+
+.row.full {
+  @apply lg:grid-cols-1
+}
+</style>
