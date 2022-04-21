@@ -70,6 +70,16 @@ const fetchGasRates = async () => fetchData(`${INDEX_API_URL}/gasrates`)
 
 const fetchExchangeRates = async () => await fetchData(`${INDEX_API_URL}/exchangerate`)
 
+
+const fetchSessionStats = async (address, options = {}) => {
+  if (!options.range) options.range = 'daily'
+  if (!options.count) options.limit = 100
+  let url = `${INDEX_API_URL}/node/${address}/activity?range=${options.range}&count=${options.count}`
+
+  const results = await fetchData(url)
+  return results
+}
+
 const fetchTransactions = async (address, options = {}) => {
   if (!options.page) {
     options.page = 1
@@ -161,6 +171,7 @@ export {
   fetchPendingTransactions,
   fetchGasRates,
   fetchExchangeRates,
+  fetchSessionStats,
   fetchTransactions,
   formatTransactions,
   fetchTokenValue
