@@ -16,8 +16,8 @@
       </div>
 
       <div class="account-panel__right">
-        <div v-if="view === 'staking'" class="account-panel__buttons">
-          <button class="w-full button button--success col-start-1 col-span-2" @click="openCreateStake">
+        <div v-if="view === 'staking'" class="account-panel__buttons staking-buttons">
+          <button class="w-full button button--success" @click="openCreateStake">
             <span class="w-12 button__icon">
               <PlusIcon class="w-15" />
             </span>
@@ -204,8 +204,16 @@ export default {
     @apply grid grid-cols-3 mt-0;
   }
 
+  .account-panel__buttons.staking-buttons {
+    @apply grid-cols-1;
+  }
+
   .account-panel__buttons > button {
     width: 140px;
+  }
+
+  .account-panel__buttons.staking-buttons > button {
+    width: 170px;
   }
 
   .account-panel__balance {
