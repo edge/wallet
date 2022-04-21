@@ -37,10 +37,7 @@
         <div class="px-24 pt-32 pb-40 border-t border-gray-700 border-opacity-30">
           <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
             <button class="w-full button button--outline-success" @click="cancel">Cancel</button>
-            <button
-              @click="cancel"
-              class="w-full button button--success"
-            >Copy</button>
+            <button @click="copy" class="w-full button button--success">Copy</button>
           </div>
         </div>
       </template>
@@ -75,6 +72,9 @@ export default {
     cancel() {
       this.reset()
       this.close()
+    },
+    copy() {
+      return navigator.clipboard.writeText(this.address)
     },
     goto(step) {
       this.step = step
