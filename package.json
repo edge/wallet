@@ -23,6 +23,7 @@
   },
   "main": "server/index.js",
   "dependencies": {
+    "@chenfengyuan/vue-qrcode": "^2.0.0",
     "@edge/bridge-utils": "^1.6.1",
     "@edge/index-utils": "^0.4.4",
     "@edge/wallet-utils": "^0.14.0",
