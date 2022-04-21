@@ -15,8 +15,6 @@
                 <VueQrcode
                   :value="address"
                   :options="{
-                    color: {
-                    },
                     margin: 1,
                     width: 200
                   }"
