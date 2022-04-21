@@ -288,7 +288,8 @@ export default {
       return this.unlocksAt < this.currentTime
     },
     releaseFeeParsed() {
-      return this.stake.amount * this.vars.stake_express_release_fee / 1e6
+      if (this.isUnlocked) return 0
+      else return this.stake.amount * this.vars.stake_express_release_fee / 1e6
     },
     releasePc() {
       if (this.isUnlocked) return 0
