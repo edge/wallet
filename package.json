@@ -1,6 +1,6 @@
 {
   "name": "wallet",
-  "version": "1.15.1",
+  "version": "1.16.0",
   "description": "Web wallet for managing XE coin",
   "private": true,
   "license": "GPL",
@@ -23,6 +23,7 @@
   },
   "main": "server/index.js",
   "dependencies": {
+    "@chenfengyuan/vue-qrcode": "^2.0.0",
     "@edge/bridge-utils": "^1.6.1",
     "@edge/index-utils": "^0.4.4",
     "@edge/wallet-utils": "^0.14.0",
@@ -51,6 +52,7 @@
     "morgan": "^1.10.0",
     "path": "^0.12.7",
     "postcss": "^7.0.35",
+    "qrcode": "^1.5.0",
     "ramda": "^0.27.1",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.0",
     "vue": "^3.0.11",

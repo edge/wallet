@@ -16,8 +16,8 @@
       </div>
 
       <div class="account-panel__right">
-        <div v-if="view === 'staking'" class="account-panel__buttons">
-          <button class="w-full button button--success col-start-1 col-span-2" @click="openCreateStake">
+        <div v-if="view === 'staking'" class="account-panel__buttons staking-buttons">
+          <button class="w-full button button--success" @click="openCreateStake">
             <span class="w-12 button__icon">
               <PlusIcon class="w-15" />
             </span>
@@ -32,6 +32,13 @@
             Send
           </button>
 
+          <button class="w-full button button--outline-success" @click="openReceive">
+            <span class="w-12 button__icon">
+              <ArrowDownIcon/>
+            </span>
+            Receive
+          </button>
+
           <button class="w-full button button--outline-success" @click="openSwap">
             <span class="button__icon w-15">
               <SwitchHorizontalIcon/>
@@ -44,6 +51,9 @@
 
     <div class="account-panel__modals">
       <CreateStakeModal :close="reset" :visible="modal === 'createStake'"/>
+      <DepositModal :close="reset" :visible="modal === 'deposit'"/>
+      <ReceiveModal :close="reset" :visible="modal === 'receive'"/>
+      <SellModal :close="reset" :visible="modal === 'sell'"/>
       <SendModal :close="reset" :visible="modal === 'send'"/>
       <SwapModal
         :close="reset"
@@ -52,9 +62,7 @@
         :openSell="openSell"
         :visible="modal === 'swap'"
       />
-      <DepositModal :close="reset" :visible="modal === 'deposit'"/>
       <WithdrawModal :close="reset" :visible="modal === 'withdraw'"/>
-      <SellModal :close="reset" :visible="modal === 'sell'"/>
     </div>
   </div>
 </template>
@@ -63,25 +71,28 @@
 import Amount from './Amount.vue'
 import CreateStakeModal from './stakes/CreateStakeModal'
 import DepositModal from './tx/DepositModal'
+import ReceiveModal from './tx/ReceiveModal'
 import SellModal from './tx/SellModal'
 import SendModal from './tx/SendModal'
 import SwapModal from './tx/SwapModal'
 import WithdrawModal from './tx/WithdrawModal'
 import { mapState } from 'vuex'
-import { ArrowUpIcon, PlusIcon, SwitchHorizontalIcon } from '@heroicons/vue/outline'
+import { ArrowDownIcon, ArrowUpIcon, PlusIcon, SwitchHorizontalIcon } from '@heroicons/vue/outline'
 
 export default {
   name: 'AccountPanel',
   props: ['view'],
   components: {
     Amount,
+    ArrowDownIcon,
     ArrowUpIcon,
     CreateStakeModal,
     DepositModal,
-    SwapModal,
     PlusIcon,
-    SendModal,
+    ReceiveModal,
     SellModal,
+    SendModal,
+    SwapModal,
     SwitchHorizontalIcon,
     WithdrawModal
   },
@@ -92,17 +103,14 @@ export default {
     }
   },
   methods: {
-    reset() {
-      this.modal = ''
-    },
     openCreateStake() {
       this.modal = 'createStake'
     },
     openDeposit() {
       this.modal = 'deposit'
     },
-    openSwap() {
-      this.modal = 'swap'
+    openReceive() {
+      this.modal = 'receive'
     },
     openSell() {
       this.modal = 'sell'
@@ -110,8 +118,14 @@ export default {
     openSend() {
       this.modal = 'send'
     },
+    openSwap() {
+      this.modal = 'swap'
+    },
     openWithdraw() {
       this.modal = 'withdraw'
+    },
+    reset() {
+      this.modal = ''
     }
   }
 }
@@ -187,10 +201,18 @@ export default {
   }
 
   .account-panel__buttons {
-    @apply grid grid-cols-2 mt-0;
+    @apply grid grid-cols-3 mt-0;
+  }
+
+  .account-panel__buttons.staking-buttons {
+    @apply grid-cols-1;
   }
 
   .account-panel__buttons > button {
+    width: 140px;
+  }
+
+  .account-panel__buttons.staking-buttons > button {
     width: 170px;
   }
 
