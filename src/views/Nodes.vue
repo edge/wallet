@@ -18,21 +18,20 @@
           :totalCount="metadata.totalCount"
         />
       </div>
-      <!-- CHART COMPONENTS -->
-      <div class="container mt-40">
+      <div class="container mt-40" v-if="metadata.totalCount">
         <NodesChartTimeToggle :period="chartPeriod" :onPeriodUpdate="updateChartPeriod" />
         <div class="row mb-25">
           <NodesChartAvailability
-            v-if="sessionStats.length"
-            :data="chartAvailabilityMetrics"
+            v-if="sessionsStats.average.length"
+            :data="chartAvailabilityAverage"
             :xLabel="xLabel"
             :timeSeries="timeSeries"
             :height="isSmView ? 400 : 200"
             :pointRadius="isSmView ? 2 : 3"
           />
           <NodesChartRequests
-            v-if="sessionStats.length"
-            :data="chartRequestsMetrics"
+            v-if="sessionsStats.sum.length"
+            :data="chartRequestsSum"
             :xLabel="xLabel"
             :timeSeries="timeSeries"
             :height="isSmView ? 400 : 200"
@@ -41,9 +40,9 @@
         </div>
         <div class="row full mb-25">
           <NodesChartDataInOut
-            v-if="sessionStats.length"
-            :dataIn="chartDataInMetrics"
-            :dataOut="chartDataOutMetrics"
+            v-if="sessionsStats.sum.length"
+            :dataIn="chartDataInSum"
+            :dataOut="chartDataOutSum"
             :xLabel="xLabel"
             :timeSeries="timeSeries"
             :height="isSmView ? 400 : isMdView ? 200 : 100"
@@ -59,28 +58,15 @@
 <script>
 import AccountPanel from '@/components/AccountPanel'
 import Header from '@/components/Header'
-
-// CHART IMPORTS
 import NodesChartAvailability from '@/components/NodesChartAvailability'
 import NodesChartDataInOut from '@/components/NodesChartDataInOut'
 import NodesChartRequests from '@/components/NodesChartRequests'
 import NodesChartTimeToggle from '@/components/NodesChartTimeToggle'
-
 import NodesTable from '@/components/NodesTable'
 import Pagination from '@/components/PaginationNew'
-
-// CHART IMPORTS
-import { fetchSessionStats } from '../utils/api'
+import { fetchSessionsStats } from '../utils/api'
+import { mapState } from 'vuex'
 import moment from 'moment'
-
-
-const testNodes = [
-  'xe_06163EcCB1F9b12D173B3eeaA771E672c5C16203',
-  'xe_f68d9607CEa938013b440850E77824b0b74B1E22',
-  'xe_7fEF9b284fb81874A81654fDADe656fCb4f05735',
-  'xe_9e2d4A2E0A48F2B1b25ee38A12ad00991E716583',
-  'xe_47d365C7105afd7e6008e9C06fA706607EeE248C'
-]
 
 
 export default {
@@ -89,60 +75,47 @@ export default {
     return {
       metadata: { totalCount: 0 },
       limit: 20,
-
-      // CHART DATA
-      sessionStats: [],
+      sessionsStats: {average: [], sum: []},
       timeSeries: []
     }
   },
   components: {
     AccountPanel,
     Header,
-
-    // CHART COMPONENTS
     NodesChartAvailability,
     NodesChartDataInOut,
     NodesChartRequests,
     NodesChartTimeToggle,
-
     NodesTable,
     Pagination
   },
   computed: {
-    currentPage() {
-      return Math.max(1, parseInt(this.$route.query.page) || 1)
-    },
-    lastPage() {
-      return Math.max(1, Math.ceil(this.metadata.totalCount / this.limit))
-    },
-
-
-    // CHART PROPS
-    chartAvailabilityMetrics() {
+    ...mapState(['address']),
+    chartAvailabilityAverage() {
       const metrics = []
-      this.sessionStats.forEach((step, index) => {
+      this.sessionsStats.average.forEach((step, index) => {
         metrics[this.chartSteps - index - 1] = step.uptime * 100 / this.maxUptime
       })
       return metrics
     },
-    chartDataInMetrics() {
+    chartDataInSum() {
       const metrics = []
-      this.sessionStats.forEach((step, index) => {
+      this.sessionsStats.sum.forEach((step, index) => {
         if (this.chartDataInOutMb) metrics[this.chartSteps - index - 1] = step.metrics.cdn.data.in / 1000000
         else metrics[this.chartSteps - index - 1] = step.metrics.cdn.data.in / 1000
       })
       return metrics
     },
-    chartDataOutMetrics() {
+    chartDataOutSum() {
       const metrics = []
-      this.sessionStats.forEach((step, index) => {
+      this.sessionsStats.sum.forEach((step, index) => {
         if (this.chartDataInOutMb) metrics[this.chartSteps - index - 1] = step.metrics.cdn.data.out / 1000000
         else metrics[this.chartSteps - index - 1] = step.metrics.cdn.data.out / 1000
       })
       return metrics
     },
     chartDataInOutMb() {
-      return this.sessionStats.some(el => el.metrics.cdn.data.in + el.metrics.cdn.data.out > 1000000)
+      return this.sessionsStats.sum.some(el => el.metrics.cdn.data.in + el.metrics.cdn.data.out > 1000000)
     },
     chartPeriod() {
       const period = this.$route.query.period
@@ -154,9 +127,9 @@ export default {
       if (this.chartPeriod == 'day') return 'hourly'
       else return 'daily'
     },
-    chartRequestsMetrics() {
+    chartRequestsSum() {
       const metrics = []
-      this.sessionStats.forEach((step, index) => {
+      this.sessionsStats.sum.forEach((step, index) => {
         metrics[this.chartSteps - index - 1] = step.metrics.cdn.requests
       })
       return metrics
@@ -167,11 +140,17 @@ export default {
       if (this.chartPeriod == 'month') return 30
       return 24
     },
+    currentPage() {
+      return Math.max(1, parseInt(this.$route.query.page) || 1)
+    },
     isSmView() {
       return window.innerWidth < 640
     },
     isMdView() {
       return window.innerWidth >= 640 && window.innerWidth < 1000
+    },
+    lastPage() {
+      return Math.max(1, Math.ceil(this.metadata.totalCount / this.limit))
     },
     maxUptime() {
       if (this.chartPeriod === 'day') return 3600 * 1000
@@ -188,29 +167,21 @@ export default {
     onNodesUpdate(metadata) {
       this.metadata = metadata
     },
-
-
-
-    // CHART METHODS
     updateChartPeriod(newPeriod) {
       const query = { ...this.$route.query, period: newPeriod}
       this.$router.replace({ query })
     },
-    async updateSessionStats() {
+    async updateSessionsStats() {
       const options = {
         range: this.chartRange,
         count: this.chartSteps
       }
-      // const sessionsStats = await Promise.all(testNodes.map(async node => {
-      //   const snapshots = await fetchSessionStats(node, options)
-      //   return snapshots.results
-      // }))
-      const snapshots = await fetchSessionStats(testNodes[0], options)
-      await this.updateTimeSeries(snapshots.results)
-      this.sessionStats = snapshots.results
+      const snapshots = await fetchSessionsStats(this.address, options)
+      await this.updateTimeSeries(snapshots.results.average)
+      this.sessionsStats = snapshots.results
     },
     updateTimeSeries(stats) {
-      let latestSnapshotPeriod = new Date(stats[0].end)
+      const latestSnapshotPeriod = new Date(stats[0].end)
       if (this.chartPeriod === 'day') {
         const hourLabels = []
         for (let i = 0; i < 24; i++) {
@@ -220,10 +191,10 @@ export default {
       }
       if (this.chartPeriod === 'week') {
         const dayLabels = []
-          for (let i = 0; i < 7; i++) {
-            dayLabels.unshift(moment(latestSnapshotPeriod).subtract(i + 1, 'days').format('ddd'))
-          }
-          this.timeSeries = dayLabels
+        for (let i = 0; i < 7; i++) {
+          dayLabels.unshift(moment(latestSnapshotPeriod).subtract(i + 1, 'days').format('ddd'))
+        }
+        this.timeSeries = dayLabels
       }
       if (this.chartPeriod === 'month') {
         const dateLabels = []
@@ -234,12 +205,9 @@ export default {
       }
     }
   },
-
-  // CHART MOUNTED
   mounted() {
-    this.updateSessionStats()
+    this.updateSessionsStats()
   },
-
   watch: {
     metadata() {
       const numRegEx = /^[-+]?\d*$/

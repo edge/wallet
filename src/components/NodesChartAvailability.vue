@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col h-full">
-    <h3>Availability</h3>
+    <h3>Average Availability</h3>
     <div class="relative max-h-full tile md:pr-50">
       <Line
         :chart-options="chartOptions"
