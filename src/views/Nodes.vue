@@ -18,8 +18,7 @@
           :totalCount="metadata.totalCount"
         />
       </div>
-      <!-- <div class="container mt-40" v-if="metadata.totalCount"> -->
-      <div class="container mt-40">
+      <div class="container mt-40" v-if="metadata.totalCount">
         <NodesChartTimeToggle :period="chartPeriod" :onPeriodUpdate="updateChartPeriod" />
         <div class="row mb-25">
           <NodesChartAvailability
@@ -42,6 +41,7 @@
             v-if="sessionsStats.sum.length"
             :datasets="[chartTotalDataOut, chartTotalDataIn]"
             :xLabel="xLabel"
+            :stacked="true"
             :timeSeries="timeSeries"
             title="Total Data In/Out"
             :height="isSmView ? 400 : isMdView ? 200 : 100"
@@ -72,6 +72,7 @@
             :timeSeries="timeSeries"
             title="Data In"
             :height="isSmView ? 400 : 200"
+            :yMax="chartDataMaxY"
             :yLabel="isChartIndvDataMb ? 'Data (MB)' : 'Data (KB)'"
           />
           <NodesChartDataInOut
@@ -81,6 +82,7 @@
             :timeSeries="timeSeries"
             title="Data Out"
             :height="isSmView ? 400 : 200"
+            :yMax="chartDataMaxY"
             :yLabel="isChartIndvDataMb ? 'Data (MB)' : 'Data (KB)'"
           />
         </div>
@@ -99,7 +101,6 @@ import NodesChartTimeToggle from '@/components/NodesChartTimeToggle'
 import NodesTable from '@/components/NodesTable'
 import Pagination from '@/components/PaginationNew'
 import { fetchSessionsStats } from '../utils/api'
-import interpolateRGB from 'interpolate-rgb'
 import { mapState } from 'vuex'
 import moment from 'moment'
 
@@ -112,14 +113,6 @@ export default {
     return {
       metadata: { totalCount: 0 },
       limit: 20,
-      selectedNodes: [
-        'xe_06163EcCB1F9b12D173B3eeaA771E672c5C16203',
-        'xe_47d365C7105afd7e6008e9C06fA706607EeE248C',
-        'xe_7fEF9b284fb81874A81654fDADe656fCb4f05735',
-        'xe_9e2d4A2E0A48F2B1b25ee38A12ad00991E716583',
-        'xe_f68d9607CEa938013b440850E77824b0b74B1E22'
-      ],
-      // selectedNodes: [],
       sessionsStats: {average: [], sum: []},
       timeSeries: []
     }
@@ -137,72 +130,47 @@ export default {
   computed: {
     ...mapState(['address']),
     chartAverageAvailability() {
-      const metrics = []
-      this.sessionsStats.average.forEach((step, index) => {
-        metrics[this.chartSteps - index - 1] = step.uptime * 100 / this.maxUptime
-      })
+      const metrics = this.sessionsStats.average.map(step => step.uptime * 100 / this.maxUptime).reverse()
       return [this.getDataset(metrics, 'Average Availability', true, edgeGreen)]
     },
     chartIndvsAvailability() {
-      const datasets = []
-      for (const node in this.sessionsStats) {
-        if (this.selectedNodes.includes(node)) {
-          const metrics = []
-          this.sessionsStats[node].forEach((step, index) => {
-            metrics[this.chartSteps - index - 1] = step.uptime * 100 / this.maxUptime
-          })
-          datasets.push(this.getDataset(metrics, node))
-        }
-      }
-      return datasets
+      return this.getIndvDatasets(step => step.uptime * 100 / this.maxUptime)
     },
     chartIndvsDataIn() {
-      const datasets = []
-      for (const node in this.sessionsStats) {
-        if (this.selectedNodes.includes(node)) {
-          const metrics = []
-          this.sessionsStats[node].forEach((step, index) => {
-            if (this.isChartIndvDataMb) metrics[this.chartSteps - index - 1] = step.metrics.cdn.data.in / 1000000
-            else metrics[this.chartSteps - index - 1] = step.metrics.cdn.data.in / 1000
-          })
-          datasets.push(this.getDataset(metrics, node))
-        }
-      }
-      return datasets
+      return this.getIndvDatasets(step => {
+        if (this.isChartIndvDataMb) return step.metrics.cdn.data.in / 1000000
+        else return step.metrics.cdn.data.in / 1000
+      })
     },
     chartIndvsDataOut() {
-      const datasets = []
+      return this.getIndvDatasets(step => {
+        if (this.isChartIndvDataMb) return step.metrics.cdn.data.out / 1000000
+        else return step.metrics.cdn.data.out / 1000
+      })
+    },
+    chartDataMaxY() {
+      let maxValue = 0
       for (const node in this.sessionsStats) {
-        if (this.selectedNodes.includes(node)) {
-          const metrics = []
-          this.sessionsStats[node].forEach((step, index) => {
-            if (this.isChartIndvDataMb) metrics[this.chartSteps - index - 1] = step.metrics.cdn.data.out / 1000000
-            else metrics[this.chartSteps - index - 1] = step.metrics.cdn.data.out / 1000
+        if (node.substring(0,2) == 'xe') {
+          this.sessionsStats[node].forEach(el => {
+            if (el.metrics.cdn.data.in > maxValue) maxValue =  el.metrics.cdn.data.in
+            if (el.metrics.cdn.data.out > maxValue) maxValue =  el.metrics.cdn.data.out
           })
-          datasets.push(this.getDataset(metrics, node))
         }
       }
-      return datasets
+      if (maxValue > 1000000) return maxValue / 1000000
+      return maxValue
     },
     chartIndvsRequests() {
-      const datasets = []
-      for (const node in this.sessionsStats) {
-        if (this.selectedNodes.includes(node)) {
-          const metrics = []
-          this.sessionsStats[node].forEach((step, index) => {
-            metrics[this.chartSteps - index - 1] = step.metrics.cdn.requests
-          })
-          datasets.push(this.getDataset(metrics, node))
-        }
-      }
-      return datasets
+      return this.getIndvDatasets(step => step.metrics.cdn.requests)
     },
     isChartTotalDataMb() {
       return this.sessionsStats.sum.some(el => el.metrics.cdn.data.in + el.metrics.cdn.data.out > 1000000)
     },
     isChartIndvDataMb() {
       for (const node in this.sessionsStats) {
-        if (this.selectedNodes.includes(node)) {
+        if (node.substring(0, 2) == 'xe') {
+          // eslint-disable-next-line max-len
           if (this.sessionsStats[node].some(el => el.metrics.cdn.data.in > 1000000 || el.metrics.cdn.data.out > 1000000)) return true
         }
       }
@@ -219,26 +187,21 @@ export default {
       else return 'daily'
     },
     chartTotalDataIn() {
-      const metrics = []
-      this.sessionsStats.sum.forEach((step, index) => {
-        if (this.isChartTotalDataMb) metrics[this.chartSteps - index - 1] = step.metrics.cdn.data.in / 1000000
-        else metrics[this.chartSteps - index - 1] = step.metrics.cdn.data.in / 1000
-      })
+      const metrics = this.sessionsStats.sum.map(step => {
+        if (this.isChartTotalDataMb) return step.metrics.cdn.data.in / 1000000
+        else return step.metrics.cdn.data.in / 1000
+      }).reverse()
       return this.getDataset(metrics, 'Total Data In', true, edgeGreen)
     },
     chartTotalDataOut() {
-      const metrics = []
-      this.sessionsStats.sum.forEach((step, index) => {
-        if (this.isChartTotalDataMb) metrics[this.chartSteps - index - 1] = step.metrics.cdn.data.out / 1000000
-        else metrics[this.chartSteps - index - 1] = step.metrics.cdn.data.out / 1000
-      })
+      const metrics = this.sessionsStats.sum.map(step => {
+        if (this.isChartTotalDataMb) return step.metrics.cdn.data.out / 1000000
+        else return step.metrics.cdn.data.out / 1000
+      }).reverse()
       return this.getDataset(metrics, 'Total Data Out', true, edgeRed)
     },
     chartTotalRequests() {
-      const metrics = []
-      this.sessionsStats.sum.forEach((step, index) => {
-        metrics[this.chartSteps - index - 1] = step.metrics.cdn.requests
-      })
+      const metrics = this.sessionsStats.sum.map(step => step.metrics.cdn.requests).reverse()
       return [this.getDataset(metrics, 'Total Requests', true, edgeGreen)]
     },
     chartSteps() {
@@ -271,16 +234,7 @@ export default {
     }
   },
   methods: {
-    getDataset(data, label, fill, color) {
-      const ffColor = this.hashColour(label)
-      const backgroundColor = color ? color.background : ffColor
-      const borderColor = color ? color.border : ffColor
-      return {
-        backgroundColor, borderColor, data, fill, label,
-        pointRadius: this.isSmView ? 2 : 3
-      }
-    },
-    hashColour(address) {
+    getColorFromAddress(address) {
       let hash = 0
       const str = address.substring(3)
       for (let i = 0; i < str.length; i++) {
@@ -292,6 +246,34 @@ export default {
         colour += ('00' + value.toString(16)).substr(-2)
       }
       return colour
+    },
+    getDataset(data, label, fill, color, dashed) {
+      // eslint-disable-next-line max-len
+      const truncatedLabel = label.substring(0, 2) === 'xe' ? label.substring(0, 7) + '...' + label.substring(38) : label
+      const ffColor = this.getColorFromAddress(label)
+      const backgroundColor = dashed ? color.border : color ? color.background : ffColor
+      const borderColor = color ? color.border : ffColor
+      const borderWidth = fill ? 3 : 2
+      const pointRadius = this.isSmView ? 2 : 3
+      return {
+        backgroundColor, borderColor, borderWidth, data, fill,
+        label: truncatedLabel,
+        borderDash: dashed ? [5, 5] : [],
+        pointRadius: fill ? pointRadius : pointRadius - 1,
+        pointStyle: dashed ? 'rectRot' : ''
+      }
+    },
+    getIndvDatasets(callback) {
+      // eslint-disable-next-line max-len
+      const avgDataset = this.getDataset(this.sessionsStats.average.map(callback).reverse(), 'Average', false, edgeGreen, true)
+      const datasets = [avgDataset]
+      for (const node in this.sessionsStats) {
+        if (node.substring(0, 2) === 'xe') {
+          const metrics = this.sessionsStats[node].map(callback).reverse()
+          datasets.push(this.getDataset(metrics, node))
+        }
+      }
+      return datasets
     },
     onNodesUpdate(metadata) {
       this.metadata = metadata
@@ -305,8 +287,7 @@ export default {
         range: this.chartRange,
         count: this.chartSteps
       }
-      const snapshots = await fetchSessionsStats('xe_3F129e50310Ab4db5e3C7Eb79e177A40a8e9D319', options)
-      // const snapshots = await fetchSessionsStats(this.address, options)
+      const snapshots = await fetchSessionsStats(this.address, options)
       await this.updateTimeSeries(snapshots.results.average)
       this.sessionsStats = snapshots.results
     },

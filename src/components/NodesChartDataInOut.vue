@@ -32,11 +32,12 @@ export default {
           y: {
             beginAtZero: true,
             grid: {display: false},
+            suggestedMax: (this.yMax * 1.1) || 0,
             title: {
               display: true,
               text: this.yLabel
             },
-            stacked: true
+            stacked: this.stacked
           },
           x: {
             beginAtZero: true,
@@ -81,6 +82,10 @@ export default {
       type: Number,
       defult: 5
     },
+    stacked: {
+      type: Boolean,
+      default: false
+    },
     timeSeries: {
       type: Array,
       default: () => []
@@ -96,6 +101,10 @@ export default {
     yLabel: {
       type: String,
       default: 'KB'
+    },
+    yMax: {
+      type: Number,
+      default: 0
     }
   },
   computed: {
