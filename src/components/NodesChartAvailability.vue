@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col h-full">
-    <h3>Average Availability</h3>
+    <h3>{{ datasets.length > 1 ? '' : 'Average ' }}Availability</h3>
     <div class="relative max-h-full tile md:pr-50">
       <Line
         :chart-options="chartOptions"
@@ -23,16 +23,7 @@ export default {
     return {
       chartData: {
         labels: this.timeSeries,
-        datasets: [
-          {
-            backgroundColor: 'rgba(14, 204, 95, 0.6)',
-            borderColor: '#0ecc5f',
-            data: this.data,
-            fill: true,
-            label: 'Availability',
-            pointRadius: this.pointRadius
-          }
-        ]
+        datasets: this.datasets
       },
       chartOptions: {
         responsive: true,
@@ -64,7 +55,7 @@ export default {
               mode: 'index',
               intersect: false,
               callbacks: {
-                label: (tooltipItem) => tooltipItem.raw.toFixed(2) + ' %'
+                label: (tooltipItem) => `${tooltipItem.dataset.label}: ${tooltipItem.raw.toFixed(2)} %`
               }
             }
           }
@@ -73,7 +64,7 @@ export default {
     }
   },
   props: {
-    data: {
+    datasets: {
       type: Array,
       default: () => []
     },

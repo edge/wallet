@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col h-full">
-    <h3>Total Data In/Out</h3>
+    <h3>{{ title }}</h3>
     <div class="relative max-h-full tile md:pr-50">
       <Line
         :chart-options="chartOptions"
@@ -23,24 +23,7 @@ export default {
     return {
       chartData: {
         labels: this.timeSeries,
-        datasets: [
-          {
-            backgroundColor: 'rgb(255,138,138)',
-            borderColor: 'rgb(220, 60, 60)',
-            data: this.dataOut,
-            fill: true,
-            label: 'Data Out',
-            pointRadius: this.pointRadius
-          },
-          {
-            backgroundColor: 'rgb(110,224,159)',
-            borderColor: 'rgb(14, 204, 95)',
-            data: this.dataIn,
-            fill: true,
-            label: 'Data In',
-            pointRadius: this.pointRadius
-          }
-        ]
+        datasets: this.datasets
       },
       chartOptions: {
         responsive: true,
@@ -73,7 +56,7 @@ export default {
               mode: 'index',
               intersect: false,
               callbacks: {
-                label: (tooltipItem) => tooltipItem.raw.toFixed(2) + ` ${this.unit}`
+                label: (tooltipItem) => `${tooltipItem.dataset.label}: ${tooltipItem.raw.toFixed(2)} ${this.unit}`
               }
             }
           },
@@ -86,11 +69,7 @@ export default {
     }
   },
   props: {
-    dataIn: {
-      type: Array,
-      default: () => []
-    },
-    dataOut: {
+    datasets: {
       type: Array,
       default: () => []
     },
@@ -105,6 +84,10 @@ export default {
     timeSeries: {
       type: Array,
       default: () => []
+    },
+    title: {
+      type: String,
+      default: () => 'Total Data In/Out'
     },
     xLabel: {
       type: String,

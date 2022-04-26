@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col h-full">
-    <h3>Total Requests</h3>
+    <h3>{{ datasets.length > 1 ? '' : 'Total ' }}Requests</h3>
     <div class="relative max-h-full tile md:pr-50">
       <Line
         :chart-options="chartOptions"
@@ -23,16 +23,7 @@ export default {
     return {
       chartData: {
         labels: this.timeSeries,
-        datasets: [
-          {
-            backgroundColor: 'rgba(14, 204, 95, 0.6)',
-            borderColor: 'rgb(14, 204, 95)',
-            data: this.data,
-            fill: true,
-            label: 'Requests',
-            pointRadius: this.pointRadius
-          }
-        ]
+        datasets: this.datasets
       },
       chartOptions: {
         responsive: true,
@@ -73,7 +64,7 @@ export default {
     }
   },
   props: {
-    data: {
+    datasets: {
       type: Array,
       default: () => []
     },

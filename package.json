@@ -47,6 +47,7 @@
     "express": "^4.17.1",
     "flat": "^5.0.2",
     "idb-keyval": "^5.0.5",
+    "interpolate-rgb": "^0.0.2",
     "javascript-time-ago": "^2.3.4",
     "js-sha3": "^0.8.0",
     "moment": "^2.29.1",
