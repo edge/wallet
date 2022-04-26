@@ -103,8 +103,8 @@ import interpolateRGB from 'interpolate-rgb'
 import { mapState } from 'vuex'
 import moment from 'moment'
 
-const edgeGreen = {border: [14, 204, 95], background: [110, 224, 159]}
-const edgeRed = {border: [220, 60, 60], background: [255, 138, 138]}
+const edgeGreen = {border: 'rgb(14, 204, 95)', background: 'rgb(110, 224, 159)'}
+const edgeRed = {border: 'rgb(220, 60, 60)', background: 'rgb(255, 138, 138)'}
 
 export default {
   name: 'ViewNodes',
@@ -141,26 +141,23 @@ export default {
       this.sessionsStats.average.forEach((step, index) => {
         metrics[this.chartSteps - index - 1] = step.uptime * 100 / this.maxUptime
       })
-      return [this.getDataset(metrics, 0, 1, 'Average Availability', true)]
+      return [this.getDataset(metrics, 'Average Availability', true, edgeGreen)]
     },
     chartIndvsAvailability() {
       const datasets = []
-      let colorIndex = 0
       for (const node in this.sessionsStats) {
         if (this.selectedNodes.includes(node)) {
           const metrics = []
           this.sessionsStats[node].forEach((step, index) => {
             metrics[this.chartSteps - index - 1] = step.uptime * 100 / this.maxUptime
           })
-          datasets.push(this.getDataset(metrics, colorIndex, this.selectedNodes.length - 1, node))
-          colorIndex++
+          datasets.push(this.getDataset(metrics, node))
         }
       }
       return datasets
     },
     chartIndvsDataIn() {
       const datasets = []
-      let colorIndex = 0
       for (const node in this.sessionsStats) {
         if (this.selectedNodes.includes(node)) {
           const metrics = []
@@ -168,15 +165,13 @@ export default {
             if (this.isChartIndvDataMb) metrics[this.chartSteps - index - 1] = step.metrics.cdn.data.in / 1000000
             else metrics[this.chartSteps - index - 1] = step.metrics.cdn.data.in / 1000
           })
-          datasets.push(this.getDataset(metrics, colorIndex, this.selectedNodes.length - 1, node))
-          colorIndex++
+          datasets.push(this.getDataset(metrics, node))
         }
       }
       return datasets
     },
     chartIndvsDataOut() {
       const datasets = []
-      let colorIndex = 0
       for (const node in this.sessionsStats) {
         if (this.selectedNodes.includes(node)) {
           const metrics = []
@@ -184,23 +179,20 @@ export default {
             if (this.isChartIndvDataMb) metrics[this.chartSteps - index - 1] = step.metrics.cdn.data.out / 1000000
             else metrics[this.chartSteps - index - 1] = step.metrics.cdn.data.out / 1000
           })
-          datasets.push(this.getDataset(metrics, colorIndex, this.selectedNodes.length - 1, node))
-          colorIndex++
+          datasets.push(this.getDataset(metrics, node))
         }
       }
       return datasets
     },
     chartIndvsRequests() {
       const datasets = []
-      let colorIndex = 0
       for (const node in this.sessionsStats) {
         if (this.selectedNodes.includes(node)) {
           const metrics = []
           this.sessionsStats[node].forEach((step, index) => {
             metrics[this.chartSteps - index - 1] = step.metrics.cdn.requests
           })
-          datasets.push(this.getDataset(metrics, colorIndex, this.selectedNodes.length - 1, node))
-          colorIndex++
+          datasets.push(this.getDataset(metrics, node))
         }
       }
       return datasets
@@ -232,7 +224,7 @@ export default {
         if (this.isChartTotalDataMb) metrics[this.chartSteps - index - 1] = step.metrics.cdn.data.in / 1000000
         else metrics[this.chartSteps - index - 1] = step.metrics.cdn.data.in / 1000
       })
-      return this.getDataset(metrics, 0, 2,'Total Data In', true)
+      return this.getDataset(metrics, 'Total Data In', true, edgeGreen)
     },
     chartTotalDataOut() {
       const metrics = []
@@ -240,14 +232,14 @@ export default {
         if (this.isChartTotalDataMb) metrics[this.chartSteps - index - 1] = step.metrics.cdn.data.out / 1000000
         else metrics[this.chartSteps - index - 1] = step.metrics.cdn.data.out / 1000
       })
-      return this.getDataset(metrics, 1, 2, 'Total Data Out', true)
+      return this.getDataset(metrics, 'Total Data Out', true, edgeRed)
     },
     chartTotalRequests() {
       const metrics = []
       this.sessionsStats.sum.forEach((step, index) => {
         metrics[this.chartSteps - index - 1] = step.metrics.cdn.requests
       })
-      return [this.getDataset(metrics, 0, 1, 'Total Requests', true)]
+      return [this.getDataset(metrics, 'Total Requests', true, edgeGreen)]
     },
     chartSteps() {
       if (this.chartPeriod == 'day') return 24
@@ -279,25 +271,27 @@ export default {
     }
   },
   methods: {
-    getColor(startColor, endColor, percent) {
-      const rgb = interpolateRGB(startColor, endColor, percent)
-      return `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`
-    },
-    getDataset(data, index, dataPoints, label, fill) {
-      const pc = index ? index / (dataPoints - 1) : 0
-      // use lighter background colour for line graphs with fill
-      const backgroundGreen = !fill ? edgeGreen.border : edgeGreen.background
-      const backgroundRed = !fill ? edgeRed.border : edgeRed.background
+    getDataset(data, label, fill, color) {
+      const ffColor = this.hashColour(label)
+      const backgroundColor = color ? color.background : ffColor
+      const borderColor = color ? color.border : ffColor
       return {
-        backgroundColor: this.getColor(backgroundGreen, backgroundRed, pc),
-        borderColor: this.getColor(edgeGreen.border, edgeRed.border, pc),
-        data, fill, label,
+        backgroundColor, borderColor, data, fill, label,
         pointRadius: this.isSmView ? 2 : 3
       }
     },
-    isDataInMb(datasets, sum) {
-      if (sum) return this.sessionsStats.sum.some(el => el.metrics.cdn.data.in + el.metrics.cdn.data.out > 1000000)
-      else return 
+    hashColour(address) {
+      let hash = 0
+      const str = address.substring(3)
+      for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash)
+      }
+      let colour = '#'
+      for (let i = 0; i < 3; i++) {
+        const value = (hash >> (i * 8)) & 0xFF
+        colour += ('00' + value.toString(16)).substr(-2)
+      }
+      return colour
     },
     onNodesUpdate(metadata) {
       this.metadata = metadata
