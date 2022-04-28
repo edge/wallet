@@ -31,10 +31,11 @@ export default {
   ],
   computed: {
     isAscending() {
-      // check if expression is present is sorting query, but not preceded by a hyphen
-      // also, for multi-word expressions, check no word is preceded by hyphen
-      const regex = new RegExp('(?<!-)' + this.sortParam.replace(',', ',(?<!-)'))
-      return regex.test(this.sortQuery)
+      if (!this.isDescending) {
+        const regex = new RegExp(this.sortParam)
+        return regex.test(this.sortQuery)
+      }
+      else return false
     },
     isDescending() {
       const regex = new RegExp(`-${this.sortParam.replace(',', ',-')}`)
