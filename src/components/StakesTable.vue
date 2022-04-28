@@ -42,13 +42,13 @@
       />
     </tbody>
     <tbody v-else-if="!loaded && loading">
-      <td colspan="6" class="block w-full text-center bg-white lg:table-cell py-35">
+      <td colspan="7" class="block w-full text-center bg-white lg:table-cell py-35">
         Loading...
       </td>
     </tbody>
     <tbody v-else>
       <tr>
-        <td colspan="6" class="block w-full text-center bg-white lg:table-cell py-35">
+        <td colspan="7" class="block w-full text-center bg-white lg:table-cell py-35">
           No stakes.
         </td>
       </tr>
@@ -82,6 +82,7 @@ export default {
     TableHeader
   },
   props: [
+    'hideReleasedStakes',
     'limit',
     'page',
     'receiveMetadata',
@@ -110,14 +111,17 @@ export default {
       this.loading = true
       // the sort query sent to index needs to include "-created", but this is hidden from user in browser url
       const sortQuery = this.$route.query.sort ? `${this.$route.query.sort},-created` : '-created'
+      const options = {
+        limit: this.limit,
+        page: this.page,
+        sort: sortQuery
+      }
+      if (this.hideReleasedStakes) options.hideReleased = 1
+
       const stakes = await index.stake.stakes(
         process.env.VUE_APP_INDEX_API_URL,
         this.address,
-        {
-          limit: this.limit,
-          page: this.page,
-          sort: sortQuery
-        }
+        options
       )
       this.stakes = stakes.results
       this.receiveMetadata(stakes.metadata)
