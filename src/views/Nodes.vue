@@ -50,7 +50,7 @@
         </div>
         <div class="row mb-25">
           <NodesChartAvailability
-            v-if="sessionsStats.average.length"
+            v-if="sessionsStats.sum.length"
             :datasets="chartIndvsAvailability"
             :xLabel="xLabel"
             :timeSeries="timeSeries"
@@ -66,7 +66,7 @@
         </div>
         <div class="row mb-25">
           <NodesChartDataInOut
-            v-if="sessionsStats.average.length"
+            v-if="sessionsStats.sum.length"
             :datasets="chartIndvsDataIn"
             :xLabel="xLabel"
             :timeSeries="timeSeries"
@@ -288,8 +288,10 @@ export default {
         count: this.chartSteps
       }
       const snapshots = await fetchSessionsStats(this.address, options)
-      await this.updateTimeSeries(snapshots.results.average)
-      this.sessionsStats = snapshots.results
+      if (snapshots.results.average) {
+        await this.updateTimeSeries(snapshots.results.average)
+        this.sessionsStats = snapshots.results
+      }
     },
     updateTimeSeries(stats) {
       const latestSnapshotPeriod = new Date(stats[0].end)

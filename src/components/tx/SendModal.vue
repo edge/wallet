@@ -141,13 +141,10 @@
 
     <Modal :close="cancel" :visible="visible && step === 3">
       <template v-slot:header>
-        <Logo/>
+        <h2 class="mb-8">Transaction sent<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
       </template>
       <template v-slot:body>
         <div class="pb-14 min-h-410">
-          <div class="pb-4 mb-20 border-b border-gray-700 decor-block border-opacity-30">
-            <!-- <CheckIcon class="w-52 text-green"/> -->
-          </div>
           <div class="form-group mb-14">
             <label class="label">Recipient</label>
             <HashLink to="explorer" :wallet="completedTx.recipient" />
@@ -196,7 +193,6 @@ import * as xe from '@edge/xe-utils'
 import Amount from '../Amount'
 import HashLink from '../HashLink'
 import { LockOpenIcon } from '@heroicons/vue/outline'
-import Logo from '../Logo'
 import Modal from '../Modal'
 import Radio from '../Radio'
 import { helpers } from '@vuelidate/validators'
@@ -213,7 +209,6 @@ export default {
     Amount,
     HashLink,
     LockOpenIcon,
-    Logo,
     Modal,
     Radio
   },

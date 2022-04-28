@@ -106,9 +106,6 @@
 
       <template v-slot:body>
         <div class="pb-14">
-          <div class="pb-4 mb-20 border-b border-gray-700 decor-block border-opacity-30">
-            <!-- <CheckIcon class="w-52 text-green"/> -->
-          </div>
           <div class="form-group mb-25">
             <label class="label">Stake Type</label>
             <span class="break-all text-3xl">{{ stakeTypeFormatted }}</span>
