@@ -69,7 +69,7 @@
             </div>
           </div>
           <div class="flex flex-wrap justify-end pt-12 radio-list">
-            <Radio name="currency" id="max" label="MAX" @click="setAmountAsPercent(100);" />
+            <Radio name="currency" id="max" label="MAX" @click=setMaxAmount />
           </div>
 
           <div class="form-group mb-14">
@@ -298,6 +298,8 @@ export default {
           { b: this.edgeBalance, p: this.amountParsed },
           helpers.withMessage('Insufficient funds.', () => {
             if (isNaN(this.amountParsed)) return false
+            console.log(this.amountParsed)
+            console.log(this.edgeBalance)
             return this.amountParsed <= this.edgeBalance
           })
         )
@@ -469,8 +471,9 @@ export default {
 
       this.updateEdgeBalance()
     },
-    setAmountAsPercent(percentage) {
-      this.amount = (this.edgeBalance * (percentage / 100)).toFixed(6)
+    async setMaxAmount() {
+      this.amount = (Math.floor(this.edgeBalance * 1e6) / 1e6).toString()
+      await this.v$.$validate()
     },
     setChainId(chainId) {
       // https://eips.ethereum.org/EIPS/eip-1193#chain-changes
