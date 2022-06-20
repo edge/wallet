@@ -59,7 +59,7 @@
               <input
                 type="text"
                 id="amount-send"
-                placeholder="0.00"
+                placeholder="0.000000"
                 v-model="v$.amount.$model"
                 class="placeholder-white placeholder-opacity-100"
               />
@@ -298,8 +298,6 @@ export default {
           { b: this.edgeBalance, p: this.amountParsed },
           helpers.withMessage('Insufficient funds.', () => {
             if (isNaN(this.amountParsed)) return false
-            console.log(this.amountParsed)
-            console.log(this.edgeBalance)
             return this.amountParsed <= this.edgeBalance
           })
         )
@@ -315,7 +313,7 @@ export default {
       return window.ethereum !== undefined && window.ethereum.isMetaMask
     },
     amountParsed() {
-      return parseAmount(this.amount)
+      return (Math.floor(parseAmount(this.amount) * 1e6) / 1e6)
     },
     canDeposit() {
       if (this.depositInProgress || this.v$.$invalid) return false
@@ -490,7 +488,7 @@ export default {
     async updateEdgeBalance() {
       let balance = await this.contract.balanceOf(this.ethAddress)
       balance = ethers.utils.formatEther(balance.toString())
-      this.edgeBalance = parseFloat(balance)
+      this.edgeBalance = parseFloat(Math.floor(balance * 1e6) / 1e6)
     },
     async updateGasRates() {
       this.gasRates = await fetchGasRates()
