@@ -59,7 +59,7 @@
               <input
                 type="text"
                 id="amount-send"
-                placeholder="0.00"
+                placeholder="0.000000"
                 v-model="v$.amount.$model"
                 class="placeholder-white placeholder-opacity-100"
               />
@@ -69,7 +69,7 @@
             </div>
           </div>
           <div class="flex flex-wrap justify-end pt-12 radio-list">
-            <Radio name="currency" id="max" label="MAX" @click="setAmountAsPercent(100);" />
+            <Radio name="currency" id="max" label="MAX" @click=setMaxAmount />
           </div>
 
           <div class="form-group mb-14">
@@ -313,7 +313,7 @@ export default {
       return window.ethereum !== undefined && window.ethereum.isMetaMask
     },
     amountParsed() {
-      return parseAmount(this.amount)
+      return (Math.floor(parseAmount(this.amount) * 1e6) / 1e6)
     },
     canDeposit() {
       if (this.depositInProgress || this.v$.$invalid) return false
@@ -469,8 +469,9 @@ export default {
 
       this.updateEdgeBalance()
     },
-    setAmountAsPercent(percentage) {
-      this.amount = (this.edgeBalance * (percentage / 100)).toFixed(6)
+    async setMaxAmount() {
+      this.amount = (Math.floor(this.edgeBalance * 1e6) / 1e6).toString()
+      await this.v$.$validate()
     },
     setChainId(chainId) {
       // https://eips.ethereum.org/EIPS/eip-1193#chain-changes
@@ -487,7 +488,7 @@ export default {
     async updateEdgeBalance() {
       let balance = await this.contract.balanceOf(this.ethAddress)
       balance = ethers.utils.formatEther(balance.toString())
-      this.edgeBalance = parseFloat(balance)
+      this.edgeBalance = parseFloat(Math.floor(balance * 1e6) / 1e6)
     },
     async updateGasRates() {
       this.gasRates = await fetchGasRates()
