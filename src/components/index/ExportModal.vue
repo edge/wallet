@@ -41,7 +41,6 @@
             <span class="font-mono break-all text-sm2">{{ address }}</span>
             <button
               class="flex-shrink-0 w-24 ml-24 text-green on-clicked-effect"
-              v-if="canCopy"
               @click.prevent="copyToClipboard(address)"
             >
               <ClipboardCopyIcon/>
@@ -56,7 +55,6 @@
             </span>
             <button
               class="flex-shrink-0 w-24 text-green ml-18 on-clicked-effect"
-              v-if="canCopy"
               @click.prevent="copyToClipboard(privateKey)"
             >
               <ClipboardCopyIcon/>
@@ -104,8 +102,7 @@ export default {
     return {
       password: '',
       passwordError: '',
-      privateKey: '',
-      canCopy: !!navigator.clipboard
+      privateKey: ''
     }
   },
   validations() {
@@ -159,8 +156,10 @@ export default {
       this.exportKey()
     },
     copyToClipboard(input) {
-      if (!this.canCopy) window.alert('Clipboard unavailable. Please copy-paste manually.')
-      return navigator.clipboard.writeText(input)
+      if (!!navigator.clipboard) {
+        return navigator.clipboard.writeText(input)
+      }
+      window.alert('Clipboard unavailable. Please copy-paste manually.')
     }
   },
   setup() {
