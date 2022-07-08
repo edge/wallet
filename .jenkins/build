@@ -3,9 +3,9 @@
 // Use of this source code is governed by a GNU GPL-style license
 // that can be found in the LICENSE.md file. All rights reserved.
 
-def buildAndPushImage(registry, tag, isTestnet, blockchainApi, indexApi, explorerUrl, bridgeWalletAddress) {
-  docker.withRegistry("https://$registry", registry) {
-    def image = docker.build("$registry/$tag",
+def buildAndPushImage(registryCredential, tag, isTestnet, blockchainApi, indexApi, explorerUrl, bridgeWalletAddress) {
+  docker.withRegistry("https://registry.edge.network", registryCredential) {
+    def image = docker.build("registry.edge.network/$tag",
       "--build-arg IS_TESTNET=$isTestnet --build-arg BLOCKCHAIN_API_URL=$blockchainApi --build-arg INDEX_API_URL=$indexApi --build-arg EXPLORER_URL=$explorerUrl --build-arg BRIDGE_WALLET_ADDRESS=$bridgeWalletAddress .")
     image.push()
     return "$registry/$tag"
@@ -27,7 +27,7 @@ pipeline {
           }
           steps {
             script {
-              buildAndPushImage(REGISTRY, NAME, IS_TESTNET, BLOCKCHAIN_API_URL, INDEX_API_URL, EXPLORER_URL, BRIDGE_WALLET_ADDRESS)
+              buildAndPushImage(REGISTRY_CREDENTIAL, NAME, IS_TESTNET, BLOCKCHAIN_API_URL, INDEX_API_URL, EXPLORER_URL, BRIDGE_WALLET_ADDRESS)
             }
           }
         }
