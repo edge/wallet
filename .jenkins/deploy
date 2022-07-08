@@ -35,7 +35,9 @@ def deployScript() {
 }
 
 pipeline {
-  agent any
+  agent {
+    label 'local'
+  }
   stages {
     //
     // Deploy
