@@ -36,7 +36,7 @@
     </td>
 
     <td data-title="Memo:" :title="item.data.memo || 'None'">
-      <span class="monospace lg:font-sans" :class="!item.data.memo && 'text-gray'">
+      <span class="monospace lg:font-sans lg:inline-block" :class="!item.data.memo && 'text-gray'">
         {{ item.data.memo || 'None' }}
       </span>
     </td>
