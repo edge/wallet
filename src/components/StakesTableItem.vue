@@ -15,7 +15,8 @@
     </td>
 
     <td data-title="Node:" :title="item.device">
-      <a v-if="item.device" :href="explorerNodeUrl">
+      <span v-if="item.type === 'governance'" class="text-gray-400 lg:inline-block">N/A</span>
+      <a v-else-if="item.device" :href="explorerNodeUrl">
         <span class="monospace lg:inline-block">
           {{ item.device }}
         </span>
