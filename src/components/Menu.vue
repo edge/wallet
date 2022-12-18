@@ -7,8 +7,12 @@
       class="main-nav__item"
       :class="item.disabled ? 'disabled' : ''"
     >
+      <a v-if="item.external" :href="item.link" target="_blank" class="main-nav__link">
+        {{item.text}}
+      </a>
       <!-- eslint-disable max-len -->
       <router-link
+        v-else
         :to="item.link"
         class="main-nav__link"
         :class="location && (item.text === 'Transactions' && location.startsWith('/transactions')) ? 'router-link-active' : ''"
