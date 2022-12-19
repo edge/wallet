@@ -17,6 +17,8 @@
 </template>
 
 <script>
+/* global process */
+
 import BurgerButton from '@/components/BurgerButton'
 import ExportKey from '@/components/index/ExportModal'
 import ForgetWallet from '@/components/index/ForgetModal'
@@ -50,9 +52,9 @@ export default {
           text: 'Nodes'
         },
         {
-          link: '/governance',
+          link: process.env.VUE_APP_GOVERNANCE_URL,
           text: 'Governance',
-          disabled: true
+          external: true
         }
       ]
     }

@@ -1,6 +1,6 @@
 {
   "name": "wallet",
-  "version": "1.18.3",
+  "version": "1.18.4",
   "description": "Web wallet for managing XE coin",
   "private": true,
   "license": "GPL",
@@ -18,8 +18,8 @@
     "lint": "eslint --ext js,vue src",
     "lint:fix": "eslint --fix --ext js,vue src",
     "start": "node server/index.js",
-    "testnet": "cross-env VUE_APP_IS_TESTNET=true VUE_APP_BLOCKCHAIN_API_URL=https://xe1.test.network VUE_APP_INDEX_API_URL=https://index.test.network VUE_APP_EXPLORER_URL=https://test.network VUE_APP_BRIDGE_WALLET_ADDRESS=xe_BEE3d7E5f007b662B2C886d51e2B3E08de090488 npm run dev",
-    "mainnet": "cross-env VUE_APP_IS_TESTNET=false VUE_APP_BLOCKCHAIN_API_URL=https://api.xe.network VUE_APP_INDEX_API_URL=https://index.xe.network VUE_APP_EXPLORER_URL=https://xe.network VUE_APP_BRIDGE_WALLET_ADDRESS=xe_A4788d8201Fb879e3b7523a0367401D2a985D42F npm run dev"
+    "testnet": "cross-env VUE_APP_IS_TESTNET=true VUE_APP_BLOCKCHAIN_API_URL=https://xe1.test.network VUE_APP_INDEX_API_URL=https://index.test.network VUE_APP_EXPLORER_URL=https://test.network VUE_APP_BRIDGE_WALLET_ADDRESS=xe_BEE3d7E5f007b662B2C886d51e2B3E08de090488 VUE_APP_GOVERNANCE_URL=https://governance.test.network npm run dev",
+    "mainnet": "cross-env VUE_APP_IS_TESTNET=false VUE_APP_BLOCKCHAIN_API_URL=https://api.xe.network VUE_APP_INDEX_API_URL=https://index.xe.network VUE_APP_EXPLORER_URL=https://xe.network VUE_APP_BRIDGE_WALLET_ADDRESS=xe_A4788d8201Fb879e3b7523a0367401D2a985D42F VUE_APP_GOVERNANCE_URL=https://governance.edge.network npm run dev"
   },
   "main": "server/index.js",
   "dependencies": {

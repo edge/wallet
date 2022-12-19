@@ -6,13 +6,13 @@
           <TableHeader width="165" header="Date" :sortQuery="sortQuery"
             sortParam="timestamp" :onSortingUpdate="updateSorting"
           />
-          <TableHeader width="20%" header="Tx Hash" :sortQuery="sortQuery"
+          <TableHeader width="15%" header="Tx Hash" :sortQuery="sortQuery"
             sortParam="hash" :onSortingUpdate="updateSorting"
           />
-          <TableHeader width="30%" header="From/To" :sortQuery="sortQuery"
+          <TableHeader width="20%" header="From/To" :sortQuery="sortQuery"
             sortParam="sortAddress" :onSortingUpdate="updateSorting"
           />
-          <TableHeader width="15%" header="Memo" :sortQuery="sortQuery"
+          <TableHeader width="30%" header="Memo" :sortQuery="sortQuery"
             sortParam="data.memo" :onSortingUpdate="updateSorting"
           />
           <TableHeader width="10%" header="Status" :sortQuery="sortQuery"
@@ -24,9 +24,9 @@
         </tr>
         <tr v-else>
           <th width="165">Date</th>
-          <th width="20%">Tx Hash</th>
-          <th width="30%">From/To</th>
-          <th width="15%">Memo</th>
+          <th width="15%">Tx Hash</th>
+          <th width="20%">From/To</th>
+          <th width="30%">Memo</th>
           <th width="10%">Status</th>
           <th class="amount-col" width="15%">Amount XE</th>
         </tr>
