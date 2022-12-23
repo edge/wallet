@@ -26,7 +26,7 @@
     </td>
     <td v-else data-title="From:" class="from-to" :title="item.sender">
       <span>
-        <span class="icon-wrap"><ArrowDownIcon class="icon inline-icon icon-red" /></span>
+        <span class="icon-wrap"><ArrowDownIcon class="icon inline-icon icon-green" /></span>
         <a :href="explorerFromAddressUrl" target="_blank" rel="noreferrer">
           <span class="monospace lg:inline-block">
             {{ item.sender }}
