@@ -37,8 +37,9 @@
         v-for="item in stakes"
         :key="item.id"
         :item="item"
-        :openReleaseStakeModal="openReleaseStakeModal"
-        :openUnlockStakeModal="openUnlockStakeModal"
+        @assign="stake => $emit('assign', stake)"
+        @release="stake => $emit('release', stake)"
+        @unlock="stake => $emit('unlock', stake)"
       />
     </tbody>
     <tbody v-else-if="!loaded && loading">
@@ -86,10 +87,9 @@ export default {
     'limit',
     'page',
     'receiveMetadata',
-    'sortable',
-    'openReleaseStakeModal',
-    'openUnlockStakeModal'
+    'sortable'
   ],
+  emits: ['assign', 'release', 'unlock'],
   computed: {
     ...mapState(['address']),
     sortQuery() {
