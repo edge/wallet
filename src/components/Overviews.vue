@@ -14,8 +14,8 @@
 </template>
 
 <script>
-import OverviewItem from '@/components/OverviewItem'
-import TransactionsTable from '@/components/TransactionsTable'
+import OverviewItem from '@/components/OverviewItem.vue'
+import TransactionsTable from '@/components/TransactionsTable.vue'
 
 export default {
   // eslint-disable-next-line vue/multi-word-component-names

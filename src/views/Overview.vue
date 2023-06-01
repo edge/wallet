@@ -35,13 +35,12 @@
 </template>
 
 <script>
-/*global process*/
-import AccountPanel from '@/components/AccountPanel'
-import Header from '@/components/Header'
-import NewsPromo from '@/components/NewsPromo'
-import Overviews from '@/components/Overviews'
-import RecentBlocks from '@/components/RecentBlocks'
-import TestnetFaucet from '@/components/Faucet'
+import AccountPanel from '@/components/AccountPanel.vue'
+import Header from '@/components/Header.vue'
+import NewsPromo from '@/components/NewsPromo.vue'
+import Overviews from '@/components/Overviews.vue'
+import RecentBlocks from '@/components/RecentBlocks.vue'
+import TestnetFaucet from '@/components/Faucet.vue'
 import dayjs from 'dayjs'
 import { fetchTransactions } from '../utils/api'
 import { mapState } from 'vuex'
@@ -60,7 +59,7 @@ export default {
       polling: null,
       overviews: [],
       transactionRefreshInterval: 5000,
-      isTestnet: process.env.VUE_APP_IS_TESTNET === 'true'
+      isTestnet: import.meta.env.VITE_IS_TESTNET === 'true'
     }
   },
   components: {

@@ -2,16 +2,17 @@
 // Use of this source code is governed by a GNU GPL-style license
 // that can be found in the LICENSE.md file. All rights reserved.
 
-/*global process*/
-
 import './index.css'
 import './utils'
 import App from './App.vue'
+import { Buffer } from 'buffer'
 import Store from './store'
 import { createApp } from 'vue'
 import router from './router'
 import titleMixin from './mixins/titleMixin'
 
+// eslint-disable-next-line no-undef
+globalThis.Buffer = Buffer
 const WALLET_REFRESH_INTERVAL = 30 * 1000
 
 const init = async () => {
@@ -24,7 +25,7 @@ const init = async () => {
     .mixin({
       data() {
         return {
-          isTestnet: process.env.VUE_APP_IS_TESTNET === 'true'
+          isTestnet: import.meta.env.VITE_IS_TESTNET === 'true'
         }
       }
     })

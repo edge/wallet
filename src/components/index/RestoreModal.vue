@@ -68,7 +68,7 @@
 import * as storage from '../../utils/storage'
 import * as validation from '../../utils/validation'
 import * as xe from '@edge/xe-utils'
-import Modal from '../Modal'
+import Modal from '../Modal.vue'
 import useVuelidate from '@vuelidate/core'
 import {
   KeyIcon,

@@ -69,13 +69,13 @@
 
 <script>
 import Amount from './Amount.vue'
-import CreateStakeModal from './stakes/CreateStakeModal'
-import DepositModal from './tx/DepositModal'
-import ReceiveModal from './tx/ReceiveModal'
-import SellModal from './tx/SellModal'
-import SendModal from './tx/SendModal'
-import SwapModal from './tx/SwapModal'
-import WithdrawModal from './tx/WithdrawModal'
+import CreateStakeModal from './stakes/CreateStakeModal.vue'
+import DepositModal from './tx/DepositModal.vue'
+import ReceiveModal from './tx/ReceiveModal.vue'
+import SellModal from './tx/SellModal.vue'
+import SendModal from './tx/SendModal.vue'
+import SwapModal from './tx/SwapModal.vue'
+import WithdrawModal from './tx/WithdrawModal.vue'
 import { mapState } from 'vuex'
 import { ArrowDownIcon, ArrowUpIcon, PlusIcon, SwitchHorizontalIcon } from '@heroicons/vue/outline'
 

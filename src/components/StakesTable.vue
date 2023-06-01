@@ -58,11 +58,9 @@
 </template>
 
 <script>
-/*global process*/
-
 import * as index from '@edge/index-utils'
-import StakesTableItem from '@/components/StakesTableItem'
-import TableHeader from '@/components/TableHeader'
+import StakesTableItem from '@/components/StakesTableItem.vue'
+import TableHeader from '@/components/TableHeader.vue'
 import { mapState } from 'vuex'
 
 const stakesRefreshInterval = 5 * 1000
@@ -119,7 +117,7 @@ export default {
       if (this.hideReleasedStakes) options.hideReleased = 1
 
       const stakes = await index.stake.stakes(
-        process.env.VUE_APP_INDEX_API_URL,
+        import.meta.env.VITE_INDEX_API_URL,
         this.address,
         options
       )

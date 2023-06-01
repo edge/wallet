@@ -14,10 +14,8 @@
 </template>
 
 <script>
-/*global process*/
-
-const explorerUrl = process.env.VUE_APP_EXPLORER_URL
-const etherscanUrl = process.env.VUE_APP_IS_TESTNET == 'false' ? 'https://etherscan.io' : 'https://rinkeby.etherscan.io'
+const explorerUrl = import.meta.env.VITE_EXPLORER_URL
+const etherscanUrl = import.meta.env.VITE_IS_TESTNET == 'false' ? 'https://etherscan.io' : 'https://rinkeby.etherscan.io'
 
 export default {
   // eslint-disable-next-line vue/multi-word-component-names

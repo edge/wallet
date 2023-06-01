@@ -16,14 +16,12 @@
 </template>
 
 <script>
-/* global process */
-
-import BurgerButton from '@/components/BurgerButton'
-import ExportKey from '@/components/index/ExportModal'
-import ForgetWallet from '@/components/index/ForgetModal'
-import HeaderTools from '@/components/HeaderTools'
-import Logo from '@/components/Logo'
-import Menu from '@/components/Menu'
+import BurgerButton from '@/components/BurgerButton.vue'
+import ExportKey from '@/components/index/ExportModal.vue'
+import ForgetWallet from '@/components/index/ForgetModal.vue'
+import HeaderTools from '@/components/HeaderTools.vue'
+import Logo from '@/components/Logo.vue'
+import Menu from '@/components/Menu.vue'
 
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
@@ -51,7 +49,7 @@ export default {
           text: 'Nodes'
         },
         {
-          link: process.env.VUE_APP_GOVERNANCE_URL,
+          link: import.meta.env.VITE_GOVERNANCE_URL,
           text: 'Governance',
           external: true
         }

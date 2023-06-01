@@ -2,12 +2,10 @@
 // Use of this source code is governed by a GNU GPL-style license
 // that can be found in the LICENSE.md file. All rights reserved.
 
-/*global process*/
-
 import { xeStringFromMicroXe } from '@edge/wallet-utils'
 
-const BLOCKCHAIN_API_URL = process.env.VUE_APP_BLOCKCHAIN_API_URL
-const INDEX_API_URL = process.env.VUE_APP_INDEX_API_URL
+const BLOCKCHAIN_API_URL = import.meta.env.VITE_BLOCKCHAIN_API_URL
+const INDEX_API_URL = import.meta.env.VITE_INDEX_API_URL
 
 const fetchBlocks = async (options = {}) => {
   if (!options.page) {

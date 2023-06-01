@@ -24,10 +24,10 @@
 </template>
 
 <script>
-import AccountPanel from '@/components/AccountPanel'
-import Header from '@/components/Header'
-import Pagination from '@/components/PaginationNew'
-import TransactionsTable from '@/components/TransactionsTable'
+import AccountPanel from '@/components/AccountPanel.vue'
+import Header from '@/components/Header.vue'
+import Pagination from '@/components/PaginationNew.vue'
+import TransactionsTable from '@/components/TransactionsTable.vue'
 
 export default {
   name: 'ViewTransactions',

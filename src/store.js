@@ -2,8 +2,6 @@
 // Use of this source code is governed by a GNU GPL-style license
 // that can be found in the LICENSE.md file. All rights reserved.
 
-/*global process*/
-
 import * as xe from '@edge/xe-utils'
 import { createStore } from 'vuex'
 import { fetchTokenValue } from './utils/api'
@@ -48,10 +46,10 @@ const init = async () => {
       // TODO investigate whether we can set these in app mixin instead
       config: {
         blockchain: {
-          baseURL: process.env.VUE_APP_BLOCKCHAIN_API_URL
+          baseURL: import.meta.env.VITE_BLOCKCHAIN_API_URL
         },
         index: {
-          baseURL: process.env.VUE_APP_INDEX_API_URL
+          baseURL: import.meta.env.VITE_INDEX_API_URL
         }
       }
     },

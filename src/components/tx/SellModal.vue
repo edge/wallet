@@ -79,7 +79,7 @@
                   </span>
                 </div>
                 <span class="flex justify-center p-12 pl-12 mx-auto mt-12 border border-gray-700 rounded-full md:ml-20 md:mt-0 md:flex-shrink-0 w-52 h-52 border-opacity-30 align-center">
-                  <img src="/assets/logo.svg" alt="XE" class="flex-shrink-0">
+                  <img src="/logo.svg" alt="XE" class="flex-shrink-0">
                 </span>
                 <span class="block mx-auto my-12 icon-arrow md:absolute md:m-0 md:top-1/2 md:-right-13 md:-mt-14 w-27 text-gray">
                   <ArrowRightIcon class="hidden md:block"/>
@@ -88,7 +88,7 @@
               </div>
               <div class="right md:w-1/2 md:flex md:pl-18">
                 <span class="flex justify-center p-8 mx-auto mb-12 bg-white border rounded-full md:mb-0 md:flex-shrink-0 md:mr-20 w-52 h-52 align-center">
-                  <img src="/assets/usd-coin-usdc-logo.svg" alt="USDC" class="flex-shrink-0">
+                  <img src="/usd-coin-usdc-logo.svg" alt="USDC" class="flex-shrink-0">
                 </span>
                 <div class="md:flex-grow">
                   <span class="block mb-3 text-gray">You will receive</span>
@@ -268,16 +268,14 @@
 </template>
 
 <script>
-/*global process*/
-
 import * as storage from '../../utils/storage'
 import * as validation from '../../utils/validation'
 import * as xe from '@edge/xe-utils'
-import Amount from '../Amount'
-import HashLink from '../HashLink'
+import Amount from '../Amount.vue'
+import HashLink from '../HashLink.vue'
 import { InformationCircleIcon } from '@heroicons/vue/solid'
-import Modal from '../Modal'
-import Tooltip from '../Tooltip'
+import Modal from '../Modal.vue'
+import Tooltip from '../Tooltip.vue'
 import { helpers } from '@vuelidate/validators'
 import { mapState } from 'vuex'
 import { parseAmount } from '../../utils/form'
@@ -453,7 +451,7 @@ export default {
       const tx = xe.tx.sign({
         timestamp: Date.now(),
         sender: this.address,
-        recipient: process.env.VUE_APP_BRIDGE_WALLET_ADDRESS,
+        recipient: import.meta.env.VITE_BRIDGE_WALLET_ADDRESS,
         amount: toMicroXe(this.amountParsed),
         data: {
           destination: this.recipient,
@@ -466,7 +464,7 @@ export default {
 
       // submit tx to blockchain
       try {
-        const { metadata, results } = await xe.tx.createTransactions(process.env.VUE_APP_BLOCKCHAIN_API_URL, [tx])
+        const { metadata, results } = await xe.tx.createTransactions(import.meta.env.VITE_BLOCKCHAIN_API_URL, [tx])
         if (metadata.accepted) {
           this.completedTx = results[0]
           this.feeOnSubmit = this.fee

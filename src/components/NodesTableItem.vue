@@ -67,8 +67,6 @@
 </template>
 
 <script>
-/*global process*/
-
 import moment from 'moment'
 import { ClockIcon, StatusOfflineIcon, StatusOnlineIcon } from '@heroicons/vue/outline'
 
@@ -82,13 +80,13 @@ export default {
   },
   computed: {
     explorerUrl() {
-      return `${process.env.VUE_APP_EXPLORER_URL}/node/${this.item.node.address}`
+      return `${import.meta.env.VITE_EXPLORER_URL}/node/${this.item.node.address}`
     },
     gatewayUrl() {
-      return `${process.env.VUE_APP_EXPLORER_URL}/node/${this.item.node.gateway}`
+      return `${import.meta.env.VITE_EXPLORER_URL}/node/${this.item.node.gateway}`
     },
     stargateUrl() {
-      return `${process.env.VUE_APP_EXPLORER_URL}/node/${this.item.node.stargate}`
+      return `${import.meta.env.VITE_EXPLORER_URL}/node/${this.item.node.stargate}`
     },
     formattedType() {
       return this.item.node.type.charAt(0).toUpperCase() + this.item.node.type.slice(1)
