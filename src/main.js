@@ -11,8 +11,11 @@ import { createApp } from 'vue'
 import router from './router'
 import titleMixin from './mixins/titleMixin'
 
+// https://github.com/vitejs/vite/discussions/2785
 // eslint-disable-next-line no-undef
+window.Buffer = Buffer
 globalThis.Buffer = Buffer
+
 const WALLET_REFRESH_INTERVAL = 30 * 1000
 
 const init = async () => {
