@@ -10,10 +10,8 @@
         <span class="flex-shrink-0 inline-block mt-8 mr-12 text-white icon w-27">
           <ShieldExclamationIcon/>
         </span>
-        <!-- eslint-disable-next-line max-len -->
         <p>Enter your password below to decrypt and display your private key. This will enable you to back up your private key and restore your wallet on other browsers and devices. Do not share your private key with anyone else and be aware of your surroundings while it is visible.</p>
         </div>
-        <!-- eslint-disable-next-line max-len -->
         <div class="form-group" :class="{'form-group__error': v$.password.$error || (passwordError && !v$.password.$dirty)}">
           <label for="password">ENTER PASSWORD to export your private key</label>
           <div class="relative input-wrap">
@@ -29,7 +27,6 @@
               v-model="v$.password.$model"
             />
           </div>
-          <!-- eslint-disable-next-line max-len -->
           <div class="form-group__error input-error" v-for="error of v$.password.$errors" :key="error.$uid">{{error.$message}}</div>
           <div class="form-group__error input-error" v-if="passwordError && !v$.password.$dirty">{{passwordError}}</div>
         </div>
@@ -67,12 +64,10 @@
     </template>
 
     <template v-slot:footer>
-      <!-- eslint-disable-next-line max-len -->
       <div v-if="!privateKey" class="grid grid-cols-1 gap-24 px-24 pt-24 border-gray-700 border-solid md:grid-cols-2 border-t-default border-opacity-30 pb-24">
         <button class="w-full button button--outline-success" @click="cancel">Cancel</button>
         <button class="w-full button button--success" :disabled="!canSubmit" @click="exportKey">Export</button>
       </div>
-      <!-- eslint-disable-next-line max-len -->
       <div v-else class="grid grid-cols-1 gap-24 px-24 pt-20 border-gray-700 border-solid border-t-default border-opacity-30 pb-20">
         <button
           :disabled="!canSubmit"

@@ -12,7 +12,6 @@
         <span class="not-link" v-else><ChevronLeftIcon/></span>
       </li>
       <li class="pagination__item">
-        <!-- eslint-disable-next-line max-len -->
         <span v-if="totalPages">Page {{Number(currentPage).toLocaleString()}} of {{Number(totalPages).toLocaleString()}}</span>
         <span v-else>&nbsp;</span>
       </li>

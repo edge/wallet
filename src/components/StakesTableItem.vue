@@ -55,9 +55,16 @@
 
     <td data-title="">
       <button
+        v-if="canAssign"
+        class="w-full table-button button--outline"
+        @click="$emit('assign', item)"
+      >
+        Assign Device
+      </button>
+      <button
         v-if="action"
         class="w-full table-button button--outline"
-        @click="openModal"
+        @click="$emit(action.toLowerCase(), item)"
       >
         {{ action }}
       </button>
@@ -72,7 +79,8 @@ import { ArrowCircleDownIcon, CheckCircleIcon, ClockIcon, DotsCircleHorizontalIc
 
 export default {
   name: 'StakesTableItem',
-  props: ['item', 'openReleaseStakeModal', 'openUnlockStakeModal'],
+  props: ['item'],
+  emits: ['assign', 'release', 'unlock'],
   components: {
     ArrowCircleDownIcon,
     CheckCircleIcon,
@@ -87,6 +95,9 @@ export default {
     },
     address () {
       return this.item.tx.recipient
+    },
+    canAssign() {
+      return !this.item.unlockRequested && ['stargate', 'gateway', 'host'].includes(this.item.type)
     },
     explorerNodeUrl() {
       return `${process.env.VUE_APP_EXPLORER_URL}/node/${this.item.device}`
@@ -108,7 +119,7 @@ export default {
     }
   },
   methods: {
-    openModal() {
+    openActionModel() {
       if (this.action === 'Unlock') return this.openUnlockStakeModal(this.item)
       else if ( this.action === 'Release') return this.openReleaseStakeModal(this.item)
     }
@@ -160,6 +171,10 @@ td a {
 
 button.table-button {
   @apply py-2 rounded text-black border-solid border border-gray-400 text-gray-500 hover:border-green hover:text-green
+}
+
+button.table-button:not(:first-child) {
+  @apply mt-4;
 }
 
 @screen lg {

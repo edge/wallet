@@ -25,7 +25,6 @@
               maxlength="43"
               v-model="v$.recipient.$model"
             />
-            <!-- eslint-disable-next-line max-len -->
             <div class="form-group__error input-error" v-for="error of v$.recipient.$errors" :key="error.$uid">{{error.$message}}</div>
           </div>
 
@@ -42,7 +41,6 @@
                 class="placeholder-white placeholder-opacity-100"
               />
               <span class="absolute right-0 text-xl curren top-23">XE</span>
-              <!-- eslint-disable-next-line max-len -->
               <div class="mt-5 form-group__error input-error" style="color: #CD5F4E" v-for="error of v$.amount.$errors" :key="error.$uid">{{error.$message}}</div>
             </div>
           </div>
@@ -60,7 +58,6 @@
           <div class="mt-32 mb-8 form-group">
             <label class="flex items-center space-x-3">
               Transaction Fee
-              <!-- eslint-disable-next-line max-len -->
               <Tooltip class="ml-3" position="right" theme="dark" :wide="true" :text="`This covers the cost of the Ethereum transaction`">
                 <InformationCircleIcon class="hidden md:block button__icon w-15" />
               </Tooltip>
@@ -72,7 +69,6 @@
 
       <template v-slot:footer>
         <div class="px-24 pt-32 pb-40 border-t border-gray-700 border-opacity-30">
-          <!-- eslint-disable-next-line max-len -->
           <div class="px-10 py-20 mb-32 text-center bg-black border border-gray-700 rounded convert-info md:text-left border-opacity-30 border-color">
             <div class="md:flex">
               <div class="left md:text-right md:w-1/2 md:flex md:pr-18 md:relative">
@@ -82,18 +78,15 @@
                     <Amount :value="amountParsed" currency="XE" short/>
                   </span>
                 </div>
-                <!-- eslint-disable-next-line max-len -->
                 <span class="flex justify-center p-12 pl-12 mx-auto mt-12 border border-gray-700 rounded-full md:ml-20 md:mt-0 md:flex-shrink-0 w-52 h-52 border-opacity-30 align-center">
                   <img src="/assets/logo.svg" alt="XE" class="flex-shrink-0">
                 </span>
-                <!-- eslint-disable-next-line max-len -->
                 <span class="block mx-auto my-12 icon-arrow md:absolute md:m-0 md:top-1/2 md:-right-13 md:-mt-14 w-27 text-gray">
                   <ArrowRightIcon class="hidden md:block"/>
                   <ArrowDownIcon class="block md:hidden"/>
                 </span>
               </div>
               <div class="right md:w-1/2 md:flex md:pl-18">
-                <!-- eslint-disable-next-line max-len -->
                 <span class="flex justify-center p-8 mx-auto mb-12 bg-white border rounded-full md:mb-0 md:flex-shrink-0 md:mr-20 w-52 h-52 align-center">
                   <img src="/assets/usd-coin-usdc-logo.svg" alt="USDC" class="flex-shrink-0">
                 </span>
@@ -141,7 +134,6 @@
           <div class="form-group mb-14">
             <label class="flex items-center space-x-3">
               Transaction Fee
-              <!-- eslint-disable-next-line max-len -->
               <Tooltip class="ml-3" position="right" theme="dark" :wide="true" :text="`This covers the cost of the Ethereum transaction`">
                 <InformationCircleIcon class="hidden md:block button__icon w-15" />
               </Tooltip>
@@ -167,7 +159,6 @@
           </div>
         </div>
 
-        <!-- eslint-disable-next-line max-len -->
         <div v-if="!withinSaleLimit" class="px-20 py-20 mb-24 text-center bg-black border border-gray-700 rounded convert-info md:text-left red border-opacity-30 border-color">
           <div class="">
             <span class="flex w-full overflow-hidden overflow-ellipsis text-red">
@@ -179,7 +170,6 @@
 
       <template v-slot:footer>
         <div class="px-24 py-32 border-t border-gray-700 border-opacity-30">
-          <!-- eslint-disable-next-line max-len -->
           <div class="mb-24 form-group" :class="{'form-group__error': v$.password.$error || (passwordError && !v$.password.$dirty)}">
             <form>
               <label for="password">ENTER PASSWORD</label>
@@ -196,14 +186,11 @@
                   @keypress="sellOnEnter"
                 />
               </div>
-              <!-- eslint-disable-next-line max-len -->
               <div class="form-group__error input-error" v-for="error of v$.password.$errors" :key="error.$uid">{{error.$message}}</div>
-              <!-- eslint-disable-next-line max-len -->
               <div class="form-group__error input-error" v-if="passwordError && !v$.password.$dirty">{{passwordError}}</div>
             </form>
           </div>
 
-          <!-- eslint-disable-next-line max-len -->
           <div v-if="submitError" class="px-20 py-20 text-center bg-black border border-gray-700 rounded convert-info md:text-left red border-opacity-30 border-color">
             <div class="">
               <span class="flex w-full overflow-hidden overflow-ellipsis text-red">
@@ -263,7 +250,6 @@
           </div>
 
           <div class="flex items-center mt-24 leading-8 text-gray">
-            <!-- eslint-disable-next-line max-len -->
             <p class="mb-0">Your request has been accepted and should be processed soon. If your request cannot be processed for any reason, your XE will be returned.</p>
           </div>
         </div>

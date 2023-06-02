@@ -10,7 +10,6 @@
       <a v-if="item.external" :href="item.link" target="_blank" class="main-nav__link">
         {{item.text}}
       </a>
-      <!-- eslint-disable max-len -->
       <router-link
         v-else
         :to="item.link"
@@ -19,7 +18,6 @@
       >
         {{item.text}}
       </router-link>
-      <!-- eslint-enable max-len -->
     </li>
   </ul>
 </template>

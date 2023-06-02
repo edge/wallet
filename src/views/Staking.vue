@@ -3,6 +3,11 @@
     <Header />
     <AccountPanel view="staking" />
 
+    <AssignDeviceModal
+      :close="closeAssignDeviceModal"
+      :visible="showAssignDeviceModal"
+      :stake="stake"
+    />
     <ReleaseStakeModal
       :close="closeReleaseStakeModal"
       :visible="showReleaseStakeModal"
@@ -27,8 +32,9 @@
           :receiveMetadata="onStakesUpdate"
           :page="currentPage"
           :sortable="true"
-          :openReleaseStakeModal="openReleaseStakeModal"
-          :openUnlockStakeModal="openUnlockStakeModal"
+          @assign="openAssignDeviceModal"
+          @release="openReleaseStakeModal"
+          @unlock="openUnlockStakeModal"
         />
         <Pagination
           v-if="metadata.totalCount > limit"
@@ -44,6 +50,7 @@
 
 <script>
 import AccountPanel from '@/components/AccountPanel'
+import AssignDeviceModal from '../components/stakes/AssignDeviceModal.vue'
 import Header from '@/components/Header'
 import Pagination from '@/components/PaginationNew'
 import ReleaseStakeModal from '@/components/stakes/ReleaseStakeModal'
@@ -54,6 +61,7 @@ export default {
   name: 'ViewStaking',
   data: function () {
     return {
+      showAssignDeviceModal: false,
       showReleaseStakeModal: false,
       showUnlockStakeModal: false,
       stake: null,
@@ -68,7 +76,8 @@ export default {
     Pagination,
     ReleaseStakeModal,
     StakesTable,
-    UnlockStakeModal
+    UnlockStakeModal,
+    AssignDeviceModal
   },
   computed: {
     currentPage() {
@@ -82,6 +91,10 @@ export default {
     }
   },
   methods: {
+    closeAssignDeviceModal() {
+      this.stake = null
+      this.showAssignDeviceModal = false
+    },
     closeReleaseStakeModal() {
       this.stake = null
       this.showReleaseStakeModal = false
@@ -92,6 +105,10 @@ export default {
     },
     onStakesUpdate(metadata) {
       this.metadata = metadata
+    },
+    openAssignDeviceModal(stake) {
+      this.stake = stake
+      this.showAssignDeviceModal = true
     },
     openReleaseStakeModal(stake) {
       this.stake = stake
@@ -115,7 +132,6 @@ export default {
           this.$router.replace({ query: { ...this.$route.query, page: 1 } })
         }
       }
-      // eslint-disable-next-line max-len
       if (this.currentPage > this.lastPage) this.$router.replace({ query: { ...this.$route.query, page: this.lastPage } })
     }
   }
