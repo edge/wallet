@@ -22,7 +22,7 @@
               <div class="form-group__error input-error" v-for="error of v$.token.$errors" :key="error.$uid">{{error.$message}}</div>
               <div v-if="tokenError" class="form-group__error input-error">{{ tokenError }}</div>
             </div>
-            <a href="#" class="block mb-14 hover:text-green text-sm2 text-right" @click="toggleEntryMode">Enter device information manually</a>
+            <a href="#" class="inline-block mb-14 hover:text-green text-sm2 float-right" @click="toggleEntryMode">Enter device information manually</a>
           </div>
           <div v-else>
             <div class="form-group mb-14" :class="{'form-group__error': v$.device.$error}">
@@ -35,7 +35,7 @@
               <input type="text" placeholder="Enter the corresponding private key" id="device-key" v-model="v$.deviceKey.$model"/>
               <div class="form-group__error input-error" v-for="error of v$.deviceKey.$errors" :key="error.$uid">{{error.$message}}</div>
             </div>
-            <a href="#" class="block mb-14 hover:text-green text-sm2 text-right" @click="toggleEntryMode">Enter a device token</a>
+            <a href="#" class="inline-block mb-14 hover:text-green text-sm2 float-right" @click="toggleEntryMode">Enter a device token</a>
           </div>
         </div>
       </template>
