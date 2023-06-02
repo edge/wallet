@@ -64,7 +64,7 @@ export const passwordRequired = helpers.withMessage('Password required.', _requi
  */
 export const required = helpers.withMessage('A value is required.', _required)
 
-const xeAddressRegexp = /^xe_[a-fA-F0-9]{40}$/
+export const xeAddressRegexp = /^xe_[a-fA-F0-9]{40}$/
 /**
  * XE address validator.
  */

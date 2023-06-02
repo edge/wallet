@@ -15,17 +15,30 @@
             <label class="label">Stake Type</label>
             <span class="break-all text-3xl">{{ stakeTypeFormatted }}</span>
           </div>
-          <div class="form-group mb-14" :class="{'form-group__error': v$.device.$error}">
-            <label for="device" class="label">Device Address</label>
-            <input type="text" placeholder="Enter a device address" id="device" v-model="v$.device.$model"/>
-            <!-- eslint-disable-next-line max-len -->
-            <div class="form-group__error input-error" v-for="error of v$.device.$errors" :key="error.$uid">{{error.$message}}</div>
+          <div v-if="entryMode === 'token'">
+            <div class="form-group mb-14" :class="{'form-group__error': v$.token.$error}">
+              <label for="token" class="label">Device Token</label>
+              <input type="text" placeholder="Enter your device token" id="token" v-model="v$.token.$model"/>
+              <!-- eslint-disable-next-line max-len -->
+              <div class="form-group__error input-error" v-for="error of v$.token.$errors" :key="error.$uid">{{error.$message}}</div>
+              <div v-if="tokenError" class="form-group__error input-error">{{ tokenError }}</div>
+            </div>
+            <a href="#" class="block mb-14 hover:text-green text-sm2 text-right" @click="toggleEntryMode">Enter device information manually</a>
           </div>
-          <div class="form-group" :class="{'form-group__error': v$.deviceKey.$error}">
-            <label for="device-key" class="label">Device Private Key</label>
-            <input type="text" placeholder="Enter the corresponding private key" id="device-key" v-model="v$.deviceKey.$model"/>
-            <!-- eslint-disable-next-line max-len -->
-            <div class="form-group__error input-error" v-for="error of v$.deviceKey.$errors" :key="error.$uid">{{error.$message}}</div>
+          <div v-else>
+            <div class="form-group mb-14" :class="{'form-group__error': v$.device.$error}">
+              <label for="device" class="label">Device Address</label>
+              <input type="text" placeholder="Enter a device address" id="device" v-model="v$.device.$model"/>
+              <!-- eslint-disable-next-line max-len -->
+              <div class="form-group__error input-error" v-for="error of v$.device.$errors" :key="error.$uid">{{error.$message}}</div>
+            </div>
+            <div class="form-group mb-14" :class="{'form-group__error': v$.deviceKey.$error}">
+              <label for="device-key" class="label">Device Private Key</label>
+              <input type="text" placeholder="Enter the corresponding private key" id="device-key" v-model="v$.deviceKey.$model"/>
+              <!-- eslint-disable-next-line max-len -->
+              <div class="form-group__error input-error" v-for="error of v$.deviceKey.$errors" :key="error.$uid">{{error.$message}}</div>
+            </div>
+            <a href="#" class="block mb-14 hover:text-green text-sm2 text-right" @click="toggleEntryMode">Enter a device token</a>
           </div>
         </div>
       </template>
@@ -167,6 +180,8 @@
 import * as storage from '../../utils/storage'
 import * as validation from '../../utils/validation'
 import * as xe from '@edge/xe-utils'
+import Base64 from 'crypto-js/enc-base64'
+import UTF8 from 'crypto-js/enc-utf8'
 import HashLink from '../HashLink'
 import { LockOpenIcon } from '@heroicons/vue/outline'
 import Modal from '../Modal'
@@ -189,6 +204,10 @@ export default {
   data() {
     return {
       step: 1,
+      entryMode: 'token',
+
+      token: '',
+      tokenError: '',
 
       device: '',
       deviceKey: '',
@@ -202,6 +221,9 @@ export default {
   },
   validations() {
     return {
+      token: [
+        validation.required
+      ],
       device: [
         validation.required,
         validation.xeAddress,
@@ -219,7 +241,9 @@ export default {
       return !this.v$.$invalid
     },
     canReadyAssign() {
-      return this.v$.$anyDirty && !this.v$.device.$error && !this.v$.deviceKey.$error
+      if (!this.v$.$anyDirty) return false
+      if (this.entryMode === 'token') return !this.v$.token.$error
+      return !this.v$.device.$error && !this.v$.deviceKey.$error
     },
     stakeTypeFormatted() {
       return this.stake.type[0].toUpperCase() + this.stake.type.slice(1)
@@ -248,13 +272,38 @@ export default {
       this.step = step
     },
     async readyAssign() {
-      this.v$.device.$touch()
-      this.v$.deviceKey.$touch()
-      if (this.v$.device.$error || this.v$.deviceKey.$error) return
+      if (this.entryMode === 'token') {
+        this.v$.token.$touch()
+        if (this.v$.token.$error) return
+        try {
+          const words = Base64.parse(this.token)
+          const str = UTF8.stringify(words)
+          const data = JSON.parse(str)
+          console.log(data)
+          if (!data || !data.address || !data.privateKey) throw new Error('Invalid device token.')
+          if (!validation.xeAddressRegexp.test(data.address)) throw new Error('Invalid address.')
+          this.device = data.address
+          this.deviceKey = data.privateKey
+        }
+        catch (err) {
+          if (err.message.startsWith('JSON.parse')) this.tokenError = 'Invalid device token.'
+          else this.tokenError = err.message
+          return
+        }
+      }
+      else {
+        this.v$.device.$touch()
+        this.v$.deviceKey.$touch()
+        if (this.v$.device.$error || this.v$.deviceKey.$error) return
+      }
+      this.tokenError = ''
       this.goto(2)
     },
     reset() {
       this.goto(1)
+      this.entryMode = 'token'
+
+      this.token = ''
 
       this.device = ''
       this.deviceKey = ''
@@ -263,6 +312,9 @@ export default {
       this.passwordError = ''
 
       this.v$.$reset()
+    },
+    toggleEntryMode() {
+      this.entryMode = this.entryMode === 'token' ? 'manual' : 'token'
     },
     async assign() {
       this.passwordError = ''
@@ -313,6 +365,9 @@ export default {
     }
   },
   watch: {
+    token() {
+      this.tokenError = ''
+    },
     visible(v, oldv) {
       if (v === oldv) return
       if (v) {
