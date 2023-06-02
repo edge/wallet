@@ -38,7 +38,7 @@
     "chart.js": "^3.7.1",
     "click-outside-vue3": "^4.0.1",
     "core-js": "^3.6.5",
-    "crypto-js": "^4.0.0",
+    "crypto-js": "^4.1.1",
     "dayjs": "^1.10.5",
     "detect-browser": "^5.2.0",
     "dotenv": "^8.2.0",
@@ -62,7 +62,7 @@
     "vuex": "^4.0.2"
   },
   "devDependencies": {
-    "@edge/eslint-config-javascript": "^0.1.0",
+    "@edge/eslint-config-javascript": "^0.1.5",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-service": "~4.5.0",

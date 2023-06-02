@@ -18,13 +18,11 @@
               type="text"
               v-model="v$.recipient.$model"
             />
-            <!-- eslint-disable-next-line max-len -->
             <div class="form-group__error input-error" v-for="error of v$.recipient.$errors" :key="error.$uid">{{error.$message}}</div>
           </div>
           <div class="form-group" :class="{'form-group__error': v$.memo.$error}">
             <label for="memo" class="label">Memo (optional)</label>
             <input type="text" placeholder="Enter a memo" id="memo" v-model="v$.memo.$model"/>
-            <!-- eslint-disable-next-line max-len -->
             <div class="form-group__error input-error" v-for="error of v$.memo.$errors" :key="error.$uid">{{error.$message}}</div>
           </div>
           <div
@@ -41,12 +39,10 @@
                 class="placeholder-white placeholder-opacity-100"
               />
               <span class="absolute right-0 text-xl currentColor top-23">XE</span>
-              <!-- eslint-disable-next-line max-len -->
               <div class="mt-5 form-group__error input-error" style="color: #CD5F4E" v-for="error of v$.amount.$errors" :key="error.$uid">{{error.$message}}</div>
             </div>
           </div>
           <div class="flex flex-wrap pt-12 radio-list">
-            <!-- eslint-disable-next-line max-len -->
             <Radio name="amount-send1" id="max" label="MAX" :selected="isMaxAmountEntered" @click="setAmountAsPercent(100)" />
           </div>
         </div>
@@ -97,7 +93,6 @@
       <template v-slot:footer>
         <div class="px-24 pt-32 pb-40 border-t border-gray-700 border-opacity-30">
           <form>
-            <!-- eslint-disable-next-line max-len -->
             <div class="form-group" :class="{'form-group__error': v$.password.$error || (passwordError && !v$.password.$dirty)}">
               <label for="pass-step">Enter Password</label>
               <div class="relative input-wrap">
@@ -113,9 +108,7 @@
                   v-model="v$.password.$model"
                 />
               </div>
-              <!-- eslint-disable-next-line max-len -->
               <div class="form-group__error input-error" v-for="error of v$.password.$errors" :key="error.$uid">{{error.$message}}</div>
-              <!-- eslint-disable-next-line max-len -->
               <div class="form-group__error input-error" v-if="passwordError && !v$.password.$dirty">{{passwordError}}</div>
             </div>
           </form>
@@ -127,7 +120,6 @@
               class="w-full button button--success"
             >Confirm transaction</button>
           </div>
-          <!-- eslint-disable-next-line max-len -->
           <div v-if="submitError" class="px-20 py-20 my-20 text-center bg-black border border-gray-700 rounded convert-info md:text-left border-opacity-30 border-color">
             <div class="">
               <span class="flex w-full overflow-hidden text-white overflow-ellipsis">
@@ -242,7 +234,6 @@ export default {
       ],
       memo: [
         helpers.withMessage(
-          // eslint-disable-next-line max-len
           'Memo is limited to 32 characters and should include only upper and lowercase letters, numbers, hyphens and spaces.',
           v => v.length === 0 || memoRegexp.test(v)
         )

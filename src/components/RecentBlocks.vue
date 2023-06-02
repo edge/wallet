@@ -22,7 +22,6 @@
       <tbody v-if="blocks.length">
         <tr v-for="block in blocks" :key="block.hash">
           <td data-title="Height:">
-            <!-- eslint-disable-next-line max-len -->
             <a :href="`${explorerUrl}/block/${block.height}`" target="_blank" rel="noreferrer" class="monospace lg:inline-block">
               {{ block.height }}
             </a>

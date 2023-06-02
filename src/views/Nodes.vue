@@ -170,7 +170,6 @@ export default {
     isChartIndvDataMb() {
       for (const node in this.sessionsStats) {
         if (node.substring(0, 2) == 'xe') {
-          // eslint-disable-next-line max-len
           if (this.sessionsStats[node].some(el => el.metrics.cdn.data.in > 1000000 || el.metrics.cdn.data.out > 1000000)) return true
         }
       }
@@ -248,7 +247,6 @@ export default {
       return colour
     },
     getDataset(data, label, fill, color, dashed) {
-      // eslint-disable-next-line max-len
       const truncatedLabel = label.substring(0, 2) === 'xe' ? label.substring(0, 7) + '...' + label.substring(38) : label
       const ffColor = this.getColorFromAddress(label)
       const backgroundColor = dashed ? color.border : color ? color.background : ffColor
@@ -264,7 +262,6 @@ export default {
       }
     },
     getIndvDatasets(callback) {
-      // eslint-disable-next-line max-len
       const avgDataset = this.getDataset(this.sessionsStats.average.map(callback).reverse(), 'Average', false, edgeGreen, true)
       const datasets = [avgDataset]
       for (const node in this.sessionsStats) {

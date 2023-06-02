@@ -11,7 +11,6 @@
             <label>wallet address</label>
             <span class="break-all">{{ address }}</span>
           </div>
-          <!-- eslint-disable-next-line max-len -->
           <div class="form-group" :class="{'form-group__error': v$.password.$error || (passwordError && !v$.password.$dirty)}">
             <label for="password">ENTER PASSWORD</label>
             <div class="relative input-wrap">
@@ -27,9 +26,7 @@
                 v-model="v$.password.$model"
               />
             </div>
-            <!-- eslint-disable-next-line max-len -->
             <div class="form-group__error input-error" v-for="error of v$.password.$errors" :key="error.$uid">{{error.$message}}</div>
-            <!-- eslint-disable-next-line max-len -->
             <div class="form-group__error input-error" v-if="passwordError && !v$.password.$dirty">{{passwordError}}</div>
           </div>
         </form>
@@ -37,7 +34,6 @@
     </template>
 
     <template v-slot:footer>
-      <!-- eslint-disable-next-line max-len -->
       <div class="grid grid-cols-1 gap-24 px-24 pt-48 border-gray-700 border-solid md:grid-cols-2 border-t-default border-opacity-30 pb-54">
         <button
           class="w-full border-red-600 button button--outline-success hover:border-red-600 hover:bg-red-600"

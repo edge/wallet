@@ -19,7 +19,6 @@
             <div class="form-group mb-14" :class="{'form-group__error': v$.token.$error}">
               <label for="token" class="label">Device Token</label>
               <input type="text" placeholder="Enter your device token" id="token" v-model="v$.token.$model"/>
-              <!-- eslint-disable-next-line max-len -->
               <div class="form-group__error input-error" v-for="error of v$.token.$errors" :key="error.$uid">{{error.$message}}</div>
               <div v-if="tokenError" class="form-group__error input-error">{{ tokenError }}</div>
             </div>
@@ -29,13 +28,11 @@
             <div class="form-group mb-14" :class="{'form-group__error': v$.device.$error}">
               <label for="device" class="label">Device Address</label>
               <input type="text" placeholder="Enter a device address" id="device" v-model="v$.device.$model"/>
-              <!-- eslint-disable-next-line max-len -->
               <div class="form-group__error input-error" v-for="error of v$.device.$errors" :key="error.$uid">{{error.$message}}</div>
             </div>
             <div class="form-group mb-14" :class="{'form-group__error': v$.deviceKey.$error}">
               <label for="device-key" class="label">Device Private Key</label>
               <input type="text" placeholder="Enter the corresponding private key" id="device-key" v-model="v$.deviceKey.$model"/>
-              <!-- eslint-disable-next-line max-len -->
               <div class="form-group__error input-error" v-for="error of v$.deviceKey.$errors" :key="error.$uid">{{error.$message}}</div>
             </div>
             <a href="#" class="block mb-14 hover:text-green text-sm2 text-right" @click="toggleEntryMode">Enter a device token</a>
@@ -91,7 +88,6 @@
       <template v-slot:footer>
         <div class="px-24 pt-32 pb-40 border-t border-gray-700 border-opacity-30">
           <form>
-            <!-- eslint-disable-next-line max-len -->
             <div class="form-group" :class="{'form-group__error': v$.password.$error || (passwordError && !v$.password.$dirty)}">
               <label for="pass-step">Enter Password</label>
               <div class="relative input-wrap">
@@ -107,9 +103,7 @@
                   v-model="v$.password.$model"
                 />
               </div>
-              <!-- eslint-disable-next-line max-len -->
               <div class="form-group__error input-error" v-for="error of v$.password.$errors" :key="error.$uid">{{error.$message}}</div>
-              <!-- eslint-disable-next-line max-len -->
               <div class="form-group__error input-error" v-if="passwordError && !v$.password.$dirty">{{passwordError}}</div>
             </div>
           </form>
@@ -121,7 +115,6 @@
               class="w-full button button--success"
             >Assign Stake</button>
           </div>
-          <!-- eslint-disable-next-line max-len -->
           <div v-if="submitError" class="px-20 py-20 my-20 text-center bg-black border border-gray-700 rounded convert-info md:text-left border-opacity-30 border-color">
             <div class="">
               <span class="flex w-full overflow-hidden text-white overflow-ellipsis">
@@ -157,7 +150,6 @@
             </a>
           </div>
           <div class="flex items-center mt-24 leading-8 text-gray">
-            <!-- eslint-disable-next-line max-len -->
             <p class="mb-0">Your transaction has been submitted. Once processed, your device will be assigned to this stake. This may take a minute or two.</p>
           </div>
         </div>
@@ -181,10 +173,10 @@ import * as storage from '../../utils/storage'
 import * as validation from '../../utils/validation'
 import * as xe from '@edge/xe-utils'
 import Base64 from 'crypto-js/enc-base64'
-import UTF8 from 'crypto-js/enc-utf8'
 import HashLink from '../HashLink'
 import { LockOpenIcon } from '@heroicons/vue/outline'
 import Modal from '../Modal'
+import UTF8 from 'crypto-js/enc-utf8'
 import { helpers } from '@vuelidate/validators'
 import { mapState } from 'vuex'
 import useVuelidate from '@vuelidate/core'

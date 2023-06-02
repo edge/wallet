@@ -3,14 +3,11 @@
     <Modal :close="cancel" :visible="visible && step === 1">
       <template v-slot:header>
         <h2 class="mb-8">Deposit EDGE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
-        <!-- eslint-disable max-len -->
         <span v-if="browserSupport" class="sub-heading d-block text-gray text-caption">Connect to MetaMask to deposit EDGE for swap.</span>
         <span v-else class="sub-heading d-block text-gray text-caption">Your browser doesn't support the MetaMask browser extension. Please use Brave, Chrome, Edge or Firefox for depositing EDGE.</span>
-        <!-- eslint-enable max-len -->
       </template>
       <template v-slot:body>
         <div class="pb-15">
-          <!-- eslint-disable-next-line max-len -->
           <div v-if="connectError" class="px-20 py-20 mb-32 text-center bg-black border border-gray-700 rounded convert-info md:text-left border-opacity-30 border-color">
             <div class="">
               <span class="flex w-full overflow-hidden text-white overflow-ellipsis">
@@ -18,12 +15,10 @@
               </span>
             </div>
           </div>
-          <!-- eslint-disable max-len -->
           <button v-if="connectStatus === 'onboarding'" class="w-full mb-16 button button--success" disabled>Waiting for MetaMask...</button>
           <button v-else-if="connectStatus === 'connecting'" class="w-full mb-16 button button--success" disabled>Connecting to MetaMask...</button>
           <button v-else-if="hasMetaMask" class="w-full mb-16 button button--success" @click="connect">Connect MetaMask</button>
           <button v-else class="w-full mb-16 button button--success" @click="installMetaMask" :disabled="!browserSupport">Click to install MetaMask</button>
-          <!-- eslint-enable max-len -->
           <button class="w-full button button--outline-success" @click="cancel">Cancel</button>
         </div>
       </template>
@@ -64,7 +59,6 @@
                 class="placeholder-white placeholder-opacity-100"
               />
               <span class="absolute right-0 text-xl curren top-23">EDGE</span>
-              <!-- eslint-disable-next-line max-len -->
               <div class="mt-5 form-group__error input-error" style="color: #CD5F4E" v-for="error of v$.amount.$errors" :key="error.$uid">{{error.$message}}</div>
             </div>
           </div>
@@ -75,7 +69,6 @@
           <div class="form-group mb-14">
             <label class="flex items-center space-x-3">
               Transaction fee
-              <!-- eslint-disable-next-line max-len -->
               <Tooltip class="ml-3" position="right" theme="dark" :text="`Inclusive of a ${minimumFee} XE handling fee`">
                 <InformationCircleIcon class="hidden md:block button__icon w-15" />
               </Tooltip>
@@ -88,7 +81,6 @@
 
       <template v-slot:footer>
         <div class="px-24 pt-32 pb-40 border-t border-gray-700 border-opacity-30">
-          <!-- eslint-disable-next-line max-len -->
           <div class="px-10 py-20 mb-32 text-center bg-black border border-gray-700 rounded convert-info md:text-left border-opacity-30 border-color">
             <div class="md:flex">
               <div class="left md:text-right md:w-1/2 md:flex md:pr-18 md:relative">
@@ -98,18 +90,15 @@
                     <Amount :value="amountParsed" currency="EDGE"/>
                   </span>
                 </div>
-                <!-- eslint-disable-next-line max-len -->
                 <span class="flex justify-center p-12 mx-auto mt-12 border border-gray-700 rounded-full md:ml-20 md:mt-0 md:flex-shrink-0 w-52 h-52 border-opacity-30 align-center">
                   <img src="/assets/e-logo-alt.svg" alt="image description" class="flex-shrink-0">
                 </span>
-                <!-- eslint-disable-next-line max-len -->
                 <span class="block mx-auto my-12 icon-arrow md:absolute md:m-0 md:top-1/2 md:-right-13 md:-mt-14 w-27 text-gray">
                   <ArrowRightIcon class="hidden md:block"/>
                   <ArrowDownIcon class="block md:hidden"/>
                 </span>
               </div>
               <div class="right md:w-1/2 md:flex md:pl-18">
-                <!-- eslint-disable-next-line max-len -->
                 <span class="flex justify-center p-8 pl-12 mx-auto mb-12 bg-white border rounded-full md:mb-0 md:flex-shrink-0 md:mr-20 w-52 h-52 align-center">
                   <img src="/assets/logo.svg" alt="XE Wallet" class="flex-shrink-0">
                 </span>
@@ -123,7 +112,6 @@
             </div>
           </div>
 
-          <!-- eslint-disable-next-line max-len -->
           <div v-if="depositMessage" class="px-20 py-20 mb-32 text-center bg-black border border-gray-700 rounded convert-info md:text-left border-opacity-30 border-color">
             <div class="">
               <span class="deposit-message flex w-full overflow-hidden text-white overflow-ellipsis">
@@ -131,7 +119,7 @@
               </span>
             </div>
           </div>
-          <!-- eslint-disable-next-line max-len -->
+
           <div v-if="depositError" class="px-20 py-20 mb-32 text-center bg-black border border-gray-700 rounded convert-info md:text-left border-opacity-30 border-color">
             <div class="">
               <span class="flex w-full overflow-hidden text-red overflow-ellipsis">
@@ -199,7 +187,6 @@
 
       <template v-slot:footer>
         <div class="px-24 pt-40 pb-40 border-t border-gray-700 border-opacity-30">
-          <!-- eslint-disable-next-line max-len -->
           <button class="block w-full mx-auto text-center button button--success md:w-3/6" @click="cancel">Close</button>
         </div>
       </template>
