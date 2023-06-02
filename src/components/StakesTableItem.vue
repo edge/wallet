@@ -173,6 +173,10 @@ button.table-button {
   @apply py-2 rounded text-black border-solid border border-gray-400 text-gray-500 hover:border-green hover:text-green
 }
 
+button.table-button:not(:first-child) {
+  @apply mt-4;
+}
+
 @screen lg {
   td {
     @apply border-gray-200 pt-13 pb-10 table-cell border-b-2 align-middle;
