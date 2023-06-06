@@ -158,7 +158,7 @@ export default {
 
       await storage.setWallet({ privateKey: this.privateKey, publicKey: this.publicKey }, this.password)
       await storage.setWalletVersion(storage.getHighestWalletVersion())
-      this.$store.commit('setAddress', this.address)
+      await this.$store.dispatch('reloadWallet')
       this.$store.commit('unlock')
       this.$store.dispatch('refresh')
 

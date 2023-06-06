@@ -78,6 +78,9 @@ const init = async () => {
       setUSDBalance(state, usdBalance) {
         state.usdBalance = usdBalance
       },
+      setVersion(state, version) {
+        state.version = version
+      },
       unlock(state) {
         state.locked = false
         setUnlockExpiry(new Date(Date.now() + WALLET_EXPIRY))
@@ -115,6 +118,17 @@ const init = async () => {
       async refreshTokenValue({ commit, state }) {
         const tokenValue = await fetchTokenValue()
         commit('setUSDBalance', tokenValue.usdPerXE * (state.balance / 1e6))
+      },
+      async reloadWallet({ commit }) {
+        try {
+          const version = await getWalletVersion()
+          const address = await getAddress(version)
+          commit('setAddress', address)
+          commit('setVersion', version)
+        }
+        catch (err) {
+          console.error(err)
+        }
       }
     }
   })

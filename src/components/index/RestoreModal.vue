@@ -133,10 +133,9 @@ export default {
       if (!await this.v$.$validate()) return
 
       const publicKey = xe.wallet.publicKeyFromPrivateKey(this.privateKey)
-      const address = xe.wallet.deriveAddress(publicKey)
       await storage.setWallet({ privateKey: this.privateKey, publicKey }, this.password)
       await storage.setWalletVersion(storage.getHighestWalletVersion())
-      this.$store.commit('setAddress', address)
+      await this.$store.dispatch('reloadWallet')
       this.$store.commit('unlock')
       this.$store.dispatch('refresh')
 

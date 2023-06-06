@@ -111,6 +111,7 @@ export default {
       // do not specify wallet version here - this forces migration to highest version
       await storage.setWallet({ privateKey, publicKey }, this.password)
       await storage.setWalletVersion(storage.getHighestWalletVersion())
+      await this.$store.dispatch('reloadWallet')
       this.$store.commit('unlock')
       this.$store.dispatch('refresh')
 
