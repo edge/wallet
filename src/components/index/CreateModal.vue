@@ -18,7 +18,6 @@
             </button>
             <button
               class="flex-shrink-0 w-24 ml-24 text-green on-clicked-effect"
-              v-if="canCopy"
               @click="copyToClipboard(address)"
             >
               <ClipboardCopyIcon/>
@@ -33,7 +32,6 @@
             </span>
             <button
               class="flex-shrink-0 w-24 text-green ml-18 on-clicked-effect"
-              v-if="canCopy"
               @click="copyToClipboard(privateKey)"
             >
               <ClipboardCopyIcon/>
@@ -130,8 +128,6 @@ export default {
 
       password: '',
       confirmPhrase: '',
-
-      canCopy: !!navigator.clipboard,
       phrase: confirmPhrase
     }
   },
@@ -174,8 +170,10 @@ export default {
       this.create()
     },
     copyToClipboard(input) {
-      if (!this.canCopy) window.alert('Clipboard unavailable. Please copy-paste manually.')
-      return navigator.clipboard.writeText(input)
+      if (!!navigator.clipboard) {
+        return navigator.clipboard.writeText(input)
+      }
+      window.alert('Clipboard unavailable. Please copy-paste manually.')
     },
     generateWallet() {
       const wallet = xe.wallet.create()
