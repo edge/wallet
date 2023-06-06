@@ -151,7 +151,7 @@ export default {
       this.exportKey()
     },
     copyToClipboard(input) {
-      if (!!navigator.clipboard) {
+      if (navigator.clipboard) {
         return navigator.clipboard.writeText(input)
       }
       window.alert('Clipboard unavailable. Please copy-paste manually.')
