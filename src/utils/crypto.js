@@ -2,11 +2,7 @@
 // Use of this source code is governed by a GNU GPL-style license
 // that can be found in the LICENSE.md file. All rights reserved.
 
-import AES from 'crypto-js/aes'
 import CryptoJS from 'crypto-js'
-import Hex from 'crypto-js/enc-hex'
-import PBKDF2 from 'crypto-js/pbkdf2'
-import UTF8 from 'crypto-js/enc-utf8'
 
 const hasher = CryptoJS.algo.SHA512.create()
 const iterations = 1000
@@ -21,8 +17,8 @@ const keySize = 16
  * @returns boolean
  */
 export const compare = (hash, salt, input) => {
-  const key = PBKDF2(input, salt, { keySize, hasher, iterations })
-  return Hex.stringify(key) === hash
+  const key = CryptoJS.PBKDF2(input, salt, { keySize, hasher, iterations })
+  return CryptoJS.enc.Hex.stringify(key) === hash
 }
 
 /**
@@ -30,7 +26,7 @@ export const compare = (hash, salt, input) => {
  *
  * @returns string
  */
-export const createSalt = () => Hex.stringify(CryptoJS.lib.WordArray.random(16))
+export const createSalt = () => CryptoJS.enc.Hex.stringify(CryptoJS.lib.WordArray.random(16))
 
 /**
  * Decrypt some encrypted data.
@@ -41,11 +37,11 @@ export const createSalt = () => Hex.stringify(CryptoJS.lib.WordArray.random(16))
  */
 export const decrypt = async (enc, secret) => {
   if (!enc.salt) return decryptClassic(enc, secret)
-  const ciphertext = Hex.parse(enc.content)
-  const iv = Hex.parse(enc.iv)
-  const salt = Hex.parse(enc.salt)
-  const dec = AES.decrypt({ ciphertext, iv, salt }, secret)
-  const res = UTF8.stringify(dec)
+  const ciphertext = CryptoJS.enc.Hex.parse(enc.content)
+  const iv = CryptoJS.enc.Hex.parse(enc.iv)
+  const salt = CryptoJS.enc.Hex.parse(enc.salt)
+  const dec = CryptoJS.AES.decrypt({ ciphertext, iv, salt }, secret)
+  const res = CryptoJS.enc.Utf8.stringify(dec)
   return res
 }
 
@@ -91,11 +87,11 @@ const decryptClassic = async (enc, secret) => {
  * @returns {{ content: string, iv: string, salt: string }}
  */
 export const encrypt = (data, secret) => {
-  const encrypted = AES.encrypt(data, secret)
+  const encrypted = CryptoJS.AES.encrypt(data, secret)
   return {
-    content: Hex.stringify(encrypted.ciphertext),
-    iv: Hex.stringify(encrypted.iv),
-    salt: Hex.stringify(encrypted.salt)
+    content: CryptoJS.enc.Hex.stringify(encrypted.ciphertext),
+    iv: CryptoJS.enc.Hex.stringify(encrypted.iv),
+    salt: CryptoJS.enc.Hex.stringify(encrypted.salt)
   }
 }
 
@@ -107,6 +103,6 @@ export const encrypt = (data, secret) => {
  * @returns string
  */
 export const hash = (input, salt) => {
-  const key = PBKDF2(input, salt, { keySize, hasher, iterations })
-  return Hex.stringify(key)
+  const key = CryptoJS.PBKDF2(input, salt, { keySize, hasher, iterations })
+  return CryptoJS.enc.Hex.stringify(key)
 }

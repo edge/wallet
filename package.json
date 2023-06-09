@@ -28,7 +28,6 @@
     "@heroicons/vue": "^1.0.1",
     "@metamask/detect-provider": "^1.2.0",
     "@metamask/onboarding": "^1.0.0",
-    "@rollup/plugin-inject": "^5.0.3",
     "@vitejs/plugin-basic-ssl": "^1.0.1",
     "@vitejs/plugin-vue": "^4.2.3",
     "@vuelidate/core": "^2.0.0-alpha.16",
@@ -67,8 +66,7 @@
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.4.0",
     "lodash": "^4.17.21",
-    "nodemon": "^2.0.7",
-    "vite-plugin-node-polyfills": "^0.8.2"
+    "nodemon": "^2.0.7"
   },
   "browserslist": [
     "> 1%",
