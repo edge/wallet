@@ -49,13 +49,13 @@
 </template>
 
 <script>
-import AccountPanel from '@/components/AccountPanel'
+import AccountPanel from '@/components/AccountPanel.vue'
 import AssignDeviceModal from '../components/stakes/AssignDeviceModal.vue'
-import Header from '@/components/Header'
-import Pagination from '@/components/PaginationNew'
-import ReleaseStakeModal from '@/components/stakes/ReleaseStakeModal'
-import StakesTable from '@/components/StakesTable'
-import UnlockStakeModal from '@/components/stakes/UnlockStakeModal'
+import Header from '@/components/Header.vue'
+import Pagination from '@/components/PaginationNew.vue'
+import ReleaseStakeModal from '@/components/stakes/ReleaseStakeModal.vue'
+import StakesTable from '@/components/StakesTable.vue'
+import UnlockStakeModal from '@/components/stakes/UnlockStakeModal.vue'
 
 export default {
   name: 'ViewStaking',
