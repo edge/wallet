@@ -61,8 +61,6 @@
 </template>
 
 <script>
-/*global process*/
-
 import { formatXe } from '@edge/wallet-utils'
 import { mapState } from 'vuex'
 import { ArrowDownIcon, ArrowUpIcon, CheckCircleIcon, ClockIcon } from '@heroicons/vue/outline'
@@ -84,13 +82,13 @@ export default {
       return new Date(this.item.timestamp).toLocaleString()
     },
     explorerFromAddressUrl() {
-      return `${process.env.VUE_APP_EXPLORER_URL}/wallet/${this.item.sender}`
+      return `${import.meta.env.VITE_EXPLORER_URL}/wallet/${this.item.sender}`
     },
     explorerToAddressUrl() {
-      return `${process.env.VUE_APP_EXPLORER_URL}/wallet/${this.item.recipient}`
+      return `${import.meta.env.VITE_EXPLORER_URL}/wallet/${this.item.recipient}`
     },
     explorerTxUrl() {
-      return `${process.env.VUE_APP_EXPLORER_URL}/transaction/${this.item.hash}`
+      return `${import.meta.env.VITE_EXPLORER_URL}/transaction/${this.item.hash}`
     },
     formattedAmount() {
       return formatXe(this.item.amount / 1e6, true)

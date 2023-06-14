@@ -52,7 +52,6 @@
 </template>
 
 <script>
-/*global process*/
 import { ClockIcon } from '@heroicons/vue/outline'
 import { fetchBlocks } from '../utils/api'
 import { formatXe } from '@edge/wallet-utils'
@@ -62,11 +61,11 @@ export default {
   name: 'RecentBlocks',
   data: function () {
     return {
-      explorerUrl: process.env.VUE_APP_EXPLORER_URL || 'https://xe.network',
+      explorerUrl: import.meta.env.VITE_EXPLORER_URL || 'https://xe.network',
       loading: false,
       polling: null,
       blocks: [],
-      isTestnet: process.env.VUE_APP_IS_TESTNET === 'true'
+      isTestnet: import.meta.env.VITE_IS_TESTNET === 'true'
     }
   },
   components: {

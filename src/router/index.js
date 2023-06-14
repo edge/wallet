@@ -2,13 +2,11 @@
 // Use of this source code is governed by a GNU GPL-style license
 // that can be found in the LICENSE.md file. All rights reserved.
 
-/*global process*/
-
 import Index from '../views/Index.vue'
-import Nodes from '@/views/Nodes'
-import Overview from '@/views/Overview'
-import Staking from '@/views/Staking'
-import Transactions from '@/views/Transactions'
+import Nodes from '@/views/Nodes.vue'
+import Overview from '@/views/Overview.vue'
+import Staking from '@/views/Staking.vue'
+import Transactions from '@/views/Transactions.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
@@ -46,7 +44,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHistory(import.meta.env.VITE_BASE_URL),
   routes
 })
 

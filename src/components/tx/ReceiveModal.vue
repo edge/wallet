@@ -21,7 +21,7 @@
                 />
                 <img
                   class="qrcode__image"
-                  src="assets/logo.svg"
+                  src="/logo.svg"
                   alt="xe logo"
                 >
               </figure>
@@ -51,8 +51,8 @@
 </template>
 
 <script>
-import Modal from '../Modal'
-import Tooltip from '../Tooltip'
+import Modal from '../Modal.vue'
+import Tooltip from '../Tooltip.vue'
 import VueQrcode from '@chenfengyuan/vue-qrcode'
 import { mapState } from 'vuex'
 
@@ -111,7 +111,7 @@ export default {
 .wrapper {
   @apply flex justify-around py-20 rounded-xl;
   background-color: black;
-  background-image: url(../../../public/assets/receive-map.svg);
+  background-image: url(/receive-map.svg);
 }
 
 .address {

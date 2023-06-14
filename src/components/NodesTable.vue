@@ -58,10 +58,9 @@
 </template>
 
 <script>
-/*global process*/
 import * as index from '@edge/index-utils'
-import NodesTableItem from '@/components/NodesTableItem'
-import TableHeader from '@/components/TableHeader'
+import NodesTableItem from '@/components/NodesTableItem.vue'
+import TableHeader from '@/components/TableHeader.vue'
 import { mapState } from 'vuex'
 
 const nodesRefreshInterval = 30 * 1000
@@ -109,7 +108,7 @@ export default {
       // the sort query sent to index needs to include "-created", but this is hidden from user in browser url
       const sortQuery = this.$route.query.sort ? `${this.$route.query.sort},-sortAvailability` : '-sortAvailability'
       const nodes = await index.session.sessions(
-        process.env.VUE_APP_INDEX_API_URL,
+        import.meta.env.VITE_INDEX_API_URL,
         this.address,
         {
           limit: this.limit,

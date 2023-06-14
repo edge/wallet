@@ -2,8 +2,6 @@
 // Use of this source code is governed by a GNU GPL-style license
 // that can be found in the LICENSE.md file. All rights reserved.
 
-/*global process*/
-
 import './index.css'
 import './utils'
 import App from './App.vue'
@@ -24,7 +22,7 @@ const init = async () => {
     .mixin({
       data() {
         return {
-          isTestnet: process.env.VUE_APP_IS_TESTNET === 'true'
+          isTestnet: import.meta.env.VITE_IS_TESTNET === 'true'
         }
       }
     })

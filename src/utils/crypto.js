@@ -2,11 +2,11 @@
 // Use of this source code is governed by a GNU GPL-style license
 // that can be found in the LICENSE.md file. All rights reserved.
 
-/*global Buffer*/
+import CryptoJS from 'crypto-js'
 
-import crypto from 'crypto'
-
-const algorithm = 'aes-256-ctr'
+const hasher = CryptoJS.algo.SHA512.create()
+const iterations = 1000
+const keySize = 16
 
 /**
  * Compare input with hashed data.
@@ -17,10 +17,8 @@ const algorithm = 'aes-256-ctr'
  * @returns boolean
  */
 export const compare = (hash, salt, input) => {
-  const inputHash = crypto
-    .pbkdf2Sync(input, salt, 1000, 64, 'sha512')
-    .toString('hex')
-  return hash === inputHash
+  const key = CryptoJS.PBKDF2(input, salt, { keySize, hasher, iterations })
+  return CryptoJS.enc.Hex.stringify(key) === hash
 }
 
 /**
@@ -28,22 +26,57 @@ export const compare = (hash, salt, input) => {
  *
  * @returns string
  */
-export const createSalt = () => crypto.randomBytes(16).toString('hex')
+export const createSalt = () => CryptoJS.enc.Hex.stringify(CryptoJS.lib.WordArray.random(16))
 
 /**
  * Decrypt some encrypted data.
  *
+ * @param {{ content: string, iv: string, salt: string | undefined }} enc Encrypted data
+ * @param {string} secret Secret key (or, passphrase) for decryption
+ * @returns Promise<string>
+ */
+export const decrypt = async (enc, secret) => {
+  if (!enc.salt) return decryptClassic(enc, secret)
+  const ciphertext = CryptoJS.enc.Hex.parse(enc.content)
+  const iv = CryptoJS.enc.Hex.parse(enc.iv)
+  const salt = CryptoJS.enc.Hex.parse(enc.salt)
+  const dec = CryptoJS.AES.decrypt({ ciphertext, iv, salt }, secret)
+  const res = CryptoJS.enc.Utf8.stringify(dec)
+  return res
+}
+
+/**
+ * Decrypt some encrypted data.
+ * This method provides backward compatibility for encrypted data that does not include a salt.
+ *
+ * With thanks to [@g45t345rt](https://github.com/g45t345rt); see https://github.com/edge/wallet/issues/256#issuecomment-1582186310
+ *
  * @param {{ content: string, iv: string }} enc Encrypted data
  * @param {string} secret Secret key (or, passphrase) for decryption
- * @returns string
+ * @returns Promise<string>
  */
-export const decrypt = (enc, secret) => {
-  const decipher = crypto.createDecipheriv(algorithm, secret, Buffer.from(enc.iv, 'hex'))
-  const decrypted = Buffer.concat([
-    decipher.update(Buffer.from(enc.content, 'hex')),
-    decipher.final()
-  ])
-  return decrypted.toString()
+const decryptClassic = async (enc, secret) => {
+  // based on https://stackoverflow.com/a/73476151
+  const hex2buf = str => new Uint8Array(str.match(/[\da-f]{2}/g).map(h => parseInt(h, 16)))
+
+  const useSecret = (new TextEncoder()).encode(secret)
+  const useIV = hex2buf(enc.iv)
+  const useContent = hex2buf(enc.content)
+  const key = await crypto.subtle.importKey(
+    'raw',
+    useSecret,
+    { name: 'AES-CTR', length: 256 },
+    false,
+    ['decrypt']
+  )
+  const data = await crypto.subtle.decrypt(
+    { name: 'AES-CTR', counter: useIV.buffer, length: useIV.length },
+    key,
+    useContent
+  )
+
+  const res = (new TextDecoder('utf-8')).decode(data)
+  return res
 }
 
 /**
@@ -51,15 +84,14 @@ export const decrypt = (enc, secret) => {
  *
  * @param {string} data Text data to encrypt
  * @param {string} secret Secret key (or, passphrase) for encryption
- * @returns {{ content: string, iv: string }}
+ * @returns {{ content: string, iv: string, salt: string }}
  */
 export const encrypt = (data, secret) => {
-  const iv = crypto.randomBytes(16)
-  const cipher = crypto.createCipheriv(algorithm, secret, iv)
-  const encrypted = Buffer.concat([cipher.update(data), cipher.final()])
+  const encrypted = CryptoJS.AES.encrypt(data, secret)
   return {
-    iv: iv.toString('hex'),
-    content: encrypted.toString('hex')
+    content: CryptoJS.enc.Hex.stringify(encrypted.ciphertext),
+    iv: CryptoJS.enc.Hex.stringify(encrypted.iv),
+    salt: CryptoJS.enc.Hex.stringify(encrypted.salt)
   }
 }
 
@@ -70,6 +102,7 @@ export const encrypt = (data, secret) => {
  * @param {string} salt Hash salt
  * @returns string
  */
-export const hash = (input, salt) => crypto
-  .pbkdf2Sync(input, salt, 1000, 64, 'sha512')
-  .toString('hex')
+export const hash = (input, salt) => {
+  const key = CryptoJS.PBKDF2(input, salt, { keySize, hasher, iterations })
+  return CryptoJS.enc.Hex.stringify(key)
+}

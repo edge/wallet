@@ -1,7 +1,7 @@
 <template>
   <div
     class="bg-black bg-center bg-no-repeat bg-cover"
-    :style="!hasWallet ? 'background-image: url(/assets/map.svg);' : ''"
+    :style="!hasWallet ? 'background-image: url(/map.svg);' : ''"
   >
     <div class="container">
       <div class="relative">
@@ -58,11 +58,11 @@
 </template>
 
 <script>
-import CreateModal from '@/components/index/CreateModal'
-import ForgetModal from '@/components/index/ForgetModal'
-import Logo from '@/components/Logo'
-import RestoreModal from '@/components/index/RestoreModal'
-import UnlockModal from '@/components/index/UnlockModal'
+import CreateModal from '@/components/index/CreateModal.vue'
+import ForgetModal from '@/components/index/ForgetModal.vue'
+import Logo from '@/components/Logo.vue'
+import RestoreModal from '@/components/index/RestoreModal.vue'
+import UnlockModal from '@/components/index/UnlockModal.vue'
 import { mapState } from 'vuex'
 
 export default {

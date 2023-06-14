@@ -92,14 +92,14 @@
 </template>
 
 <script>
-import AccountPanel from '@/components/AccountPanel'
-import Header from '@/components/Header'
-import NodesChartAvailability from '@/components/NodesChartAvailability'
-import NodesChartDataInOut from '@/components/NodesChartDataInOut'
-import NodesChartRequests from '@/components/NodesChartRequests'
-import NodesChartTimeToggle from '@/components/NodesChartTimeToggle'
-import NodesTable from '@/components/NodesTable'
-import Pagination from '@/components/PaginationNew'
+import AccountPanel from '@/components/AccountPanel.vue'
+import Header from '@/components/Header.vue'
+import NodesChartAvailability from '@/components/NodesChartAvailability.vue'
+import NodesChartDataInOut from '@/components/NodesChartDataInOut.vue'
+import NodesChartRequests from '@/components/NodesChartRequests.vue'
+import NodesChartTimeToggle from '@/components/NodesChartTimeToggle.vue'
+import NodesTable from '@/components/NodesTable.vue'
+import Pagination from '@/components/PaginationNew.vue'
 import { fetchSessionsStats } from '../utils/api'
 import { mapState } from 'vuex'
 import moment from 'moment'

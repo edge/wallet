@@ -168,14 +168,13 @@
 </template>
 
 <script>
-/*global process*/
 import * as storage from '../../utils/storage'
 import * as validation from '../../utils/validation'
 import * as xe from '@edge/xe-utils'
 import Base64 from 'crypto-js/enc-base64'
-import HashLink from '../HashLink'
+import HashLink from '../HashLink.vue'
 import { LockOpenIcon } from '@heroicons/vue/outline'
-import Modal from '../Modal'
+import Modal from '../Modal.vue'
 import UTF8 from 'crypto-js/enc-utf8'
 import { helpers } from '@vuelidate/validators'
 import { mapState } from 'vuex'
@@ -230,7 +229,9 @@ export default {
   computed: {
     ...mapState(['address', 'nextNonce']),
     canAssign() {
-      return !this.v$.$invalid
+      if (this.entryMode === 'token' && this.v$.token.$error) return false
+      else if (this.v$.device.$error && this.v$.deviceKey.$error) return false
+      return this.v$.password.$dirty && !this.v$.password.$error
     },
     canReadyAssign() {
       if (!this.v$.$anyDirty) return false
@@ -241,7 +242,7 @@ export default {
       return this.stake.type[0].toUpperCase() + this.stake.type.slice(1)
     },
     explorerNodeUrl() {
-      return `${process.env.VUE_APP_EXPLORER_URL}/node/${this.device}`
+      return `${import.meta.env.VITE_EXPLORER_URL}/node/${this.device}`
     }
   },
   methods: {
@@ -331,7 +332,7 @@ export default {
 
       // submit tx to blockchain
       try {
-        const { metadata, results } = await xe.tx.createTransactions(process.env.VUE_APP_BLOCKCHAIN_API_URL, [tx])
+        const { metadata, results } = await xe.tx.createTransactions(import.meta.env.VITE_BLOCKCHAIN_API_URL, [tx])
         if (metadata.accepted) {
           this.completedTx = results[0]
           this.goto(3)

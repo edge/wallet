@@ -3,7 +3,7 @@
     <h3>Testnet XE Faucet</h3>
     <div class="flex flex-col flex-1 px-24 py-32 bg-white rounded">
       <h1 class="faucet-header my-0 pt-50 pb-20">
-        <img src="assets/faucet.svg" class="inline">
+        <img src="/faucet.svg" class="inline">
         XE Automated Faucet
       </h1>
       <p class="flex-1 my-0">

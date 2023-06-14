@@ -10,7 +10,7 @@
           <div class="leading-7 text-caption mb-65">
             <strong>Deposit</strong>
             <p class="mb-25">Convert EDGE to XE for staking, governance and service use.</p>
-            <img src="/assets/deposit.svg" alt="Deposit EDGE for XE" class="account-panel__swap-img">
+            <img src="/deposit.svg" alt="Deposit EDGE for XE" class="account-panel__swap-img">
           </div>
 
           <button class="w-full button--outline-success button" @click="openDeposit">
@@ -24,7 +24,7 @@
           <div class="leading-7 text-caption mb-65">
             <strong>Withdraw</strong>
             <p class="mb-25">Convert XE to EDGE for use within the Ethereum network.</p>
-            <img src="/assets/withdraw.svg" alt="Withdraw XE for EDGE" class="account-panel__swap-img">
+            <img src="/withdraw.svg" alt="Withdraw XE for EDGE" class="account-panel__swap-img">
           </div>
           <button class="w-full button--outline-success button" @click="openWithdraw">
             <span class="w-12 button__icon">
@@ -37,7 +37,7 @@
           <div class="leading-7 text-caption mb-65">
             <strong>Sell</strong>
             <p class="mb-25">Sell XE for USDC on the Ethereum network.</p>
-            <img src="/assets/sell.svg" alt="Sell XE for USDC" class="account-panel__swap-img">
+            <img src="/sell.svg" alt="Sell XE for USDC" class="account-panel__swap-img">
           </div>
           <button class="w-full button--outline-success button" @click="openSell">
             <span class="w-12 button__icon">
@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import Modal from '../Modal'
+import Modal from '../Modal.vue'
 import { ArrowNarrowLeftIcon, ArrowNarrowRightIcon, CurrencyDollarIcon } from '@heroicons/vue/outline'
 
 export default {

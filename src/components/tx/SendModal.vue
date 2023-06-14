@@ -177,16 +177,14 @@
 </template>
 
 <script>
-/*global process*/
-
 import * as storage from '../../utils/storage'
 import * as validation from '../../utils/validation'
 import * as xe from '@edge/xe-utils'
-import Amount from '../Amount'
-import HashLink from '../HashLink'
+import Amount from '../Amount.vue'
+import HashLink from '../HashLink.vue'
 import { LockOpenIcon } from '@heroicons/vue/outline'
-import Modal from '../Modal'
-import Radio from '../Radio'
+import Modal from '../Modal.vue'
+import Radio from '../Radio.vue'
 import { helpers } from '@vuelidate/validators'
 import { mapState } from 'vuex'
 import { parseAmount } from '../../utils/form'
@@ -325,7 +323,7 @@ export default {
 
       // submit tx to blockchain
       try {
-        const { metadata, results } = await xe.tx.createTransactions(process.env.VUE_APP_BLOCKCHAIN_API_URL, [tx])
+        const { metadata, results } = await xe.tx.createTransactions(import.meta.env.VITE_BLOCKCHAIN_API_URL, [tx])
         if (metadata.accepted) {
           this.completedTx = results[0]
           this.goto(3)

@@ -73,7 +73,6 @@
 </template>
 
 <script>
-/*global process*/
 import { formatXe } from '@edge/wallet-utils'
 import { ArrowCircleDownIcon, CheckCircleIcon, ClockIcon, DotsCircleHorizontalIcon } from '@heroicons/vue/outline'
 
@@ -100,13 +99,13 @@ export default {
       return !this.item.unlockRequested && ['stargate', 'gateway', 'host'].includes(this.item.type)
     },
     explorerNodeUrl() {
-      return `${process.env.VUE_APP_EXPLORER_URL}/node/${this.item.device}`
+      return `${import.meta.env.VITE_EXPLORER_URL}/node/${this.item.device}`
     },
     explorerStakeUrl() {
-      return `${process.env.VUE_APP_EXPLORER_URL}/stake/${this.item.id}`
+      return `${import.meta.env.VITE_EXPLORER_URL}/stake/${this.item.id}`
     },
     explorerWalletUrl() {
-      return `${process.env.VUE_APP_EXPLORER_URL}/wallet/${this.address}`
+      return `${import.meta.env.VITE_EXPLORER_URL}/wallet/${this.address}`
     },
     formattedAmount() {
       return formatXe(this.item.amount / 1e6, true)
