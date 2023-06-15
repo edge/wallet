@@ -6,7 +6,6 @@ const config = require('./config')
 const express = require('express')
 const morgan = require('morgan')
 const path = require('path')
-const flat = require('flat')
 const fs = require('fs')
 
 // Create & configure express app

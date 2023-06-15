@@ -16,5 +16,28 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
-  }
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          chart: [
+            'chart.js',
+            'vue-chartjs'
+          ],
+          crypto: [
+            'crypto-js',
+            'elliptic',
+            'ethers'
+          ],
+          edge: [
+            '@edge/bridge-utils',
+            '@edge/index-utils',
+            '@edge/wallet-utils',
+            '@edge/xe-utils'
+          ]
+        }
+      }
+    },
+  },
 })
