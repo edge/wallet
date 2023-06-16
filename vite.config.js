@@ -28,7 +28,9 @@ export default defineConfig({
           crypto: [
             'crypto-js',
             'elliptic',
-            'ethers'
+            'ethers',
+            '@metamask/detect-provider',
+            '@metamask/onboarding'
           ],
           edge: [
             '@edge/bridge-utils',
