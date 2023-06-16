@@ -56,9 +56,6 @@ module.exports = plugin.withOptions(
   (options = {}) => {
     return {
       theme: {
-        purge: {
-          content: ['./src/**/*.vue']
-        },
         extend: {
           colors: colors,
           fontFamily: {
