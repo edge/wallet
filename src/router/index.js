@@ -3,10 +3,7 @@
 // that can be found in the LICENSE.md file. All rights reserved.
 
 import Index from '../views/Index.vue'
-import Nodes from '@/views/Nodes.vue'
 import Overview from '@/views/Overview.vue'
-import Staking from '@/views/Staking.vue'
-import Transactions from '@/views/Transactions.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
@@ -18,7 +15,7 @@ const routes = [
   {
     path: '/nodes',
     name: 'Nodes',
-    component: Nodes
+    component: () => import('@/views/Nodes.vue')
   },
   {
     path: '/overview',
@@ -28,18 +25,12 @@ const routes = [
   {
     path: '/transactions/:page(\\d+)?',
     name: 'Transactions',
-    component: Transactions
-  },
-  {
-    path: '/governance',
-    name: 'Governance',
-    component: () => {},
-    disabled: true
+    component: () => import('@/views/Transactions.vue')
   },
   {
     path: '/staking',
     name: 'Staking',
-    component: Staking
+    component: () => import('@/views/Staking.vue')
   }
 ]
 
