@@ -8,7 +8,7 @@
         <TableHeader width="19%" header="Hash" :sortQuery="sortQuery"
           sortParam="hash" :onSortingUpdate="updateSorting"
         />
-        <TableHeader width="26%" header="Node" :sortQuery="sortQuery"
+        <TableHeader width="20%" header="Node" :sortQuery="sortQuery"
           sortParam="device" :onSortingUpdate="updateSorting"
         />
         <TableHeader width="8%" header="Type" :sortQuery="sortQuery"
@@ -20,16 +20,16 @@
         <TableHeader class="amount-col" width="10%" header="Amount XE" :sortQuery="sortQuery"
           sortParam="amount" :onSortingUpdate="updateSorting"
         />
-        <th width="10%">&nbsp;</th>
+        <th width="21%">&nbsp;</th>
       </tr>
       <tr v-else>
         <th width="19%">ID</th>
         <th width="19%">Hash</th>
-        <th width="26%">Node</th>
+        <th width="20%">Node</th>
         <th width="8%">Type</th>
         <th width="8%">Status</th>
         <th class="amount-col" width="10%">Amount XE</th>
-        <th width="10%">&nbsp;</th>
+        <th width="21%">&nbsp;</th>
       </tr>
     </thead>
     <tbody v-if="stakes.length">

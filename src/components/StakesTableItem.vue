@@ -54,20 +54,22 @@
     </td>
 
     <td data-title="">
-      <button
-        v-if="canAssign"
-        class="w-full table-button button--outline"
-        @click="$emit('assign', item)"
-      >
-        Assign Device
-      </button>
-      <button
-        v-if="action"
-        class="w-full table-button button--outline"
-        @click="$emit(action.toLowerCase(), item)"
-      >
-        {{ action }}
-      </button>
+      <div class="button-wrapper">
+        <button
+          v-if="canAssign"
+          class="w-full table-button button--outline"
+          @click="$emit('assign', item)"
+        >
+          Assign Device
+        </button>
+        <button
+          v-if="action"
+          class="w-full table-button button--outline"
+          @click="$emit(action.toLowerCase(), item)"
+        >
+          {{ action }}
+        </button>
+      </div>
     </td>
   </tr>
 </template>
@@ -168,12 +170,18 @@ td a {
   @apply border-b border-black border-opacity-25 hover:border-green hover:border-opacity-25 hover:text-green align-middle;
 }
 
-button.table-button {
-  @apply py-2 rounded text-black border-solid border border-gray-400 text-gray-500 hover:border-green hover:text-green
+.button-wrapper {
+  @apply flex flex-col gap-2 sm:flex-row w-full max-w-sm;
 }
 
-button.table-button:not(:first-child) {
-  @apply mt-4;
+button.table-button {
+  @apply rounded text-black border-solid border border-gray-400 text-gray-500 hover:border-green hover:text-green;
+}
+
+@screen sm {
+  button.table-button {
+    max-width: 50%
+  }
 }
 
 @screen lg {
