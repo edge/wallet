@@ -1,11 +1,11 @@
 <template>
-  <Modal :close="close" :preventClickOutside="true" :showCloseButton="true" :visible="visible" :width="900">
+  <Modal :close="close" :preventClickOutside="true" :showCloseButton="true" :visible="visible" :width="600">
     <template v-slot:header>
       <h2>Swap<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
     </template>
 
     <template v-slot:body>
-      <div class="grid grid-cols-1 gap-24 pt-12 pb-20 md:grid-cols-3">
+      <div class="grid grid-cols-1 gap-24 pt-12 pb-20 md:grid-cols-2">
         <div>
           <div class="leading-7 text-caption mb-65">
             <strong>Deposit</strong>
@@ -33,7 +33,7 @@
             Withdraw
           </button>
         </div>
-        <div>
+        <!-- <div>
           <div class="leading-7 text-caption mb-65">
             <strong>Sell</strong>
             <p class="mb-25">Sell XE for USDC on the Ethereum network.</p>
@@ -45,7 +45,7 @@
             </span>
             Sell
           </button>
-        </div>
+        </div> -->
       </div>
     </template>
   </Modal>
