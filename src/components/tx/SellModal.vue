@@ -279,7 +279,6 @@ import Tooltip from '../Tooltip.vue'
 import { helpers } from '@vuelidate/validators'
 import { mapState } from 'vuex'
 import { parseAmount } from '../../utils/form'
-import { toMicroXe } from '@edge/wallet-utils'
 import useVuelidate from '@vuelidate/core'
 import { ArrowDownIcon, ArrowRightIcon, LockOpenIcon } from '@heroicons/vue/outline'
 import { fetchExchangeRates, fetchGasRates } from '../../utils/api'
@@ -452,7 +451,7 @@ export default {
         timestamp: Date.now(),
         sender: this.address,
         recipient: import.meta.env.VITE_BRIDGE_WALLET_ADDRESS,
-        amount: toMicroXe(this.amountParsed),
+        amount: xe.xe.toMxe(this.amountParsed),
         data: {
           destination: this.recipient,
           ref: this.exchangeRate.ref,

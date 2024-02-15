@@ -35,7 +35,6 @@ export default defineConfig({
           edge: [
             '@edge/bridge-utils',
             '@edge/index-utils',
-            '@edge/wallet-utils',
             '@edge/xe-utils'
           ]
         }

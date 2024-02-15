@@ -188,7 +188,6 @@ import Radio from '../Radio.vue'
 import { helpers } from '@vuelidate/validators'
 import { mapState } from 'vuex'
 import { parseAmount } from '../../utils/form'
-import { toMicroXe } from '@edge/wallet-utils'
 import useVuelidate from '@vuelidate/core'
 
 const memoRegexp = /^[a-zA-Z0-9\s-]{0,32}$/
@@ -314,7 +313,7 @@ export default {
         timestamp: Date.now(),
         sender: this.address,
         recipient: this.recipient,
-        amount: toMicroXe(this.amountParsed),
+        amount: xe.xe.toMxe(this.amountParsed),
         data: {
           memo: this.memo
         },

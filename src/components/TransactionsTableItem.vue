@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import { formatXe } from '@edge/wallet-utils'
+import * as xe from '@edge/xe-utils'
 import { mapState } from 'vuex'
 import { ArrowDownIcon, ArrowUpIcon, CheckCircleIcon, ClockIcon } from '@heroicons/vue/outline'
 
@@ -91,7 +91,7 @@ export default {
       return `${import.meta.env.VITE_EXPLORER_URL}/transaction/${this.item.hash}`
     },
     formattedAmount() {
-      return formatXe(this.item.amount / 1e6, true)
+      return xe.xe.formatMxe(this.item.amount, true)
     },
     isConfirmed() {
       return ((this.item.confirmations || 0) >= 10)
