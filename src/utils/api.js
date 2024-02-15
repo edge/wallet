@@ -2,7 +2,7 @@
 // Use of this source code is governed by a GNU GPL-style license
 // that can be found in the LICENSE.md file. All rights reserved.
 
-import { xeStringFromMicroXe } from '@edge/wallet-utils'
+import * as xe from '@edge/xe-utils'
 
 const BLOCKCHAIN_API_URL = import.meta.env.VITE_BLOCKCHAIN_API_URL
 const INDEX_API_URL = import.meta.env.VITE_INDEX_API_URL
@@ -121,7 +121,7 @@ const formatTransactions = (address, data, pending) => {
     if (tx.sender === tx.recipient) {
       const rcvTx = {
         address: tx.sender === address ? tx.recipient : tx.sender,
-        amount: xeStringFromMicroXe(tx.amount),
+        amount: xe.xe.formatMxe(tx.amount),
         // '16/04/2021 13:06',
         date: new Date(tx.timestamp).toLocaleString(),
         description: tx.data.memo || 'None',
@@ -145,7 +145,7 @@ const formatTransactions = (address, data, pending) => {
     else {
       transactions.push({
         address: tx.sender === address ? tx.recipient : tx.sender,
-        amount: xeStringFromMicroXe(tx.amount),
+        amount: xe.xe.formatMxe(tx.amount),
         // '16/04/2021 13:06',
         date: new Date(tx.timestamp).toLocaleString(),
         description: tx.data.memo || 'None',

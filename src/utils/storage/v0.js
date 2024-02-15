@@ -2,7 +2,7 @@
 // Use of this source code is governed by a GNU GPL-style license
 // that can be found in the LICENSE.md file. All rights reserved.
 
-import { publicKeyToChecksumAddress } from '@edge/wallet-utils'
+import * as xe from '@edge/xe-utils'
 import { store } from './'
 import { compare, createSalt, decrypt, encrypt, hash } from '../crypto'
 import { get, getMany, set, setMany } from 'idb-keyval'
@@ -19,7 +19,7 @@ const comparePassword = async password => {
 
 const getAddress = async () => {
   const publicKey = await getPublicKey()
-  return publicKeyToChecksumAddress(publicKey)
+  return xe.wallet.deriveAddress(publicKey)
 }
 
 const getPrivateKey = async () => {

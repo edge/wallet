@@ -52,9 +52,9 @@
 </template>
 
 <script>
+import * as xe from '@edge/xe-utils'
 import { ClockIcon } from '@heroicons/vue/outline'
 import { fetchBlocks } from '../utils/api'
-import { formatXe } from '@edge/wallet-utils'
 import moment from 'moment'
 
 export default {
@@ -84,7 +84,7 @@ export default {
       this.loading = false
     },
     formatAmount(amount) {
-      return formatXe(amount / 1e6, true)
+      return xe.xe.formatMxe(amount, true)
     },
     pollData() {
       this.polling = setInterval(() => {

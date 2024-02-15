@@ -1,6 +1,6 @@
 {
   "name": "wallet",
-  "version": "1.21.0",
+  "version": "1.21.1",
   "description": "Web wallet for managing XE coin",
   "private": true,
   "license": "GPL",
@@ -23,8 +23,7 @@
     "@chenfengyuan/vue-qrcode": "^2.0.0",
     "@edge/bridge-utils": "^1.6.1",
     "@edge/index-utils": "^0.4.4",
-    "@edge/wallet-utils": "^0.14.0",
-    "@edge/xe-utils": "^1.1.2",
+    "@edge/xe-utils": "^1.11.1",
     "@heroicons/vue": "^1.0.1",
     "@metamask/detect-provider": "^1.2.0",
     "@metamask/onboarding": "^1.0.0",

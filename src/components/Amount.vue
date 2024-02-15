@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { formatXe } from '@edge/wallet-utils'
+import * as xe from '@edge/xe-utils'
 
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
@@ -29,7 +29,7 @@ export default {
       if (isNaN(this.value)) return '&mdash;'
       if (typeof this.value === 'string') return this.value
       if (this.isXE && !this.short) {
-        return formatXe(this.value, true)
+        return xe.xe.format(this.value, true)
       }
       return this.value.toLocaleString('en-US', { maximumFractionDigits: this.decimalPlaces || 6 })
     }
