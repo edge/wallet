@@ -9,12 +9,13 @@
         <div class="form-group">
           <label>wallet address</label>
           <span class="flex items-center">
-            <span class="font-mono break-all text-sm2">{{ address }}</span>
+            <span class="font-mono break-all text-sm2">{{ showAddress ? address : '•'.repeat(43) }}</span>
             <button
               class="flex-shrink-0 w-20 ml-24 text-green on-clicked-effect"
-              v-on:click.prevent="generateWallet"
+              @click.prevent="showAddress = !showAddress"
             >
-              <RefreshIcon/>
+              <EyeIcon v-if="!showAddress"/>
+              <EyeOffIcon v-else/>
             </button>
             <button
               class="flex-shrink-0 w-24 ml-24 text-green on-clicked-effect"
@@ -22,14 +23,27 @@
             >
               <ClipboardCopyIcon/>
             </button>
+            <button
+              class="flex-shrink-0 w-20 ml-24 text-green on-clicked-effect"
+              v-on:click.prevent="generateWallet"
+            >
+              <RefreshIcon/>
+            </button>
           </span>
         </div>
         <div class="form-group mb-25">
           <label>PRIVATE KEY</label>
           <span class="flex items-center">
             <span class="private-key font-mono break-all text-sm2">
-              {{ privateKey }}
+              {{ showPrivateKey ? privateKey : '•'.repeat(64) }}
             </span>
+            <button
+              class="flex-shrink-0 w-20 text-green ml-18 on-clicked-effect"
+              @click.prevent="showPrivateKey = !showPrivateKey"
+            >
+              <EyeIcon v-if="!showPrivateKey"/>
+              <EyeOffIcon v-else/>
+            </button>
             <button
               class="flex-shrink-0 w-24 text-green ml-18 on-clicked-effect"
               @click="copyToClipboard(privateKey)"
@@ -98,6 +112,8 @@ import Modal from '../Modal.vue'
 import useVuelidate from '@vuelidate/core'
 import {
   ClipboardCopyIcon,
+  EyeIcon,
+  EyeOffIcon,
   LockOpenIcon,
   RefreshIcon,
   ShieldExclamationIcon
@@ -110,6 +126,8 @@ export default {
   name: 'CreateModal',
   components: {
     ClipboardCopyIcon,
+    EyeIcon,
+    EyeOffIcon,
     LockOpenIcon,
     Modal,
     RefreshIcon,
@@ -125,6 +143,8 @@ export default {
       address: '',
       privateKey: '',
       publicKey: '',
+      showAddress: false,
+      showPrivateKey: false,
 
       password: '',
       confirmPhrase: '',
