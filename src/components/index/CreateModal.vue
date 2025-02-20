@@ -34,9 +34,10 @@
         <div class="form-group mb-25">
           <label>PRIVATE KEY</label>
           <span class="flex items-center">
-            <span class="private-key font-mono break-all text-sm2">
-              {{ showPrivateKey ? privateKey : '•'.repeat(64) }}
-            </span>
+            <div class="private-key font-mono text-sm2">
+              <div>{{ formattedPrivateKey[0] }}</div>
+              <div>{{ formattedPrivateKey[1] }}</div>
+            </div>
             <button
               class="flex-shrink-0 w-20 text-green ml-18 on-clicked-effect"
               @click.prevent="showPrivateKey = !showPrivateKey"
@@ -164,6 +165,10 @@ export default {
     }
   },
   computed: {
+    formattedPrivateKey() {
+      const value = this.showPrivateKey ? this.privateKey : '•'.repeat(64)
+      return [value.slice(0, 32), value.slice(32)]
+    },
     canSubmit() {
       return !this.v$.$invalid
     }
@@ -220,7 +225,8 @@ export default {
 
 <style scoped>
 .private-key {
-  width: 32ch
+  display: inline-block;
+  line-height: 1.5
 }
 
 .on-clicked-effect {
