@@ -16,9 +16,9 @@
         <div class="mx-auto max-w-800">
           <div class="text-white md:px-6 mb-11 text-caption" v-if="!hasWallet">
             <h1 class="mb-2 text-white">
-              Welcome to the edge
+              Welcome to the <span class="edge-text">Edge</span>
             </h1>
-            <p>Create or restore an XE wallet to begin</p>
+            <p class="text-75opac">Create or restore an XE wallet to begin</p>
           </div>
 
           <div
@@ -56,7 +56,14 @@
     </div>
   </div>
 </template>
-
+<style scoped>
+.edge-text {
+  color: #0ECC5F;
+}
+.text-75opac {
+  opacity: 0.75;
+}
+</style>
 <script>
 import CreateModal from '@/components/index/CreateModal.vue'
 import ForgetModal from '@/components/index/ForgetModal.vue'
