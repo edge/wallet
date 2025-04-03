@@ -21,13 +21,13 @@
 
     <div class="bg-gray-200 py-35">
       <div class="container">
-        <div class="checkbox-container" @click="updateHideReleasedStakes" >
-          <label>Hide Released Stakes</label>
-          <input type="checkbox" :checked="hideReleasedStakes" />
+        <div class="checkbox-container" @click="updateShowReleasedStakes" >
+          <label>Show Released Stakes</label>
+          <input type="checkbox" :checked="showReleasedStakes" />
           <span class="checkmark"></span>
         </div>
         <StakesTable
-          :hideReleasedStakes="hideReleasedStakes"
+          :hideReleasedStakes="!showReleasedStakes"
           :limit="limit"
           :receiveMetadata="onStakesUpdate"
           :page="currentPage"
@@ -83,8 +83,8 @@ export default {
     currentPage() {
       return Math.max(1, parseInt(this.$route.query.page) || 1)
     },
-    hideReleasedStakes() {
-      return this.$route.query.hideReleased === '1' || false
+    showReleasedStakes() {
+      return this.$route.query.showReleased === '1' || false
     },
     lastPage() {
       return Math.max(1, Math.ceil(this.metadata.totalCount / this.limit))
@@ -118,9 +118,9 @@ export default {
       this.stake = stake
       this.showUnlockStakeModal = true
     },
-    updateHideReleasedStakes() {
-      const hideReleased = !this.hideReleasedStakes ? 1 : undefined
-      const query = { ...this.$route.query, hideReleased }
+    updateShowReleasedStakes() {
+      const showReleased = !this.showReleasedStakes ? 1 : undefined
+      const query = { ...this.$route.query, showReleased }
       this.$router.replace({ query })
     }
   },
