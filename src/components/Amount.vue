@@ -21,8 +21,7 @@ export default {
   },
   computed: {
     isXE() {
-      // if currency is not specified, we assume XE
-      return this.currency === 'XE' || this.currency === '' || this.currency === undefined
+      return this.currency === '$EDGE' || this.currency === '' || this.currency === undefined
     },
     formattedValue() {
       if (this.value === undefined) return '...'

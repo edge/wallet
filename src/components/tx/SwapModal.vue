@@ -9,8 +9,8 @@
         <div>
           <div class="leading-7 text-caption mb-65">
             <strong>Deposit</strong>
-            <p class="mb-25">Convert EDGE to XE for staking, governance and service use.</p>
-            <img src="/deposit.svg" alt="Deposit EDGE for XE" class="account-panel__swap-img">
+            <p class="mb-25">Deposit $EDGE onto the XE blockchain for staking, governance and service use.</p>
+            <img src="/deposit.svg" alt="Deposit $EDGE onto XE" class="account-panel__swap-img">
           </div>
 
           <button class="w-full button--outline-success button" @click="openDeposit">
@@ -23,8 +23,8 @@
         <div>
           <div class="leading-7 text-caption mb-65">
             <strong>Withdraw</strong>
-            <p class="mb-25">Convert XE to EDGE for use within the Ethereum network.</p>
-            <img src="/withdraw.svg" alt="Withdraw XE for EDGE" class="account-panel__swap-img">
+            <p class="mb-25">Withdraw $EDGE from the XE blockchain for use within the Ethereum network.</p>
+            <img src="/withdraw.svg" alt="Withdraw $EDGE from XE" class="account-panel__swap-img">
           </div>
           <button class="w-full button--outline-success button" @click="openWithdraw">
             <span class="w-12 button__icon">
@@ -36,8 +36,8 @@
         <!-- <div>
           <div class="leading-7 text-caption mb-65">
             <strong>Sell</strong>
-            <p class="mb-25">Sell XE for USDC on the Ethereum network.</p>
-            <img src="/sell.svg" alt="Sell XE for USDC" class="account-panel__swap-img">
+            <p class="mb-25">Sell $EDGE for USDC on the Ethereum network.</p>
+            <img src="/sell.svg" alt="Sell $EDGE for USDC" class="account-panel__swap-img">
           </div>
           <button class="w-full button--outline-success button" @click="openSell">
             <span class="w-12 button__icon">

@@ -2,9 +2,9 @@
   <div>
     <Modal :close="cancel" :visible="visible && step === 1">
       <template v-slot:header>
-        <h2 class="mb-8">Withdraw XE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
+        <h2 class="mb-8">Withdraw $EDGE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
         <span class="sub-heading d-block text-gray text-caption">
-          <Amount :value="balance / 1e6" currency="XE"/> available
+          <Amount :value="balance / 1e6" currency="$EDGE"/> available
         </span>
       </template>
       <template v-slot:body>
@@ -40,7 +40,7 @@
                 v-model="v$.amount.$model"
                 class="placeholder-white placeholder-opacity-100"
               >
-              <span class="absolute right-0 text-xl curren top-23">XE</span>
+              <span class="absolute right-0 text-xl curren top-23">$EDGE</span>
               <div class="mt-5 form-group__error input-error" style="color: #CD5F4E" v-for="error of v$.amount.$errors" :key="error.$uid">{{error.$message}}</div>
             </div>
           </div>
@@ -49,7 +49,7 @@
             <label class="flex items-center space-x-3">
               Transaction fee
               <Tooltip
-                :text="`Inclusive of a ${minimumFee} XE handling fee`"
+                :text="`Inclusive of a ${minimumFee} $EDGE handling fee`"
                 class="ml-3"
                 position="right"
                 theme="dark"
@@ -57,7 +57,7 @@
                 <InformationCircleIcon class="hidden md:block button__icon w-15" />
               </Tooltip>
             </label>
-            <Amount :value="fee" currency="XE" short sub/>
+            <Amount :value="fee" currency="$EDGE" short sub/>
           </div>
         </div>
       </template>
@@ -70,7 +70,7 @@
                 <div class="md:flex-grow">
                   <span class="block mb-3 text-gray">You are withdrawing</span>
                   <span class="block text-xl text-white price">
-                    <Amount :value="amountParsed" currency="XE" short/>
+                    <Amount :value="amountParsed" currency=""/>
                   </span>
                 </div>
                 <span class="flex justify-center p-12 pl-12 mx-auto mt-12 border border-gray-700 rounded-full md:ml-20 md:mt-0 md:flex-shrink-0 w-52 h-52 border-opacity-30 align-center">
@@ -88,7 +88,7 @@
                 <div class="md:flex-grow">
                   <span class="block mb-3 text-gray">You will receive</span>
                   <span class="block text-xl text-white price">
-                    <Amount :value="edgeAmount" currency="EDGE"/>
+                    <Amount :value="edgeAmount" currency=""/>
                   </span>
                 </div>
               </div>
@@ -108,16 +108,16 @@
 
     <Modal :close="cancel" :visible="visible && step === 2">
       <template v-slot:header>
-        <h2 class="mb-8">Withdraw XE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
+        <h2 class="mb-8">Withdraw $EDGE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
         <span class="sub-heading d-block text-gray text-caption">
-          <Amount :value="balance / 1e6" currency="XE"/> available
+          <Amount :value="balance / 1e6" currency="$EDGE"/> available
         </span>
       </template>
       <template v-slot:body>
         <div class="pb-12 min-h-300">
           <div class="form-group mb-14">
             <label>You are withdrawing</label>
-            <Amount :value="amount" currency="XE" sub/>
+            <Amount :value="amount" currency="$EDGE" sub/>
           </div>
 
           <div class="form-group mb-14">
@@ -133,11 +133,11 @@
           <div class="form-group mb-14">
             <label class="flex items-center space-x-3">
               Transaction fee
-              <Tooltip class="ml-3" position="right" theme="dark" :text="`Includes handling fee of ${minimumFee} XE`">
+              <Tooltip class="ml-3" position="right" theme="dark" :text="`Includes handling fee of ${minimumFee} $EDGE`">
                 <InformationCircleIcon class="hidden md:block button__icon w-15" />
               </Tooltip>
             </label>
-            <Amount :value="fee" currency="XE" short sub/>
+            <Amount :value="fee" currency="$EDGE" short sub/>
           </div>
 
           <div class="form-group mb-14">
@@ -202,7 +202,7 @@
 
           <div class="form-group mb-14">
             <label>You are withdrawing</label>
-            <Amount :value="completedTx.amount / 1e6" currency="XE" short sub/>
+            <Amount :value="completedTx.amount / 1e6" currency="$EDGE" short sub/>
           </div>
 
           <div class="form-group mb-14">
@@ -217,7 +217,7 @@
 
           <div class="form-group mb-14">
             <label>Transaction fee</label>
-            <Amount :value="feeOnSubmit" currency="XE" short sub/>
+            <Amount :value="feeOnSubmit" currency="$EDGE" short sub/>
           </div>
 
           <div class="form-group mb-14">

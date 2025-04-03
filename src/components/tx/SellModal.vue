@@ -2,9 +2,9 @@
   <div>
     <Modal :close="cancel" :visible="visible && step === 1">
       <template v-slot:header>
-        <h2 class="mb-8">Sell XE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
+        <h2 class="mb-8">Sell $EDGE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
         <span class="sub-heading d-block text-gray text-caption">
-          <Amount :value="balance / 1e6" currency="XE"/> available
+          <Amount :value="balance / 1e6" currency="$EDGE"/> available
         </span>
       </template>
       <template v-slot:body>
@@ -40,7 +40,7 @@
                 v-model="v$.amount.$model"
                 class="placeholder-white placeholder-opacity-100"
               />
-              <span class="absolute right-0 text-xl curren top-23">XE</span>
+              <span class="absolute right-0 text-xl curren top-23">$EDGE</span>
               <div class="mt-5 form-group__error input-error" style="color: #CD5F4E" v-for="error of v$.amount.$errors" :key="error.$uid">{{error.$message}}</div>
             </div>
           </div>
@@ -62,7 +62,7 @@
                 <InformationCircleIcon class="hidden md:block button__icon w-15" />
               </Tooltip>
             </label>
-            <Amount :value="fee" currency="XE" short sub/>
+            <Amount :value="fee" currency="$EDGE" short sub/>
           </div>
         </div>
       </template>
@@ -75,11 +75,11 @@
                 <div class="md:flex-grow">
                   <span class="block mb-3 text-gray">You are selling</span>
                   <span class="block text-xl text-white price">
-                    <Amount :value="amountParsed" currency="XE" short/>
+                    <Amount :value="amountParsed" currency="$EDGE" short/>
                   </span>
                 </div>
                 <span class="flex justify-center p-12 pl-12 mx-auto mt-12 border border-gray-700 rounded-full md:ml-20 md:mt-0 md:flex-shrink-0 w-52 h-52 border-opacity-30 align-center">
-                  <img src="/logo.svg" alt="XE" class="flex-shrink-0">
+                  <img src="/logo.svg" alt="$EDGE" class="flex-shrink-0">
                 </span>
                 <span class="block mx-auto my-12 icon-arrow md:absolute md:m-0 md:top-1/2 md:-right-13 md:-mt-14 w-27 text-gray">
                   <ArrowRightIcon class="hidden md:block"/>
@@ -109,16 +109,16 @@
 
     <Modal :close="cancel" :visible="visible && step === 2">
       <template v-slot:header>
-        <h2 class="mb-8">Sell XE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
+        <h2 class="mb-8">Sell $EDGE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
         <span class="sub-heading d-block text-gray text-caption">
-          <Amount :value="balance / 1e6" currency="XE"/> available
+          <Amount :value="balance / 1e6" currency="$EDGE"/> available
         </span>
       </template>
       <template v-slot:body>
         <div class="pb-12 min-h-300">
           <div class="form-group mb-14">
             <label>You are selling</label>
-            <Amount :value="amountParsed" currency="XE" short sub/>
+            <Amount :value="amountParsed" currency="$EDGE" short sub/>
           </div>
 
           <div class="form-group mb-14">
@@ -138,7 +138,7 @@
                 <InformationCircleIcon class="hidden md:block button__icon w-15" />
               </Tooltip>
             </label>
-            <Amount :value="fee" currency="XE" short sub/>
+            <Amount :value="fee" currency="$EDGE" short sub/>
           </div>
 
           <div class="form-group mb-14">
@@ -162,7 +162,7 @@
         <div v-if="!withinSaleLimit" class="px-20 py-20 mb-24 text-center bg-black border border-gray-700 rounded convert-info md:text-left red border-opacity-30 border-color">
           <div class="">
             <span class="flex w-full overflow-hidden overflow-ellipsis text-red">
-              Exchange rate has been updated. The swap maximum is now {{exchangeRate.limit}} XE.
+              Exchange rate has been updated. The swap maximum is now {{exchangeRate.limit}} $EDGE.
             </span>
           </div>
         </div>
@@ -216,7 +216,7 @@
 
           <div class="form-group mb-14">
             <label>You are selling</label>
-            <Amount :value="completedTx.amount / 1e6" currency="XE" short sub/>
+            <Amount :value="completedTx.amount / 1e6" currency="$EDGE" short sub/>
           </div>
 
           <div class="form-group mb-14">
@@ -231,7 +231,7 @@
 
           <div class="form-group mb-14">
             <label>Transaction Fee</label>
-            <Amount :value="feeOnSubmit" currency="XE" short sub/>
+            <Amount :value="feeOnSubmit" currency="$EDGE" short sub/>
           </div>
 
           <div class="form-group mb-14">
@@ -250,7 +250,7 @@
           </div>
 
           <div class="flex items-center mt-24 leading-8 text-gray">
-            <p class="mb-0">Your request has been accepted and should be processed soon. If your request cannot be processed for any reason, your XE will be returned.</p>
+            <p class="mb-0">Your request has been accepted and should be processed soon. If your request cannot be processed for any reason, your $EDGE will be returned.</p>
           </div>
         </div>
       </template>
@@ -334,7 +334,7 @@ export default {
         ...validation.amount(this.balance, this.amountParsed),
         helpers.withParams(
           { saleLimit: this.saleLimit },
-          helpers.withMessage(`The exchange maximum is ${this.saleLimit} XE.`, () => this.withinSaleLimit)
+          helpers.withMessage(`The exchange maximum is ${this.saleLimit} $EDGE.`, () => this.withinSaleLimit)
         )
       ],
       password: [validation.passwordRequired]
