@@ -2,7 +2,7 @@
   <div>
     <Modal :close="cancel" :visible="visible">
       <template v-slot:header>
-        <h2 class="mb-8">Receive XE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
+        <h2 class="mb-8">Receive $EDGE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
       </template>
       <template v-slot:body>
         <div class="pb-4 min-h-300">

@@ -9,7 +9,7 @@
         <div class="pb-14">
           <div class="mb-16 form-group">
             <label>Current balance</label>
-            <Amount :value="balance / 1e6" currency="XE" short sub/>
+            <Amount :value="balance / 1e6" $EDGE short sub/>
           </div>
           <div class="mb-16 form-group">
             <label>Stake Type</label>
@@ -18,7 +18,7 @@
                 name="stake-type-host"
                 id="host"
                 extraName="Host"
-                :label="`${shortHostStakeAmount} XE`"
+                :label="`${shortHostStakeAmount} $EDGE`"
                 :selected="stakeType === 'host'"
                 :disabled="!isStakeAffordable('host')"
                 :big="true"
@@ -28,7 +28,7 @@
                 name="stake-type-gateway"
                 id="gateway"
                 extraName="Gateway"
-                :label="`${shortGatewayStakeAmount} XE`"
+                :label="`${shortGatewayStakeAmount} $EDGE`"
                 :selected="stakeType === 'gateway'"
                 :disabled="!isStakeAffordable('gateway')"
                 :big="true"
@@ -38,7 +38,7 @@
                 name="stake-type-stargate"
                 id="stargate"
                 extraName="Stargate"
-                :label="`${shortStargateStakeAmount} XE`"
+                :label="`${shortStargateStakeAmount} $EDGE`"
                 :selected="stakeType === 'stargate'"
                 :disabled="!isStakeAffordable('stargate')"
                 :big="true"
@@ -48,7 +48,7 @@
           </div>
           <div class="mb-16 form-group">
             <label>Remaining Balance</label>
-            <Amount v-if="canAffordStake" :value="remainingBalance" currency="XE" short sub/>
+            <Amount v-if="canAffordStake" :value="remainingBalance" currency="$EDGE" short sub/>
             <span v-else class="break-all text-lg">You balance is currently too low to create a stake</span>
           </div>
         </div>
@@ -108,15 +108,15 @@
           </div>
           <div class="form-group mb-25">
             <label class="label">Stake Amount</label>
-            <Amount :value="stakeAmountXe" currency="XE" short sub/>
+            <Amount :value="stakeAmountXe" currency="$EDGE" short sub/>
           </div>
           <div class="mb-16 form-group">
             <label>Fee</label>
-            <Amount :value="0" currency="XE" short sub/>
+            <Amount :value="0" currency="$EDGE" short sub/>
           </div>
           <div class="mb-16 form-group">
             <label>Remaining Balance</label>
-            <Amount :value="remainingBalance" currency="XE" short sub/>
+            <Amount :value="remainingBalance" currency="$EDGE" short sub/>
           </div>
           <div class="form-group mb-14">
             <label>Transaction hash</label>

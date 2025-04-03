@@ -17,7 +17,7 @@
           </div>
           <div class="mb-16 form-group">
             <label>Stake amount</label>
-            <Amount :value="stakeAmountParsed" currency="XE" short sub/>
+            <Amount :value="stakeAmountParsed" currency="$EDGE" short sub/>
           </div>
           <div class="mb-16 form-group text-3xl">
             <label>Unlock period</label>
@@ -80,11 +80,11 @@
           </div>
           <div class="form-group mb-25">
             <label class="label">Stake Amount</label>
-            <Amount :value="stakeAmountParsed" currency="XE" short sub/>
+            <Amount :value="stakeAmountParsed" currency="$EDGE" short sub/>
           </div>
           <div class="mb-16 form-group">
             <label>Fee</label>
-            <Amount :value="0" currency="XE" short sub/>
+            <Amount :value="0" currency="$EDGE" short sub/>
           </div>
           <div class="form-group mb-14">
             <label>Transaction hash</label>

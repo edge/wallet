@@ -17,7 +17,7 @@
           </div>
           <div class="mb-16 form-group">
             <label>Stake amount</label>
-            <Amount :value="stakeAmountParsed" currency="XE" short sub/>
+            <Amount :value="stakeAmountParsed" currency="$EDGE" short sub/>
           </div>
           <div class="mb-16 form-group text-3xl">
             <label>Status</label>
@@ -93,15 +93,15 @@
         <div class="pb-14">
           <div class="mb-16 form-group">
             <label>Stake amount</label>
-            <Amount :value="stakeAmountParsed" currency="XE" short sub/>
+            <Amount :value="stakeAmountParsed" currency="$EDGE" short sub/>
           </div>
           <div class="mb-16 form-group text-3xl">
             <label>Express Release Fee</label>
-            <Amount :value="releaseFeeParsed" currency="XE" short sub/>
+            <Amount :value="releaseFeeParsed" currency="$EDGE" short sub/>
           </div>
           <div class="mb-16 form-group text-3xl">
             <label>You'll receive</label>
-            <Amount :value="returnAmountParsed" currency="XE" short sub/>
+            <Amount :value="returnAmountParsed" currency="$EDGE" short sub/>
           </div>
         </div>
       </template>
@@ -171,15 +171,15 @@
           </div>
           <div class="form-group mb-25">
             <label class="label">Stake Amount</label>
-            <Amount :value="stakeAmountParsed" currency="XE" short sub/>
+            <Amount :value="stakeAmountParsed" currency="$EDGE" short sub/>
           </div>
           <div class="mb-16 form-group">
             <label>Fee</label>
-            <Amount :value="releaseFeeParsed" currency="XE" short sub/>
+            <Amount :value="releaseFeeParsed" currency="$EDGE" short sub/>
           </div>
           <div class="mb-16 form-group text-3xl">
             <label>You'll receive</label>
-            <Amount :value="returnAmountParsed" currency="XE" short sub/>
+            <Amount :value="returnAmountParsed" currency="$EDGE" short sub/>
           </div>
           <div class="form-group mb-14">
             <label>Transaction hash</label>

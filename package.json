@@ -1,7 +1,7 @@
 {
   "name": "wallet",
   "version": "1.22.0",
-  "description": "Web wallet for managing XE coin",
+  "description": "Web wallet for managing $EDGE",
   "private": true,
   "license": "GPL",
   "author": "Edge Network <core@edge.network>",

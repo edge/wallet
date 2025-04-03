@@ -73,7 +73,7 @@
                 <InformationCircleIcon class="hidden md:block button__icon w-15" />
               </Tooltip>
             </label>
-            <Amount :value="fee" currency="XE" short sub/>
+            <Amount :value="fee" currency="$EDGE" short sub/>
           </div>
 
         </div>
@@ -105,7 +105,7 @@
                 <div class="md:flex-grow">
                   <span class="block mb-3 text-gray">You should receive</span>
                   <span class="block text-lg text-white price">
-                    <Amount :value="xeAmount" currency="XE" short/>
+                    <Amount :value="xeAmount" currency="$EDGE" short/>
                   </span>
                 </div>
               </div>
@@ -164,14 +164,14 @@
             <span class="mb-4 label tracking text-base3">Transaction fee</span>
             <div class="relative input-wrap">
               <span class="block w-full overflow-hidden text-white input-filled overflow-ellipsis text-caption">
-                <Amount :value="fee" currency="XE" short sub/>
+                <Amount :value="fee" currency="$EDGE" short sub/>
               </span>
             </div>
           </div>
 
           <div class="form-group mb-14">
             <label>You should receive</label>
-            <Amount :value="xeAmount" currency="XE" short sub/>
+            <Amount :value="xeAmount" currency="$EDGE" short sub/>
           </div>
 
           <div class="form-group mb-14">

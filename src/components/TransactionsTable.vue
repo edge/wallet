@@ -18,7 +18,7 @@
           <TableHeader width="10%" header="Status" :sortQuery="sortQuery"
             sortParam="block.height" :onSortingUpdate="updateSorting"
           />
-          <TableHeader  class="amount-col" width="15%" header="Amount XE" :sortQuery="sortQuery"
+          <TableHeader  class="amount-col" width="15%" header="Amount $EDGE" :sortQuery="sortQuery"
             sortParam="amount" :onSortingUpdate="updateSorting"
           />
         </tr>
@@ -28,7 +28,7 @@
           <th width="20%">From/To</th>
           <th width="30%">Memo</th>
           <th width="10%">Status</th>
-          <th class="amount-col" width="15%">Amount XE</th>
+          <th class="amount-col" width="15%">Amount $EDGE</th>
         </tr>
       </thead>
       <tbody v-if="transactions.length">

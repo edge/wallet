@@ -19,7 +19,7 @@
           <strong class="transaction-item__amount">
             <span v-if="item.head.type.toLowerCase() === 'sent'">-</span>
               {{ item.head.amount }}
-              XE
+              $EDGE
           </strong>
           <span class="transaction-item__heading-icon">
             <ChevronDownIcon/>

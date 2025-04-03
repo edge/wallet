@@ -2,9 +2,9 @@
   <div>
     <Modal :close="cancel" :visible="visible && step === 1">
       <template v-slot:header>
-        <h2 class="mb-8">Send XE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
+        <h2 class="mb-8">Send $EDGE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
         <span class="sub-heading d-block text-gray text-caption">
-          <Amount :value="balance / 1e6" currency="XE"/> available
+          <Amount :value="balance / 1e6" currency="$EDGE"/> available
         </span>
       </template>
       <template v-slot:body>
@@ -38,7 +38,7 @@
                 v-model="v$.amount.$model"
                 class="placeholder-white placeholder-opacity-100"
               />
-              <span class="absolute right-0 text-xl currentColor top-23">XE</span>
+              <span class="absolute right-0 text-xl currentColor top-23">$EDGE</span>
               <div class="mt-5 form-group__error input-error" style="color: #CD5F4E" v-for="error of v$.amount.$errors" :key="error.$uid">{{error.$message}}</div>
             </div>
           </div>
@@ -60,9 +60,9 @@
 
     <Modal :close="cancel" :visible="visible && step === 2">
       <template v-slot:header>
-        <h2 class="mb-8">Send XE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
+        <h2 class="mb-8">Send $EDGE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
         <span class="sub-heading d-block text-gray text-caption">
-          <Amount :value="balance / 1e6" currency="XE"/> available
+          <Amount :value="balance / 1e6" currency="$EDGE"/> available
         </span>
       </template>
       <template v-slot:body>
@@ -77,15 +77,15 @@
           </div>
           <div class="mb-16 form-group">
             <label>Amount</label>
-            <Amount :value="amountParsed" currency="XE" short sub/>
+            <Amount :value="amountParsed" currency="$EDGE" short sub/>
           </div>
           <div class="mb-16 form-group">
             <label>Fee</label>
-            <Amount :value="0" currency="XE" short sub/>
+            <Amount :value="0" currency="$EDGE" short sub/>
           </div>
           <div class="mb-0 form-group">
             <label>Recipient receives</label>
-            <Amount :value="amountParsed" currency="XE" short sub/>
+            <Amount :value="amountParsed" currency="$EDGE" short sub/>
           </div>
         </div>
       </template>
@@ -147,15 +147,15 @@
           </div>
           <div class="mb-14 form-group">
             <label>Amount</label>
-            <Amount :value="completedTx.amount / 1e6" currency="XE" short sub/>
+            <Amount :value="completedTx.amount / 1e6" currency="$EDGE" short sub/>
           </div>
           <div class="mb-14 form-group">
             <label>Fee</label>
-            <Amount :value="0" currency="XE" short sub/>
+            <Amount :value="0" currency="$EDGE" short sub/>
           </div>
           <div class="mb-14 form-group">
             <label>Recipient receives</label>
-            <Amount :value="completedTx.amount / 1e6" currency="XE" short sub/>
+            <Amount :value="completedTx.amount / 1e6" currency="$EDGE" short sub/>
           </div>
           <div class="form-group mb-14">
             <label>Transaction hash</label>

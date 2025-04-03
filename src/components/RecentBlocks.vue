@@ -8,7 +8,7 @@
           <th width="15%">Height</th>
           <th width="20%">Hash</th>
           <th width="10%">Txs</th>
-          <th width="25%" class="amount-col">Total XE</th>
+          <th width="25%" class="amount-col">Total $EDGE</th>
           <th width="30%">Mined</th>
         </tr>
       </thead>
@@ -34,7 +34,7 @@
           <td data-title="Txs:">
             <span class="monospace lg:inline-block">{{ block.transactions.length }}</span>
           </td>
-          <td data-title="Total XE:" class="amount-col">
+          <td data-title="Total $EDGE:" class="amount-col">
             <span class="monospace lg:inline-block">{{ formatAmount(block.total) }}</span>
           </td>
           <td data-title="Mined:" class="text-gray-600 lg:text-gray">

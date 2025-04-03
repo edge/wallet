@@ -52,7 +52,7 @@
       </span>
     </td>
 
-    <td data-title="Amount (XE):" class="amount-col" :title="`${sent ? '-' : ''}${formattedAmount}`">
+    <td data-title="Amount ($EDGE):" class="amount-col" :title="`${sent ? '-' : ''}${formattedAmount}`">
       <span class="monospace">
         {{ `${sent && formattedAmount < 0 ? '-' : ''}${formattedAmount}` }}
       </span>

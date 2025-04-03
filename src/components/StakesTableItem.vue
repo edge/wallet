@@ -49,7 +49,7 @@
       </span>
     </td>
 
-    <td data-title="Amount (XE):" class="amount-col" :title="formattedAmount">
+    <td data-title="Amount ($EDGE):" class="amount-col" :title="formattedAmount">
       <span class="monospace lg:inline-block">{{ formattedAmount }}</span>
     </td>
 
