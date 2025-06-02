@@ -13,23 +13,18 @@ def buildAndPushImage(registryCredential, tag, isTestnet, blockchainApi, indexAp
 }
 
 pipeline {
-  agent any
+  agent {
+    label "local"
+  }
   stages {
     //
     // Build image
     //
     stage('Build') {
       failFast true
-      parallel {
-        stage('amd64') {
-          agent {
-            label 'arch-amd64'
-          }
-          steps {
-            script {
-              buildAndPushImage(REGISTRY_CREDENTIAL, NAME, IS_TESTNET, BLOCKCHAIN_API_URL, INDEX_API_URL, EXPLORER_URL, BRIDGE_WALLET_ADDRESS, GOVERNANCE_URL)
-            }
-          }
+      steps {
+        script {
+          buildAndPushImage(REGISTRY_CREDENTIAL, NAME, IS_TESTNET, BLOCKCHAIN_API_URL, INDEX_API_URL, EXPLORER_URL, BRIDGE_WALLET_ADDRESS, GOVERNANCE_URL)
         }
       }
     }
