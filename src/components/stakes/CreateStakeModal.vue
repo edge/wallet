@@ -9,7 +9,7 @@
         <div class="pb-14">
           <div class="mb-16 form-group">
             <label>Current balance</label>
-            <Amount :value="balance / 1e6" $EDGE short sub/>
+            <Amount :value="balance / 1e6" currency="$EDGE" short sub/>
           </div>
           <div class="mb-16 form-group">
             <label>Stake Type</label>
