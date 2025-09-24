@@ -51,7 +51,9 @@ const init = async () => {
         index: {
           baseURL: import.meta.env.VITE_INDEX_API_URL
         }
-      }
+      },
+
+      bridgeOnline: false
     },
     mutations: {
       lock(state) {
@@ -69,6 +71,9 @@ const init = async () => {
       },
       setBalance(state, balance) {
         state.balance = balance
+      },
+      setBridgeOnline(state, online) {
+        state.bridgeOnline = online
       },
       setNextNonce(state, nextNonce) {
         state.nextNonce = nextNonce
@@ -112,6 +117,14 @@ const init = async () => {
         commit('setBalance', info.balance)
         commit('setNextNonce', info.nonce)
         dispatch('refreshTokenValue')
+      },
+      async refreshIndexConfig({ commit, state }) {
+        const res = await fetch(`${state.config.index.baseURL}/v2/config`)
+        if (!res.ok) {
+          throw new Error('Unable to retrieve Bridge status from Index')
+        }
+        const data = await res.json()
+        commit('setBridgeOnline', data.bridge && data.bridge.online)
       },
       async refreshTokenValue({ commit, state }) {
         const tokenValue = await fetchTokenValue()
