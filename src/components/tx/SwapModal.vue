@@ -47,11 +47,16 @@
           </button>
         </div> -->
       </div>
+      <div class="pt-8 pb-20 text-center" v-if="!bridgeOnline">
+        <p class="font-bold mb-4">Bridge is currently unavailable, so transactions may be delayed.</p>
+        <p>Please check again later or contact support for more information.</p>
+      </div>
     </template>
   </Modal>
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import Modal from '../Modal.vue'
 import { ArrowNarrowLeftIcon, ArrowNarrowRightIcon, CurrencyDollarIcon } from '@heroicons/vue/outline'
 
@@ -69,6 +74,16 @@ export default {
     openSell: Function,
     openWithdraw: Function,
     visible: Boolean
+  },
+  computed: {
+    ...mapState(['bridgeOnline'])
+  },
+  watch: {
+    visible() {
+      if (this.visible) {
+        this.$store.dispatch('refreshIndexConfig')
+      }
+    }
   }
 }
 </script>
