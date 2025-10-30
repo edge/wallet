@@ -406,7 +406,7 @@ export default {
         amount: xe.xe.toMxe(this.amountParsed),
         data: {
           destination: this.recipient,
-          memo: 'XE Withdrawal',
+          memo: 'Bridge Withdrawal',
           token: 'EDGE'
         },
         nonce: this.nextNonce
