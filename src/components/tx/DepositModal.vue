@@ -207,7 +207,7 @@ import Tooltip from '../Tooltip.vue'
 import bridge from '@edge/bridge-utils'
 import { detect } from 'detect-browser'
 import { ethers } from 'ethers'
-import { fetchGasRates } from '../../utils/api'
+import { fetchFees } from '../../utils/api'
 import { helpers } from '@vuelidate/validators'
 import { mapState } from 'vuex'
 import { parseAmount } from '../../utils/form'
@@ -262,8 +262,8 @@ export default {
       networkLabel: '',
       contract: null,
 
-      gasRates: {},
-      iGasRates: null,
+      fees: {},
+      iFees: null,
 
       amount: '',
 
@@ -307,12 +307,12 @@ export default {
       return this.xeAmount > 0
     },
     minimumFee() {
-      return this.gasRates.minimumHandlingFee || NaN
+      return (this.fees.depositMinFee || 0) / 1e6
     },
     fee() {
       if (isNaN(this.minimumFee)) return NaN
-      const { handlingFeePercentage } = this.gasRates
-      const percentageFee = this.amountParsed * (handlingFeePercentage / 100)
+      const { depositPercentFee } = this.fees
+      const percentageFee = this.amountParsed * (depositPercentFee / 100)
       return Math.round(Math.max(percentageFee, this.minimumFee))
     },
     xeAmount() {
@@ -334,13 +334,13 @@ export default {
     visible(v, oldv) {
       if (v === oldv) return
       if (v) {
-        this.updateGasRates()
-        this.iGasRates = setInterval(this.updateGasRates, gasRatesUpdateInterval)
+        this.updateFees()
+        this.iFees = setInterval(this.updateFees, gasRatesUpdateInterval)
         if (this.ethAddress !== '') this.goto(2)
       }
       else {
-        clearInterval(this.iGasRates)
-        this.iGasRates = null
+        clearInterval(this.iFees)
+        this.iFees = null
       }
     }
   },
@@ -477,8 +477,8 @@ export default {
       balance = ethers.utils.formatEther(balance.toString())
       this.edgeBalance = parseFloat(Math.floor(balance * 1e6) / 1e6)
     },
-    async updateGasRates() {
-      this.gasRates = await fetchGasRates()
+    async updateFees() {
+      this.fees = await fetchFees()
     }
   },
   setup() {

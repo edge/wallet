@@ -254,7 +254,7 @@ import HashLink from '../HashLink.vue'
 import { InformationCircleIcon } from '@heroicons/vue/solid'
 import Modal from '../Modal.vue'
 import Tooltip from '../Tooltip.vue'
-import { fetchGasRates } from '../../utils/api'
+import { fetchFees } from '../../utils/api'
 import { mapState } from 'vuex'
 import { parseAmount } from '../../utils/form'
 import useVuelidate from '@vuelidate/core'
@@ -282,8 +282,8 @@ export default {
     return {
       step: 1,
 
-      gasRates: {},
-      iGasRates: null,
+      fees: {},
+      iFees: null,
 
       recipient: '',
       amount: '',
@@ -320,18 +320,15 @@ export default {
     canWithdraw() {
       return !this.v$.$invalid && this.edgeAmount > 0
     },
-    gasRate() {
-      return this.gasRates.fee
-    },
     minimumFee() {
-      if (this.gasRate === undefined || isNaN(this.amountParsed)) return NaN
-      const { handlingFeePercentage, minimumHandlingFee } = this.gasRates
-      const percentageFee = this.amountParsed * (handlingFeePercentage / 100)
-      return Math.max(percentageFee, minimumHandlingFee)
+      if (isNaN(this.amountParsed)) return NaN
+      const { withdrawalMinFee, withdrawalPercentFee } = this.fees
+      const percentageFee = this.amountParsed * (withdrawalPercentFee / 100)
+      return Math.max(percentageFee, (withdrawalMinFee || 0) / 1e6)
     },
     fee() {
-      if (this.gasRate === undefined || isNaN(this.amountParsed)) return NaN
-      return Math.round(this.minimumFee + this.gasRate)
+      if (isNaN(this.amountParsed)) return NaN
+      return Math.round(this.minimumFee)
     },
     edgeAmount() {
       return Math.max(0, this.amountParsed - this.fee)
@@ -342,12 +339,12 @@ export default {
       if (v === oldv) return
       if (v) {
         this.$store.dispatch('refresh')
-        this.updateGasRates()
-        this.iGasRates = setInterval(this.updateGasRates, gasRatesUpdateInterval)
+        this.updateFees()
+        this.iFees = setInterval(this.updateFees, gasRatesUpdateInterval)
       }
       else {
-        clearInterval(this.iGasRates)
-        this.iGasRates = null
+        clearInterval(this.iFees)
+        this.iFees = null
       }
     }
   },
@@ -391,8 +388,8 @@ export default {
 
       this.v$.$reset()
     },
-    async updateGasRates() {
-      this.gasRates = await fetchGasRates()
+    async updateFees() {
+      this.fees = await fetchFees()
     },
     async withdraw() {
       this.passwordError = ''
@@ -410,7 +407,6 @@ export default {
         data: {
           destination: this.recipient,
           memo: 'XE Withdrawal',
-          ref: this.gasRates.ref,
           token: 'EDGE'
         },
         nonce: this.nextNonce

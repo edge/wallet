@@ -66,6 +66,8 @@ const fetchPendingTransactions = (address) => {
 
 const fetchGasRates = async () => fetchData(`${INDEX_API_URL}/gasrates`)
 
+const fetchFees = async () => fetchData(`${INDEX_API_URL}/fees`)
+
 const fetchExchangeRates = async () => await fetchData(`${INDEX_API_URL}/exchangerate`)
 
 
@@ -169,6 +171,7 @@ export {
   fetchBlocks,
   fetchPendingTransactions,
   fetchGasRates,
+  fetchFees,
   fetchExchangeRates,
   fetchSessionsStats,
   fetchTransactions,
