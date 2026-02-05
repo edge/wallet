@@ -1,7 +1,7 @@
 <template>
   <Modal :close="cancel" :visible="visible">
     <template v-slot:header>
-      <h2>Create a wallet</h2>
+      <h2>{{ isAdditionalWallet ? 'Create wallet' : 'Create a wallet' }}</h2>
     </template>
 
     <template v-slot:body>
@@ -63,11 +63,12 @@
           <span class="flex-shrink-0 inline-block mt-8 mr-12 text-white icon w-27">
             <ShieldExclamationIcon/>
           </span>
-          <p>Ensure you copy and store your wallet address and key securely. If you lose your details you
+          <p v-if="isAdditionalWallet">Ensure you copy and store your private key securely. If you lose your private key you will not be able to access your wallet.</p>
+          <p v-else>Ensure you copy and store your private key securely. If you lose your private key you
               will not be able to access your wallet. Please enter your password to confirm you have
               backed up your details.</p>
           </div>
-          <div class="form-group" :class="{'form-group__error': v$.password.$error}">
+          <div v-if="!isAdditionalWallet" class="form-group" :class="{'form-group__error': v$.password.$error}">
             <label for="password">ENTER PASSWORD to encrypt this session</label>
             <div class="relative input-wrap">
               <span class="icon">
@@ -98,7 +99,7 @@
         </form>
         <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
           <button class="w-full button button--outline-success" @click="cancel">Cancel</button>
-          <button class="w-full button button--success" :disabled="!canSubmit" @click.prevent="create">Next</button>
+          <button class="w-full button button--success" :disabled="!canSubmit" @click.prevent="create">{{ isAdditionalWallet ? 'Create' : 'Next' }}</button>
         </div>
       </div>
     </template>
@@ -111,6 +112,7 @@ import * as validation from '../../utils/validation'
 import * as xe from '@edge/xe-utils'
 import Modal from '../Modal.vue'
 import useVuelidate from '@vuelidate/core'
+import { mapState } from 'vuex'
 import {
   ClipboardCopyIcon,
   EyeIcon,
@@ -137,8 +139,10 @@ export default {
   props: {
     afterCreate: Function,
     close: Function,
-    visible: Boolean
+    visible: Boolean,
+    isAdditionalWallet: Boolean // When true, adds to existing vault instead of creating new
   },
+  emits: ['created'],
   data() {
     return {
       address: '',
@@ -153,6 +157,15 @@ export default {
     }
   },
   validations() {
+    // Skip password validation when adding to existing vault
+    if (this.isAdditionalWallet) {
+      return {
+        confirmPhrase: [
+          validation.required,
+          matchConfirmPhrase
+        ]
+      }
+    }
     return {
       password: [
         validation.passwordRequired,
@@ -165,12 +178,22 @@ export default {
     }
   },
   computed: {
+    ...mapState(['sessionPassword']),
     formattedPrivateKey() {
       const value = this.showPrivateKey ? this.privateKey : '•'.repeat(64)
       return [value.slice(0, 32), value.slice(32)]
     },
     canSubmit() {
       return !this.v$.$invalid
+    }
+  },
+  watch: {
+    visible(newVal) {
+      if (newVal) {
+        this.generateWallet()
+      } else {
+        this.reset()
+      }
     }
   },
   methods: {
@@ -181,13 +204,32 @@ export default {
     async create() {
       if (!await this.v$.$validate()) return
 
-      await storage.setWallet({ privateKey: this.privateKey, publicKey: this.publicKey }, this.password)
-      await storage.setWalletVersion(storage.getHighestWalletVersion())
-      await this.$store.dispatch('reloadWallet')
-      this.$store.commit('unlock')
-      this.$store.dispatch('refresh')
+      if (this.isAdditionalWallet) {
+        // Add wallet to existing vault
+        await storage.addWallet({
+          publicKey: this.publicKey,
+          privateKey: this.privateKey,
+          name: 'Wallet ' + (this.$store.state.wallets.length + 1)
+        }, this.sessionPassword)
 
-      this.afterCreate()
+        await this.$store.dispatch('loadWallets', this.sessionPassword)
+        this.$emit('created')
+        this.reset()
+        this.close()
+      } else {
+        // Initial wallet creation
+        await storage.setWallet({ privateKey: this.privateKey, publicKey: this.publicKey }, this.password)
+
+        const address = xe.wallet.deriveAddress(this.publicKey)
+        this.$store.commit('setAddress', address)
+        this.$store.commit('setVersion', storage.getHighestWalletVersion())
+        this.$store.commit('unlock')
+
+        await this.$store.dispatch('loadWallets', this.password)
+        this.$store.dispatch('refresh')
+
+        this.afterCreate()
+      }
     },
     createOnEnter(event) {
       if (event.charCode !== 13) return
@@ -207,13 +249,15 @@ export default {
       this.publicKey = wallet.publicKey
     },
     reset() {
+      this.address = ''
+      this.privateKey = ''
+      this.publicKey = ''
       this.password = ''
       this.confirmPhrase = ''
+      this.showAddress = false
+      this.showPrivateKey = false
       this.v$.$reset()
     }
-  },
-  mounted() {
-    this.generateWallet()
   },
   setup() {
     return {

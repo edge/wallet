@@ -7,7 +7,7 @@
     <template v-slot:body>
       <div class="pt-15">
         <form>
-          <div class="form-group">
+          <div v-if="walletVersion < 2" class="form-group">
             <label>wallet address</label>
             <span class="break-all">{{ address }}</span>
           </div>
@@ -39,7 +39,7 @@
           class="w-full border-red-600 button button--outline-success hover:border-red-600 hover:bg-red-600"
           @click="switchToForgetModal"
         >
-          Forget wallet
+          Reset wallet
         </button>
         <button class="w-full button button--success" :disabled="!canSubmit" @click.prevent="unlock">Unlock</button>
       </div>
@@ -48,6 +48,7 @@
 </template>
 
 <script>
+import * as xe from '@edge/xe-utils'
 import * as storage from '../../utils/storage'
 import * as validation from '../../utils/validation'
 import { LockOpenIcon } from '@heroicons/vue/outline'
@@ -105,14 +106,19 @@ export default {
       if (!await this.v$.$validate()) return
       if (!await this.checkPassword()) return
 
-      const privateKey = await storage.getPrivateKey(this.password, this.walletVersion)
-      const publicKey = await storage.getPublicKey(this.walletVersion)
+      // Migrate vault from older versions if needed
+      if (await storage.needsMigration()) {
+        await storage.migrateToV2(this.password)
+      }
 
-      // do not specify wallet version here - this forces migration to highest version
-      await storage.setWallet({ privateKey, publicKey }, this.password)
-      await storage.setWalletVersion(storage.getHighestWalletVersion())
-      await this.$store.dispatch('reloadWallet')
+      const publicKey = await storage.getPublicKey(this.password)
+      const highestVersion = storage.getHighestWalletVersion()
+      const address = xe.wallet.deriveAddress(publicKey)
+      this.$store.commit('setAddress', address)
+      this.$store.commit('setVersion', highestVersion)
       this.$store.commit('unlock')
+
+      await this.$store.dispatch('loadWallets', this.password)
       this.$store.dispatch('refresh')
 
       this.afterUnlock()

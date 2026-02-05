@@ -10,7 +10,7 @@
         <span class="flex-shrink-0 inline-block mt-8 mr-12 text-white icon w-27">
           <ShieldExclamationIcon/>
         </span>
-        <p>Enter your password below to decrypt and display your private key. This will enable you to back up your private key and restore your wallet on other browsers and devices. Do not share your private key with anyone else and be aware of your surroundings while it is visible.</p>
+        <p>Enter your password below to decrypt and display your private key<span v-if="walletName"> for <strong>{{ walletName }}</strong></span>. This will enable you to back up your private key and restore your wallet on other browsers and devices. Do not share your private key with anyone else and be aware of your surroundings while it is visible.</p>
         </div>
         <div class="form-group" :class="{'form-group__error': v$.password.$error || (passwordError && !v$.password.$dirty)}">
           <label for="password">ENTER PASSWORD to export your private key</label>
@@ -35,10 +35,10 @@
         <div class="form-group">
           <label>wallet address</label>
           <span class="flex items-center">
-            <span class="font-mono break-all text-sm2">{{ address }}</span>
+            <span class="font-mono break-all text-sm2">{{ displayAddress }}</span>
             <button
               class="flex-shrink-0 w-24 ml-24 text-green on-clicked-effect"
-              @click.prevent="copyToClipboard(address)"
+              @click.prevent="copyToClipboard(displayAddress)"
             >
               <ClipboardCopyIcon/>
             </button>
@@ -107,12 +107,26 @@ export default {
   },
   props: {
     close: Function,
-    visible: Boolean
+    visible: Boolean,
+    wallet: Object // Optional: specific wallet to export. If not provided, exports active wallet.
   },
   computed: {
     ...mapState(['address']),
     canSubmit() {
       return !this.v$.$invalid
+    },
+    walletName() {
+      return this.wallet?.name || null
+    },
+    displayAddress() {
+      return this.wallet?.address || this.address
+    }
+  },
+  watch: {
+    visible(newVal) {
+      if (!newVal) {
+        this.reset()
+      }
     }
   },
   methods: {
@@ -143,7 +157,13 @@ export default {
       if (!await this.v$.$validate()) return
       if (!await this.checkPassword()) return
 
-      this.privateKey = await storage.getPrivateKey(this.password)
+      // If a specific wallet is provided, export that wallet's key
+      // Otherwise export the active wallet's key
+      if (this.wallet?.id) {
+        this.privateKey = await storage.getWalletPrivateKey(this.password, this.wallet.id)
+      } else {
+        this.privateKey = await storage.getPrivateKey(this.password)
+      }
     },
     exportOnEnter(event) {
       if (event.charCode !== 13) return
