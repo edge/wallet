@@ -7,7 +7,7 @@
     <template v-slot:body>
       <div class="pt-15">
         <form>
-          <div class="form-group">
+          <div v-if="walletVersion < 2" class="form-group">
             <label>wallet address</label>
             <span class="break-all">{{ address }}</span>
           </div>
@@ -48,6 +48,7 @@
 </template>
 
 <script>
+import * as xe from '@edge/xe-utils'
 import * as storage from '../../utils/storage'
 import * as validation from '../../utils/validation'
 import { LockOpenIcon } from '@heroicons/vue/outline'
@@ -106,12 +107,14 @@ export default {
       if (!await this.checkPassword()) return
 
       const privateKey = await storage.getPrivateKey(this.password, this.walletVersion)
-      const publicKey = await storage.getPublicKey(this.walletVersion)
+      const publicKey = await storage.getPublicKey(this.password, this.walletVersion)
 
       // do not specify wallet version here - this forces migration to highest version
       await storage.setWallet({ privateKey, publicKey }, this.password)
-      await storage.setWalletVersion(storage.getHighestWalletVersion())
-      await this.$store.dispatch('reloadWallet')
+
+      const address = xe.wallet.deriveAddress(publicKey)
+      this.$store.commit('setAddress', address)
+      this.$store.commit('setVersion', storage.getHighestWalletVersion())
       this.$store.commit('unlock')
       this.$store.dispatch('refresh')
 

@@ -90,7 +90,7 @@ export default {
   computed: mapState({
     address: 'address',
     locked: 'locked',
-    hasWallet: state => state.address.length > 0
+    hasWallet: 'hasWallet'
   }),
   methods: {
     gotoOverview() {

@@ -22,9 +22,12 @@ const init = async () => {
   const expires = await getUnlockExpiry()
   const locked = expires.getTime() < Date.now()
 
+  // For v2, address is inside encrypted vault - can't retrieve without password
+  // Address will be set when user unlocks
   const address = await (async () => {
+    if (version === 2) return ''
     try {
-      return await getAddress(version)
+      return await getAddress(undefined, version)
     }
     catch (err) {
       console.debug(err)
@@ -32,10 +35,15 @@ const init = async () => {
     }
   })()
 
+  // If wallet-version exists (> 0), a wallet exists
+  // empty() clears all keys including wallet-version
+  const hasWallet = version > 0
+
   return createStore({
     state: {
       locked,
       version,
+      hasWallet,
 
       address,
       balance: 0,
@@ -62,6 +70,7 @@ const init = async () => {
       },
       reset(state) {
         state.locked = true
+        state.hasWallet = false
         state.address = ''
         state.balance = 0
         state.nextNonce = 0
@@ -129,17 +138,6 @@ const init = async () => {
       async refreshTokenValue({ commit, state }) {
         const tokenValue = await fetchTokenValue()
         commit('setUSDBalance', tokenValue.usdPerXE * (state.balance / 1e6))
-      },
-      async reloadWallet({ commit }) {
-        try {
-          const version = await getWalletVersion()
-          const address = await getAddress(version)
-          commit('setAddress', address)
-          commit('setVersion', version)
-        }
-        catch (err) {
-          console.error(err)
-        }
       }
     }
   })
