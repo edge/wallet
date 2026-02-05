@@ -121,7 +121,7 @@ export async function createVault(wallet, password) {
 
   const walletEntry = {
     id: walletId,
-    name: wallet.name || 'Main Wallet',
+    name: wallet.name || 'Wallet 1',
     publicKey: wallet.publicKey,
     privateKey: wallet.privateKey
   }

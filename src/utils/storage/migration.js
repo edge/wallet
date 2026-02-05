@@ -81,7 +81,7 @@ export async function migrateToV2(password, onProgress) {
   const walletMeta = await v2.createVault({
     publicKey,
     privateKey,
-    name: 'Main Wallet'
+    name: 'Wallet 1'
   }, password)
 
   // 3. Update version

@@ -198,7 +198,7 @@ const setWallet = async (keypair, password, version) => {
     await v2.createVault({
       publicKey: keypair.publicKey,
       privateKey: keypair.privateKey,
-      name: 'Main Wallet'
+      name: 'Wallet 1'
     }, password)
     await setWalletVersion(2)
     break
@@ -228,6 +228,15 @@ const {
   clearVault
 } = v2
 
+/**
+ * Get private key for a specific wallet (v2 only).
+ *
+ * @param {string} password - Password to decrypt vault
+ * @param {string} walletId - Wallet ID
+ * @returns {Promise<string|undefined>}
+ */
+const getWalletPrivateKey = (password, walletId) => v2.getPrivateKey(password, walletId)
+
 export {
   // Version-switching functions
   comparePassword,
@@ -247,6 +256,7 @@ export {
   addWallet,
   removeWallet,
   updateWallet,
+  getWalletPrivateKey,
   hasVault,
   clearVault,
 
