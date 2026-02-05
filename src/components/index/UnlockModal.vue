@@ -39,7 +39,7 @@
           class="w-full border-red-600 button button--outline-success hover:border-red-600 hover:bg-red-600"
           @click="switchToForgetModal"
         >
-          Forget wallet
+          Reset wallet
         </button>
         <button class="w-full button button--success" :disabled="!canSubmit" @click.prevent="unlock">Unlock</button>
       </div>
@@ -106,16 +106,22 @@ export default {
       if (!await this.v$.$validate()) return
       if (!await this.checkPassword()) return
 
-      const privateKey = await storage.getPrivateKey(this.password, this.walletVersion)
-      const publicKey = await storage.getPublicKey(this.password, this.walletVersion)
+      const highestVersion = storage.getHighestWalletVersion()
 
-      // do not specify wallet version here - this forces migration to highest version
-      await storage.setWallet({ privateKey, publicKey }, this.password)
+      // Migrate vault from older versions if needed
+      if (this.walletVersion < highestVersion) {
+        const privateKey = await storage.getPrivateKey(this.password, this.walletVersion)
+        const publicKey = await storage.getPublicKey(this.password, this.walletVersion)
+        await storage.setWallet({ privateKey, publicKey }, this.password)
+      }
 
+      const publicKey = await storage.getPublicKey(this.password)
       const address = xe.wallet.deriveAddress(publicKey)
       this.$store.commit('setAddress', address)
-      this.$store.commit('setVersion', storage.getHighestWalletVersion())
+      this.$store.commit('setVersion', highestVersion)
       this.$store.commit('unlock')
+
+      await this.$store.dispatch('loadWallets', this.password)
       this.$store.dispatch('refresh')
 
       this.afterUnlock()
