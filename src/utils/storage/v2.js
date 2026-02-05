@@ -32,7 +32,6 @@ import { encrypt, decrypt, ITERATIONS_V2 } from '../crypto-native'
 import { get, set, del } from 'idb-keyval'
 
 const KEY_VAULT = 'vault'
-const KEY_ADDRESS = 'address'
 const KEY_ACTIVE_WALLET_ID = 'active-wallet-id'
 
 /**
@@ -133,7 +132,6 @@ export async function createVault(wallet, password) {
 
   await setVault(vaultData, password)
   await setActiveWalletId(walletId)
-  await set(KEY_ADDRESS, address, store)
 
   return {
     id: walletId,
@@ -153,35 +151,13 @@ export async function getActiveWalletId() {
 }
 
 /**
- * Set the active wallet ID and update cached address.
+ * Set the active wallet ID.
  *
  * @param {string} walletId - Wallet ID to set as active
- * @param {string} [password] - Password to decrypt vault (needed to update cached address)
  * @returns {Promise<void>}
  */
-export async function setActiveWalletId(walletId, password) {
+export async function setActiveWalletId(walletId) {
   await set(KEY_ACTIVE_WALLET_ID, walletId, store)
-
-  // Update cached address if password provided
-  if (password) {
-    const vault = await getVault(password)
-    if (vault) {
-      const wallet = vault.wallets.find(w => w.id === walletId)
-      if (wallet) {
-        const address = xe.wallet.deriveAddress(wallet.publicKey)
-        await set(KEY_ADDRESS, address, store)
-      }
-    }
-  }
-}
-
-/**
- * Get cached address (for display when locked, does not require password).
- *
- * @returns {Promise<string|undefined>} Cached address
- */
-export async function getCachedAddress() {
-  return await get(KEY_ADDRESS, store)
 }
 
 /**
@@ -326,7 +302,6 @@ export async function addWallet(wallet, password, options = {}) {
   // Set as active if requested
   if (setActive) {
     await setActiveWalletId(walletId)
-    await set(KEY_ADDRESS, address, store)
   }
 
   return {
@@ -366,14 +341,11 @@ export async function removeWallet(walletId, password) {
     if (vault.wallets.length > 0) {
       // Switch to first remaining wallet
       newActiveId = vault.wallets[0].id
-      const newActiveWallet = vault.wallets[0]
       await setActiveWalletId(newActiveId)
-      await set(KEY_ADDRESS, xe.wallet.deriveAddress(newActiveWallet.publicKey), store)
     } else {
       // No wallets left
       newActiveId = null
       await del(KEY_ACTIVE_WALLET_ID, store)
-      await del(KEY_ADDRESS, store)
     }
   }
 
@@ -428,6 +400,5 @@ export async function hasVault() {
  */
 export async function clearVault() {
   await del(KEY_VAULT, store)
-  await del(KEY_ADDRESS, store)
   await del(KEY_ACTIVE_WALLET_ID, store)
 }
