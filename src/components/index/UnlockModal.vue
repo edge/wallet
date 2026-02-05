@@ -106,16 +106,13 @@ export default {
       if (!await this.v$.$validate()) return
       if (!await this.checkPassword()) return
 
-      const highestVersion = storage.getHighestWalletVersion()
-
       // Migrate vault from older versions if needed
-      if (this.walletVersion < highestVersion) {
-        const privateKey = await storage.getPrivateKey(this.password, this.walletVersion)
-        const publicKey = await storage.getPublicKey(this.password, this.walletVersion)
-        await storage.setWallet({ privateKey, publicKey }, this.password)
+      if (await storage.needsMigration()) {
+        await storage.migrateToV2(this.password)
       }
 
       const publicKey = await storage.getPublicKey(this.password)
+      const highestVersion = storage.getHighestWalletVersion()
       const address = xe.wallet.deriveAddress(publicKey)
       this.$store.commit('setAddress', address)
       this.$store.commit('setVersion', highestVersion)
