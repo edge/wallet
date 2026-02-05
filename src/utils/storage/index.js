@@ -6,9 +6,8 @@ import * as v0 from './v0'
 import * as v1 from './v1'
 import * as v2 from './v2'
 import { needsMigration, migrateToV2, getLegacyPrivateKey } from './migration'
-import { clear, createStore, del, get, set } from 'idb-keyval'
+import { clear, createStore, get, set } from 'idb-keyval'
 
-const KEY_UNLOCK_EXPIRY = 'unlock-expiry'
 const KEY_WALLET_VERSION = 'wallet-version'
 
 const invalidVersion = version => new Error(`Invalid storage version ${version}`)
@@ -50,13 +49,6 @@ const comparePassword = (password, version) => {
  * @returns Promise<void>
  */
 const empty = () => clear(store)
-
-/**
- * Force unlock expiry.
- *
- * @returns Promise<void>
- */
-const expire = () => del(KEY_UNLOCK_EXPIRY, store)
 
 /**
  * Get wallet address from storage.
@@ -137,17 +129,6 @@ const getPublicKey = (password, version) => {
 }
 
 /**
- * Get unlock expiry time from storage.
- *
- * @returns Promise<Date>
- */
-const getUnlockExpiry = async () => {
-  const dateStr = await get(KEY_UNLOCK_EXPIRY, store)
-  if (!dateStr) return new Date(0)
-  return new Date(dateStr)
-}
-
-/**
  * Get wallet version from storage.
  *
  * If no version is found, this function returns 0.
@@ -159,14 +140,6 @@ const getWalletVersion = async () => {
   if (v !== undefined) return v
   return 0
 }
-
-/**
- * Set unlock expiry time in storage.
- *
- * @param {Date} date Expiry date & time
- * @returns Promise<void>
- */
-const setUnlockExpiry = (date) => set(KEY_UNLOCK_EXPIRY, date.toString(), store)
 
 /**
  * Save wallet in storage.
@@ -265,10 +238,6 @@ export {
   migrateToV2,
   getLegacyPrivateKey,
 
-  // Session management
-  getUnlockExpiry,
-  setUnlockExpiry,
-  expire,
   empty,
 
   // Store access

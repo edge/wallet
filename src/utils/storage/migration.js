@@ -104,7 +104,8 @@ export async function migrateToV2(password, onProgress) {
     del('p1', store),
     del('p2', store),
     del('h', store),
-    del('s', store)
+    del('s', store),
+    del('unlock-expiry', store)
   ])
 
   return walletMeta

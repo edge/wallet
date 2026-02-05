@@ -7,8 +7,6 @@ import { createStore } from 'vuex'
 import { fetchTokenValue } from './utils/api'
 import * as storage from './utils/storage'
 
-const WALLET_EXPIRY = 5 * 60 * 1000
-
 // Module-scope abort controller for request cancellation
 // Not in state because AbortController isn't serializable
 let refreshAbortController = null
@@ -16,13 +14,8 @@ let refreshAbortController = null
 const init = async () => {
   const version = await storage.getWalletVersion()
 
-  const expires = await storage.getUnlockExpiry()
-  const sessionExpired = expires.getTime() < Date.now()
-
-  // For v2 storage, we can't retrieve address without password
-  // After page refresh, session password is lost, so always start locked
-  // For v0/v1, we can use session expiry since address is stored unencrypted
-  const locked = version === 2 ? true : sessionExpired
+  // Always start locked - user must enter password to unlock
+  const locked = true
 
   // For v2, address is inside encrypted vault - can't retrieve without password
   // Address will be set when user unlocks
@@ -77,7 +70,6 @@ const init = async () => {
       lock(state) {
         state.locked = true
         state.sessionPassword = ''
-        storage.expire()
       },
       reset(state) {
         state.locked = true
@@ -112,7 +104,6 @@ const init = async () => {
       unlock(state) {
         state.locked = false
         state.hasWallet = true
-        storage.setUnlockExpiry(new Date(Date.now() + WALLET_EXPIRY))
       },
       setWallets(state, wallets) {
         state.wallets = wallets
@@ -146,29 +137,9 @@ const init = async () => {
       canSwitchWallet: (state) => !state.transactionInProgress && state.wallets.length > 1
     },
     actions: {
-      async backgroundRefresh({ commit, dispatch, state }, router) {
-        const expires = await storage.getUnlockExpiry()
-        const locked = expires.getTime() < Date.now()
-
-        if (locked) {
-          if (!state.locked) {
-            commit('lock')
-            router.push('/')
-          }
-        }
-        else {
-          // For v2 storage, we need the password to load wallets
-          // If session is valid but we don't have the password, treat as locked
-          // to force re-entry (this happens on page refresh)
-          if (state.version === 2 && !state.sessionPassword) {
-            commit('lock')
-            router.push('/')
-            return
-          }
-          // postpones expiry
-          commit('unlock')
-          dispatch('refresh')
-        }
+      async backgroundRefresh({ dispatch, state }) {
+        if (state.locked) return
+        dispatch('refresh')
       },
       forget({ commit }) {
         storage.empty()
