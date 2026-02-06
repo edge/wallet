@@ -48,7 +48,6 @@
 </template>
 
 <script>
-import * as xe from '@edge/xe-utils'
 import * as storage from '../../utils/storage'
 import * as validation from '../../utils/validation'
 import { LockOpenIcon } from '@heroicons/vue/outline'
@@ -111,13 +110,10 @@ export default {
         await storage.migrateToV2(this.password)
       }
 
-      const publicKey = await storage.getPublicKey(this.password)
-      const highestVersion = storage.getHighestWalletVersion()
-      const address = xe.wallet.deriveAddress(publicKey)
-      this.$store.commit('setAddress', address)
-      this.$store.commit('setVersion', highestVersion)
+      this.$store.commit('setVersion', storage.getHighestWalletVersion())
       this.$store.commit('unlock')
 
+      // loadWallets derives addresses from vault (v2) or state (legacy)
       await this.$store.dispatch('loadWallets', this.password)
       this.$store.dispatch('refresh')
 
