@@ -1,12 +1,13 @@
-// Copyright (C) 2022 Edge Network Technologies Limited
+// Copyright (C) 2026 Edge Network Technologies Limited
 // Use of this source code is governed by a GNU GPL-style license
 // that can be found in the LICENSE.md file. All rights reserved.
 
 import * as v0 from './v0'
 import * as v1 from './v1'
-import { clear, createStore, del, get, set } from 'idb-keyval'
+import * as v2 from './v2'
+import { needsMigration, migrateToV2, getLegacyPrivateKey } from './migration'
+import { clear, createStore, get, set } from 'idb-keyval'
 
-const KEY_UNLOCK_EXPIRY = 'unlock-expiry'
 const KEY_WALLET_VERSION = 'wallet-version'
 
 const invalidVersion = version => new Error(`Invalid storage version ${version}`)
@@ -35,6 +36,8 @@ const comparePassword = (password, version) => {
     return v0.comparePassword(password)
   case 1:
     return v1.comparePassword(password)
+  case 2:
+    return v2.comparePassword(password)
   default:
     throw invalidVersion(version)
   }
@@ -48,28 +51,24 @@ const comparePassword = (password, version) => {
 const empty = () => clear(store)
 
 /**
- * Force unlock expiry.
- *
- * @returns Promise<void>
- */
-const expire = () => del(KEY_UNLOCK_EXPIRY, store)
-
-/**
  * Get wallet address from storage.
  *
  * The `version` argument can be provided to specify the storage model to use.
  * If it is undefined, the highest storage version will be selected automatically.
  *
+ * @param {string} password Password (required for v2, ignored for v0/v1)
  * @param {number|undefined} version Storage version
  * @returns Promise<string>
  */
-const getAddress = version => {
+const getAddress = (password, version) => {
   if (version === undefined) version = getHighestWalletVersion()
   switch(version) {
   case 0:
     return v0.getAddress()
   case 1:
     return v1.getAddress()
+  case 2:
+    return v2.getAddress(password)
   default:
     throw invalidVersion(version)
   }
@@ -80,7 +79,7 @@ const getAddress = version => {
  *
  * @returns number
  */
-const getHighestWalletVersion = () => 1
+const getHighestWalletVersion = () => 2
 
 /**
  * Get wallet private key from storage.
@@ -98,6 +97,8 @@ const getPrivateKey = (password, version) => {
     return v0.getPrivateKey()
   case 1:
     return v1.getPrivateKey(password)
+  case 2:
+    return v2.getPrivateKey(password)
   default:
     throw invalidVersion(version)
   }
@@ -109,30 +110,22 @@ const getPrivateKey = (password, version) => {
  * The `version` argument can be provided to specify the storage model to use.
  * If it is undefined, the highest storage version will be selected automatically.
  *
+ * @param {string} password Password (required for v2, ignored for v0/v1)
  * @param {number|undefined} version Storage version
  * @returns Promise<string>
  */
-const getPublicKey = version => {
+const getPublicKey = (password, version) => {
   if (version === undefined) version = getHighestWalletVersion()
   switch (version) {
   case 0:
     return v0.getPublicKey()
   case 1:
     return v1.getPublicKey()
+  case 2:
+    return v2.getPublicKey(password)
   default:
     throw invalidVersion(version)
   }
-}
-
-/**
- * Get unlock expiry time from storage.
- *
- * @returns Promise<Date>
- */
-const getUnlockExpiry = async () => {
-  const dateStr = await get(KEY_UNLOCK_EXPIRY, store)
-  if (!dateStr) return new Date(0)
-  return new Date(dateStr)
 }
 
 /**
@@ -147,14 +140,6 @@ const getWalletVersion = async () => {
   if (v !== undefined) return v
   return 0
 }
-
-/**
- * Set unlock expiry time in storage.
- *
- * @param {Date} date Expiry date & time
- * @returns Promise<void>
- */
-const setUnlockExpiry = (date) => set(KEY_UNLOCK_EXPIRY, date.toString(), store)
 
 /**
  * Save wallet in storage.
@@ -182,6 +167,14 @@ const setWallet = async (keypair, password, version) => {
     await v1.setPassword(password)
     await setWalletVersion(1)
     break
+  case 2:
+    await v2.createVault({
+      publicKey: keypair.publicKey,
+      privateKey: keypair.privateKey,
+      name: 'Wallet 1'
+    }, password)
+    await setWalletVersion(2)
+    break
   default:
     throw invalidVersion(version)
   }
@@ -195,18 +188,58 @@ const setWallet = async (keypair, password, version) => {
  */
 const setWalletVersion = v => set(KEY_WALLET_VERSION, v, store)
 
+// Re-export v2 multi-wallet functions
+const {
+  getWallets,
+  getActiveWalletId,
+  setActiveWalletId,
+  createVault,
+  addWallet,
+  removeWallet,
+  updateWallet,
+  hasVault,
+  clearVault
+} = v2
+
+/**
+ * Get private key for a specific wallet (v2 only).
+ *
+ * @param {string} password - Password to decrypt vault
+ * @param {string} walletId - Wallet ID
+ * @returns {Promise<string|undefined>}
+ */
+const getWalletPrivateKey = (password, walletId) => v2.getPrivateKey(password, walletId)
+
 export {
+  // Version-switching functions
   comparePassword,
-  empty,
-  expire,
   getAddress,
   getHighestWalletVersion,
   getPrivateKey,
   getPublicKey,
-  getUnlockExpiry,
   getWalletVersion,
-  setUnlockExpiry,
   setWallet,
   setWalletVersion,
+
+  // Multi-wallet functions (v2)
+  getWallets,
+  getActiveWalletId,
+  setActiveWalletId,
+  createVault,
+  addWallet,
+  removeWallet,
+  updateWallet,
+  getWalletPrivateKey,
+  hasVault,
+  clearVault,
+
+  // Migration functions
+  needsMigration,
+  migrateToV2,
+  getLegacyPrivateKey,
+
+  empty,
+
+  // Store access
   store
 }

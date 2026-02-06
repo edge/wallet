@@ -18,14 +18,6 @@
         </a>
       </li>
       <li class="header-tools__item">
-        <div class="header-tools__link" @click="exportKey">
-          <span class="header-tools__icon">
-            <KeyIcon/>
-          </span>
-          Export Private Key
-        </div>
-      </li>
-      <li class="header-tools__item">
         <div class="header-tools__link" @click="lock">
           <span class="header-tools__icon">
             <LockOpenIcon/>
@@ -34,11 +26,11 @@
         </div>
       </li>
       <li class="header-tools__item">
-        <div class="header-tools__link" @click="forget">
+        <div class="header-tools__link header-tools__link--red" @click="forget">
           <span class="header-tools__icon">
             <LogoutIcon/>
           </span>
-          Forget Wallet
+          Reset Wallet
         </div>
       </li>
     </ul>
@@ -48,14 +40,13 @@
 <script>
 import { SupportIcon } from '@heroicons/vue/solid'
 import vClickOutside from 'click-outside-vue3'
-import { ChevronDownIcon, CogIcon, KeyIcon, LockOpenIcon, LogoutIcon } from '@heroicons/vue/outline'
+import { ChevronDownIcon, CogIcon, LockOpenIcon, LogoutIcon } from '@heroicons/vue/outline'
 
 export default {
   name: 'HeaderTools',
   components: {
     ChevronDownIcon,
     CogIcon,
-    KeyIcon,
     LockOpenIcon,
     LogoutIcon,
     SupportIcon
@@ -83,14 +74,9 @@ export default {
       this.$store.commit('lock')
       this.$router.push('/')
     },
-    exportKey() {
-      this.showTools = false
-      this.openExportKeyModal()
-    }
   },
   props: {
-    openForgetWalletModal: Function,
-    openExportKeyModal: Function
+    openForgetWalletModal: Function
   }
 }
 </script>

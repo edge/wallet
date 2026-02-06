@@ -22,18 +22,18 @@ const addNewComponents = ({ components, ...rest }) => {
     return
   }
 
-  components.forEach(({ source, variant = null }) => {
+  components.forEach(({ source }) => {
     return Object.entries(source).map(([className, values]) => {
       const override = rest.brandOverrides[className] || {}
 
-      rest.addComponents({ [className]: _.merge(values, override) }, rest.variants(variant))
+      rest.addComponents({ [className]: _.merge(values, override) })
     })
   })
 }
 
 module.exports = plugin.withOptions(
   () => {
-    return function ({ addBase, addComponents, theme, variants }) {
+    return function ({ addBase, addComponents, theme }) {
       const brandOverrides = theme('brand', {})
 
       addBase(styles({ theme }))
@@ -41,15 +41,14 @@ module.exports = plugin.withOptions(
       addNewComponents({
         components: [
           { source: brandTypography({ theme }).base },
-          { source: brandTypography({ theme }).responsive, variant: 'brandTypography' },
+          { source: brandTypography({ theme }).responsive },
           { source: container({theme})},
           { source: buttons({ theme }) },
           { source: transactionTable({ theme }) },
           { source: forms({ theme }) }
         ],
         brandOverrides,
-        addComponents,
-        variants
+        addComponents
       })
     }
   },
@@ -113,10 +112,7 @@ module.exports = plugin.withOptions(
           }
         }
       },
-      variants: {
-        brandTypography: ['responsive'],
-        translate: ['responsive', 'hover', 'focus', 'group-hover']
-      }
+      variants: {}
     }
   }
 )

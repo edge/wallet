@@ -5,7 +5,7 @@
 #
 # 1. Build the Vue app
 #
-FROM node:16 AS build
+FROM node:20 AS build
 
 COPY *.config.js ./
 COPY package*.json ./
@@ -33,7 +33,7 @@ RUN npm run build
 #
 # 2. Copy the files over and run it
 #
-FROM node:16
+FROM node:20
 
 WORKDIR /edge/wallet
 
