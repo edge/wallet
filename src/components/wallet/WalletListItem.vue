@@ -27,7 +27,7 @@
 
       <span class="wallet-item__balance">
         <svg
-          v-if="loading"
+          v-if="loading && balance == null"
           class="wallet-item__spinner"
           viewBox="0 0 24 24"
           fill="none"
@@ -216,6 +216,7 @@ export default {
 
 .wallet-item__balance {
   @apply ml-auto text-right text-sm flex-shrink-0 pl-16 text-gray-400;
+  min-width: 90px;
 }
 
 .wallet-item--active .wallet-item__balance {
