@@ -30,9 +30,9 @@ const init = async () => {
     }
   })()
 
-  // If wallet-version exists (> 0), a wallet exists
-  // empty() clears all keys including wallet-version
-  const hasWallet = version > 0
+  // Detect wallet presence: v1/v2 have wallet-version set,
+  // v0 has no wallet-version but may have keys (p1) in IndexedDB
+  const hasWallet = version > 0 || await storage.needsMigration()
 
   return createStore({
     state: {
