@@ -7,7 +7,7 @@
  * These tests do NOT mock v0/v1 - they test actual data formats.
  */
 
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { clear, get } from 'idb-keyval'
 import { store, setWalletVersion, getWalletVersion } from './'
 import * as v0 from './v0'
@@ -238,6 +238,99 @@ describe('migration integration (real encryption)', () => {
 
       const privateKey = await v1.getPrivateKey(unicodePassword)
       expect(privateKey).toBe(wallet.privateKey)
+    })
+  })
+
+  describe('migration failure recovery', () => {
+    // Tests the safety guarantees that UnlockModal relies on:
+    // When migrateToV2 fails, original data must be preserved so
+    // getLegacyPrivateKey can still retrieve the key for export.
+
+    describe('v1 vault creation failure', () => {
+      beforeEach(async () => {
+        await v1.setPublicKey(wallet.publicKey)
+        await v1.setPrivateKey(wallet.privateKey, correctPassword)
+        await v1.setPassword(correctPassword)
+        await setWalletVersion(1)
+      })
+
+      it('preserves v1 data when vault creation throws', async () => {
+        // Simulate crypto failure during vault creation
+        vi.spyOn(v2, 'createVault').mockRejectedValueOnce(new Error('Simulated encryption failure'))
+
+        await expect(migrateToV2(correctPassword)).rejects.toThrow()
+
+        // Version must not have changed
+        expect(await getWalletVersion()).toBe(1)
+
+        // v1 keys must still be readable
+        expect(await v1.getPrivateKey(correctPassword)).toBe(wallet.privateKey)
+        expect(await v1.getPublicKey()).toBe(wallet.publicKey)
+      })
+
+      it('getLegacyPrivateKey works after failed migration', async () => {
+        vi.spyOn(v2, 'createVault').mockRejectedValueOnce(new Error('Simulated encryption failure'))
+
+        await expect(migrateToV2(correctPassword)).rejects.toThrow()
+
+        // Emergency recovery must still work
+        const key = await getLegacyPrivateKey(correctPassword)
+        expect(key).toBe(wallet.privateKey)
+      })
+
+      it('needsMigration still returns true after failed migration', async () => {
+        vi.spyOn(v2, 'createVault').mockRejectedValueOnce(new Error('Simulated encryption failure'))
+
+        await expect(migrateToV2(correctPassword)).rejects.toThrow()
+
+        // Retry should be possible
+        expect(await needsMigration()).toBe(true)
+      })
+
+      it('migration succeeds on retry after previous failure', async () => {
+        vi.spyOn(v2, 'createVault').mockRejectedValueOnce(new Error('Simulated encryption failure'))
+
+        await expect(migrateToV2(correctPassword)).rejects.toThrow()
+
+        // Spy was consumed by mockRejectedValueOnce — real createVault runs now
+        const result = await migrateToV2(correctPassword)
+        expect(result.address).toBe(wallet.address)
+
+        const migratedKey = await v2.getPrivateKey(correctPassword)
+        expect(migratedKey).toBe(wallet.privateKey)
+        expect(await getWalletVersion()).toBe(2)
+      })
+    })
+
+    describe('v0 vault creation failure', () => {
+      beforeEach(async () => {
+        await v0.setPublicKey(wallet.publicKey)
+        await v0.setPrivateKey(wallet.privateKey)
+        await v0.setPassword(correctPassword)
+        // v0 has no wallet-version key (version === 0)
+      })
+
+      it('preserves v0 data when vault creation throws', async () => {
+        vi.spyOn(v2, 'createVault').mockRejectedValueOnce(new Error('Simulated encryption failure'))
+
+        await expect(migrateToV2(correctPassword)).rejects.toThrow()
+
+        // Version must still be 0 (no wallet-version key)
+        expect(await getWalletVersion()).toBe(0)
+
+        // v0 keys must still be readable
+        expect(await v0.getPrivateKey()).toBe(wallet.privateKey)
+        expect(await v0.getPublicKey()).toBe(wallet.publicKey)
+      })
+
+      it('getLegacyPrivateKey works after failed v0 migration', async () => {
+        vi.spyOn(v2, 'createVault').mockRejectedValueOnce(new Error('Simulated encryption failure'))
+
+        await expect(migrateToV2(correctPassword)).rejects.toThrow()
+
+        const key = await getLegacyPrivateKey(correctPassword)
+        expect(key).toBe(wallet.privateKey)
+      })
     })
   })
 
