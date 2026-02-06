@@ -1,11 +1,25 @@
 <template>
   <Modal :close="close" :visible="visible">
     <template v-slot:header>
-      <h2>Unlock wallet</h2>
+      <h2>{{ migrationFailed ? 'Migration Failed' : 'Unlock wallet' }}</h2>
     </template>
 
     <template v-slot:body>
-      <div class="pt-15">
+      <div v-if="migrationFailed" class="pt-15">
+        <div class="flex items-start leading-8 text-gray mb-14">
+          <p>Wallet migration to the new format failed. Please copy your private key below and reset your wallet to continue.</p>
+        </div>
+        <div class="form-group">
+          <label>wallet address</label>
+          <span class="break-all">{{ address }}</span>
+        </div>
+        <div class="form-group mb-25">
+          <label>PRIVATE KEY</label>
+          <span class="font-mono break-all text-sm2">{{ legacyPrivateKey }}</span>
+        </div>
+      </div>
+
+      <div v-else class="pt-15">
         <form>
           <div v-if="walletVersion < 2" class="form-group">
             <label>wallet address</label>
@@ -34,7 +48,15 @@
     </template>
 
     <template v-slot:footer>
-      <div class="grid grid-cols-1 gap-24 px-24 pt-48 border-gray-700 border-solid md:grid-cols-2 border-t-default border-opacity-30 pb-54">
+      <div v-if="migrationFailed" class="px-24 pt-48 border-gray-700 border-solid border-t-default border-opacity-30 pb-54">
+        <button
+          class="w-full border-red-600 button button--outline-success hover:border-red-600 hover:bg-red-600"
+          @click="switchToForgetModal"
+        >
+          Reset wallet
+        </button>
+      </div>
+      <div v-else class="grid grid-cols-1 gap-24 px-24 pt-48 border-gray-700 border-solid md:grid-cols-2 border-t-default border-opacity-30 pb-54">
         <button
           class="w-full border-red-600 button button--outline-success hover:border-red-600 hover:bg-red-600"
           @click="switchToForgetModal"
@@ -64,7 +86,9 @@ export default {
   data() {
     return {
       password: '',
-      passwordError: ''
+      passwordError: '',
+      migrationFailed: false,
+      legacyPrivateKey: ''
     }
   },
   validations() {
@@ -105,19 +129,48 @@ export default {
       if (!await this.v$.$validate()) return
       if (!await this.checkPassword()) return
 
-      // Migrate vault from older versions if needed
-      if (await storage.needsMigration()) {
-        await storage.migrateToV2(this.password)
+      // Attempt migration from older versions
+      try {
+        if (await storage.needsMigration()) {
+          await storage.migrateToV2(this.password)
+        }
+      }
+      catch (err) {
+        // Migration failed — old data preserved (write-verify-delete pattern)
+        // Show private key so user can export and reset
+        console.error('Migration failed:', err)
+        this.legacyPrivateKey = await storage.getLegacyPrivateKey(this.password)
+        if (this.legacyPrivateKey) {
+          this.migrationFailed = true
+        } else {
+          this.passwordError = 'Migration failed and wallet data could not be read.'
+        }
+        return
       }
 
-      this.$store.commit('setVersion', storage.getHighestWalletVersion())
-      this.$store.commit('unlock')
+      try {
+        // Use actual stored version (reflects migration success)
+        this.$store.commit('setVersion', await storage.getWalletVersion())
+        this.$store.commit('unlock')
 
-      // loadWallets derives addresses from vault (v2) or state (legacy)
-      await this.$store.dispatch('loadWallets', this.password)
-      this.$store.dispatch('refresh')
+        // loadWallets derives addresses from vault (v2) or state (legacy)
+        await this.$store.dispatch('loadWallets', this.password)
 
-      this.afterUnlock()
+        // Verify wallet loaded before navigating away
+        if (!this.$store.state.address) {
+          this.$store.commit('lock')
+          this.passwordError = 'Failed to load wallet data. Please try again.'
+          return
+        }
+
+        this.$store.dispatch('refresh')
+        this.afterUnlock()
+      }
+      catch (err) {
+        // Roll back unlock state so user stays on unlock screen
+        this.$store.commit('lock')
+        this.passwordError = err.message || 'An error occurred while unlocking.'
+      }
     },
     unlockOnEnter(event) {
       if (event.charCode !== 13) return
