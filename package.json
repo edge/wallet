@@ -17,8 +17,8 @@
     "build": "vite build",
     "serve": "vite preview",
     "start": "node server/index.js",
-    "test": "vitest",
-    "test:run": "vitest run"
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "main": "server/index.js",
   "dependencies": {
