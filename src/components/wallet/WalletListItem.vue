@@ -126,7 +126,7 @@ export default {
     truncatedAddress() {
       const addr = this.wallet.address || ''
       if (addr.length < 11) return addr
-      return `${addr.slice(0, 6)}...${addr.slice(-4)}`
+      return `${addr.slice(0, 7)}...${addr.slice(-4)}`
     },
     formattedBalance() {
       if (this.balance === undefined || this.balance === null) return '-.--'
@@ -202,7 +202,7 @@ export default {
 }
 
 .wallet-item__address {
-  @apply font-mono text-sm text-gray-400 leading-tight;
+  @apply text-sm2 text-gray-400 leading-tight;
 }
 
 .wallet-item--active .wallet-item__address {
