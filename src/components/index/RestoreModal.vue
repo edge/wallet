@@ -7,6 +7,12 @@
     <template v-slot:body>
       <div class="pt-15">
         <form>
+          <div v-if="isAdditionalWallet" class="flex items-start leading-8 text-gray mb-14">
+            <span class="flex-shrink-0 inline-block mt-8 mr-12 text-white icon w-27">
+              <ShieldExclamationIcon/>
+            </span>
+            <p>Enter a private key below to import a wallet. The wallet will be encrypted with your existing password.</p>
+          </div>
           <div class="form-group" :class="{'form-group__error': v$.privateKey.$error || importError}">
             <label for="key">ENTER private key</label>
             <div class="relative input-wrap">
@@ -74,7 +80,8 @@ import useVuelidate from '@vuelidate/core'
 import { mapState } from 'vuex'
 import {
   KeyIcon,
-  LockOpenIcon
+  LockOpenIcon,
+  ShieldExclamationIcon
 } from '@heroicons/vue/outline'
 import { helpers, sameAs } from '@vuelidate/validators'
 
@@ -85,7 +92,8 @@ export default {
   components: {
     KeyIcon,
     LockOpenIcon,
-    Modal
+    Modal,
+    ShieldExclamationIcon
   },
   props: {
     afterRestore: Function,
