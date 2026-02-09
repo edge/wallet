@@ -16,18 +16,13 @@
 
         <div class="mt-35">
           <h3>Recent transactions</h3>
-          <p v-if="loading">
-            Loading...
-          </p>
           <p v-if="error">{{error}}</p>
 
-          <p v-if="!loading">
-            <Overviews :overviews="overviews" :transactions="transactions" />
-          </p>
+          <Overviews :overviews="overviews" :transactions="transactions" />
         </div>
 
-        <div class="w-full text-right" v-if="transactions.length">
-          <a href="/transactions" class="button button--success">View all</a>
+        <div class="w-full text-right mt-20" v-if="transactions.length">
+          <router-link to="/transactions" class="button button--success">View all</router-link>
         </div>
       </div>
     </div>
@@ -47,6 +42,8 @@ import { mapState } from 'vuex'
 import relativeTime from 'dayjs/plugin/relativeTime'
 
 dayjs.extend(relativeTime)
+
+const txCache = {}
 
 export default {
   name: 'ViewOverview',
@@ -71,6 +68,18 @@ export default {
     TestnetFaucet
   },
   computed: mapState(['address']),
+  watch: {
+    address(newAddr) {
+      const cached = txCache[newAddr]
+      if (cached) {
+        this.transactions = cached.transactions
+        this.metadata = cached.metadata
+      } else {
+        this.transactions = []
+      }
+      this.updateTransactions()
+    }
+  },
   mounted() {
     this.initialise()
   },
@@ -83,12 +92,17 @@ export default {
       this.pollData()
     },
     async updateTransactions() {
-      const { transactions, metadata } = await fetchTransactions(this.address, { limit: 5 })
+      const addr = this.address
+      if (!addr) return
+      const { transactions, metadata } = await fetchTransactions(addr, { limit: 5 })
 
-      // Update this.transactions & this.metadata only once promise has resolved
-      this.transactions = transactions
-      this.metadata = metadata
-      this.loading = false
+      txCache[addr] = { transactions, metadata }
+      // Only update display if address hasn't changed during fetch
+      if (this.address === addr) {
+        this.transactions = transactions
+        this.metadata = metadata
+        this.loading = false
+      }
     },
     pollData() {
       this.polling = setInterval(() => {

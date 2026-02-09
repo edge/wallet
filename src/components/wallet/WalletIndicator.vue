@@ -98,7 +98,7 @@ export default {
   methods: {
     truncateAddress(addr) {
       if (!addr || addr.length < 11) return addr || ''
-      return `${addr.slice(0, 6)}...${addr.slice(-4)}`
+      return `${addr.slice(0, 7)}...${addr.slice(-4)}`
     },
     toggleDropdown() {
       this.showDropdown = !this.showDropdown
@@ -189,7 +189,7 @@ export default {
 }
 
 .wallet-indicator__address {
-  @apply font-mono text-sm;
+  @apply text-base3;
 }
 
 .wallet-indicator__chevron {
