@@ -21,8 +21,8 @@
           <Overviews :overviews="overviews" :transactions="transactions" />
         </div>
 
-        <div class="w-full text-right" v-if="transactions.length">
-          <a href="/transactions" class="button button--success">View all</a>
+        <div class="w-full text-right mt-20" v-if="transactions.length">
+          <router-link to="/transactions" class="button button--success">View all</router-link>
         </div>
       </div>
     </div>
