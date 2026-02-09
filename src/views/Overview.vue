@@ -43,6 +43,8 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 
 dayjs.extend(relativeTime)
 
+const txCache = {}
+
 export default {
   name: 'ViewOverview',
   title: 'Overview',
@@ -54,8 +56,7 @@ export default {
       polling: null,
       overviews: [],
       transactionRefreshInterval: 5000,
-      isTestnet: import.meta.env.VITE_IS_TESTNET === 'true',
-      txCache: {}
+      isTestnet: import.meta.env.VITE_IS_TESTNET === 'true'
     }
   },
   components: {
@@ -69,7 +70,7 @@ export default {
   computed: mapState(['address']),
   watch: {
     address(newAddr) {
-      const cached = this.txCache[newAddr]
+      const cached = txCache[newAddr]
       if (cached) {
         this.transactions = cached.transactions
         this.metadata = cached.metadata
@@ -95,7 +96,7 @@ export default {
       if (!addr) return
       const { transactions, metadata } = await fetchTransactions(addr, { limit: 5 })
 
-      this.txCache[addr] = { transactions, metadata }
+      txCache[addr] = { transactions, metadata }
       // Only update display if address hasn't changed during fetch
       if (this.address === addr) {
         this.transactions = transactions

@@ -61,6 +61,7 @@ import TransactionsTableItem from '@/components/TransactionsTableItem.vue'
 import { mapState } from 'vuex'
 
 const txsRefreshInterval = 5 * 1000
+const txCache = {}
 
 export default {
   name: 'TransactionsTable',
@@ -70,8 +71,7 @@ export default {
       loading: true,
       metadata: null,
       transactions: [],
-      iTransactions: null,
-      txCache: {}
+      iTransactions: null
     }
   },
   components: {
@@ -91,6 +91,12 @@ export default {
     }
   },
   mounted() {
+    const cached = txCache[this.address]
+    if (cached) {
+      this.transactions = cached.transactions
+      this.loaded = true
+      this.loading = false
+    }
     this.updateTransactions()
     // initiate polling
     this.iTransactions = setInterval(() => {
@@ -116,7 +122,7 @@ export default {
           sort: sortQuery
         }
       )
-      this.txCache[addr] = { transactions: transactions.results }
+      txCache[addr] = { transactions: transactions.results }
       // Only update display if address hasn't changed during fetch
       if (this.address === addr) {
         this.transactions = transactions.results
@@ -133,7 +139,7 @@ export default {
   },
   watch: {
     address(newAddr) {
-      const cached = this.txCache[newAddr]
+      const cached = txCache[newAddr]
       if (cached) {
         this.transactions = cached.transactions
       } else {
