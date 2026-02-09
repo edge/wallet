@@ -45,6 +45,7 @@ const init = async () => {
       nextNonce: 0,
 
       usdBalance: undefined,
+      usdPerXE: null,
 
       // TODO investigate whether we can set these in app mixin instead
       config: {
@@ -97,6 +98,9 @@ const init = async () => {
       },
       setUSDBalance(state, usdBalance) {
         state.usdBalance = usdBalance
+      },
+      setUsdPerXE(state, rate) {
+        state.usdPerXE = rate
       },
       setVersion(state, version) {
         state.version = version
@@ -168,6 +172,10 @@ const init = async () => {
 
           commit('setBalance', info.balance)
           commit('setNextNonce', info.nonce)
+          // Keep dropdown cache in sync
+          if (state.activeWalletId) {
+            commit('setWalletBalance', { walletId: state.activeWalletId, balance: info.balance })
+          }
           dispatch('refreshTokenValue')
         } catch (err) {
           // Ignore abort errors - these are expected during wallet switching
@@ -185,6 +193,7 @@ const init = async () => {
       },
       async refreshTokenValue({ commit, state }) {
         const tokenValue = await fetchTokenValue()
+        commit('setUsdPerXE', tokenValue.usdPerXE)
         commit('setUSDBalance', tokenValue.usdPerXE * (state.balance / 1e6))
       },
       async switchWallet({ commit, dispatch, state }, walletId) {
@@ -209,10 +218,16 @@ const init = async () => {
         commit('setActiveWalletId', walletId)
         commit('setAddress', wallet.address)
 
-        // Reset balance/nonce (will be fetched fresh)
-        commit('setBalance', 0)
+        // Use cached dropdown balance if available, otherwise reset to 0
+        const cachedBalance = state.walletBalances[walletId]
+        commit('setBalance', cachedBalance != null ? cachedBalance : 0)
         commit('setNextNonce', 0)
-        commit('setUSDBalance', undefined)
+        // Compute USD from cached rate and balance
+        if (cachedBalance != null && state.usdPerXE != null) {
+          commit('setUSDBalance', state.usdPerXE * (cachedBalance / 1e6))
+        } else {
+          commit('setUSDBalance', undefined)
+        }
 
         // Persist active wallet selection (plain storage, no password needed)
         await storage.setActiveWalletId(walletId)
