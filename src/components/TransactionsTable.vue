@@ -67,10 +67,11 @@ export default {
   data: function () {
     return {
       loaded: false,
-      loading: false,
+      loading: true,
       metadata: null,
       transactions: [],
-      iTransactions: null
+      iTransactions: null,
+      txCache: {}
     }
   },
   components: {
@@ -102,21 +103,27 @@ export default {
   methods: {
     async updateTransactions() {
       this.loading = true
+      const addr = this.address
+      if (!addr) return
       // the sort query sent to index needs to include "-created", but this is hidden from user in browser url
       const sortQuery = this.$route.query.sort ? `${this.$route.query.sort},-timestamp` : '-timestamp'
       const transactions = await index.tx.transactions(
         import.meta.env.VITE_INDEX_API_URL,
-        this.address,
+        addr,
         {
           limit: this.limit,
           page: this.page,
           sort: sortQuery
         }
       )
-      this.transactions = transactions.results
-      if (this.receiveMetadata) this.receiveMetadata(transactions.metadata)
-      this.loaded = true
-      this.loading = false
+      this.txCache[addr] = { transactions: transactions.results }
+      // Only update display if address hasn't changed during fetch
+      if (this.address === addr) {
+        this.transactions = transactions.results
+        if (this.receiveMetadata) this.receiveMetadata(transactions.metadata)
+        this.loaded = true
+        this.loading = false
+      }
     },
     updateSorting(newSortQuery) {
       const query = { ...this.$route.query, sort: newSortQuery }
@@ -125,6 +132,16 @@ export default {
     }
   },
   watch: {
+    address(newAddr) {
+      const cached = this.txCache[newAddr]
+      if (cached) {
+        this.transactions = cached.transactions
+      } else {
+        this.transactions = []
+        this.loaded = false
+      }
+      this.updateTransactions()
+    },
     page() {
       this.updateTransactions()
     },

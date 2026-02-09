@@ -16,14 +16,9 @@
 
         <div class="mt-35">
           <h3>Recent transactions</h3>
-          <p v-if="loading">
-            Loading...
-          </p>
           <p v-if="error">{{error}}</p>
 
-          <p v-if="!loading">
-            <Overviews :overviews="overviews" :transactions="transactions" />
-          </p>
+          <Overviews :overviews="overviews" :transactions="transactions" />
         </div>
 
         <div class="w-full text-right" v-if="transactions.length">
@@ -59,7 +54,8 @@ export default {
       polling: null,
       overviews: [],
       transactionRefreshInterval: 5000,
-      isTestnet: import.meta.env.VITE_IS_TESTNET === 'true'
+      isTestnet: import.meta.env.VITE_IS_TESTNET === 'true',
+      txCache: {}
     }
   },
   components: {
@@ -71,6 +67,18 @@ export default {
     TestnetFaucet
   },
   computed: mapState(['address']),
+  watch: {
+    address(newAddr) {
+      const cached = this.txCache[newAddr]
+      if (cached) {
+        this.transactions = cached.transactions
+        this.metadata = cached.metadata
+      } else {
+        this.transactions = []
+      }
+      this.updateTransactions()
+    }
+  },
   mounted() {
     this.initialise()
   },
@@ -83,12 +91,17 @@ export default {
       this.pollData()
     },
     async updateTransactions() {
-      const { transactions, metadata } = await fetchTransactions(this.address, { limit: 5 })
+      const addr = this.address
+      if (!addr) return
+      const { transactions, metadata } = await fetchTransactions(addr, { limit: 5 })
 
-      // Update this.transactions & this.metadata only once promise has resolved
-      this.transactions = transactions
-      this.metadata = metadata
-      this.loading = false
+      this.txCache[addr] = { transactions, metadata }
+      // Only update display if address hasn't changed during fetch
+      if (this.address === addr) {
+        this.transactions = transactions
+        this.metadata = metadata
+        this.loading = false
+      }
     },
     pollData() {
       this.polling = setInterval(() => {
