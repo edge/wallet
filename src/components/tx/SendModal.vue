@@ -314,7 +314,7 @@ export default {
     },
     truncateAddress(addr) {
       if (!addr || addr.length < 11) return addr
-      return `${addr.slice(0, 6)}...${addr.slice(-4)}`
+      return `${addr.slice(0, 7)}...${addr.slice(-4)}`
     },
     async checkPassword() {
       this.v$.password.$reset()
@@ -432,8 +432,8 @@ export default {
   margin-top: 6px;
   max-height: 160px;
   overflow-y: auto;
-  background: #111;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
 }
 
@@ -459,6 +459,6 @@ export default {
 }
 
 .recipient-suggestions__address {
-  @apply font-mono text-sm text-gray-400 leading-tight;
+  @apply text-sm2 text-gray-400 leading-tight;
 }
 </style>
