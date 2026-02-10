@@ -206,7 +206,7 @@ import Modal from '../Modal.vue'
 import Radio from '../Radio.vue'
 import { helpers } from '@vuelidate/validators'
 import { mapState } from 'vuex'
-import { parseAmount } from '../../utils/form'
+import { parseAmount, truncateAddress } from '../../utils/form'
 import useVuelidate from '@vuelidate/core'
 
 const memoRegexp = /^[a-zA-Z0-9\s-]{0,32}$/
@@ -312,10 +312,7 @@ export default {
       this.recipient = wallet.address
       this.showRecipientDropdown = false
     },
-    truncateAddress(addr) {
-      if (!addr || addr.length < 11) return addr
-      return `${addr.slice(0, 7)}...${addr.slice(-4)}`
-    },
+    truncateAddress,
     async checkPassword() {
       this.v$.password.$reset()
       if (await storage.comparePassword(this.password)) {

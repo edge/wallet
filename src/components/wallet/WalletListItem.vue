@@ -77,6 +77,7 @@
 </template>
 
 <script>
+import { truncateAddress } from '../../utils/form'
 import vClickOutside from 'click-outside-vue3'
 import { CheckCircleIcon, DotsVerticalIcon, KeyIcon, PencilIcon, TrashIcon } from '@heroicons/vue/outline'
 
@@ -124,9 +125,7 @@ export default {
   },
   computed: {
     truncatedAddress() {
-      const addr = this.wallet.address || ''
-      if (addr.length < 11) return addr
-      return `${addr.slice(0, 7)}...${addr.slice(-4)}`
+      return truncateAddress(this.wallet.address)
     },
     formattedBalance() {
       if (this.balance === undefined || this.balance === null) return '-.--'
