@@ -177,6 +177,7 @@ export default {
         }, this.sessionPassword)
 
         await this.$store.dispatch('loadWallets', this.sessionPassword)
+        this.$store.dispatch('refresh')
         this.$emit('imported')
         this.reset()
         this.close()

@@ -262,6 +262,15 @@ const init = async () => {
           if (activeWallet) {
             commit('setActiveWalletId', activeWallet.id)
             commit('setAddress', activeWallet.address)
+            // Reset balance state so stale values from a previous wallet don't linger
+            const cachedBalance = state.walletBalances[activeWallet.id]
+            commit('setBalance', cachedBalance != null ? cachedBalance : 0)
+            commit('setNextNonce', 0)
+            if (cachedBalance != null && state.usdPerXE != null) {
+              commit('setUSDBalance', state.usdPerXE * (cachedBalance / 1e6))
+            } else {
+              commit('setUSDBalance', undefined)
+            }
             await storage.setActiveWalletId(activeWallet.id)
           }
         } catch (err) {
