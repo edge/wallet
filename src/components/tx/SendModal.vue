@@ -11,13 +11,32 @@
         <div class="pb-14 min-h-410">
           <div class="form-group" :class="{'form-group__error': v$.recipient.$error}">
             <label for="send-send" class="label">SEND TO</label>
-            <input
-              id="send-send"
-              placeholder="XE address"
-              ref="recipient"
-              type="text"
-              v-model="v$.recipient.$model"
-            />
+            <div class="recipient-input-wrap">
+              <input
+                id="send-send"
+                placeholder="XE address"
+                ref="recipient"
+                type="text"
+                autocomplete="off"
+                v-model="v$.recipient.$model"
+                @focus="onRecipientFocus"
+                @click="onRecipientFocus"
+                @blur="onRecipientBlur"
+                @keydown.esc.stop="onRecipientEsc"
+              />
+              <div v-if="showRecipientDropdown && filteredWallets.length" class="recipient-suggestions">
+                <div class="recipient-suggestions__header">My wallets</div>
+                <button
+                  v-for="w in filteredWallets"
+                  :key="w.id"
+                  class="recipient-suggestions__item"
+                  @mousedown.prevent="selectRecipient(w)"
+                >
+                  <span class="recipient-suggestions__name">{{ w.name }}</span>
+                  <span class="recipient-suggestions__address">{{ truncateAddress(w.address) }}</span>
+                </button>
+              </div>
+            </div>
             <div class="form-group__error input-error" v-for="error of v$.recipient.$errors" :key="error.$uid">{{error.$message}}</div>
           </div>
           <div class="form-group" :class="{'form-group__error': v$.memo.$error}">
@@ -187,7 +206,7 @@ import Modal from '../Modal.vue'
 import Radio from '../Radio.vue'
 import { helpers } from '@vuelidate/validators'
 import { mapState } from 'vuex'
-import { parseAmount } from '../../utils/form'
+import { parseAmount, truncateAddress } from '../../utils/form'
 import useVuelidate from '@vuelidate/core'
 
 const memoRegexp = /^[a-zA-Z0-9\s-]{0,32}$/
@@ -216,7 +235,9 @@ export default {
       passwordError: '',
 
       completedTx: null,
-      submitError: ''
+      submitError: '',
+
+      showRecipientDropdown: false
     }
   },
   validations() {
@@ -239,7 +260,18 @@ export default {
     }
   },
   computed: {
-    ...mapState(['address', 'balance', 'nextNonce']),
+    ...mapState(['address', 'balance', 'nextNonce', 'wallets', 'activeWalletId']),
+    otherWallets() {
+      return this.wallets.filter(w => w.id !== this.activeWalletId)
+    },
+    filteredWallets() {
+      const query = this.recipient.trim().toLowerCase()
+      if (!query) return this.otherWallets
+      return this.otherWallets.filter(w =>
+        w.name.toLowerCase().includes(query) ||
+        w.address.toLowerCase().includes(query)
+      )
+    },
     amountParsed() {
       return parseAmount(this.amount)
     },
@@ -266,6 +298,21 @@ export default {
       this.reset()
       this.close()
     },
+    onRecipientFocus() {
+      this.showRecipientDropdown = true
+    },
+    onRecipientEsc() {
+      this.showRecipientDropdown = false
+    },
+    onRecipientBlur() {
+      // Small delay so mousedown on dropdown item fires before hide
+      setTimeout(() => { this.showRecipientDropdown = false }, 150)
+    },
+    selectRecipient(wallet) {
+      this.recipient = wallet.address
+      this.showRecipientDropdown = false
+    },
+    truncateAddress,
     async checkPassword() {
       this.v$.password.$reset()
       if (await storage.comparePassword(this.password)) {
@@ -298,6 +345,7 @@ export default {
 
       this.completedTx = null
       this.submitError = ''
+      this.showRecipientDropdown = false
 
       this.v$.$reset()
     },
@@ -369,5 +417,45 @@ export default {
 .testnet-header {
   color: #0ecc5f;
   padding-left: 10px;
+}
+
+.recipient-input-wrap {
+  position: relative;
+}
+
+.recipient-suggestions {
+  @apply absolute left-0 right-0 rounded-lg z-20 py-6;
+  top: 100%;
+  margin-top: 6px;
+  max-height: 160px;
+  overflow-y: auto;
+  background: #1d1d1d;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
+}
+
+.recipient-suggestions__header {
+  @apply px-12 text-gray-400;
+  padding-top: 4px;
+  padding-bottom: 8px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.recipient-suggestions__item {
+  @apply flex items-center justify-between w-full px-12 py-10 text-gray transition-colors cursor-pointer;
+  @apply hover:text-white hover:bg-gray-700 hover:bg-opacity-25;
+  background: none;
+  border: none;
+  font-size: 13px;
+}
+
+.recipient-suggestions__name {
+  @apply font-medium text-white text-sm leading-tight;
+}
+
+.recipient-suggestions__address {
+  @apply text-sm2 text-gray-400 leading-tight;
 }
 </style>

@@ -60,6 +60,7 @@
 <script>
 import { ChevronDownIcon, DownloadIcon, PlusIcon } from '@heroicons/vue/outline'
 import vClickOutside from 'click-outside-vue3'
+import { truncateAddress } from '../../utils/form'
 import * as storage from '../../utils/storage'
 import { mapGetters, mapState } from 'vuex'
 import WalletDropdown from './WalletDropdown.vue'
@@ -87,7 +88,7 @@ export default {
     ...mapState(['wallets', 'activeWalletId', 'address', 'locked', 'walletBalances', 'walletBalancesLoading', 'sessionPassword']),
     ...mapGetters(['canSwitchWallet']),
     truncatedAddress() {
-      return this.truncateAddress(this.address)
+      return truncateAddress(this.address)
     }
   },
   mounted() {
@@ -96,10 +97,6 @@ export default {
     }
   },
   methods: {
-    truncateAddress(addr) {
-      if (!addr || addr.length < 11) return addr || ''
-      return `${addr.slice(0, 7)}...${addr.slice(-4)}`
-    },
     toggleDropdown() {
       this.showDropdown = !this.showDropdown
       if (this.showDropdown) {
