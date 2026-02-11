@@ -16,12 +16,11 @@
 
         <div class="mt-35">
           <h3>Recent transactions</h3>
-          <p v-if="error">{{error}}</p>
 
-          <Overviews :overviews="overviews" :transactions="transactions" />
+          <Overviews />
         </div>
 
-        <div class="w-full text-right mt-20" v-if="transactions.length">
+        <div class="w-full text-right mt-20">
           <router-link to="/transactions" class="button button--success">View all</router-link>
         </div>
       </div>
@@ -36,26 +35,11 @@ import NewsPromo from '@/components/NewsPromo.vue'
 import Overviews from '@/components/Overviews.vue'
 import RecentBlocks from '@/components/RecentBlocks.vue'
 import TestnetFaucet from '@/components/Faucet.vue'
-import dayjs from 'dayjs'
-import { fetchTransactions } from '../utils/api'
-import { mapState } from 'vuex'
-import relativeTime from 'dayjs/plugin/relativeTime'
-
-dayjs.extend(relativeTime)
-
-const txCache = {}
-
 export default {
   name: 'ViewOverview',
   title: 'Overview',
   data: function () {
     return {
-      transactions: [],
-      loading: true,
-      error: '',
-      polling: null,
-      overviews: [],
-      transactionRefreshInterval: 5000,
       isTestnet: import.meta.env.VITE_IS_TESTNET === 'true'
     }
   },
@@ -66,49 +50,6 @@ export default {
     NewsPromo,
     RecentBlocks,
     TestnetFaucet
-  },
-  computed: mapState(['address']),
-  watch: {
-    address(newAddr) {
-      const cached = txCache[newAddr]
-      if (cached) {
-        this.transactions = cached.transactions
-        this.metadata = cached.metadata
-      } else {
-        this.transactions = []
-      }
-      this.updateTransactions()
-    }
-  },
-  mounted() {
-    this.initialise()
-  },
-  unmounted() {
-    clearInterval(this.polling)
-  },
-  methods: {
-    async initialise() {
-      await this.updateTransactions()
-      this.pollData()
-    },
-    async updateTransactions() {
-      const addr = this.address
-      if (!addr) return
-      const { transactions, metadata } = await fetchTransactions(addr, { limit: 5 })
-
-      txCache[addr] = { transactions, metadata }
-      // Only update display if address hasn't changed during fetch
-      if (this.address === addr) {
-        this.transactions = transactions
-        this.metadata = metadata
-        this.loading = false
-      }
-    },
-    pollData() {
-      this.polling = setInterval(() => {
-        this.updateTransactions()
-      }, this.transactionRefreshInterval)
-    }
   }
 }
 </script>

@@ -76,6 +76,9 @@ export default {
     this.fetchBlocks()
     this.pollData()
   },
+  unmounted() {
+    clearInterval(this.polling)
+  },
   methods: {
     async fetchBlocks() {
       const limit = this.isTestnet ? 5 : 7

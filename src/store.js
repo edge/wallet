@@ -58,6 +58,7 @@ const init = async () => {
       },
 
       bridgeOnline: false,
+      vars: null,
 
       // Multi-wallet support
       wallets: [],
@@ -92,6 +93,9 @@ const init = async () => {
       },
       setBridgeOnline(state, online) {
         state.bridgeOnline = online
+      },
+      setVars(state, vars) {
+        state.vars = vars
       },
       setNextNonce(state, nextNonce) {
         state.nextNonce = nextNonce
@@ -183,6 +187,10 @@ const init = async () => {
           console.error('Refresh failed:', err)
         }
       },
+      async refreshVars({ commit, state }) {
+        const vars = await xe.vars(state.config.blockchain.baseURL)
+        commit('setVars', vars)
+      },
       async refreshIndexConfig({ commit, state }) {
         const res = await fetch(`${state.config.index.baseURL}/v2/config`)
         if (!res.ok) {
@@ -262,6 +270,15 @@ const init = async () => {
           if (activeWallet) {
             commit('setActiveWalletId', activeWallet.id)
             commit('setAddress', activeWallet.address)
+            // Reset balance state so stale values from a previous wallet don't linger
+            const cachedBalance = state.walletBalances[activeWallet.id]
+            commit('setBalance', cachedBalance != null ? cachedBalance : 0)
+            commit('setNextNonce', 0)
+            if (cachedBalance != null && state.usdPerXE != null) {
+              commit('setUSDBalance', state.usdPerXE * (cachedBalance / 1e6))
+            } else {
+              commit('setUSDBalance', undefined)
+            }
             await storage.setActiveWalletId(activeWallet.id)
           }
         } catch (err) {
@@ -275,11 +292,12 @@ const init = async () => {
         const walletIds = state.wallets.map(w => w.id)
         commit('setWalletBalancesLoading', walletIds)
 
-        // Fetch balances in parallel
+        // Fetch balances in parallel (uses info, not infoWithNextNonce,
+        // to avoid unnecessary pending transaction requests for non-active wallets)
         const results = await Promise.allSettled(
           state.wallets.map(async (wallet) => {
             try {
-              const info = await xe.wallet.infoWithNextNonce(state.config.blockchain.baseURL, wallet.address)
+              const info = await xe.wallet.info(state.config.blockchain.baseURL, wallet.address)
               return { walletId: wallet.id, balance: info.balance }
             } catch (err) {
               console.error(`Failed to fetch balance for ${wallet.address}:`, err)

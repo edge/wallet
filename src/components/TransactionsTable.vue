@@ -118,7 +118,7 @@ export default {
         addr,
         {
           limit: this.limit,
-          page: this.page,
+          page: this.page || 1,
           sort: sortQuery
         }
       )

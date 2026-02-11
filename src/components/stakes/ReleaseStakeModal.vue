@@ -242,9 +242,7 @@ export default {
       confirmPhrase: '',
 
       completedTx: null,
-      submitError: '',
-
-      vars: null
+      submitError: ''
     }
   },
   validations() {
@@ -260,7 +258,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['address', 'nextNonce']),
+    ...mapState(['address', 'nextNonce', 'vars']),
     canRelease() {
       if (this.isUnlocked) return !this.v$.password.$invalid
       else return !this.v$.$invalid
@@ -273,11 +271,11 @@ export default {
       return this.unlocksAt < this.currentTime
     },
     releaseFeeParsed() {
-      if (this.isUnlocked) return 0
+      if (this.isUnlocked || !this.vars) return 0
       else return this.stake.amount * this.vars.stake_express_release_fee / 1e6
     },
     releasePc() {
-      if (this.isUnlocked) return 0
+      if (this.isUnlocked || !this.vars) return 0
       else return this.vars.stake_express_release_fee * 100
     },
     returnAmountParsed() {
@@ -334,9 +332,6 @@ export default {
         this.passwordError = 'Incorrect password.'
         return false
       }
-    },
-    async updateVars() {
-      this.vars = await xe.vars(import.meta.env.VITE_BLOCKCHAIN_API_URL)
     },
     goto(step) {
       this.step = step
@@ -407,9 +402,6 @@ export default {
       }
     }
   },
-  mounted() {
-    this.updateVars()
-  },
   setup() {
     return {
       v$: useVuelidate()
@@ -420,7 +412,7 @@ export default {
       if (v === oldv) return
       if (v) {
         this.$store.dispatch('refresh')
-        this.updateVars()
+        this.$store.dispatch('refreshVars')
       }
     },
     stake() {
