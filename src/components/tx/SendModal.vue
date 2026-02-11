@@ -429,8 +429,8 @@ export default {
   margin-top: 6px;
   max-height: 160px;
   overflow-y: auto;
-  background: #000;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #1d1d1d;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
 }
 
