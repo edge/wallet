@@ -319,6 +319,9 @@ export default {
     this.updateSessionsStats()
   },
   watch: {
+    address() {
+      this.updateSessionsStats()
+    },
     metadata() {
       const numRegEx = /^[-+]?\d*$/
       if (this.$route.query.page) {

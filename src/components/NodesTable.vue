@@ -128,6 +128,9 @@ export default {
     }
   },
   watch: {
+    address() {
+      this.updateNodes()
+    },
     page() {
       this.updateNodes()
     },

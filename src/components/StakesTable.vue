@@ -133,6 +133,9 @@ export default {
     }
   },
   watch: {
+    address() {
+      this.updateStakes()
+    },
     page() {
       this.updateStakes()
     },
