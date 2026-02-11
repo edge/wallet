@@ -284,11 +284,12 @@ const init = async () => {
         const walletIds = state.wallets.map(w => w.id)
         commit('setWalletBalancesLoading', walletIds)
 
-        // Fetch balances in parallel
+        // Fetch balances in parallel (uses info, not infoWithNextNonce,
+        // to avoid unnecessary pending transaction requests for non-active wallets)
         const results = await Promise.allSettled(
           state.wallets.map(async (wallet) => {
             try {
-              const info = await xe.wallet.infoWithNextNonce(state.config.blockchain.baseURL, wallet.address)
+              const info = await xe.wallet.info(state.config.blockchain.baseURL, wallet.address)
               return { walletId: wallet.id, balance: info.balance }
             } catch (err) {
               console.error(`Failed to fetch balance for ${wallet.address}:`, err)
