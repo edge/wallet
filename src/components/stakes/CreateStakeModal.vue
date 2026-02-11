@@ -191,6 +191,7 @@ export default {
   computed: {
     ...mapState(['address', 'balance', 'nextNonce']),
     canAffordStake() {
+      if (!this.vars) return false
       return this.balance >= this.vars.host_stake_amount
     },
     canCreate() {
@@ -200,15 +201,19 @@ export default {
       return (this.balance - this.stakeAmount) / 1e6
     },
     shortHostStakeAmount() {
+      if (!this.vars) return ''
       return this.formatShortAmount(this.vars.host_stake_amount)
     },
     shortGatewayStakeAmount() {
+      if (!this.vars) return ''
       return this.formatShortAmount(this.vars.gateway_stake_amount)
     },
     shortStargateStakeAmount() {
+      if (!this.vars) return ''
       return this.formatShortAmount(this.vars.stargate_stake_amount)
     },
     stakeAmount() {
+      if (!this.vars) return 0
       switch (this.stakeType) {
       case 'host':
         return this.vars.host_stake_amount
@@ -294,6 +299,7 @@ export default {
       this.vars = await xe.vars(import.meta.env.VITE_BLOCKCHAIN_API_URL)
     },
     isStakeAffordable(type) {
+      if (!this.vars) return false
       return this.balance - this.vars[type + '_stake_amount'] > 0
     },
     reset() {
@@ -312,9 +318,6 @@ export default {
         this.stakeType = type
       }
     }
-  },
-  mounted() {
-    this.updateVars()
   },
   setup() {
     return {

@@ -273,11 +273,11 @@ export default {
       return this.unlocksAt < this.currentTime
     },
     releaseFeeParsed() {
-      if (this.isUnlocked) return 0
+      if (this.isUnlocked || !this.vars) return 0
       else return this.stake.amount * this.vars.stake_express_release_fee / 1e6
     },
     releasePc() {
-      if (this.isUnlocked) return 0
+      if (this.isUnlocked || !this.vars) return 0
       else return this.vars.stake_express_release_fee * 100
     },
     returnAmountParsed() {
@@ -406,9 +406,6 @@ export default {
         clearInterval(this.iSecondsUntilUnlock)
       }
     }
-  },
-  mounted() {
-    this.updateVars()
   },
   setup() {
     return {
