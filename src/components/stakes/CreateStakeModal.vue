@@ -174,9 +174,7 @@ export default {
       stakeType: '',
 
       completedTx: null,
-      submitError: '',
-
-      vars: null
+      submitError: ''
     }
   },
   validations() {
@@ -189,7 +187,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['address', 'balance', 'nextNonce']),
+    ...mapState(['address', 'balance', 'nextNonce', 'vars']),
     canAffordStake() {
       if (!this.vars) return false
       return this.balance >= this.vars.host_stake_amount
@@ -295,9 +293,6 @@ export default {
     goto(step) {
       this.step = step
     },
-    async updateVars() {
-      this.vars = await xe.vars(import.meta.env.VITE_BLOCKCHAIN_API_URL)
-    },
     isStakeAffordable(type) {
       if (!this.vars) return false
       return this.balance - this.vars[type + '_stake_amount'] > 0
@@ -329,7 +324,7 @@ export default {
       if (v === oldv) return
       if (v) {
         this.$store.dispatch('refresh')
-        this.updateVars()
+        this.$store.dispatch('refreshVars')
         this.stakeType = 'host'
       }
     }

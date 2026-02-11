@@ -58,6 +58,7 @@ const init = async () => {
       },
 
       bridgeOnline: false,
+      vars: null,
 
       // Multi-wallet support
       wallets: [],
@@ -92,6 +93,9 @@ const init = async () => {
       },
       setBridgeOnline(state, online) {
         state.bridgeOnline = online
+      },
+      setVars(state, vars) {
+        state.vars = vars
       },
       setNextNonce(state, nextNonce) {
         state.nextNonce = nextNonce
@@ -182,6 +186,10 @@ const init = async () => {
           if (err.name === 'AbortError') return
           console.error('Refresh failed:', err)
         }
+      },
+      async refreshVars({ commit, state }) {
+        const vars = await xe.vars(state.config.blockchain.baseURL)
+        commit('setVars', vars)
       },
       async refreshIndexConfig({ commit, state }) {
         const res = await fetch(`${state.config.index.baseURL}/v2/config`)

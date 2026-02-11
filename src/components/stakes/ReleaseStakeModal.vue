@@ -242,9 +242,7 @@ export default {
       confirmPhrase: '',
 
       completedTx: null,
-      submitError: '',
-
-      vars: null
+      submitError: ''
     }
   },
   validations() {
@@ -260,7 +258,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['address', 'nextNonce']),
+    ...mapState(['address', 'nextNonce', 'vars']),
     canRelease() {
       if (this.isUnlocked) return !this.v$.password.$invalid
       else return !this.v$.$invalid
@@ -334,9 +332,6 @@ export default {
         this.passwordError = 'Incorrect password.'
         return false
       }
-    },
-    async updateVars() {
-      this.vars = await xe.vars(import.meta.env.VITE_BLOCKCHAIN_API_URL)
     },
     goto(step) {
       this.step = step
@@ -417,7 +412,7 @@ export default {
       if (v === oldv) return
       if (v) {
         this.$store.dispatch('refresh')
-        this.updateVars()
+        this.$store.dispatch('refreshVars')
       }
     },
     stake() {
