@@ -17,10 +17,10 @@
         <div class="mt-35">
           <h3>Recent transactions</h3>
 
-          <Overviews />
+          <Overviews :receiveMetadata="onTransactionsUpdate" />
         </div>
 
-        <div class="w-full text-right mt-20">
+        <div class="w-full text-right mt-20" v-if="metadata.totalCount > 5">
           <router-link to="/transactions" class="button button--success">View all</router-link>
         </div>
       </div>
@@ -40,6 +40,7 @@ export default {
   title: 'Overview',
   data: function () {
     return {
+      metadata: { totalCount: 0 },
       isTestnet: import.meta.env.VITE_IS_TESTNET === 'true'
     }
   },
@@ -50,6 +51,11 @@ export default {
     NewsPromo,
     RecentBlocks,
     TestnetFaucet
+  },
+  methods: {
+    onTransactionsUpdate(metadata) {
+      this.metadata = metadata
+    }
   }
 }
 </script>
