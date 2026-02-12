@@ -1,6 +1,6 @@
 {
   "name": "wallet",
-  "version": "1.23.3",
+  "version": "1.23.4",
   "description": "Web wallet for managing $EDGE",
   "private": true,
   "license": "GPL",
