@@ -213,6 +213,7 @@ export default {
         }, this.sessionPassword)
 
         await this.$store.dispatch('loadWallets', this.sessionPassword)
+        this.$store.dispatch('refresh')
         this.$emit('created')
         this.reset()
         this.close()

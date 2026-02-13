@@ -35,6 +35,7 @@ const init = async () => {
 
   if (store.state.address) store.dispatch('refresh')
   store.dispatch('refreshIndexConfig')
+  store.dispatch('refreshVars')
   setInterval(() => store.dispatch('backgroundRefresh'), WALLET_REFRESH_INTERVAL)
 }
 
