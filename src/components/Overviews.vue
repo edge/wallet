@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="transactions-items">
-      <TransactionsTable :limit="5" />
+      <TransactionsTable :limit="5" :receiveMetadata="receiveMetadata" />
     </div>
   </div>
 </template>
@@ -14,7 +14,8 @@ export default {
   name: 'Overviews',
   components: {
     TransactionsTable
-  }
+  },
+  props: ['receiveMetadata']
 }
 </script>
 

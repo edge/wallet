@@ -1,0 +1,154 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: mainnet
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha,prefix={{branch}}-
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            BLOCKCHAIN_API_URL=${{ vars.BLOCKCHAIN_API_URL }}
+            BRIDGE_WALLET_ADDRESS=${{ vars.BRIDGE_WALLET_ADDRESS }}
+            EXPLORER_URL=${{ vars.EXPLORER_URL }}
+            GOVERNANCE_URL=${{ vars.GOVERNANCE_URL }}
+            INDEX_API_URL=${{ vars.INDEX_API_URL }}
+            IS_TESTNET=${{ vars.IS_TESTNET }}
+          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache
+          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache,mode=max
+
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    environment: mainnet
+    permissions:
+      packages: read
+    concurrency:
+      group: deploy-wallet
+      cancel-in-progress: false
+    env:
+      DOCKER_HOST: ssh://${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
+
+    steps:
+      - name: Setup SSH
+        uses: MrSquaare/ssh-setup-action@2d028b70b5e397cf8314c6eaea229a6c3e34977a
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          private-key-name: deploy_key
+
+      - name: Log in to GHCR on remote host
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Deploy
+        run: |
+          IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:master"
+          NAME="wallet"
+
+          echo "Pulling $IMAGE..."
+          docker pull "$IMAGE"
+
+          echo "Stopping existing container..."
+          docker stop "$NAME" 2>/dev/null || true
+          docker rm "$NAME" 2>/dev/null || true
+
+          echo "Starting new container..."
+          docker run \
+            --detach \
+            --restart always \
+            --name "$NAME" \
+            --network core-network \
+            --expose 8000 \
+            --env HTTP_PORT="8000" \
+            --env VIRTUAL_HOST="${{ vars.DOMAIN }}" \
+            --env LETSENCRYPT_HOST="${{ vars.DOMAIN }}" \
+            --env LETSENCRYPT_EMAIL="${{ vars.LETSENCRYPT_EMAIL }}" \
+            --env NETWORK_ACCESS="external" \
+            "$IMAGE"
+
+      - name: Verify
+        run: |
+          sleep 10
+          STATE=$(docker inspect --format '{{.State.Status}}' "wallet")
+          if [ "$STATE" != "running" ]; then
+            echo "Container is not running (state: $STATE)"
+            docker logs --tail=50 "wallet"
+            exit 1
+          fi
+          echo "Container is running"
+
+      - name: Send Discord notification
+        if: always()
+        run: |
+          STATUS="${{ job.status }}"
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          if [ "$STATUS" == "success" ]; then
+            COLOR=3066993
+            TITLE="Deployment Successful"
+          else
+            COLOR=15158332
+            TITLE="Deployment Failed"
+          fi
+
+          curl -s -H "Content-Type: application/json" \
+            -X POST "${{ secrets.DISCORD_DEPLOYS_WEBHOOK }}" \
+            -d "{
+              \"username\": \"GitHub Actions\",
+              \"embeds\": [{
+                \"title\": \"$TITLE\",
+                \"color\": $COLOR,
+                \"fields\": [
+                  { \"name\": \"Service\", \"value\": \"Wallet\", \"inline\": true },
+                  { \"name\": \"Commit\", \"value\": \"\`${GITHUB_SHA:0:7}\`\", \"inline\": true },
+                  { \"name\": \"Workflow\", \"value\": \"[View logs]($RUN_URL)\", \"inline\": true }
+                ],
+                \"timestamp\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",
+                \"footer\": { \"text\": \"Edge Wallet\" }
+              }]
+            }"
