@@ -310,15 +310,15 @@ export default {
     }
   },
   computed: {
-    ...mapState(['address', 'balance', 'nextNonce']),
+    ...mapState(['address', 'balance', 'bridgeOnline', 'nextNonce']),
     amountParsed() {
       return parseAmount(this.amount)
     },
     canReadyWithdraw() {
-      return ![this.v$.recipient, this.v$.amount].map(f => f.$invalid).includes(true) && this.edgeAmount > 0
+      return this.bridgeOnline && ![this.v$.recipient, this.v$.amount].map(f => f.$invalid).includes(true) && this.edgeAmount > 0
     },
     canWithdraw() {
-      return !this.v$.$invalid && this.edgeAmount > 0
+      return this.bridgeOnline && !this.v$.$invalid && this.edgeAmount > 0
     },
     minimumFee() {
       if (isNaN(this.amountParsed)) return NaN
