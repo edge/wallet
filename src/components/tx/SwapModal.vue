@@ -56,16 +56,15 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
 import Modal from '../Modal.vue'
-import { ArrowNarrowLeftIcon, ArrowNarrowRightIcon, CurrencyDollarIcon } from '@heroicons/vue/outline'
+import { mapState } from 'vuex'
+import { ArrowNarrowLeftIcon, ArrowNarrowRightIcon } from '@heroicons/vue/outline'
 
 export default {
   name: 'SwapModal',
   components: {
     ArrowNarrowLeftIcon,
     ArrowNarrowRightIcon,
-    CurrencyDollarIcon,
     Modal
   },
   props: {
