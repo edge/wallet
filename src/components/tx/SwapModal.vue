@@ -13,7 +13,7 @@
             <img src="/deposit.svg" alt="Deposit $EDGE onto XE" class="account-panel__swap-img">
           </div>
 
-          <button class="w-full button--outline-success button" @click="openDeposit">
+          <button class="w-full button--outline-success button" :disabled="!bridgeOnline" @click="openDeposit">
             <span class="w-12 button__icon">
               <ArrowNarrowLeftIcon/>
             </span>
@@ -26,7 +26,7 @@
             <p class="mb-25">Withdraw $EDGE from the XE blockchain for use within the Ethereum network.</p>
             <img src="/withdraw.svg" alt="Withdraw $EDGE from XE" class="account-panel__swap-img">
           </div>
-          <button class="w-full button--outline-success button" @click="openWithdraw">
+          <button class="w-full button--outline-success button" :disabled="!bridgeOnline" @click="openWithdraw">
             <span class="w-12 button__icon">
               <ArrowNarrowRightIcon/>
             </span>
@@ -48,7 +48,7 @@
         </div> -->
       </div>
       <div class="pt-8 pb-20 text-center" v-if="!bridgeOnline">
-        <p class="font-bold mb-4">Bridge is currently unavailable, so transactions may be delayed.</p>
+        <p class="font-bold mb-4">The bridge is currently offline. Deposits and withdrawals are temporarily disabled.</p>
         <p>Please check again later or contact support for more information.</p>
       </div>
     </template>
@@ -56,16 +56,15 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
 import Modal from '../Modal.vue'
-import { ArrowNarrowLeftIcon, ArrowNarrowRightIcon, CurrencyDollarIcon } from '@heroicons/vue/outline'
+import { mapState } from 'vuex'
+import { ArrowNarrowLeftIcon, ArrowNarrowRightIcon } from '@heroicons/vue/outline'
 
 export default {
   name: 'SwapModal',
   components: {
     ArrowNarrowLeftIcon,
     ArrowNarrowRightIcon,
-    CurrencyDollarIcon,
     Modal
   },
   props: {

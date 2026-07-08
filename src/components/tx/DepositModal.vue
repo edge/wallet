@@ -292,7 +292,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['address']),
+    ...mapState(['address', 'bridgeOnline']),
     browserSupport() {
       return ['brave', 'chrome', 'edge', 'firefox'].includes(detect().name)
     },
@@ -303,6 +303,7 @@ export default {
       return (Math.floor(parseAmount(this.amount) * 1e6) / 1e6)
     },
     canDeposit() {
+      if (!this.bridgeOnline) return false
       if (this.depositInProgress || this.v$.$invalid) return false
       return this.xeAmount > 0
     },
