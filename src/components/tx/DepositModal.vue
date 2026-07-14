@@ -78,7 +78,9 @@
 
           <div class="form-group">
             <span class="text-caption text-gray">
-              Can't see your EDGE in MetaMask? Add the token using contract address
+              Can't see your EDGE in MetaMask?
+              <a class="text-white underline cursor-pointer" @click="addTokenToMetaMask">Add the token</a>
+              or add it manually using contract address
               <span class="text-white break-all">{{ tokenAddress }}</span>
             </span>
           </div>
@@ -370,6 +372,25 @@ export default {
     },
     checkPassword(input) {
       return storage.comparePassword(input)
+    },
+    async addTokenToMetaMask() {
+      try {
+        // https://eips.ethereum.org/EIPS/eip-747
+        await window.ethereum.request({
+          method: 'wallet_watchAsset',
+          params: {
+            type: 'ERC20',
+            options: {
+              address: this.tokenAddress,
+              symbol: 'EDGE',
+              decimals: 18
+            }
+          }
+        })
+      }
+      catch (err) {
+        console.error(err)
+      }
     },
     async connect() {
       this.connectStatus = 'connecting'
