@@ -232,6 +232,8 @@ const networks = {
   }
 }
 
+const unsupportedNetworkError = 'Unsupported network. Please switch MetaMask to Ethereum Mainnet and try again.'
+
 export default {
   name: 'DepositModal',
   components: {
@@ -367,6 +369,7 @@ export default {
         // https://eips.ethereum.org/EIPS/eip-695
         this.setChainId(await window.ethereum.request({ method: 'eth_chainId' }))
         window.ethereum.on('chainChanged', this.setChainId)
+        if (this.network === '') return
 
         this.setAccounts(accounts)
         window.ethereum.on('accountsChanged', this.setAccounts)
@@ -446,6 +449,12 @@ export default {
       }
       if (ethAddress === this.ethAddress) return
 
+      if (bridge.addresses[this.network] === undefined) {
+        this.connectError = unsupportedNetworkError
+        this.connectStatus = ''
+        return
+      }
+
       const provider = new ethers.providers.Web3Provider(window.ethereum)
 
       this.ethAddress = ethAddress
@@ -464,7 +473,7 @@ export default {
     setChainId(chainId) {
       // https://eips.ethereum.org/EIPS/eip-1193#chain-changes
       if (networks[chainId] === undefined) {
-        this.connectError = 'Unsupported network. Please use Ethereum Mainnet or Rinkeby Test Network.'
+        this.connectError = unsupportedNetworkError
         this.connectStatus = ''
         return
       }
