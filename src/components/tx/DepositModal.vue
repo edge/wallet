@@ -76,6 +76,13 @@
             <Amount :value="fee" currency="$EDGE" short sub/>
           </div>
 
+          <div class="form-group">
+            <span class="text-caption text-gray">
+              Can't see your EDGE in MetaMask? Add the token using contract address
+              <span class="text-white break-all">{{ tokenAddress }}</span>
+            </span>
+          </div>
+
         </div>
       </template>
 
@@ -331,6 +338,10 @@ export default {
     ethTxUrl() {
       if (this.completedTx === null) return ''
       return `${etherscanUrls[this.chainId]}/tx/${this.completedTx.hash}`
+    },
+    tokenAddress() {
+      const addresses = bridge.addresses[this.network]
+      return addresses === undefined ? '' : addresses.token
     }
   },
   watch: {
