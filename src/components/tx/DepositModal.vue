@@ -76,6 +76,15 @@
             <Amount :value="fee" currency="$EDGE" short sub/>
           </div>
 
+          <div class="form-group">
+            <span class="text-caption text-gray">
+              Can't see your EDGE in MetaMask?
+              <a class="text-white underline cursor-pointer" @click="addTokenToMetaMask">Add the token</a>
+              or add it manually using contract address
+              <span class="text-white break-all">{{ tokenAddress }}</span>
+            </span>
+          </div>
+
         </div>
       </template>
 
@@ -232,6 +241,8 @@ const networks = {
   }
 }
 
+const unsupportedNetworkError = 'Unsupported network. Please switch MetaMask to Ethereum Mainnet and try again.'
+
 export default {
   name: 'DepositModal',
   components: {
@@ -329,6 +340,10 @@ export default {
     ethTxUrl() {
       if (this.completedTx === null) return ''
       return `${etherscanUrls[this.chainId]}/tx/${this.completedTx.hash}`
+    },
+    tokenAddress() {
+      const addresses = bridge.addresses[this.network]
+      return addresses === undefined ? '' : addresses.token
     }
   },
   watch: {
@@ -358,6 +373,25 @@ export default {
     checkPassword(input) {
       return storage.comparePassword(input)
     },
+    async addTokenToMetaMask() {
+      try {
+        // https://eips.ethereum.org/EIPS/eip-747
+        await window.ethereum.request({
+          method: 'wallet_watchAsset',
+          params: {
+            type: 'ERC20',
+            options: {
+              address: this.tokenAddress,
+              symbol: 'EDGE',
+              decimals: 18
+            }
+          }
+        })
+      }
+      catch (err) {
+        console.error(err)
+      }
+    },
     async connect() {
       this.connectStatus = 'connecting'
       try {
@@ -367,6 +401,7 @@ export default {
         // https://eips.ethereum.org/EIPS/eip-695
         this.setChainId(await window.ethereum.request({ method: 'eth_chainId' }))
         window.ethereum.on('chainChanged', this.setChainId)
+        if (this.network === '') return
 
         this.setAccounts(accounts)
         window.ethereum.on('accountsChanged', this.setAccounts)
@@ -446,6 +481,12 @@ export default {
       }
       if (ethAddress === this.ethAddress) return
 
+      if (bridge.addresses[this.network] === undefined) {
+        this.connectError = unsupportedNetworkError
+        this.connectStatus = ''
+        return
+      }
+
       const provider = new ethers.providers.Web3Provider(window.ethereum)
 
       this.ethAddress = ethAddress
@@ -464,7 +505,7 @@ export default {
     setChainId(chainId) {
       // https://eips.ethereum.org/EIPS/eip-1193#chain-changes
       if (networks[chainId] === undefined) {
-        this.connectError = 'Unsupported network. Please use Ethereum Mainnet or Rinkeby Test Network.'
+        this.connectError = unsupportedNetworkError
         this.connectStatus = ''
         return
       }
