@@ -80,7 +80,8 @@ const storageKey = address => `claim-xe:${address}`
 export function saveActiveClaim(address, claim) {
   try {
     localStorage.setItem(storageKey(address), JSON.stringify(claim))
-  } catch (err) {
+  }
+  catch (err) {
     console.error('Could not save the claim in progress:', err)
   }
 }
@@ -88,7 +89,8 @@ export function saveActiveClaim(address, claim) {
 export function loadActiveClaim(address) {
   try {
     return JSON.parse(localStorage.getItem(storageKey(address)))
-  } catch {
+  }
+  catch {
     return null
   }
 }
@@ -96,7 +98,8 @@ export function loadActiveClaim(address) {
 export function clearActiveClaim(address) {
   try {
     localStorage.removeItem(storageKey(address))
-  } catch {
+  }
+  catch {
     // Storage unavailable: nothing to clear.
   }
 }
@@ -108,7 +111,8 @@ const failedKey = address => `claim-xe-failed:${address}`
 export function loadFailedRefs(address) {
   try {
     return JSON.parse(localStorage.getItem(failedKey(address))) || []
-  } catch {
+  }
+  catch {
     return []
   }
 }
@@ -117,7 +121,8 @@ export function markClaimFailed(address, ref) {
   try {
     const refs = loadFailedRefs(address).filter(r => r !== ref)
     localStorage.setItem(failedKey(address), JSON.stringify([ref, ...refs].slice(0, 20)))
-  } catch (err) {
+  }
+  catch (err) {
     console.error('Could not save the failed claim:', err)
   }
 }
