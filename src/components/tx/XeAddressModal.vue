@@ -8,8 +8,17 @@
       <template v-slot:body>
         <div class="pb-14">
           <p class="mb-14 text-gray">
-            This is a new address on the XE network. Its recovery phrase is these 24 words.
-            Write them down in order and keep them safe.
+            This is a new address on the XE network. Choose New address until you have one you like.
+          </p>
+          <div class="form-group mb-14">
+            <div class="flex items-center justify-between">
+              <label>XE address</label>
+              <button class="xe-new" @click="generate"><RefreshIcon/>New address</button>
+            </div>
+            <span class="font-mono break-all text-sm2">{{ address }}</span>
+          </div>
+          <p class="mb-14 text-gray">
+            Its recovery phrase is these 24 words. Write them down in order and keep them safe.
           </p>
           <ol class="xe-words">
             <li v-for="(word, i) in words" :key="i"><span class="xe-words__n">{{ i + 1 }}</span>{{ word }}</li>
@@ -20,10 +29,6 @@
               Anyone with these words controls your $XE. If you lose them, nobody can recover your $XE.
               This wallet does not keep them.
             </p>
-          </div>
-          <div class="mt-20 form-group mb-14">
-            <label>XE address</label>
-            <span class="font-mono break-all text-sm2">{{ address }}</span>
           </div>
         </div>
       </template>
@@ -81,8 +86,8 @@
 
 <script>
 import Modal from '../Modal.vue'
-import { ShieldExclamationIcon } from '@heroicons/vue/outline'
 import { h } from 'vue'
+import { RefreshIcon, ShieldExclamationIcon } from '@heroicons/vue/outline'
 import { newXeAccount, pickCheckPositions } from '../../utils/xe-account'
 
 const CHECK_WORDS = 3
@@ -99,6 +104,7 @@ export default {
   name: 'XeAddressModal',
   components: {
     Modal,
+    RefreshIcon,
     ShieldExclamationIcon,
     XeLogo
   },
@@ -191,6 +197,20 @@ export default {
   margin-right: 6px;
   color: #ff6900;
   text-align: right;
+}
+
+.xe-new {
+  @apply inline-flex items-center mb-10 text-sm;
+  gap: 6px;
+  color: #ff6900;
+}
+
+.xe-new:hover {
+  @apply underline;
+}
+
+.xe-new svg {
+  width: 18px;
 }
 
 .xe-box {
