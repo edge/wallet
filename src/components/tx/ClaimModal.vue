@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Modal :close="cancel" :visible="visible && step === 1">
+    <Modal :close="cancel" :visible="visible && step === 1 && !creatingAddress">
       <template v-slot:header>
         <h2 class="mb-8">Claim $XE<span class="testnet-header" v-if="isTestnet">(Testnet)</span></h2>
         <span class="sub-heading d-block text-gray text-caption">
@@ -21,6 +21,7 @@
               v-model="v$.xeAddress.$model"
             />
             <div class="form-group__error input-error" v-for="error of v$.xeAddress.$errors" :key="error.$uid">{{error.$message}}</div>
+            <p class="mt-10 text-gray">Don't have an XE address yet? <button class="claim-link" @click="creatingAddress = true">Create one</button></p>
           </div>
           <div class="lg-input-group" :class="{'form-group__error': v$.amount.$error}">
             <label for="claim-amount">AMOUNT</label>
@@ -174,6 +175,8 @@
         </div>
       </template>
     </Modal>
+
+    <XeAddressModal :close="closeCreateAddress" :visible="visible && creatingAddress" @created="useCreatedAddress" />
   </div>
 </template>
 
@@ -186,6 +189,7 @@ import HashLink from '../HashLink.vue'
 import { LockOpenIcon } from '@heroicons/vue/outline'
 import Modal from '../Modal.vue'
 import Radio from '../Radio.vue'
+import XeAddressModal from './XeAddressModal.vue'
 import { helpers } from '@vuelidate/validators'
 import { mapState } from 'vuex'
 import { parseAmount } from '../../utils/form'
@@ -205,7 +209,8 @@ export default {
     HashLink,
     LockOpenIcon,
     Modal,
-    Radio
+    Radio,
+    XeAddressModal
   },
   props: {
     close: Function,
@@ -214,6 +219,7 @@ export default {
   data() {
     return {
       step: 1,
+      creatingAddress: false,
 
       info: null,
       infoError: '',
@@ -333,6 +339,7 @@ export default {
     },
     reset() {
       this.goto(1)
+      this.creatingAddress = false
       this.xeAddress = ''
       this.amount = ''
       this.checked = false
@@ -477,6 +484,17 @@ export default {
       this.xeAddress = xeAddress
       this.loadClaims()
     },
+    closeCreateAddress() {
+      this.creatingAddress = false
+    },
+    // The generator made the user back up the recovery phrase, so the
+    // address is checked and the box is ticked for them.
+    useCreatedAddress(address) {
+      this.xeAddress = address
+      this.checked = true
+      this.v$.xeAddress.$touch()
+      this.creatingAddress = false
+    },
     retryFrom(claim) {
       this.amount = (claim.amount / 1e6).toString()
     },
@@ -575,7 +593,8 @@ export default {
   margin-left: 4px;
 }
 
-.claim-history__retry {
+.claim-history__retry,
+.claim-link {
   @apply text-green underline;
 }
 
