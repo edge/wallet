@@ -7,9 +7,6 @@
       </template>
       <template v-slot:body>
         <div class="pb-14">
-          <p class="mb-14 text-gray">
-            This is a new address on the XE network. Choose New address until you have one you like.
-          </p>
           <div class="form-group mb-14">
             <div class="flex items-center justify-between">
               <label>XE address</label>
