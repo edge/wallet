@@ -1,0 +1,70 @@
+{
+  "description": "XE recovery phrase test vectors (xeprotocol/core#1005). An XE recovery phrase is the BIP39 entropy-to-mnemonic encoding of the 32-byte ed25519 seed with the BIP39 English wordlist: seed || first 8 bits of SHA-256(seed) gives 264 bits, read most significant bit first as 24 word indexes of 11 bits. Exactly 24 words. No PBKDF2, no passphrase, no derivation path: the words are the seed. bip39: the official BIP39 English vectors with 32-byte entropy, from trezor/python-mnemonic vectors.json, entropy and mnemonic only (the PBKDF2 seed and xprv columns do not apply). xe: seed (hex), phrase, public_key (hex ed25519 public key from the seed, RFC 8032) and address (hex SHA-256 of the UTF-8 bytes 'xe/account/v1' followed by the 32-byte public key).",
+  "wordlist_sha256": "2f5eed53a4727b4bf8880d8f3f199efc90e58503646d9ff8eff3a2ed3b24dbda",
+  "bip39": [
+    {
+      "entropy": "0000000000000000000000000000000000000000000000000000000000000000",
+      "mnemonic": "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon art"
+    },
+    {
+      "entropy": "7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f",
+      "mnemonic": "legal winner thank year wave sausage worth useful legal winner thank year wave sausage worth useful legal winner thank year wave sausage worth title"
+    },
+    {
+      "entropy": "8080808080808080808080808080808080808080808080808080808080808080",
+      "mnemonic": "letter advice cage absurd amount doctor acoustic avoid letter advice cage absurd amount doctor acoustic avoid letter advice cage absurd amount doctor acoustic bless"
+    },
+    {
+      "entropy": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "mnemonic": "zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo vote"
+    },
+    {
+      "entropy": "68a79eaca2324873eacc50cb9c6eca8cc68ea5d936f98787c60c7ebc74e6ce7c",
+      "mnemonic": "hamster diagram private dutch cause delay private meat slide toddler razor book happy fancy gospel tennis maple dilemma loan word shrug inflict delay length"
+    },
+    {
+      "entropy": "9f6a2878b2520799a44ef18bc7df394e7061a224d2c33cd015b157d746869863",
+      "mnemonic": "panda eyebrow bullet gorilla call smoke muffin taste mesh discover soft ostrich alcohol speed nation flash devote level hobby quick inner drive ghost inside"
+    },
+    {
+      "entropy": "066dca1a2bb7e8a1db2832148ce9933eea0f3ac9548d793112d9a95c9407efad",
+      "mnemonic": "all hour make first leader extend hole alien behind guard gospel lava path output census museum junior mass reopen famous sing advance salt reform"
+    },
+    {
+      "entropy": "f585c11aec520db57dd353c69554b21a89b20fb0650966fa0a9d6f74fd989d8f",
+      "mnemonic": "void come effort suffer camp survey warrior heavy shoot primary clutch crush open amazing screen patrol group space point ten exist slush involve unfold"
+    }
+  ],
+  "xe": [
+    {
+      "seed": "0000000000000000000000000000000000000000000000000000000000000000",
+      "phrase": "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon art",
+      "public_key": "3b6a27bcceb6a42d62a3a8d02a6f0d73653215771de243a63ac048a18b59da29",
+      "address": "4ac0d6d4f0bd50354b93324c950096f6e0de5f91e42dac66583756afd50852de"
+    },
+    {
+      "seed": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "phrase": "zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo vote",
+      "public_key": "76a1592044a6e4f511265bca73a604d90b0529d1df602be30a19a9257660d1f5",
+      "address": "b25fe45d4afa568e72559a9e0bcf727c44dbdde8ab591df1f53fdd908cd73dbb"
+    },
+    {
+      "seed": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "phrase": "abandon amount liar amount expire adjust cage candy arch gather drum bullet absurd math era live bid rhythm alien crouch range attend journey unaware",
+      "public_key": "03a107bff3ce10be1d70dd18e74bc09967e4d6309ba50d5f1ddc8664125531b8",
+      "address": "338c76e03f0a8dd21192808ba1a11879b2202591bf53f4338070119f4f54a0e1"
+    },
+    {
+      "seed": "7a11413e0111030869fb5d1e434ef96110be6dbb0fb160064b3fa7a36a5f35bf",
+      "phrase": "key meat exhibit acquire awake loud pony hill bundle bounce salad season armor cycle umbrella wage gas crane soup exercise cute convince street trophy",
+      "public_key": "42aa7e1f7b83cf10b730a4ac7e11c8c4dda9321b60207ee8a9649932cada7319",
+      "address": "1cc821b6fedffceeac924054c97a3185ab835c498da225cbbd7bc89f1945a769"
+    },
+    {
+      "seed": "1c9813e44d6cfe05cd8d55a442897c56091e03aa6744c82cc16e33383d3a054e",
+      "phrase": "broken scene weekend onion soup actual curtain primary picture begin gallery project music achieve praise trigger sight gravity fortune grid long other benefit special",
+      "public_key": "a0ccc1be08b3b369c3b5b2bc8e47a61a1cb2cc6fa5662a5882ba09065cf1558c",
+      "address": "cadb731c0c153a76bd503702f7c2f51026623d2e3b31b51981cbe6873f0bb26b"
+    }
+  ]
+}
