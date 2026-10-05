@@ -10,6 +10,7 @@ import {
   addressFromPublicKey, newXeAccount, phraseFromSeed, pickCheckPositions, publicKeyFromSeed
 } from './xe-account'
 import { bytesToHex, hexToBytes, utf8ToBytes } from '@noble/hashes/utils.js'
+import { describe, expect, it } from 'vitest'
 
 // The vectors file is a copy of xeprotocol/core core/testdata/recovery-phrase-vectors.json.
 describe('XE recovery phrase vectors', () => {

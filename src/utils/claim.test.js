@@ -6,6 +6,7 @@ import {
   claimFailed, claimProgress, clearActiveClaim, keepLastWordsTogether, loadActiveClaim, loadFailedRefs,
   markClaimFailed, newXeAddressRegexp, normaliseXeAddress, saveActiveClaim
 } from './claim'
+import { describe, expect, it } from 'vitest'
 
 const base = { chainTx: null, pending: false, walletNonce: 4, txNonce: 4, claim: null, required: 10 }
 
