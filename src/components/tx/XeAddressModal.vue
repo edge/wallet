@@ -3,7 +3,7 @@
     <Modal :close="close" :visible="visible && step === 1">
       <template v-slot:header>
         <h2 class="flex items-center mb-8"><XeLogo/>Create an XE address</h2>
-        <span class="sub-heading d-block text-gray text-caption">Step 1 of 2: write down your recovery phrase</span>
+        <span class="sub-heading d-block text-gray text-caption">Step 1 of 2: write down your recovery&nbsp;phrase</span>
       </template>
       <template v-slot:body>
         <div class="pb-14">
@@ -15,7 +15,7 @@
             <span class="font-mono break-all text-sm2">{{ address }}</span>
           </div>
           <p class="mb-14 text-gray">
-            Its recovery phrase is these 24 words. Write them down in order and keep them safe.
+            Its recovery phrase is these 24 words. Write them down in order and keep them&nbsp;safe.
           </p>
           <ol class="xe-words">
             <li v-for="(word, i) in words" :key="i"><span class="xe-words__n">{{ i + 1 }}</span>{{ word }}</li>
@@ -24,7 +24,7 @@
             <span class="flex-shrink-0 inline-block mr-12 text-white icon w-27"><ShieldExclamationIcon/></span>
             <p class="mb-0">
               Anyone with these words controls your $XE. If you lose them, nobody can recover your $XE.
-              This wallet does not keep them.
+              This wallet does not keep&nbsp;them.
             </p>
           </div>
         </div>
@@ -42,7 +42,7 @@
     <Modal :close="close" :visible="visible && step === 2">
       <template v-slot:header>
         <h2 class="flex items-center mb-8"><XeLogo/>Create an XE address</h2>
-        <span class="sub-heading d-block text-gray text-caption">Step 2 of 2: check your recovery phrase</span>
+        <span class="sub-heading d-block text-gray text-caption">Step 2 of 2: check your recovery&nbsp;phrase</span>
       </template>
       <template v-slot:body>
         <div class="pb-14">

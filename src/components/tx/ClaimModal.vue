@@ -9,7 +9,7 @@
       </template>
       <template v-slot:body>
         <div class="pb-14 min-h-410">
-          <p class="mb-14 text-gray">Claim $XE on the new XE network, 1 $XE for each $EDGE.</p>
+          <p class="mb-14 text-gray">Claim $XE on the new XE network, 1 $XE for each&nbsp;$EDGE.</p>
           <div class="form-group" :class="{'form-group__error': v$.xeAddress.$error}">
             <label for="claim-xe-address" class="label">XE ADDRESS</label>
             <input
@@ -42,7 +42,7 @@
           </div>
           <label class="claim-check">
             <input type="checkbox" v-model="v$.checked.$model" />
-            <span>I have checked this XE address, and I have the recovery phrase for it.</span>
+            <span>I have checked this XE address, and I have the recovery phrase for&nbsp;it.</span>
           </label>
           <div v-if="infoError" class="claim-box claim-box--error">{{ infoError }}</div>
 
@@ -123,7 +123,7 @@
             <button class="w-full button button--outline-success" @click="() => goto(1)">Back</button>
             <button :disabled="!canClaim || submitting" @click="claim" class="w-full button button--success">Confirm claim</button>
           </div>
-          <div v-if="submitError" class="claim-box claim-box--error">{{ submitError }}</div>
+          <div v-if="submitError" class="claim-box claim-box--error">{{ submitErrorText }}</div>
         </div>
       </template>
     </Modal>
@@ -145,13 +145,13 @@
           </ol>
 
           <div v-if="failed" class="claim-box claim-box--error">
-            The transfer was not processed, so your $EDGE did not move. You can try again.
+            The transfer was not processed, so your $EDGE did not move. You can try&nbsp;again.
           </div>
           <div v-else-if="progress.stage === 'received'" class="claim-box">
-            Your claim is received. Your $XE is sent to your XE address after approval.
+            Your claim is received. Your $XE is sent to your XE address after&nbsp;approval.
           </div>
           <div v-else class="claim-box">
-            You can leave this page: your claim continues without it. Keep the page open to follow it here.
+            You can leave this page: your claim continues without it. Keep the page open to follow it&nbsp;here.
           </div>
 
           <div class="mt-20 form-group mb-14">
@@ -196,8 +196,8 @@ import { parseAmount } from '../../utils/form'
 import useVuelidate from '@vuelidate/core'
 import {
   MISSES_TO_FAIL, STAGES, claimFailed, claimProgress, clearActiveClaim, createClaim, fetchClaim, fetchClaims,
-  fetchClaimsInfo, loadActiveClaim, loadFailedRefs, markClaimFailed, newXeAddressRegexp, normaliseXeAddress,
-  saveActiveClaim
+  fetchClaimsInfo, keepLastWordsTogether, loadActiveClaim, loadFailedRefs, markClaimFailed, newXeAddressRegexp,
+  normaliseXeAddress, saveActiveClaim
 } from '../../utils/claim'
 
 const POLL_MS = 5000
@@ -246,7 +246,7 @@ export default {
       xeAddress: [
         validation.required,
         helpers.withMessage(
-          'Enter your new XE address: 64 characters, 0-9 and a-f. An Edge address (xe_...) does not work.',
+          'Enter your new XE address: 64 characters, 0-9 and a-f. An Edge address (xe_...) does not\u00a0work.',
           v => newXeAddressRegexp.test(normaliseXeAddress(v))
         )
       ],
@@ -285,6 +285,9 @@ export default {
     isMaxAmountEntered() {
       return this.balance > 0 && this.amountParsed === this.balance / 1e6
     },
+    submitErrorText() {
+      return keepLastWordsTogether(this.submitError)
+    },
     progressTitle() {
       if (this.failed) return 'Claim failed'
       if (this.progress.stage === 'received') return 'Claim received'
@@ -315,7 +318,7 @@ export default {
         if (!this.info.open) this.info = null
       }
       catch (err) {
-        this.infoError = 'The claims service is not available. Try again later.'
+        this.infoError = 'The claims service is not available. Try again\u00a0later.'
       }
       this.loadClaims()
     },
@@ -518,10 +521,10 @@ export default {
     },
     statusText(claim) {
       if (this.isFailed(claim)) return 'Failed'
-      if (claim.status === 'awaiting_transfer') return 'Waiting for transfer'
+      if (claim.status === 'awaiting_transfer') return 'Waiting for\u00a0transfer'
       if (claim.processed) return 'Paid'
       if (claim.approved) return 'Approved'
-      return claim.review.length ? 'Received, in review' : 'Received'
+      return claim.review.length ? 'Received, in\u00a0review' : 'Received'
     },
     formatDate(date) {
       return new Date(date).toLocaleDateString()
