@@ -35,6 +35,10 @@ export const newXeAddressRegexp = /^[0-9a-f]{64}$/
 
 export const normaliseXeAddress = address => address.trim().toLowerCase()
 
+// Joins the last two words with a non-breaking space, so a message that wraps
+// never leaves one word alone on its last line.
+export const keepLastWordsTogether = text => text.trim().replace(/\s+(\S+)$/, '\u00a0$1')
+
 // Stages of a claim transfer, in order.
 export const STAGES = ['posted', 'in_block', 'confirmed', 'received']
 

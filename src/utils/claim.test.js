@@ -3,8 +3,8 @@
 // that can be found in the LICENSE.md file. All rights reserved.
 
 import {
-  claimFailed, claimProgress, clearActiveClaim, loadActiveClaim, loadFailedRefs, markClaimFailed,
-  newXeAddressRegexp, normaliseXeAddress, saveActiveClaim
+  claimFailed, claimProgress, clearActiveClaim, keepLastWordsTogether, loadActiveClaim, loadFailedRefs,
+  markClaimFailed, newXeAddressRegexp, normaliseXeAddress, saveActiveClaim
 } from './claim'
 
 const base = { chainTx: null, pending: false, walletNonce: 4, txNonce: 4, claim: null, required: 10 }
@@ -97,5 +97,20 @@ describe('active claim storage', () => {
     expect(loadActiveClaim('xe_two')).toBeNull()
     clearActiveClaim('xe_one')
     expect(loadActiveClaim('xe_one')).toBeNull()
+  })
+})
+
+describe('keepLastWordsTogether', () => {
+  it('joins the last two words with a non-breaking space', () => {
+    expect(keepLastWordsTogether('too many open claims for this address')).toBe('too many open claims for this\u00a0address')
+  })
+
+  it('ignores trailing space', () => {
+    expect(keepLastWordsTogether('try again later ')).toBe('try again\u00a0later')
+  })
+
+  it('leaves a single word as it is', () => {
+    expect(keepLastWordsTogether('Failed')).toBe('Failed')
+    expect(keepLastWordsTogether('')).toBe('')
   })
 })
