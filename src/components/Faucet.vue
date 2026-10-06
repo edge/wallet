@@ -6,26 +6,31 @@
         <img src="/faucet.svg" class="inline">
         XE Automated Faucet
       </h1>
-      <p class="flex-1 my-0">
-        To request funds, please make a <a :href="`${twitterUrl}${twitterMsg}`" target="_about" class="tweet">tweet</a> including your XE wallet address, then paste the URL of the tweet into the text box below.
+      <p v-if="!faucetUrl" class="flex-1 my-0">
+        The faucet is not available at the moment.
       </p>
-      <p class="flex-1">
-        <input :disabled="submitting" v-model="url" type="text" placeholder="URL of tweet including your XE address..." class="faucet-input">
-      </p>
-      <div v-if="displayMessage" class="w-full text-left">
-        <p class="request-message py-8 my-0">
-          <span v-if="success" class="success">Your request has been received and will be processed shortly.</span>
-          <span v-if="error" class="error">Error processing your request: {{ error }}</span>
+      <template v-else>
+        <p class="flex-1 my-0">
+          To request funds, please make a <a :href="`${twitterUrl}${twitterMsg}`" target="_about" class="tweet">tweet</a> including your XE wallet address, then paste the URL of the tweet into the text box below.
         </p>
-      </div>
-      <div v-else class="w-full text-right">
-        <button
-          class="request-button py-8 button button--solid"
-          :disabled="!urlIsValid || submitting"
-          @click="requestXE">
-          {{ submitting ? 'Submitting' : 'Request EDGE' }}
-        </button>
-      </div>
+        <p class="flex-1">
+          <input :disabled="submitting" v-model="url" type="text" placeholder="URL of tweet including your XE address..." class="faucet-input">
+        </p>
+        <div v-if="displayMessage" class="w-full text-left">
+          <p class="request-message py-8 my-0">
+            <span v-if="success" class="success">Your request has been received and will be processed shortly.</span>
+            <span v-if="error" class="error">Error processing your request: {{ error }}</span>
+          </p>
+        </div>
+        <div v-else class="w-full text-right">
+          <button
+            class="request-button py-8 button button--solid"
+            :disabled="!urlIsValid || submitting"
+            @click="requestXE">
+            {{ submitting ? 'Submitting' : 'Request EDGE' }}
+          </button>
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -42,7 +47,7 @@ export default {
       success: false,
       displayMessage: false,
       submitting: false,
-      faucetUrl: 'https://faucet.test.network/request',
+      faucetUrl: null,
       twitterUrl: 'https://twitter.com/intent/tweet?text=',
       twitterMsg: encodeURIComponent(
         'Requesting faucet funds for xe_0000000000000000000000000000000000000000 on https://test.network/'
