@@ -53,6 +53,7 @@ jobs:
           build-args: |
             BLOCKCHAIN_API_URL=${{ vars.BLOCKCHAIN_API_URL }}
             BRIDGE_WALLET_ADDRESS=${{ vars.BRIDGE_WALLET_ADDRESS }}
+            CLAIMS_API_URL=${{ vars.CLAIMS_API_URL }}
             EXPLORER_URL=${{ vars.EXPLORER_URL }}
             GOVERNANCE_URL=${{ vars.GOVERNANCE_URL }}
             INDEX_API_URL=${{ vars.INDEX_API_URL }}
