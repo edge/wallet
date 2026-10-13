@@ -24,7 +24,9 @@
             <summary>Advanced: BIP39 passphrase</summary>
             <label for="xe-bip39-passphrase">Optional BIP39 passphrase</label>
             <input id="xe-bip39-passphrase" type="password" autocomplete="off" spellcheck="false" v-model="bip39Passphrase" />
-            <button class="xe-new" @click="applyPassphrase">Apply passphrase</button>
+            <label for="xe-bip39-passphrase-confirm">Confirm BIP39 passphrase (must match exactly)</label>
+            <input id="xe-bip39-passphrase-confirm" type="password" autocomplete="off" spellcheck="false" v-model="bip39PassphraseConfirm" />
+            <button class="xe-new" :disabled="!canApplyPassphrase" @click="applyPassphrase">Apply passphrase</button>
             <p class="text-gray">Keep it separately. It is never stored. A wrong passphrase opens a different, empty account. Avoid a weak passphrase.</p>
           </details>
           <p v-if="usesPassphrase" class="mt-20">This address needs your phrase and BIP39 passphrase. The passphrase is not kept.</p>
@@ -44,7 +46,7 @@
         <div class="px-24 pt-32 pb-40 border-t border-gray-700 border-opacity-30">
           <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
             <button class="w-full button button--outline-success xe-button-outline" @click="close">Cancel</button>
-            <button class="w-full button button--success xe-button" :disabled="bip39Passphrase !== ''" @click="step = 2">I have written them down</button>
+            <button class="w-full button button--success xe-button" :disabled="bip39Passphrase !== '' || bip39PassphraseConfirm !== ''" @click="step = 2">I have written them down</button>
           </div>
         </div>
       </template>
@@ -127,6 +129,7 @@ export default {
       words: [],
       address: '',
       bip39Passphrase: '',
+      bip39PassphraseConfirm: '',
       usesPassphrase: false,
       positions: [],
       answers: [],
@@ -134,6 +137,9 @@ export default {
     }
   },
   computed: {
+    canApplyPassphrase() {
+      return this.bip39Passphrase === this.bip39PassphraseConfirm
+    },
     matches() {
       return this.positions.map((position, i) => this.answers[i].trim().toLowerCase() === this.words[position])
     },
@@ -150,6 +156,7 @@ export default {
   methods: {
     generate() {
       this.bip39Passphrase = ''
+      this.bip39PassphraseConfirm = ''
       this.usesPassphrase = false
       const { address, words } = newXeAccount()
       this.words = words
@@ -160,10 +167,12 @@ export default {
       this.step = 1
     },
     applyPassphrase() {
+      if (!this.canApplyPassphrase) return
       const { address } = xeAccountFromPhrase(this.words.join(' '), { passphrase: this.bip39Passphrase })
       this.address = address
       this.usesPassphrase = this.bip39Passphrase !== ''
       this.bip39Passphrase = ''
+      this.bip39PassphraseConfirm = ''
       this.positions = pickCheckPositions(CHECK_WORDS, this.words.length)
       this.answers = this.positions.map(() => '')
       this.touched = this.positions.map(() => false)
@@ -173,6 +182,7 @@ export default {
       this.words = []
       this.address = ''
       this.bip39Passphrase = ''
+      this.bip39PassphraseConfirm = ''
       this.usesPassphrase = false
       this.positions = []
       this.answers = []
