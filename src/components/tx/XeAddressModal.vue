@@ -20,20 +20,31 @@
           <ol class="xe-words">
             <li v-for="(word, i) in words" :key="i"><span class="xe-words__n">{{ i + 1 }}</span>{{ word }}</li>
           </ol>
+          <details class="mt-20">
+            <summary>Advanced: BIP39 passphrase</summary>
+            <label for="xe-bip39-passphrase">Optional BIP39 passphrase</label>
+            <input id="xe-bip39-passphrase" type="password" autocomplete="off" spellcheck="false" v-model="bip39Passphrase" />
+            <button class="xe-new" @click="applyPassphrase">Apply passphrase</button>
+            <p class="text-gray">Keep it separately. It is never stored. A wrong passphrase opens a different, empty account. Avoid a weak passphrase.</p>
+          </details>
+          <p v-if="usesPassphrase" class="mt-20">This address needs your phrase and BIP39 passphrase. The passphrase is not kept.</p>
           <div class="flex items-start xe-box">
             <span class="flex-shrink-0 inline-block mr-12 text-white icon w-27"><ShieldExclamationIcon/></span>
             <p class="mb-0">
               Anyone with these words controls your $XE. If you lose them, nobody can recover your $XE.
               This wallet does not keep&nbsp;them.
+              The phrase is your only backup; keep any BIP39 passphrase separately.
             </p>
           </div>
+          <p class="mt-20 text-gray">Standard BIP39 + SLIP-0010 ed25519, m/44'/1'/0'. Coin type 1 is provisional.
+            Wallets made before v2 restore from their hex seed.</p>
         </div>
       </template>
       <template v-slot:footer>
         <div class="px-24 pt-32 pb-40 border-t border-gray-700 border-opacity-30">
           <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
             <button class="w-full button button--outline-success xe-button-outline" @click="close">Cancel</button>
-            <button class="w-full button button--success xe-button" @click="step = 2">I have written them down</button>
+            <button class="w-full button button--success xe-button" :disabled="bip39Passphrase !== ''" @click="step = 2">I have written them down</button>
           </div>
         </div>
       </template>
@@ -85,7 +96,7 @@
 import Modal from '../Modal.vue'
 import { h } from 'vue'
 import { RefreshIcon, ShieldExclamationIcon } from '@heroicons/vue/outline'
-import { newXeAccount, pickCheckPositions } from '../../utils/xe-account'
+import { newXeAccount, xeAccountFromPhrase, pickCheckPositions } from '../../utils/xe-account'
 
 const CHECK_WORDS = 3
 
@@ -115,6 +126,8 @@ export default {
       step: 1,
       words: [],
       address: '',
+      bip39Passphrase: '',
+      usesPassphrase: false,
       positions: [],
       answers: [],
       touched: []
@@ -136,6 +149,8 @@ export default {
   },
   methods: {
     generate() {
+      this.bip39Passphrase = ''
+      this.usesPassphrase = false
       const { address, words } = newXeAccount()
       this.words = words
       this.address = address
@@ -144,10 +159,21 @@ export default {
       this.touched = this.positions.map(() => false)
       this.step = 1
     },
+    applyPassphrase() {
+      const { address } = xeAccountFromPhrase(this.words.join(' '), { passphrase: this.bip39Passphrase })
+      this.address = address
+      this.usesPassphrase = this.bip39Passphrase !== ''
+      this.bip39Passphrase = ''
+      this.positions = pickCheckPositions(CHECK_WORDS, this.words.length)
+      this.answers = this.positions.map(() => '')
+      this.touched = this.positions.map(() => false)
+    },
     reset() {
       this.step = 1
       this.words = []
       this.address = ''
+      this.bip39Passphrase = ''
+      this.usesPassphrase = false
       this.positions = []
       this.answers = []
       this.touched = []
