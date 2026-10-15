@@ -1,70 +1,351 @@
 {
-  "description": "XE recovery phrase test vectors (xeprotocol/core#1005). An XE recovery phrase is the BIP39 entropy-to-mnemonic encoding of the 32-byte ed25519 seed with the BIP39 English wordlist: seed || first 8 bits of SHA-256(seed) gives 264 bits, read most significant bit first as 24 word indexes of 11 bits. Exactly 24 words. No PBKDF2, no passphrase, no derivation path: the words are the seed. bip39: the official BIP39 English vectors with 32-byte entropy, from trezor/python-mnemonic vectors.json, entropy and mnemonic only (the PBKDF2 seed and xprv columns do not apply). xe: seed (hex), phrase, public_key (hex ed25519 public key from the seed, RFC 8032) and address (hex SHA-256 of the UTF-8 bytes 'xe/account/v1' followed by the 32-byte public key).",
-  "wordlist_sha256": "2f5eed53a4727b4bf8880d8f3f199efc90e58503646d9ff8eff3a2ed3b24dbda",
   "bip39": [
     {
+      "entropy": "00000000000000000000000000000000",
+      "mnemonic": "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about",
+      "passphrase": "TREZOR",
+      "seed": "c55257c360c07c72029aebc1b53c05ed0362ada38ead3e3e9efa3708e53495531f09a6987599d18264c1e1c92f2cf141630c7a3c4ab7c81b2f001698e7463b04"
+    },
+    {
+      "entropy": "7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f",
+      "mnemonic": "legal winner thank year wave sausage worth useful legal winner thank yellow",
+      "passphrase": "TREZOR",
+      "seed": "2e8905819b8723fe2c1d161860e5ee1830318dbf49a83bd451cfb8440c28bd6fa457fe1296106559a3c80937a1c1069be3a3a5bd381ee6260e8d9739fce1f607"
+    },
+    {
+      "entropy": "80808080808080808080808080808080",
+      "mnemonic": "letter advice cage absurd amount doctor acoustic avoid letter advice cage above",
+      "passphrase": "TREZOR",
+      "seed": "d71de856f81a8acc65e6fc851a38d4d7ec216fd0796d0a6827a3ad6ed5511a30fa280f12eb2e47ed2ac03b5c462a0358d18d69fe4f985ec81778c1b370b652a8"
+    },
+    {
+      "entropy": "ffffffffffffffffffffffffffffffff",
+      "mnemonic": "zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo wrong",
+      "passphrase": "TREZOR",
+      "seed": "ac27495480225222079d7be181583751e86f571027b0497b5b5d11218e0a8a13332572917f0f8e5a589620c6f15b11c61dee327651a14c34e18231052e48c069"
+    },
+    {
+      "entropy": "000000000000000000000000000000000000000000000000",
+      "mnemonic": "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon agent",
+      "passphrase": "TREZOR",
+      "seed": "035895f2f481b1b0f01fcf8c289c794660b289981a78f8106447707fdd9666ca06da5a9a565181599b79f53b844d8a71dd9f439c52a3d7b3e8a79c906ac845fa"
+    },
+    {
+      "entropy": "7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f",
+      "mnemonic": "legal winner thank year wave sausage worth useful legal winner thank year wave sausage worth useful legal will",
+      "passphrase": "TREZOR",
+      "seed": "f2b94508732bcbacbcc020faefecfc89feafa6649a5491b8c952cede496c214a0c7b3c392d168748f2d4a612bada0753b52a1c7ac53c1e93abd5c6320b9e95dd"
+    },
+    {
+      "entropy": "808080808080808080808080808080808080808080808080",
+      "mnemonic": "letter advice cage absurd amount doctor acoustic avoid letter advice cage absurd amount doctor acoustic avoid letter always",
+      "passphrase": "TREZOR",
+      "seed": "107d7c02a5aa6f38c58083ff74f04c607c2d2c0ecc55501dadd72d025b751bc27fe913ffb796f841c49b1d33b610cf0e91d3aa239027f5e99fe4ce9e5088cd65"
+    },
+    {
+      "entropy": "ffffffffffffffffffffffffffffffffffffffffffffffff",
+      "mnemonic": "zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo when",
+      "passphrase": "TREZOR",
+      "seed": "0cd6e5d827bb62eb8fc1e262254223817fd068a74b5b449cc2f667c3f1f985a76379b43348d952e2265b4cd129090758b3e3c2c49103b5051aac2eaeb890a528"
+    },
+    {
       "entropy": "0000000000000000000000000000000000000000000000000000000000000000",
-      "mnemonic": "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon art"
+      "mnemonic": "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon art",
+      "passphrase": "TREZOR",
+      "seed": "bda85446c68413707090a52022edd26a1c9462295029f2e60cd7c4f2bbd3097170af7a4d73245cafa9c3cca8d561a7c3de6f5d4a10be8ed2a5e608d68f92fcc8"
     },
     {
       "entropy": "7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f",
-      "mnemonic": "legal winner thank year wave sausage worth useful legal winner thank year wave sausage worth useful legal winner thank year wave sausage worth title"
+      "mnemonic": "legal winner thank year wave sausage worth useful legal winner thank year wave sausage worth useful legal winner thank year wave sausage worth title",
+      "passphrase": "TREZOR",
+      "seed": "bc09fca1804f7e69da93c2f2028eb238c227f2e9dda30cd63699232578480a4021b146ad717fbb7e451ce9eb835f43620bf5c514db0f8add49f5d121449d3e87"
     },
     {
       "entropy": "8080808080808080808080808080808080808080808080808080808080808080",
-      "mnemonic": "letter advice cage absurd amount doctor acoustic avoid letter advice cage absurd amount doctor acoustic avoid letter advice cage absurd amount doctor acoustic bless"
+      "mnemonic": "letter advice cage absurd amount doctor acoustic avoid letter advice cage absurd amount doctor acoustic avoid letter advice cage absurd amount doctor acoustic bless",
+      "passphrase": "TREZOR",
+      "seed": "c0c519bd0e91a2ed54357d9d1ebef6f5af218a153624cf4f2da911a0ed8f7a09e2ef61af0aca007096df430022f7a2b6fb91661a9589097069720d015e4e982f"
     },
     {
       "entropy": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-      "mnemonic": "zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo vote"
+      "mnemonic": "zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo vote",
+      "passphrase": "TREZOR",
+      "seed": "dd48c104698c30cfe2b6142103248622fb7bb0ff692eebb00089b32d22484e1613912f0a5b694407be899ffd31ed3992c456cdf60f5d4564b8ba3f05a69890ad"
+    },
+    {
+      "entropy": "9e885d952ad362caeb4efe34a8e91bd2",
+      "mnemonic": "ozone drill grab fiber curtain grace pudding thank cruise elder eight picnic",
+      "passphrase": "TREZOR",
+      "seed": "274ddc525802f7c828d8ef7ddbcdc5304e87ac3535913611fbbfa986d0c9e5476c91689f9c8a54fd55bd38606aa6a8595ad213d4c9c9f9aca3fb217069a41028"
+    },
+    {
+      "entropy": "6610b25967cdcca9d59875f5cb50b0ea75433311869e930b",
+      "mnemonic": "gravity machine north sort system female filter attitude volume fold club stay feature office ecology stable narrow fog",
+      "passphrase": "TREZOR",
+      "seed": "628c3827a8823298ee685db84f55caa34b5cc195a778e52d45f59bcf75aba68e4d7590e101dc414bc1bbd5737666fbbef35d1f1903953b66624f910feef245ac"
     },
     {
       "entropy": "68a79eaca2324873eacc50cb9c6eca8cc68ea5d936f98787c60c7ebc74e6ce7c",
-      "mnemonic": "hamster diagram private dutch cause delay private meat slide toddler razor book happy fancy gospel tennis maple dilemma loan word shrug inflict delay length"
+      "mnemonic": "hamster diagram private dutch cause delay private meat slide toddler razor book happy fancy gospel tennis maple dilemma loan word shrug inflict delay length",
+      "passphrase": "TREZOR",
+      "seed": "64c87cde7e12ecf6704ab95bb1408bef047c22db4cc7491c4271d170a1b213d20b385bc1588d9c7b38f1b39d415665b8a9030c9ec653d75e65f847d8fc1fc440"
+    },
+    {
+      "entropy": "c0ba5a8e914111210f2bd131f3d5e08d",
+      "mnemonic": "scheme spot photo card baby mountain device kick cradle pact join borrow",
+      "passphrase": "TREZOR",
+      "seed": "ea725895aaae8d4c1cf682c1bfd2d358d52ed9f0f0591131b559e2724bb234fca05aa9c02c57407e04ee9dc3b454aa63fbff483a8b11de949624b9f1831a9612"
+    },
+    {
+      "entropy": "6d9be1ee6ebd27a258115aad99b7317b9c8d28b6d76431c3",
+      "mnemonic": "horn tenant knee talent sponsor spell gate clip pulse soap slush warm silver nephew swap uncle crack brave",
+      "passphrase": "TREZOR",
+      "seed": "fd579828af3da1d32544ce4db5c73d53fc8acc4ddb1e3b251a31179cdb71e853c56d2fcb11aed39898ce6c34b10b5382772db8796e52837b54468aeb312cfc3d"
     },
     {
       "entropy": "9f6a2878b2520799a44ef18bc7df394e7061a224d2c33cd015b157d746869863",
-      "mnemonic": "panda eyebrow bullet gorilla call smoke muffin taste mesh discover soft ostrich alcohol speed nation flash devote level hobby quick inner drive ghost inside"
+      "mnemonic": "panda eyebrow bullet gorilla call smoke muffin taste mesh discover soft ostrich alcohol speed nation flash devote level hobby quick inner drive ghost inside",
+      "passphrase": "TREZOR",
+      "seed": "72be8e052fc4919d2adf28d5306b5474b0069df35b02303de8c1729c9538dbb6fc2d731d5f832193cd9fb6aeecbc469594a70e3dd50811b5067f3b88b28c3e8d"
+    },
+    {
+      "entropy": "23db8160a31d3e0dca3688ed941adbf3",
+      "mnemonic": "cat swing flag economy stadium alone churn speed unique patch report train",
+      "passphrase": "TREZOR",
+      "seed": "deb5f45449e615feff5640f2e49f933ff51895de3b4381832b3139941c57b59205a42480c52175b6efcffaa58a2503887c1e8b363a707256bdd2b587b46541f5"
+    },
+    {
+      "entropy": "8197a4a47f0425faeaa69deebc05ca29c0a5b5cc76ceacc0",
+      "mnemonic": "light rule cinnamon wrap drastic word pride squirrel upgrade then income fatal apart sustain crack supply proud access",
+      "passphrase": "TREZOR",
+      "seed": "4cbdff1ca2db800fd61cae72a57475fdc6bab03e441fd63f96dabd1f183ef5b782925f00105f318309a7e9c3ea6967c7801e46c8a58082674c860a37b93eda02"
     },
     {
       "entropy": "066dca1a2bb7e8a1db2832148ce9933eea0f3ac9548d793112d9a95c9407efad",
-      "mnemonic": "all hour make first leader extend hole alien behind guard gospel lava path output census museum junior mass reopen famous sing advance salt reform"
+      "mnemonic": "all hour make first leader extend hole alien behind guard gospel lava path output census museum junior mass reopen famous sing advance salt reform",
+      "passphrase": "TREZOR",
+      "seed": "26e975ec644423f4a4c4f4215ef09b4bd7ef924e85d1d17c4cf3f136c2863cf6df0a475045652c57eb5fb41513ca2a2d67722b77e954b4b3fc11f7590449191d"
+    },
+    {
+      "entropy": "f30f8c1da665478f49b001d94c5fc452",
+      "mnemonic": "vessel ladder alter error federal sibling chat ability sun glass valve picture",
+      "passphrase": "TREZOR",
+      "seed": "2aaa9242daafcee6aa9d7269f17d4efe271e1b9a529178d7dc139cd18747090bf9d60295d0ce74309a78852a9caadf0af48aae1c6253839624076224374bc63f"
+    },
+    {
+      "entropy": "c10ec20dc3cd9f652c7fac2f1230f7a3c828389a14392f05",
+      "mnemonic": "scissors invite lock maple supreme raw rapid void congress muscle digital elegant little brisk hair mango congress clump",
+      "passphrase": "TREZOR",
+      "seed": "7b4a10be9d98e6cba265566db7f136718e1398c71cb581e1b2f464cac1ceedf4f3e274dc270003c670ad8d02c4558b2f8e39edea2775c9e232c7cb798b069e88"
     },
     {
       "entropy": "f585c11aec520db57dd353c69554b21a89b20fb0650966fa0a9d6f74fd989d8f",
-      "mnemonic": "void come effort suffer camp survey warrior heavy shoot primary clutch crush open amazing screen patrol group space point ten exist slush involve unfold"
+      "mnemonic": "void come effort suffer camp survey warrior heavy shoot primary clutch crush open amazing screen patrol group space point ten exist slush involve unfold",
+      "passphrase": "TREZOR",
+      "seed": "01f5bced59dec48e362f2c45b5de68b9fd6c92c6634f44d6d40aab69056506f0e35524a518034ddc1192e1dacd32c1ed3eaa3c3b131c88ed8e7e54c49a5d0998"
     }
   ],
+  "coin_type": 1,
+  "coin_type_provisional": true,
+  "description": "BIP39 English + SLIP-0010 ed25519. Official Trezor English vectors and both SLIP-0010 ed25519 vector chains, verified by an independent Go reference before production implementation. SLIP public keys include the official 00 prefix; XE public keys are raw 32 bytes.",
+  "invalid": [
+    {
+      "error": "word_count",
+      "phrase": ""
+    },
+    {
+      "error": "word_count",
+      "phrase": "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon"
+    },
+    {
+      "error": "checksum",
+      "phrase": "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon"
+    },
+    {
+      "error": "unknown_word",
+      "phrase": "abandon abandon notaword abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon art",
+      "position": 3
+    }
+  ],
+  "path_template": "m/44'/{coin_type}'/{account}'",
+  "slip10_ed25519": [
+    {
+      "chain_code": "90046a93de5380a72b5e45010748567d5ea02bbf6522f979e05c0d8d8ca9fffb",
+      "path": "m",
+      "private_key": "2b4be7f19ee27bbf30c667b642d5f4aa69fd169872f8fc3059c08ebae2eb19e7",
+      "public_key": "00a4b2856bfec510abab89753fac1ac0e1112364e7d250545963f135f2a33188ed",
+      "seed": "000102030405060708090a0b0c0d0e0f"
+    },
+    {
+      "chain_code": "8b59aa11380b624e81507a27fedda59fea6d0b779a778918a2fd3590e16e9c69",
+      "path": "m/0'",
+      "private_key": "68e0fe46dfb67e368c75379acec591dad19df3cde26e63b93a8e704f1dade7a3",
+      "public_key": "008c8a13df77a28f3445213a0f432fde644acaa215fc72dcdf300d5efaa85d350c",
+      "seed": "000102030405060708090a0b0c0d0e0f"
+    },
+    {
+      "chain_code": "a320425f77d1b5c2505a6b1b27382b37368ee640e3557c315416801243552f14",
+      "path": "m/0'/1'",
+      "private_key": "b1d0bad404bf35da785a64ca1ac54b2617211d2777696fbffaf208f746ae84f2",
+      "public_key": "001932a5270f335bed617d5b935c80aedb1a35bd9fc1e31acafd5372c30f5c1187",
+      "seed": "000102030405060708090a0b0c0d0e0f"
+    },
+    {
+      "chain_code": "2e69929e00b5ab250f49c3fb1c12f252de4fed2c1db88387094a0f8c4c9ccd6c",
+      "path": "m/0'/1'/2'",
+      "private_key": "92a5b23c0b8a99e37d07df3fb9966917f5d06e02ddbd909c7e184371463e9fc9",
+      "public_key": "00ae98736566d30ed0e9d2f4486a64bc95740d89c7db33f52121f8ea8f76ff0fc1",
+      "seed": "000102030405060708090a0b0c0d0e0f"
+    },
+    {
+      "chain_code": "8f6d87f93d750e0efccda017d662a1b31a266e4a6f5993b15f5c1f07f74dd5cc",
+      "path": "m/0'/1'/2'/2'",
+      "private_key": "30d1dc7e5fc04c31219ab25a27ae00b50f6fd66622f6e9c913253d6511d1e662",
+      "public_key": "008abae2d66361c879b900d204ad2cc4984fa2aa344dd7ddc46007329ac76c429c",
+      "seed": "000102030405060708090a0b0c0d0e0f"
+    },
+    {
+      "chain_code": "68789923a0cac2cd5a29172a475fe9e0fb14cd6adb5ad98a3fa70333e7afa230",
+      "path": "m/0'/1'/2'/2'/1000000000'",
+      "private_key": "8f94d394a8e8fd6b1bc2f3f49f5c47e385281d5c17e65324b0f62483e37e8793",
+      "public_key": "003c24da049451555d51a7014a37337aa4e12d41e485abccfa46b47dfb2af54b7a",
+      "seed": "000102030405060708090a0b0c0d0e0f"
+    },
+    {
+      "chain_code": "ef70a74db9c3a5af931b5fe73ed8e1a53464133654fd55e7a66f8570b8e33c3b",
+      "path": "m",
+      "private_key": "171cb88b1b3c1db25add599712e36245d75bc65a1a5c9e18d76f9f2b1eab4012",
+      "public_key": "008fe9693f8fa62a4305a140b9764c5ee01e455963744fe18204b4fb948249308a",
+      "seed": "fffcf9f6f3f0edeae7e4e1dedbd8d5d2cfccc9c6c3c0bdbab7b4b1aeaba8a5a29f9c999693908d8a8784817e7b7875726f6c696663605d5a5754514e4b484542"
+    },
+    {
+      "chain_code": "0b78a3226f915c082bf118f83618a618ab6dec793752624cbeb622acb562862d",
+      "path": "m/0'",
+      "private_key": "1559eb2bbec5790b0c65d8693e4d0875b1747f4970ae8b650486ed7470845635",
+      "public_key": "0086fab68dcb57aa196c77c5f264f215a112c22a912c10d123b0d03c3c28ef1037",
+      "seed": "fffcf9f6f3f0edeae7e4e1dedbd8d5d2cfccc9c6c3c0bdbab7b4b1aeaba8a5a29f9c999693908d8a8784817e7b7875726f6c696663605d5a5754514e4b484542"
+    },
+    {
+      "chain_code": "138f0b2551bcafeca6ff2aa88ba8ed0ed8de070841f0c4ef0165df8181eaad7f",
+      "path": "m/0'/2147483647'",
+      "private_key": "ea4f5bfe8694d8bb74b7b59404632fd5968b774ed545e810de9c32a4fb4192f4",
+      "public_key": "005ba3b9ac6e90e83effcd25ac4e58a1365a9e35a3d3ae5eb07b9e4d90bcf7506d",
+      "seed": "fffcf9f6f3f0edeae7e4e1dedbd8d5d2cfccc9c6c3c0bdbab7b4b1aeaba8a5a29f9c999693908d8a8784817e7b7875726f6c696663605d5a5754514e4b484542"
+    },
+    {
+      "chain_code": "73bd9fff1cfbde33a1b846c27085f711c0fe2d66fd32e139d3ebc28e5a4a6b90",
+      "path": "m/0'/2147483647'/1'",
+      "private_key": "3757c7577170179c7868353ada796c839135b3d30554bbb74a4b1e4a5a58505c",
+      "public_key": "002e66aa57069c86cc18249aecf5cb5a9cebbfd6fadeab056254763874a9352b45",
+      "seed": "fffcf9f6f3f0edeae7e4e1dedbd8d5d2cfccc9c6c3c0bdbab7b4b1aeaba8a5a29f9c999693908d8a8784817e7b7875726f6c696663605d5a5754514e4b484542"
+    },
+    {
+      "chain_code": "0902fe8a29f9140480a00ef244bd183e8a13288e4412d8389d140aac1794825a",
+      "path": "m/0'/2147483647'/1'/2147483646'",
+      "private_key": "5837736c89570de861ebc173b1086da4f505d4adb387c6a1b1342d5e4ac9ec72",
+      "public_key": "00e33c0f7d81d843c572275f287498e8d408654fdf0d1e065b84e2e6f157aab09b",
+      "seed": "fffcf9f6f3f0edeae7e4e1dedbd8d5d2cfccc9c6c3c0bdbab7b4b1aeaba8a5a29f9c999693908d8a8784817e7b7875726f6c696663605d5a5754514e4b484542"
+    },
+    {
+      "chain_code": "5d70af781f3a37b829f0d060924d5e960bdc02e85423494afc0b1a41bbe196d4",
+      "path": "m/0'/2147483647'/1'/2147483646'/2'",
+      "private_key": "551d333177df541ad876a60ea71f00447931c0a9da16f227c11ea080d7391b8d",
+      "public_key": "0047150c75db263559a70d5778bf36abbab30fb061ad69f69ece61a72b0cfa4fc0",
+      "seed": "fffcf9f6f3f0edeae7e4e1dedbd8d5d2cfccc9c6c3c0bdbab7b4b1aeaba8a5a29f9c999693908d8a8784817e7b7875726f6c696663605d5a5754514e4b484542"
+    }
+  ],
+  "version": 2,
+  "wordlist_sha256": "2f5eed53a4727b4bf8880d8f3f199efc90e58503646d9ff8eff3a2ed3b24dbda",
   "xe": [
     {
-      "seed": "0000000000000000000000000000000000000000000000000000000000000000",
+      "account": 0,
+      "address": "294bfbdce14da4c715440065f1e94cbeb8053c63c228d6522b3ec9ab8d82d696",
+      "ed25519_seed": "7d203575d41abdaa7d0159b6a8e485d3093096a5a5aeb9739c626b5717e78624",
+      "passphrase": "",
+      "path": "m/44'/1'/0'",
       "phrase": "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon art",
-      "public_key": "3b6a27bcceb6a42d62a3a8d02a6f0d73653215771de243a63ac048a18b59da29",
-      "address": "4ac0d6d4f0bd50354b93324c950096f6e0de5f91e42dac66583756afd50852de"
+      "public_key": "9b626614bec79527c8d0176d049ce72ccea9cbb44a80b4b3784edca18dd9b31b"
     },
     {
-      "seed": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-      "phrase": "zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo vote",
-      "public_key": "76a1592044a6e4f511265bca73a604d90b0529d1df602be30a19a9257660d1f5",
-      "address": "b25fe45d4afa568e72559a9e0bcf727c44dbdde8ab591df1f53fdd908cd73dbb"
+      "account": 1,
+      "address": "8332fe88470d3fc5280539527154a8b8a1ec0ef89a92972a27daace126a0dc73",
+      "ed25519_seed": "72d309ea3765aed4384ff5bf67bb23b5f91886529ea67195b6333357cc5e8a71",
+      "passphrase": "",
+      "path": "m/44'/1'/1'",
+      "phrase": "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon art",
+      "public_key": "aa625ed91ccc7a74669b0f1d2d8ec2b02f4fa49ad37f97a64d4c12b4f29f19b9"
     },
     {
-      "seed": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
-      "phrase": "abandon amount liar amount expire adjust cage candy arch gather drum bullet absurd math era live bid rhythm alien crouch range attend journey unaware",
-      "public_key": "03a107bff3ce10be1d70dd18e74bc09967e4d6309ba50d5f1ddc8664125531b8",
-      "address": "338c76e03f0a8dd21192808ba1a11879b2202591bf53f4338070119f4f54a0e1"
+      "account": 0,
+      "address": "697ab39a01adee1ae662a330a94c08bc894f2c275ed08c01b0abb60be00fc280",
+      "ed25519_seed": "ae60c329be0040aff4398bdc5fa778b84943285f3db253db798dbc965a603f26",
+      "passphrase": "TREZOR",
+      "path": "m/44'/1'/0'",
+      "phrase": "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon art",
+      "public_key": "d38f0c46069036a0b6b9d0c71d525363074f47287637e4a9e1380b572ed3e6d7"
     },
     {
-      "seed": "7a11413e0111030869fb5d1e434ef96110be6dbb0fb160064b3fa7a36a5f35bf",
-      "phrase": "key meat exhibit acquire awake loud pony hill bundle bounce salad season armor cycle umbrella wage gas crane soup exercise cute convince street trophy",
-      "public_key": "42aa7e1f7b83cf10b730a4ac7e11c8c4dda9321b60207ee8a9649932cada7319",
-      "address": "1cc821b6fedffceeac924054c97a3185ab835c498da225cbbd7bc89f1945a769"
+      "account": 0,
+      "address": "81cbacf91f0905fb0362b0485e8edc7683b4698d3979460c4dc6ffeb5049b758",
+      "ed25519_seed": "aee46d61b83de269c446a04b2beb5ea7ee1ce72207b5e7b8a8a10e642405b680",
+      "passphrase": "",
+      "path": "m/44'/1'/0'",
+      "phrase": "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about",
+      "public_key": "a90eb13b090b4d4c31ae87d864c0cd8db25216c90c1ce6fbfd04ddcdc1aa110c"
     },
     {
-      "seed": "1c9813e44d6cfe05cd8d55a442897c56091e03aa6744c82cc16e33383d3a054e",
-      "phrase": "broken scene weekend onion soup actual curtain primary picture begin gallery project music achieve praise trigger sight gravity fortune grid long other benefit special",
-      "public_key": "a0ccc1be08b3b369c3b5b2bc8e47a61a1cb2cc6fa5662a5882ba09065cf1558c",
-      "address": "cadb731c0c153a76bd503702f7c2f51026623d2e3b31b51981cbe6873f0bb26b"
+      "account": 0,
+      "address": "b7f23581a788c20bf2915c20c3963035cb0bf35ad14d4b8be29e4e356b134e25",
+      "ed25519_seed": "422d3d2244d826fefe6e216316184631339cd209424f72de273aed3339cfa630",
+      "passphrase": "",
+      "path": "m/44'/1'/0'",
+      "phrase": "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon address",
+      "public_key": "bb38e7d4fb05fd29d7cedfeaa048b0c734ad2938f93065da0f984a4a0335be9e"
+    },
+    {
+      "account": 0,
+      "address": "347f9ea90d348ecbb433e04698653def09f952ae38c7dde59beb90ab8aade48b",
+      "ed25519_seed": "c03e5d6a86d247e914cc6026e2a497ca9ac5bdc079526b90eb9503aa0fa24bbf",
+      "passphrase": "",
+      "path": "m/44'/1'/0'",
+      "phrase": "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon admit",
+      "public_key": "5af965d221d9402f42f0db502f506722afa90582906c350386bf6e108b324568"
+    },
+    {
+      "account": 0,
+      "address": "b64267a13412514eb502f7e7ff2c7eeeb67ed72e7fce48323a0caba4f4617f08",
+      "ed25519_seed": "6edd4467bfbce22d7d75dfa6f27be77c0b93054afdaefe6aac8a2667ac665fff",
+      "passphrase": "",
+      "path": "m/44'/1'/0'",
+      "phrase": "current atom you one bridge donkey joy ghost misery museum control roast fresh session wage route error rocket hello random happy broom pact prize",
+      "public_key": "baa9f48534fe96d4d96de832ac08bf4cc8809f1a2dc2ff54716ccb3fe296a1df"
+    },
+    {
+      "account": 0,
+      "address": "7a3ca304f157dca1f5d00ae5aef57c07e0883bd86b713f5f12cd939bac321296",
+      "ed25519_seed": "a7f939308aba0135c7e90a1197a3114b2b8b866942668d76fe517401720a0ad2",
+      "passphrase": "",
+      "path": "m/44'/1'/0'",
+      "phrase": "quit possible silent pole same apple ready senior barely hire fruit alone vault sight pink retire glimpse illness you frame long text churn size",
+      "public_key": "c0e3810bfe461dba64fd787f9f606ca650773ec5ed4a6268d3e3020e528e41ce"
+    },
+    {
+      "account": 0,
+      "address": "cdc1ba866ddd2a5752c1239178e665bdacab567672d0463fd625fde357045ae4",
+      "ed25519_seed": "18bd53b00e8369b9d71eac8cb036a9aee2b909286dc48ac49c2e09224b3deb8a",
+      "passphrase": "",
+      "path": "m/44'/1'/0'",
+      "phrase": "addict stock task sea indoor submit hedgehog asthma wool garlic divert idle easy valve shoe toddler credit gaze rival faculty volcano spread negative crack",
+      "public_key": "06830dfabeaf5780b8b8978d8fa1c17d512e1ee493a844761faf94a6a28f92ef"
+    },
+    {
+      "account": 2147483647,
+      "address": "8a55e340aefad5ccb7c7294ac3e7fa48d25cdffc3f610a5de2138ad9c18bdd51",
+      "ed25519_seed": "737347d695dfdc418b613daf73c39df18de6968ab34d37b4514c2cbebcdd8c33",
+      "passphrase": "café㍍ガバヴァぱばぐゞちぢ十人十色",
+      "path": "m/44'/1'/2147483647'",
+      "phrase": "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon art",
+      "public_key": "58becdcf2c42de4f917ef2307eb15ddb744ad5916347a69c222d2991f81a55af"
     }
   ]
 }
