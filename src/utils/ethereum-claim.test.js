@@ -5,7 +5,7 @@ const info = {
   rehearsal: true,
   chainId: '0x7a69',
   tokenAddress: '0x4ec1b60b96193a64acae44778e51f7bff2007831',
-  claimsAddress: '0x2222222222222222222222222222222222222222',
+  claimsAddress: '0x000000000000000000000000000000000000dead',
   confirmations: 2, minAmount: '1000000000000000000',
   tokenCodeHash: '0x5b912c55e41475c2a0d9c46ad3c923f2ce4b2dca84697721de0ba63738c56b3b'
 }
@@ -19,7 +19,7 @@ const claim = { ...info, ...request, ref: '11'.repeat(32) }
 describe('Ethereum claim transfer', () => {
   it('encodes one EDGE transfer with the versioned claim reference', () => {
     expect(encodeClaimTransfer(claim)).toBe(
-      '0xa9059cbb0000000000000000000000002222222222222222222222222222222222222222' +
+      '0xa9059cbb000000000000000000000000000000000000000000000000000000000000dead' +
       '0000000000000000000000000000000000000000000000000de0b6b3a7640000' +
       '58454331' + '11'.repeat(32)
     )
@@ -31,6 +31,10 @@ describe('Ethereum claim transfer', () => {
     for (const value of ['0', '-1', '1e3', '1,000', '0.0000001', '1.2345678', '']) {
       expect(() => parseClaimAmount(value)).toThrow()
     }
+  })
+
+  it('refuses to encode a transfer to any other recipient', () => {
+    expect(() => encodeClaimTransfer({ ...claim, claimsAddress: '0x' + '22'.repeat(20) })).toThrow(/burn address/i)
   })
 
   it('refuses a malformed reference before creating a transfer', () => {
@@ -46,6 +50,7 @@ describe('Ethereum claim configuration and binding', () => {
   })
   it('only accepts the pinned EDGE contract on Ethereum or the explicit local rehearsal', () => {
     expect(() => validateEthereumInfo(info)).not.toThrow()
+    expect(() => validateEthereumInfo({ ...info, claimsAddress: '0x' + '22'.repeat(20) })).toThrow(/configuration/i)
     expect(() => validateEthereumInfo({ ...info, chainId: '0x1', rehearsal: false })).not.toThrow()
     expect(() => validateEthereumInfo({ ...info, chainId: '0x89' })).toThrow(/network/i)
     expect(() => validateEthereumInfo({ ...info, tokenAddress: '0x4444444444444444444444444444444444444444' })).toThrow(/configuration/i)

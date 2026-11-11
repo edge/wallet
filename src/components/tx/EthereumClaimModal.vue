@@ -10,7 +10,7 @@
       <template v-slot:body>
         <div class="pb-14 min-h-410">
           <p v-if="info?.rehearsal" class="mb-20 text-gray">Local rehearsal. Test assets only; no native XE is paid.</p>
-          <p v-else-if="info && step !== 3" class="mb-20 text-gray">Send EDGE to register your claim for XE. XE delivery happens separately, after approval.</p>
+          <p v-else-if="info && step !== 3" class="mb-20 text-gray">Burn EDGE to register your claim for XE. XE delivery happens separately, after approval.</p>
           <p v-if="!info && !error" role="status">Connecting to the claims service…</p>
           <template v-if="info && step === 1">
             <p v-if="!ethereumAddress" class="text-gray">Connect your Ethereum wallet, choose where to receive XE, then review your transfer.</p>
@@ -49,7 +49,7 @@
               <span class="break-all">{{ destination }}</span>
             </div>
             <div class="form-group mb-16">
-              <label>You send</label>
+              <label>You burn</label>
               <Amount :value="amount" currency="$EDGE" short sub/>
             </div>
             <div class="form-group mb-14">
@@ -57,9 +57,10 @@
               <span>{{ info.chainName }}</span>
             </div>
             <div class="form-group mb-14">
-              <label>Claims wallet</label>
-              <span class="break-all">{{ info.claimsAddress }}</span>
+              <label>Burn address</label>
+              <span class="break-all">{{ ethereumBurnAddress }}</span>
             </div>
+            <p class="mt-20 text-gray">Your EDGE will be permanently retired and cannot be refunded. XE delivery happens separately, after approval.</p>
             <p class="mt-20 text-gray">Your wallet will ask you to approve this EDGE transfer. You also need ETH for the network fee.</p>
           </template>
           <template v-if="info && step === 3 && active">
@@ -69,14 +70,15 @@
             <ol class="claim-stages">
               <li :class="stageClass('posted')">Transfer posted</li>
               <li :class="stageClass('in_block')">In a block<span v-if="active.status === 'in_block'"> ({{ active.confirmations }} of {{ info.confirmations }} confirmations)</span></li>
-              <li :class="stageClass('received')">Received by the claims service</li>
+              <li :class="stageClass('received')">Claim recorded</li>
             </ol>
             <div class="claim-box" role="status">
-              <template v-if="received && active.review?.length">The claims service received your transfer. It needs review before approval.</template>
-              <template v-else-if="received">Your EDGE transfer is received. XE approval and delivery are handled separately.</template>
+              <template v-if="!burnClaim">This receipt uses a previous transfer destination. Keep it for reconciliation. Do not send another transfer for this claim.</template>
+              <template v-else-if="received && active.review?.length">Your EDGE burn is confirmed. Your claim needs review before approval.</template>
+              <template v-else-if="received">Your EDGE burn is confirmed. XE approval and delivery are handled separately.</template>
               <template v-else-if="active.status === 'transfer_failed'">The transfer failed. No EDGE moved in that transaction.</template>
-              <template v-else-if="active.status === 'expired'">This reference has expired. Check your wallet before making another claim. A late transfer can still be recorded for review.</template>
-              <template v-else-if="!active.hash">Confirm the transfer in your wallet. If you already approved it, wait for the claims service before trying again.</template>
+              <template v-else-if="active.status === 'expired'">This reference has expired. Do not send again while this transfer is unresolved. Check your wallet and keep this receipt. A late transfer can still be recorded for review.</template>
+              <template v-else-if="!active.hash">Confirm the transfer in your wallet. If you already approved it, wait for the claims service. Do not send again while it is unresolved.</template>
               <template v-else>You can leave this page: your claim continues without it. Keep the page open to follow it here.</template>
             </div>
             <div class="mt-20 form-group mb-14">
@@ -96,7 +98,7 @@
               <pre class="mt-10 text-sm2 whitespace-pre-wrap break-all">{{ receiptText }}</pre>
             </details>
             <p v-if="receiptNotice" class="mt-10 text-gray" role="status">{{ receiptNotice }}</p>
-            <details v-if="received && info.open" class="mt-20">
+            <details v-if="received && burnClaim && info.open" class="mt-20">
               <summary>Make another claim</summary>
               <p class="mt-10 text-gray">Starting another claim replaces the receipt saved in this browser. Save this receipt first.</p>
               <label class="claim-check"><input id="ethereum-receipt-saved" type="checkbox" v-model="receiptSaved" /><span>I have saved this receipt.</span></label>
@@ -112,17 +114,17 @@
             <button class="w-full button button--outline-success" :disabled="busy" @click="step === 2 ? back() : cancel()">{{ step === 2 ? 'Back' : 'Cancel' }}</button>
             <button v-if="step === 1 && !ethereumAddress" class="w-full button button--success" :disabled="!info || (!info.open && !active) || busy" @click="connect">{{ busy ? 'Connecting…' : 'Connect wallet' }}</button>
             <button v-else-if="step === 1" class="w-full button button--success" :disabled="!canContinue || busy" @click="step = 2">Continue</button>
-            <button v-else class="w-full button button--success" :disabled="busy || !canContinue" @click="submit">{{ busy ? 'Waiting for wallet…' : 'Continue in wallet' }}</button>
+            <button v-else class="w-full button button--success" :disabled="busy || !canContinue" @click="submit">{{ busy ? 'Waiting for wallet…' : 'Burn in wallet' }}</button>
           </div>
           <div v-else-if="received" class="grid grid-cols-1 gap-24 md:grid-cols-2">
             <button class="w-full button button--outline-success" @click="copyReceipt">Copy receipt</button>
             <button class="w-full button button--success" @click="cancel">Close</button>
           </div>
-          <div v-else-if="['transfer_failed', 'expired'].includes(active?.status)" class="grid grid-cols-1 gap-24 md:grid-cols-2">
+          <div v-else-if="active?.status === 'transfer_failed'" class="grid grid-cols-1 gap-24 md:grid-cols-2">
             <button class="w-full button button--outline-success" @click="cancel">Close</button>
             <button class="w-full button button--success" @click="newClaim">Try again</button>
           </div>
-          <div v-else-if="active?.status === 'awaiting_transfer' && !active.hash" class="grid grid-cols-1 gap-24 md:grid-cols-2">
+          <div v-else-if="active?.status === 'awaiting_transfer' && active.rejected && !active.hash" class="grid grid-cols-1 gap-24 md:grid-cols-2">
             <button class="w-full button button--outline-success" :disabled="busy" @click="cancel">Close</button>
             <button class="w-full button button--success" :disabled="busy" @click="resume">Review transfer</button>
           </div>
@@ -145,7 +147,7 @@ import { helpers } from '@vuelidate/validators'
 import { markRaw } from 'vue'
 import useVuelidate from '@vuelidate/core'
 import {
-  claimBalanceText, encodeClaimTransfer, ethereumClaimStorageKey, ethereumClaimsRequest,
+  claimBalanceText, encodeClaimTransfer, ethereumBurnAddress, ethereumClaimStorageKey, ethereumClaimsRequest,
   parseClaimAmount, validateClaim, validateEthereumInfo
 } from '../../utils/ethereum-claim'
 import { newXeAddressRegexp, normaliseXeAddress } from '../../utils/claim'
@@ -156,7 +158,7 @@ export default {
   props: { visible: Boolean, close: Function },
   data() {
     return {
-      info: null, step: 1, ethereumAddress: '', balance: '0', xeAddress: '', amount: '', checked: false,
+      ethereumBurnAddress, info: null, step: 1, ethereumAddress: '', balance: '0', xeAddress: '', amount: '', checked: false,
       creatingAddress: false, busy: false, error: '', active: null, pollTimer: null, pollGeneration: 0, listening: false,
       walletProvider: null, receiptNotice: '', receiptSaved: false
     }
@@ -174,7 +176,7 @@ export default {
   computed: {
     receiptText() {
       if (!this.active) return ''
-      return `XE claim receipt\nReference: ${this.active.ref}\nNetwork: ${this.info.chainName}\nAmount: ${this.activeAmount} EDGE\nFrom: ${this.active.ethereumAddress}\nXE wallet address: ${this.active.xeAddress}\nTransaction: ${this.active.hash || 'Not yet posted'}\nStatus: ${this.received ? 'Transfer received. XE approval and delivery are handled separately.' : this.statusTitle}`
+      return `XE claim receipt\nReference: ${this.active.ref}\nNetwork: ${this.info.chainName}\nAmount: ${this.activeAmount} EDGE\nTransfer recipient: ${this.active.claimsAddress}\nFrom: ${this.active.ethereumAddress}\nXE wallet address: ${this.active.xeAddress}\nTransaction: ${this.active.hash || 'Not yet posted'}\nStatus: ${this.received ? 'Claim recorded. XE approval and delivery are handled separately.' : this.statusTitle}`
     },
     destination() {
       return normaliseXeAddress(this.xeAddress)
@@ -196,6 +198,9 @@ export default {
     canContinue() {
       return !!this.info && (this.info.open || !!this.active) && !!this.ethereumAddress && !this.v$.$invalid
     },
+    burnClaim() {
+      return this.active?.claimsAddress?.toLowerCase() === ethereumBurnAddress.toLowerCase()
+    },
     received() {
       return this.active?.status === 'received'
     },
@@ -214,7 +219,7 @@ export default {
       return this.active?.hash ? 15 : 0
     },
     statusTitle() {
-      if (this.received) return 'Claim received'
+      if (this.received) return 'Claim recorded'
       if (this.active?.status === 'transfer_failed') return 'Transfer failed'
       if (this.active?.status === 'expired') return 'Claim expired'
       if (this.active?.status === 'in_block') return 'Confirming transfer'
@@ -250,8 +255,8 @@ export default {
         const saved = localStorage.getItem(ethereumClaimStorageKey())
         if (saved) {
           this.active = JSON.parse(saved)
-          validateClaim(this.active, info, this.active)
           this.step = 3
+          validateClaim(this.active, info, this.active)
           this.startPolling()
         }
         else if (!info.open) throw new Error('Claims are closed.')
@@ -329,6 +334,7 @@ export default {
         validateClaim(response, this.info, request)
         const claim = { ...response, xeAddress: request.xeAddress }
         if (this.active) {
+          if (this.active.hash || !this.active.rejected) throw new Error('This burn is unresolved. Check your wallet and keep the claim receipt.')
           const status = await ethereumClaimsRequest(`/claims/${claim.ref}`)
           validateClaim(status, this.info, claim)
           if (status.status !== 'awaiting_transfer') {
@@ -340,7 +346,7 @@ export default {
           }
         }
         await this.checkWallet()
-        this.active = claim
+        this.active = { ...claim, rejected: false }
         this.save()
         this.step = 3
         requested = true
@@ -353,7 +359,9 @@ export default {
         this.startPolling()
       }
       catch (err) {
-        if (err.code === 4001) {
+        if (requested && err.code === 4001) {
+          this.active.rejected = true
+          this.save()
           this.error = 'Transaction rejected. You can confirm the same claim again.'
           this.step = 2
         }
@@ -388,13 +396,16 @@ export default {
               const tx = await provider.request({ method: 'eth_getTransactionByHash', params: [active.hash] })
               if (tx?.from?.toLowerCase() !== active.ethereumAddress.toLowerCase() || tx?.to?.toLowerCase() !== this.info.tokenAddress.toLowerCase() ||
                   tx.input?.toLowerCase() !== encodeClaimTransfer(active).toLowerCase()) throw new Error('Wallet transaction does not match the claim.')
-              if (receipt.status === '0x0') active.status = 'transfer_failed'
-              else {
-                const block = await provider.request({ method: 'eth_getBlockByNumber', params: [receipt.blockNumber, false] })
-                if (block?.hash === receipt.blockHash) {
-                  const head = await provider.request({ method: 'eth_blockNumber' })
-                  active.confirmations = Math.max(0, ethers.BigNumber.from(head).sub(receipt.blockNumber).add(1).toNumber())
-                  if (active.status !== 'expired') active.status = 'in_block'
+              const block = await provider.request({ method: 'eth_getBlockByNumber', params: [receipt.blockNumber, false] })
+              if (block?.hash === receipt.blockHash) {
+                const head = await provider.request({ method: 'eth_blockNumber' })
+                active.confirmations = Math.max(0, ethers.BigNumber.from(head).sub(receipt.blockNumber).add(1).toNumber())
+                active.status = 'in_block'
+                if (receipt.status === '0x0' && active.confirmations >= this.info.confirmations) {
+                  const finalized = this.info.chainId === '0x1'
+                    ? await provider.request({ method: 'eth_getBlockByNumber', params: ['finalized', false] })
+                    : block
+                  if (finalized?.number && ethers.BigNumber.from(finalized.number).gte(receipt.blockNumber)) active.status = 'transfer_failed'
                 }
               }
             }
@@ -441,6 +452,7 @@ export default {
     },
     async resume() {
       const active = this.active
+      if (!active?.rejected || active.hash || active.status !== 'awaiting_transfer') return
       await this.connect()
       if (this.ethereumAddress.toLowerCase() !== active.ethereumAddress.toLowerCase()) {
         this.error = 'Connect the Ethereum account that created this claim.'
@@ -453,6 +465,8 @@ export default {
       this.step = 1
     },
     newClaim() {
+      if (!this.burnClaim) return
+      if (!this.received && this.active?.status !== 'transfer_failed') return
       if (this.received && !this.receiptSaved) return
       this.stopPolling(); localStorage.removeItem(ethereumClaimStorageKey())
       this.active = null

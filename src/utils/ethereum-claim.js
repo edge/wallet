@@ -6,6 +6,7 @@ import { ethers } from 'ethers'
 
 export const ethereumClaimsEnabled = () => !!import.meta.env.VITE_ETHEREUM_CLAIMS_API_URL
 export const ethereumClaimStorageKey = () => `ethereum-claim:${import.meta.env.VITE_ETHEREUM_CLAIMS_API_URL}`
+export const ethereumBurnAddress = '0x000000000000000000000000000000000000dEaD'
 const edgeToken = '0x4ec1b60b96193a64acae44778e51f7bff2007831'
 const edgeCodeHash = '0x5b912c55e41475c2a0d9c46ad3c923f2ce4b2dca84697721de0ba63738c56b3b'
 const token = new ethers.utils.Interface(['function transfer(address recipient, uint256 amount) returns (bool)'])
@@ -20,6 +21,7 @@ export function parseClaimAmount(value) {
 }
 
 export function encodeClaimTransfer(claim) {
+  if (claim.claimsAddress?.toLowerCase() !== ethereumBurnAddress.toLowerCase()) throw new Error('Invalid Ethereum burn address.')
   if (!referencePattern.test(claim.ref)) throw new Error('Invalid claim reference.')
   return token.encodeFunctionData('transfer', [claim.claimsAddress, claim.amount]) + '58454331' + claim.ref
 }
@@ -34,7 +36,7 @@ export function validateEthereumInfo(info) {
     throw new Error('Unsupported Ethereum claims network.')
   }
   if (info.tokenAddress?.toLowerCase() !== edgeToken || info.tokenCodeHash !== edgeCodeHash ||
-      !ethers.utils.isAddress(info.claimsAddress) || info.claimsAddress === ethers.constants.AddressZero ||
+      info.claimsAddress?.toLowerCase() !== ethereumBurnAddress.toLowerCase() ||
       !/^[1-9][0-9]*$/.test(info.minAmount) || !Number.isSafeInteger(info.confirmations) || info.confirmations < 1) {
     throw new Error('Invalid Ethereum claims configuration.')
   }
@@ -45,6 +47,7 @@ export function validateClaim(claim, info, request) {
       !/^[1-9][0-9]*$/.test(request.amount) || ethers.BigNumber.from(request.amount).gt(ethers.constants.MaxUint256)) {
     throw new Error('Invalid claim details.')
   }
+  validateEthereumInfo(info)
   const matches = claim.chainId === info.chainId &&
     claim.tokenAddress?.toLowerCase() === info.tokenAddress.toLowerCase() &&
     claim.claimsAddress?.toLowerCase() === info.claimsAddress.toLowerCase() &&

@@ -10,7 +10,7 @@ const code = edgeRuntime.trim()
 const info = {
   open: true, rehearsal: true, chainId: '0x7a69', chainName: 'EDGE Claim Rehearsal',
   confirmations: 2, minAmount: '1000000000000000000', tokenAddress: '0x4ec1b60b96193a64acae44778e51f7bff2007831',
-  claimsAddress: '0x2222222222222222222222222222222222222222', tokenCodeHash: ethers.utils.keccak256(code)
+  claimsAddress: '0x000000000000000000000000000000000000dead', tokenCodeHash: ethers.utils.keccak256(code)
 }
 let app; let chainId; let corrupt; let host; let pending; let reject; let sent; let stage
 const button = text => [...host.querySelectorAll('button')].find(el => el.textContent.includes(text))
@@ -20,7 +20,7 @@ async function fill(selector, value) {
   input.dispatchEvent(new Event('input', { bubbles: true }))
   await nextTick()
 }
-async function mount() {
+async function mount(expected = 'Local rehearsal') {
   host = document.createElement('div')
   document.body.append(host)
   const props = reactive({ visible: false })
@@ -29,7 +29,7 @@ async function mount() {
   } }) })
   app.mount(host)
   props.visible = true
-  await vi.waitFor(() => expect(host.textContent).toContain('Local rehearsal'))
+  await vi.waitFor(() => expect(host.textContent).toContain(expected))
   return props
 }
 async function ready() {
@@ -131,8 +131,10 @@ describe('Ethereum claim confirmation', () => {
   it('shows the destination before asking for one reference-bearing transfer', async () => {
     await ready()
     expect(host.textContent).toContain('aa'.repeat(32))
+    expect(host.textContent).toContain('Burn address')
+    expect(host.textContent).toContain('cannot be refunded')
     expect(sent).toHaveLength(0)
-    button('Continue in wallet').click()
+    button('Burn in wallet').click()
     await vi.waitFor(() => expect(sent).toHaveLength(1))
     expect(sent[0]).toMatchObject({ from: sender, to: info.tokenAddress, value: '0x0', chainId: '0x7a69' })
     expect(sent[0].data).toMatch(/58454331(11){32}$/)
@@ -151,23 +153,45 @@ describe('Ethereum claim confirmation', () => {
   it('keeps a rejected transfer retryable without losing the pending reference', async () => {
     reject = true
     await ready()
-    button('Continue in wallet').click()
+    button('Burn in wallet').click()
     await vi.waitFor(() => expect(host.textContent).toContain('rejected'))
     expect(sent).toHaveLength(0)
-    expect(button('Continue in wallet').disabled).toBe(false)
+    expect(button('Burn in wallet').disabled).toBe(false)
     expect(JSON.parse(localStorage.getItem(ethereumClaimStorageKey())).ref).toBe(pending.ref)
+  })
+  it('keeps an uncertain wallet submission unresolved without offering another burn', async () => {
+    let attempts = 0
+    const request = window.ethereum.request
+    window.ethereum.request = async args => {
+      if (args.method === 'eth_sendTransaction') {
+        attempts++
+        throw new Error('Wallet connection lost')
+      }
+      return request(args)
+    }
+    await ready()
+    button('Burn in wallet').click()
+    await vi.waitFor(() => expect(host.textContent).toContain('Check your wallet and the claim status'))
+    expect(button('Review transfer')).toBeUndefined()
+    expect(button('Try again')).toBeUndefined()
+    expect(JSON.parse(localStorage.getItem(ethereumClaimStorageKey())).ref).toBe(pending.ref)
+    app.unmount(); host.remove()
+    await mount()
+    expect(button('Review transfer')).toBeUndefined()
+    expect(button('Try again')).toBeUndefined()
+    expect(attempts).toBe(1)
   })
   it('refuses a changed destination returned by the API', async () => {
     corrupt = true
     await ready()
-    button('Continue in wallet').click()
+    button('Burn in wallet').click()
     await vi.waitFor(() => expect(host.textContent).toContain('does not match'))
     expect(sent).toHaveLength(0)
   })
   it('refuses a network change between review and confirmation', async () => {
     await ready()
     chainId = '0x1'
-    button('Continue in wallet').click()
+    button('Burn in wallet').click()
     await vi.waitFor(() => expect(host.textContent).toContain('Connect again'))
     expect(sent).toHaveLength(0)
   })
@@ -176,13 +200,13 @@ describe('Ethereum claim confirmation', () => {
     localStorage.setItem(ethereumClaimStorageKey(), JSON.stringify(pending))
     stage = 'received'
     const props = await mount()
-    await vi.waitFor(() => expect(host.textContent).toContain('Received by the claims service'))
+    await vi.waitFor(() => expect(host.textContent).toContain('Claim recorded'))
     expect(host.textContent).toContain('no native XE is paid')
     button('Close').click()
     await nextTick()
     expect(JSON.parse(localStorage.getItem(ethereumClaimStorageKey()))).toMatchObject({ ref: pending.ref, xeAddress: 'aa'.repeat(32) })
     props.visible = true
-    await vi.waitFor(() => expect(host.textContent).toContain('Claim received'))
+    await vi.waitFor(() => expect(host.textContent).toContain('Claim recorded'))
     expect(sent).toHaveLength(0)
   })
   it('copies the receipt and requires saving it before replacing it', async () => {
@@ -193,7 +217,7 @@ describe('Ethereum claim confirmation', () => {
     const writeText = vi.fn().mockResolvedValue()
     vi.stubGlobal('navigator', { clipboard: { writeText } })
     await mount()
-    await vi.waitFor(() => expect(host.textContent).toContain('Claim received'))
+    await vi.waitFor(() => expect(host.textContent).toContain('Claim recorded'))
     button('Copy receipt').click()
     await vi.waitFor(() => expect(host.textContent).toContain('Receipt copied'))
     const receipt = writeText.mock.calls[0][0]
@@ -221,21 +245,20 @@ describe('Ethereum claim confirmation', () => {
     expect(localStorage.getItem(ethereumClaimStorageKey())).not.toBeNull()
     expect(button('Start new claim').disabled).toBe(true)
   })
-  it('offers a fresh form after an expired reference without sending a transfer', async () => {
-    pending = { ...info, ethereumAddress: sender, xeAddress: 'aa'.repeat(32), amount: '1000000000000000000', ref: '11'.repeat(32) }
+  it.each([undefined, `0x${'ab'.repeat(32)}`])('never offers another burn for an expired reference with uncertain submission (%s)', async hash => {
+    pending = { ...info, ethereumAddress: sender, xeAddress: 'aa'.repeat(32), amount: '1000000000000000000', ref: '11'.repeat(32), hash }
     localStorage.setItem(ethereumClaimStorageKey(), JSON.stringify(pending))
     stage = 'expired'
     await mount()
-    await vi.waitFor(() => expect(button('Try again')).toBeDefined())
-    expect(host.textContent).toContain('Check your wallet')
-    button('Try again').click()
-    await nextTick()
-    expect(button('Connect wallet')).toBeDefined()
-    expect(localStorage.getItem(ethereumClaimStorageKey())).toBeNull()
+    await vi.waitFor(() => expect(host.textContent).toContain('reference has expired'))
+    expect(button('Try again')).toBeUndefined()
+    expect(button('Review transfer')).toBeUndefined()
+    expect(localStorage.getItem(ethereumClaimStorageKey())).not.toBeNull()
     expect(sent).toHaveLength(0)
   })
   it('restores an unpaid claim for review and retains its original reference', async () => {
-    pending = { ...info, ethereumAddress: sender, xeAddress: 'aa'.repeat(32), amount: '1000000000000000000', ref: '11'.repeat(32), status: 'awaiting_transfer' }
+    pending = { ...info, ethereumAddress: sender, xeAddress: 'aa'.repeat(32), amount: '1000000000000000000', ref: '11'.repeat(32),
+      status: 'awaiting_transfer', rejected: true }
     localStorage.setItem(ethereumClaimStorageKey(), JSON.stringify(pending))
     await mount()
     await vi.waitFor(() => expect(button('Review transfer')).toBeDefined())
@@ -248,7 +271,7 @@ describe('Ethereum claim confirmation', () => {
     await vi.waitFor(() => expect(button('Continue').disabled).toBe(false))
     button('Continue').click()
     await nextTick()
-    button('Continue in wallet').click()
+    button('Burn in wallet').click()
     await vi.waitFor(() => expect(sent).toHaveLength(1))
     expect(sent[0].data).toMatch(/58454331(11){32}$/)
   })
@@ -258,9 +281,43 @@ describe('Ethereum claim confirmation', () => {
     localStorage.setItem(ethereumClaimStorageKey(), JSON.stringify(pending))
     stage = 'received'
     await mount()
-    await vi.waitFor(() => expect(host.textContent).toContain('Claim received'))
+    await vi.waitFor(() => expect(host.textContent).toContain('Claim recorded'))
     expect(host.textContent).toContain('2.0')
     expect(host.textContent).toContain('needs review')
+    expect(sent).toHaveLength(0)
+  })
+  it('keeps an earlier collection-wallet receipt readable without calling it a burn', async () => {
+    pending = { ...info, claimsAddress: '0x' + '22'.repeat(20), ethereumAddress: sender, xeAddress: 'aa'.repeat(32),
+      amount: '1000000000000000000', ref: '11'.repeat(32), status: 'received' }
+    localStorage.setItem(ethereumClaimStorageKey(), JSON.stringify(pending))
+    await mount()
+    await vi.waitFor(() => expect(host.textContent).toContain('previous transfer destination'))
+    expect(host.textContent).not.toContain('burn is confirmed')
+    expect(host.textContent).toContain(pending.ref)
+    expect(button('Start new claim')).toBeUndefined()
+    expect(sent).toHaveLength(0)
+  })
+  it.each([
+    ['0x7a69', 1, '0xa', false], ['0x7a69', 2, '0xa', true],
+    ['0x1', 2, '0x9', false], ['0x1', 2, '0xa', true]
+  ])('gates reverted-burn retry on depth and finality (%s, %s, %s)', async (network, confirmations, finalized, retry) => {
+    chainId = network
+    const settings = { ...info, chainId, rehearsal: chainId === '0x7a69' }
+    pending = { ...settings, ethereumAddress: sender, xeAddress: 'aa'.repeat(32),
+      amount: '1000000000000000000', ref: '11'.repeat(32), hash: `0x${'ab'.repeat(32)}` }
+    localStorage.setItem(ethereumClaimStorageKey(), JSON.stringify(pending))
+    const originalFetch = window.fetch
+    vi.stubGlobal('fetch', async (url, options) => url.endsWith('/info') ? { ok: true, json: async () => settings } : originalFetch(url, options))
+    const request = window.ethereum.request
+    window.ethereum.request = async args => {
+      if (args.method === 'eth_getTransactionReceipt') return { status: '0x0', blockNumber: '0xa', blockHash: '0xblock' }
+      if (args.method === 'eth_getTransactionByHash') return { from: sender, to: info.tokenAddress, input: encodeClaimTransfer(pending) }
+      if (args.method === 'eth_getBlockByNumber') return args.params[0] === 'finalized' ? { number: finalized } : { number: '0xa', hash: '0xblock' }
+      if (args.method === 'eth_blockNumber') return ethers.utils.hexValue(9 + confirmations)
+      return request(args)
+    }
+    await mount(retry ? 'Transfer failed' : 'Confirming transfer')
+    expect(!!button('Try again')).toBe(retry)
     expect(sent).toHaveLength(0)
   })
   it('does not overwrite a recovered receipt with a wallet response from the closed modal', async () => {
@@ -287,11 +344,11 @@ describe('Ethereum claim confirmation', () => {
     await nextTick()
     stage = 'received'
     props.visible = true
-    await vi.waitFor(() => expect(host.textContent).toContain('Claim received'))
+    await vi.waitFor(() => expect(host.textContent).toContain('Claim recorded'))
     resolveReceipt({ status: '0x0' })
     await new Promise(resolve => setTimeout(resolve, 0))
     await nextTick()
-    expect(host.textContent).toContain('Claim received')
+    expect(host.textContent).toContain('Claim recorded')
     expect(sent).toHaveLength(0)
   })
 })
