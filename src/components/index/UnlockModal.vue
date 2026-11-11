@@ -1,5 +1,5 @@
 <template>
-  <Modal :close="close" :visible="visible">
+  <Modal :close="close" :visible="visible" :showCloseButton="showCloseButton">
     <template v-slot:header>
       <h2>{{ migrationFailed ? 'Migration Failed' : 'Unlock wallet' }}</h2>
     </template>
@@ -65,6 +65,7 @@
         </button>
         <button class="w-full button button--success" :disabled="!canSubmit" @click.prevent="unlock">Unlock</button>
       </div>
+      <button v-if="showCloseButton" class="block w-full mb-24 text-center text-green underline" @click="close">Cancel</button>
     </template>
   </Modal>
 </template>
@@ -97,6 +98,7 @@ export default {
     }
   },
   props: {
+    showCloseButton: Boolean,
     afterUnlock: Function,
     close: Function,
     switchToForgetModal: Function,
@@ -142,7 +144,8 @@ export default {
         this.legacyPrivateKey = await storage.getLegacyPrivateKey(this.password)
         if (this.legacyPrivateKey) {
           this.migrationFailed = true
-        } else {
+        }
+        else {
           this.passwordError = 'Migration failed and wallet data could not be read.'
         }
         return

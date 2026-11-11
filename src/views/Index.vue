@@ -18,7 +18,7 @@
             <h1 class="mb-2 text-white">
               Welcome to the <span class="edge-text">Edge</span>
             </h1>
-            <p class="text-75opac">Create or restore an XE wallet to begin</p>
+            <p class="text-75opac">Manage your EDGE on the Edge network.</p>
           </div>
 
           <div
@@ -42,10 +42,21 @@
             </div>
           </div>
 
+          <div v-if="hasWallet">
+            <h1 class="mb-20 text-white">Your Edge wallet is locked</h1>
+            <button class="button button--success w-full" @click="openUnlockModal">Unlock wallet</button>
+          </div>
+          <div v-if="ethereumClaimsAvailable" class="mt-32">
+            <p class="mb-14 text-gray">Have EDGE on Ethereum? Connect your Ethereum wallet directly to claim XE.</p>
+            <button class="button button--outline-success w-full" @click="modal = 'ethereumClaim'">Claim XE from Ethereum</button>
+            <EthereumClaimModal :visible="modal === 'ethereumClaim'" :close="reset" />
+          </div>
+
           <div>
             <UnlockModal
               :afterUnlock="gotoOverview"
-              :close="resetAuto"
+              :close="reset"
+              :showCloseButton="true"
               :switchToForgetModal="openForgetModal"
               :visible="modal === 'unlock'"
             />
@@ -66,10 +77,12 @@
 </style>
 <script>
 import CreateModal from '@/components/index/CreateModal.vue'
+import EthereumClaimModal from '@/components/tx/EthereumClaimModal.vue'
 import ForgetModal from '@/components/index/ForgetModal.vue'
 import Logo from '@/components/Logo.vue'
 import RestoreModal from '@/components/index/RestoreModal.vue'
 import UnlockModal from '@/components/index/UnlockModal.vue'
+import { ethereumClaimsEnabled } from '@/utils/ethereum-claim'
 import { mapState } from 'vuex'
 
 export default {
@@ -77,6 +90,7 @@ export default {
   title: 'Create or restore a wallet',
   components: {
     CreateModal,
+    EthereumClaimModal,
     ForgetModal,
     Logo,
     RestoreModal,
@@ -84,7 +98,8 @@ export default {
   },
   data: function () {
     return {
-      modal: ''
+      modal: '',
+      ethereumClaimsAvailable: ethereumClaimsEnabled()
     }
   },
   computed: mapState({

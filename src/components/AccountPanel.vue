@@ -24,7 +24,7 @@
             Create Stake
           </button>
         </div>
-        <div v-else class="account-panel__buttons" :class="{'account-panel__buttons--four': claimsOpen}">
+        <div v-else class="account-panel__buttons" :class="{'account-panel__buttons--four': claimAvailable}">
           <button class="w-full button button--success" @click="openSend">
             <span class="w-12 button__icon">
               <ArrowUpIcon/>
@@ -46,18 +46,20 @@
             Swap
           </button>
 
-          <button v-if="claimsOpen" class="w-full button button--outline-success" @click="openClaim">
+          <button v-if="claimAvailable" class="w-full button button--outline-success" @click="openClaim">
             <span class="button__icon w-15">
               <SparklesIcon/>
             </span>
-            Claim XE
+            {{ claimsOpen ? 'Claim XE' : 'View claim receipt' }}
           </button>
         </div>
+        <button v-if="view !== 'staking' && ethereumClaimsAvailable" class="mt-12 text-green underline" @click="modal = 'ethereumClaim'">Claim XE from Ethereum</button>
       </div>
     </div>
 
     <div class="account-panel__modals">
-      <ClaimModal v-if="claimsOpen" :close="reset" :visible="modal === 'claim'"/>
+      <EthereumClaimModal v-if="ethereumClaimsAvailable" :close="reset" :visible="modal === 'ethereumClaim'"/>
+      <ClaimModal v-if="claimAvailable" :close="reset" :visible="modal === 'claim'"/>
       <CreateStakeModal :close="reset" :visible="modal === 'createStake'"/>
       <DepositModal :close="reset" :visible="modal === 'deposit'"/>
       <ReceiveModal :close="reset" :visible="modal === 'receive'"/>
@@ -80,14 +82,16 @@ import Amount from './Amount.vue'
 import ClaimModal from './tx/ClaimModal.vue'
 import CreateStakeModal from './stakes/CreateStakeModal.vue'
 import DepositModal from './tx/DepositModal.vue'
+import EthereumClaimModal from './tx/EthereumClaimModal.vue'
 import ReceiveModal from './tx/ReceiveModal.vue'
 import SellModal from './tx/SellModal.vue'
 import SendModal from './tx/SendModal.vue'
 import SwapModal from './tx/SwapModal.vue'
 import WithdrawModal from './tx/WithdrawModal.vue'
+import { ethereumClaimsEnabled } from '../utils/ethereum-claim'
 import { mapState } from 'vuex'
 import { ArrowDownIcon, ArrowUpIcon, PlusIcon, SparklesIcon, SwitchHorizontalIcon } from '@heroicons/vue/outline'
-import { claimsEnabled, fetchClaimsInfo } from '../utils/claim'
+import { claimsEnabled, fetchClaimsInfo, loadActiveClaim } from '../utils/claim'
 
 export default {
   name: 'AccountPanel',
@@ -99,6 +103,7 @@ export default {
     ClaimModal,
     CreateStakeModal,
     DepositModal,
+    EthereumClaimModal,
     PlusIcon,
     ReceiveModal,
     SellModal,
@@ -108,10 +113,16 @@ export default {
     SwitchHorizontalIcon,
     WithdrawModal
   },
-  computed: mapState(['address', 'balance', 'usdBalance']),
+  computed: {
+    ...mapState(['address', 'balance', 'usdBalance']),
+    claimAvailable() {
+      return claimsEnabled() && (this.claimsOpen || !!loadActiveClaim(this.address))
+    }
+  },
   data() {
     return {
       claimsOpen: false,
+      ethereumClaimsAvailable: ethereumClaimsEnabled(),
       modal: ''
     }
   },
