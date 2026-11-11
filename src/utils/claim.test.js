@@ -4,7 +4,7 @@
 
 import {
   claimFailed, claimProgress, clearActiveClaim, keepLastWordsTogether, loadActiveClaim, loadFailedRefs,
-  markClaimFailed, newXeAddressRegexp, normaliseXeAddress, saveActiveClaim
+  markClaimFailed, newXeAddressRegexp, normaliseXeAddress, saveActiveClaim, validateNativeClaim, validateNativeInfo
 } from './claim'
 import { describe, expect, it } from 'vitest'
 
@@ -41,8 +41,8 @@ describe('claimProgress', () => {
     expect(claimProgress({ ...base, walletNonce: 5 }).stage).toBe('posted')
   })
 
-  it('fails when the claims service reports the claim expired', () => {
-    expect(claimProgress({ ...base, claim: { status: 'expired' } }).stage).toBe('failed')
+  it('keeps an expired claim unresolved until the chain proves what happened', () => {
+    expect(claimProgress({ ...base, claim: { status: 'expired' } }).stage).toBe('missing')
   })
 
   it('trusts the chain over an expired claim', () => {
@@ -82,8 +82,8 @@ describe('failed claims', () => {
     expect(loadFailedRefs('xe_two')).toEqual([])
   })
 
-  it('shows a claim failed when expired, or awaiting with a transfer that failed here', () => {
-    expect(claimFailed({ status: 'expired', ref: 'x' }, [])).toBe(true)
+  it('only shows failure for a transfer known to have failed', () => {
+    expect(claimFailed({ status: 'expired', ref: 'x' }, [])).toBe(false)
     expect(claimFailed({ status: 'awaiting_transfer', ref: 'x' }, ['x'])).toBe(true)
     expect(claimFailed({ status: 'awaiting_transfer', ref: 'x' }, [])).toBe(false)
     expect(claimFailed({ status: 'received', ref: 'x' }, ['x'])).toBe(false)
@@ -113,5 +113,21 @@ describe('keepLastWordsTogether', () => {
   it('leaves a single word as it is', () => {
     expect(keepLastWordsTogether('Failed')).toBe('Failed')
     expect(keepLastWordsTogether('')).toBe('')
+  })
+})
+
+describe('native burn binding', () => {
+  const info = { claimsAddress: 'xe_' + '0'.repeat(40), confirmations: 10, minAmount: 1000000 }
+  const request = { edgeAddress: 'xe_' + '33'.repeat(20), amount: 1000000 }
+  const claim = { ...request, claimsAddress: info.claimsAddress, ref: 'aa'.repeat(32), memo: 'Claim XE' }
+  it('only accepts the native burn address', () => {
+    expect(() => validateNativeInfo(info)).not.toThrow()
+    expect(() => validateNativeInfo({ ...info, claimsAddress: 'xe_' + '22'.repeat(20) })).toThrow(/burn address/i)
+  })
+  it('binds the signed transfer to the issued reference, sender, amount and burn address', () => {
+    expect(() => validateNativeClaim(claim, request)).not.toThrow()
+    for (const changed of [{ claimsAddress: request.edgeAddress }, { amount: 2000000 }, { edgeAddress: info.claimsAddress }, { ref: 'bad' }, { memo: 'bad' }]) {
+      expect(() => validateNativeClaim({ ...claim, ...changed }, request)).toThrow()
+    }
   })
 })

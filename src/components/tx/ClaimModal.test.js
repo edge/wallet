@@ -11,7 +11,7 @@ afterEach(() => {
 it('allows a valid native claim to be reviewed and confirmed independently of the Ethereum form', async () => {
   vi.stubEnv('VITE_ETHEREUM_CLAIMS_API_URL', 'http://127.0.0.1:18549/ethereum')
   vi.stubGlobal('fetch', async url => ({ ok: true, json: async () => url.endsWith('/info') ? {
-    open: true, minAmount: 1000000, confirmations: 3, claimsAddress: 'xe_' + '22'.repeat(20)
+    open: true, minAmount: 1000000, confirmations: 3, claimsAddress: 'xe_' + '0'.repeat(40)
   } : { results: [] } }))
   host = document.createElement('div'); document.body.append(host)
   const props = reactive({ visible: false })
@@ -30,6 +30,8 @@ it('allows a valid native claim to be reviewed and confirmed independently of th
   host.querySelector('.claim-check input').click()
   await vi.waitFor(() => expect(button('Continue').disabled).toBe(false))
   button('Continue').click(); await nextTick()
+  expect(host.textContent).toContain('Burn address')
+  expect(host.textContent).toContain('cannot be refunded')
   const password = host.querySelector('#claim-pass'); password.value = 'test-password'; password.dispatchEvent(new Event('input', { bubbles: true }))
-  await vi.waitFor(() => expect(button('Confirm claim').disabled).toBe(false))
+  await vi.waitFor(() => expect(button('Burn EDGE').disabled).toBe(false))
 })

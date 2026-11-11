@@ -7,6 +7,20 @@
 
 const CLAIMS_API_URL = import.meta.env.VITE_CLAIMS_API_URL
 
+export const nativeBurnAddress = 'xe_0000000000000000000000000000000000000000'
+
+export function validateNativeInfo(info) {
+  if (info?.claimsAddress !== nativeBurnAddress) throw new Error('The claims service must use the native burn address.')
+  if (!Number.isSafeInteger(info.confirmations) || info.confirmations < 1 || !Number.isSafeInteger(info.minAmount) || info.minAmount < 1) {
+    throw new Error('Invalid native claims configuration.')
+  }
+}
+
+export function validateNativeClaim(claim, request) {
+  if (claim?.claimsAddress !== nativeBurnAddress || claim.edgeAddress !== request.edgeAddress || claim.amount !== request.amount ||
+      !/^[0-9a-f]{64}$/.test(claim.ref) || claim.memo !== 'Claim XE') throw new Error('The claim does not match your burn details.')
+}
+
 export const claimsEnabled = () => !!CLAIMS_API_URL
 
 async function request(path, options = {}) {
@@ -51,7 +65,7 @@ export const STAGES = ['posted', 'in_block', 'confirmed', 'received']
 //   required      confirmations the claims service waits for
 // The chain can accept a transfer and then drop it. A transfer that is
 // neither pending nor in a block, while its nonce is still unused, is
-// 'missing'; the caller treats repeated misses as a failed claim.
+// 'missing'. Absence and expiry cannot prove that an irreversible burn failed.
 export function claimProgress({ chainTx, pending, walletNonce, txNonce, claim, required }) {
   if (claim && claim.status === 'received') return { stage: 'received', confirmations: required, percent: 100 }
 
@@ -63,15 +77,9 @@ export function claimProgress({ chainTx, pending, walletNonce, txNonce, claim, r
     return { stage: 'in_block', confirmations, percent: 30 + Math.floor(55 * confirmations / required) }
   }
 
-  if (claim && claim.status === 'expired') return { stage: 'failed', confirmations: 0, percent: 0 }
-
   if (pending || walletNonce > txNonce) return { stage: 'posted', confirmations: 0, percent: 15 }
   return { stage: 'missing', confirmations: 0, percent: 15 }
 }
-
-// Misses in a row before a claim counts as failed. One miss can be a transfer
-// moving from the mempool into a block between two requests.
-export const MISSES_TO_FAIL = 3
 
 // The claim in progress is kept in the browser, per Edge address, so the
 // modal can follow it again after the page is closed.
@@ -80,9 +88,11 @@ const storageKey = address => `claim-xe:${address}`
 export function saveActiveClaim(address, claim) {
   try {
     localStorage.setItem(storageKey(address), JSON.stringify(claim))
+    return true
   }
   catch (err) {
     console.error('Could not save the claim in progress:', err)
+    return false
   }
 }
 
@@ -127,8 +137,7 @@ export function markClaimFailed(address, ref) {
   }
 }
 
-// Status for the claims list: failed when the service says expired, or when
-// the transfer failed here and the service has not seen one.
+// A missing or expired reference is not proof that the transfer failed.
 export function claimFailed(claim, failedRefs) {
-  return claim.status === 'expired' || (claim.status === 'awaiting_transfer' && failedRefs.includes(claim.ref))
+  return claim.status === 'awaiting_transfer' && failedRefs.includes(claim.ref)
 }

@@ -10,7 +10,7 @@
       <template v-slot:body>
         <div class="pb-14 min-h-410">
           <p class="mb-14 text-gray">Claim $XE on the new XE network, 1 $XE for each&nbsp;$EDGE.</p>
-          <p class="mb-20 text-gray">Send EDGE to register your claim. XE delivery happens separately, after approval.</p>
+          <p class="mb-20 text-gray">Burn EDGE to register your claim. XE delivery happens separately, after approval.</p>
           <div class="form-group" :class="{'form-group__error': v$.xeAddress.$error}">
             <label for="claim-xe-address" class="label">XE WALLET ADDRESS</label>
             <input
@@ -85,7 +85,7 @@
             <span class="break-all">{{ xeAddressNormalised }}</span>
           </div>
           <div class="mb-16 form-group">
-            <label>You send</label>
+            <label>You burn</label>
             <Amount :value="amountParsed" currency="$EDGE" short sub/>
           </div>
           <div class="mb-16 form-group">
@@ -93,10 +93,10 @@
             <Amount :value="amountParsed" currency="$XE" short sub/>
           </div>
           <div class="form-group mb-14">
-            <label class="label">Claims wallet</label>
+            <label class="label">Burn address</label>
             <HashLink to="explorer" :wallet="info && info.claimsAddress" />
           </div>
-          <p class="text-gray">Confirming sends your EDGE to the claims wallet. XE will be delivered separately, after approval.</p>
+          <p class="text-gray">Your EDGE will be permanently burned and cannot be refunded. XE delivery happens separately, after approval.</p>
         </div>
       </template>
 
@@ -123,8 +123,8 @@
             </div>
           </form>
           <div class="grid grid-cols-1 gap-24 md:grid-cols-2">
-            <button class="w-full button button--outline-success" @click="() => goto(1)">Back</button>
-            <button :disabled="!canClaim || submitting" @click="claim" class="w-full button button--success">Confirm claim</button>
+            <button class="w-full button button--outline-success" :disabled="submitting" @click="() => goto(1)">Back</button>
+            <button :disabled="!canClaim || submitting" @click="claim" class="w-full button button--success">Burn EDGE</button>
           </div>
           <div v-if="submitError" class="claim-box claim-box--error">{{ submitErrorText }}</div>
         </div>
@@ -144,19 +144,20 @@
             <li :class="stageClass('posted')">Transfer posted</li>
             <li :class="stageClass('in_block')">In a block<span v-if="progress.stage === 'in_block'"> ({{ progress.confirmations }} of {{ required }} confirmations)</span></li>
             <li :class="stageClass('confirmed')">{{ required }}+ confirmations</li>
-            <li :class="stageClass('received')">Received by the claims service</li>
+            <li :class="stageClass('received')">Claim recorded</li>
           </ol>
 
           <div v-if="failed" class="claim-box claim-box--error">
             The transfer was not processed, so your $EDGE did not move. You can try&nbsp;again.
           </div>
           <div v-else-if="progress.stage === 'received'" class="claim-box">
-            Your EDGE transfer is received. XE approval and delivery are handled separately.
+            {{ active.claimsAddress === nativeBurnAddress ? 'Your EDGE burn is confirmed.' : 'Your EDGE transfer is recorded.' }} XE approval and delivery are handled separately.
           </div>
           <div v-else class="claim-box">
-            You can leave this page: your claim continues without it. Keep the page open to follow it&nbsp;here.
+            Waiting for confirmation. Do not send again while this transfer is unresolved. You can close this page and return to check your claim.
           </div>
 
+          <div v-if="submitError" class="claim-box claim-box--error" role="alert">{{ submitErrorText }}</div>
           <div class="mt-20 form-group mb-14">
             <label>Amount</label>
             <Amount :value="active.amount / 1e6" currency="$EDGE" short sub/>
@@ -217,9 +218,9 @@ import { mapState } from 'vuex'
 import { parseAmount } from '../../utils/form'
 import useVuelidate from '@vuelidate/core'
 import {
-  MISSES_TO_FAIL, STAGES, claimFailed, claimProgress, clearActiveClaim, createClaim, fetchClaim, fetchClaims,
-  fetchClaimsInfo, keepLastWordsTogether, loadActiveClaim, loadFailedRefs, markClaimFailed, newXeAddressRegexp,
-  normaliseXeAddress, saveActiveClaim
+  STAGES, claimFailed, claimProgress, clearActiveClaim, createClaim, fetchClaim, fetchClaims,
+  fetchClaimsInfo, keepLastWordsTogether, loadActiveClaim, loadFailedRefs, markClaimFailed, nativeBurnAddress,
+  newXeAddressRegexp, normaliseXeAddress, saveActiveClaim, validateNativeClaim, validateNativeInfo
 } from '../../utils/claim'
 
 const POLL_MS = 5000
@@ -240,6 +241,7 @@ export default {
   },
   data() {
     return {
+      nativeBurnAddress,
       step: 1,
       creatingAddress: false,
 
@@ -260,7 +262,6 @@ export default {
       receiptNotice: '',
       receiptSaved: false,
       progress: { stage: 'posted', confirmations: 0, percent: 15 },
-      misses: 0,
       failed: false,
       pollTimer: null
     }
@@ -290,7 +291,7 @@ export default {
     ...mapState(['address', 'balance', 'nextNonce']),
     receiptText() {
       if (!this.active) return ''
-      return `XE claim receipt\nReference: ${this.active.ref}\nNetwork: Edge${this.isTestnet ? ' testnet' : ''}\nAmount: ${this.active.amount / 1e6} EDGE\nFrom: ${this.active.sender}\nXE wallet address: ${this.active.xeAddress}\nTransaction: ${this.active.hash}\nStatus: ${this.progress.stage === 'received' ? 'Transfer received. XE approval and delivery are handled separately.' : this.progressTitle}`
+      return `XE claim receipt\nReference: ${this.active.ref}\nNetwork: Edge${this.isTestnet ? ' testnet' : ''}\nAmount: ${this.active.amount / 1e6} EDGE\nTransfer recipient: ${this.active.claimsAddress || 'Not recorded'}\nFrom: ${this.active.sender}\nXE wallet address: ${this.active.xeAddress}\nTransaction: ${this.active.hash}\nStatus: ${this.progress.stage === 'received' ? 'Claim recorded. XE approval and delivery are handled separately.' : this.progressTitle}`
     },
     amountParsed() {
       return parseAmount(this.amount)
@@ -318,7 +319,7 @@ export default {
     },
     progressTitle() {
       if (this.failed) return 'Claim failed'
-      if (this.progress.stage === 'received') return 'Claim received'
+      if (this.progress.stage === 'received') return 'Claim recorded'
       return 'Claim in progress'
     }
   },
@@ -341,12 +342,15 @@ export default {
         this.startPolling()
       }
       try {
-        this.info = await fetchClaimsInfo()
+        const info = await fetchClaimsInfo()
+        validateNativeInfo(info)
+        this.info = info
         this.infoError = this.info.open ? '' : 'Claims are closed.'
         if (!this.info.open) this.info = null
       }
       catch (err) {
-        this.infoError = 'The claims service is not available. Try again\u00a0later.'
+        this.info = null
+        this.infoError = err.message
       }
       this.loadClaims()
     },
@@ -360,6 +364,7 @@ export default {
       }
     },
     cancel() {
+      if (this.submitting) return
       this.stopPolling()
       if (this.active && this.failed) clearActiveClaim(this.active.sender)
       this.reset()
@@ -382,7 +387,6 @@ export default {
       this.receiptNotice = ''
       this.receiptSaved = false
       this.progress = { stage: 'posted', confirmations: 0, percent: 15 }
-      this.misses = 0
       this.failed = false
       this.v$.$reset()
     },
@@ -417,6 +421,7 @@ export default {
       return false
     },
     async claim() {
+      if (this.submitting || this.active) return
       this.passwordError = ''
       this.submitError = ''
       if (!await this.v$.$validate()) return
@@ -425,7 +430,9 @@ export default {
       this.submitting = true
       try {
         const privateKey = await storage.getPrivateKey(this.password)
-        const claim = await createClaim(this.address, this.xeAddressNormalised, xe.xe.toMxe(this.amountParsed))
+        const amount = xe.xe.toMxe(this.amountParsed)
+        const claim = await createClaim(this.address, this.xeAddressNormalised, amount)
+        validateNativeClaim(claim, { edgeAddress: this.address, amount })
 
         await this.$store.dispatch('refresh')
         const nonce = this.nextNonce
@@ -438,28 +445,38 @@ export default {
           nonce
         }, privateKey)
 
-        const { metadata, results } = await xe.tx.createTransactions(import.meta.env.VITE_BLOCKCHAIN_API_URL, [tx])
-        if (!metadata.accepted) {
-          this.submitError = results[0].reason
-          return
-        }
-
         this.active = {
           sender: this.address,
           ref: claim.ref,
-          hash: results[0].hash,
+          hash: xe.tx.hash(tx).hash,
           nonce,
           amount: claim.amount,
+          claimsAddress: claim.claimsAddress,
           xeAddress: this.xeAddressNormalised,
           createdAt: Date.now()
         }
-        saveActiveClaim(this.address, this.active)
+        if (!saveActiveClaim(this.address, this.active)) {
+          this.active = null
+          throw new Error('Could not save your claim receipt. No burn was submitted.')
+        }
+        const { metadata, results } = await xe.tx.createTransactions(import.meta.env.VITE_BLOCKCHAIN_API_URL, [tx])
+        if (metadata.accepted === 0 && results[0]?.success === false) {
+          clearActiveClaim(this.address)
+          this.active = null
+          this.submitError = results[0].reason || 'The chain rejected the burn. No EDGE moved.'
+          return
+        }
+
+        if (metadata.accepted !== 1 || results[0]?.hash !== this.active.hash) throw new Error('The chain response is uncertain. Do not send again; keep this claim receipt.')
         this.goto(3)
         this.startPolling()
       }
       catch (err) {
-        console.error(err)
         this.submitError = err.message
+        if (this.active) {
+          this.goto(3)
+          this.startPolling()
+        }
       }
       finally {
         this.submitting = false
@@ -472,9 +489,10 @@ export default {
     },
     startPolling() {
       this.stopPolling()
+      const active = this.active
       const tick = async () => {
         await this.pollClaim()
-        if (this.visible && !this.failed && this.progress.stage !== 'received') {
+        if (this.active === active && this.visible && !this.failed && this.progress.stage !== 'received') {
           this.pollTimer = setTimeout(tick, POLL_MS)
         }
       }
@@ -486,7 +504,9 @@ export default {
     },
     async pollClaim() {
       const host = import.meta.env.VITE_BLOCKCHAIN_API_URL
-      const { hash, nonce, ref, sender } = this.active
+      const active = this.active
+      if (!active) return
+      const { hash, nonce, ref, sender } = active
       try {
         const [chainTx, pendingTxs, walletInfo, claim] = await Promise.all([
           fetch(`${host}/transaction/${hash}`).then(res => res.ok ? res.json() : null),
@@ -494,6 +514,11 @@ export default {
           xe.wallet.info(host, sender),
           fetchClaim(ref).catch(() => null)
         ])
+        if (this.active !== active) return
+        if (claim && this.active.claimsAddress === nativeBurnAddress) {
+          validateNativeClaim(claim, { edgeAddress: sender, amount: this.active.amount })
+          if (claim.ref !== ref || (claim.transfer && claim.transfer.hash !== hash)) throw new Error('The recorded transfer does not match your burn receipt.')
+        }
         const progress = claimProgress({
           chainTx,
           pending: pendingTxs.some(t => t.hash === hash),
@@ -503,21 +528,23 @@ export default {
           required: this.required
         })
 
-        if (progress.stage === 'missing') {
-          this.misses++
-          if (this.misses >= MISSES_TO_FAIL) this.setFailed()
-          return
+        if (chainTx && this.active.claimsAddress === nativeBurnAddress &&
+            (chainTx.sender !== sender || chainTx.recipient !== nativeBurnAddress || chainTx.amount !== this.active.amount || chainTx.data?.ref !== ref)) {
+          throw new Error('The chain transaction does not match your burn details.')
         }
-        this.misses = 0
-        if (progress.stage === 'failed') {
-          this.setFailed()
-          return
+        if (claim?.claimsAddress) {
+          if (chainTx && chainTx.recipient !== claim.claimsAddress) throw new Error('The transfer recipient does not match the claim receipt.')
+          this.active.claimsAddress = claim.claimsAddress
+          saveActiveClaim(sender, this.active)
         }
+        if (progress.stage === 'missing') return
         this.progress = progress
+        if (progress.stage === 'received' || this.submitError.startsWith('Could not check claim:')) this.submitError = ''
       }
       catch (err) {
+        if (this.active !== active) return
         // Network trouble: keep the last known state and check again.
-        console.error('Claim check failed:', err)
+        this.submitError = `Could not check claim: ${err.message}. Do not send again while this transfer is unresolved.`
       }
     },
     setFailed() {
@@ -566,6 +593,7 @@ export default {
     },
     statusText(claim) {
       if (this.isFailed(claim)) return 'Failed'
+      if (claim.status === 'expired') return 'Expired'
       if (claim.status === 'awaiting_transfer') return 'Waiting for\u00a0transfer'
       if (claim.processed) return 'Paid'
       if (claim.approved) return 'Approved'
