@@ -10,17 +10,19 @@
       <template v-slot:body>
         <div class="pb-14 min-h-410">
           <p class="mb-14 text-gray">Claim $XE on the new XE network, 1 $XE for each&nbsp;$EDGE.</p>
+          <p class="mb-20 text-gray">Send EDGE to register your claim. XE delivery happens separately, after approval.</p>
           <div class="form-group" :class="{'form-group__error': v$.xeAddress.$error}">
-            <label for="claim-xe-address" class="label">XE ADDRESS</label>
+            <label for="claim-xe-address" class="label">XE WALLET ADDRESS</label>
             <input
               id="claim-xe-address"
               type="text"
               autocomplete="off"
               spellcheck="false"
-              placeholder="Your new XE address (64 characters)"
+              placeholder="Paste your XE wallet address"
               v-model="v$.xeAddress.$model"
             />
             <div class="form-group__error input-error" v-for="error of v$.xeAddress.$errors" :key="error.$uid">{{error.$message}}</div>
+            <p class="mt-10 text-gray">This is where your XE will be sent after approval.</p>
             <p class="mt-10 text-gray">Don't have an XE address yet? <button class="claim-link" @click="creatingAddress = true">Create one</button></p>
           </div>
           <div class="lg-input-group" :class="{'form-group__error': v$.amount.$error}">
@@ -87,13 +89,14 @@
             <Amount :value="amountParsed" currency="$EDGE" short sub/>
           </div>
           <div class="mb-16 form-group">
-            <label>You claim</label>
+            <label>You claim after approval</label>
             <Amount :value="amountParsed" currency="$XE" short sub/>
           </div>
           <div class="form-group mb-14">
             <label class="label">Claims wallet</label>
             <HashLink to="explorer" :wallet="info && info.claimsAddress" />
           </div>
+          <p class="text-gray">Confirming sends your EDGE to the claims wallet. XE will be delivered separately, after approval.</p>
         </div>
       </template>
 
@@ -148,7 +151,7 @@
             The transfer was not processed, so your $EDGE did not move. You can try&nbsp;again.
           </div>
           <div v-else-if="progress.stage === 'received'" class="claim-box">
-            Your claim is received. Your $XE is sent to your XE address after&nbsp;approval.
+            Your EDGE transfer is received. XE approval and delivery are handled separately.
           </div>
           <div v-else class="claim-box">
             You can leave this page: your claim continues without it. Keep the page open to follow it&nbsp;here.
@@ -159,9 +162,24 @@
             <Amount :value="active.amount / 1e6" currency="$EDGE" short sub/>
           </div>
           <div class="form-group mb-14">
+            <label>XE wallet address</label>
+            <span class="break-all text-sm2">{{ active.xeAddress }}</span>
+          </div>
+          <div class="form-group mb-14">
             <label>Transaction hash</label>
             <HashLink to="explorer" :transaction="active.hash" truncated />
           </div>
+          <details class="mt-20">
+            <summary>Claim receipt</summary>
+            <pre class="mt-10 text-sm2 whitespace-pre-wrap break-all">{{ receiptText }}</pre>
+          </details>
+          <p v-if="receiptNotice" class="mt-10 text-gray" role="status">{{ receiptNotice }}</p>
+          <details v-if="progress.stage === 'received' && info?.open" class="mt-20">
+            <summary>Make another claim</summary>
+            <p class="mt-10 text-gray">Starting another claim replaces the receipt saved in this browser. Save this receipt first.</p>
+            <label class="claim-check"><input id="claim-receipt-saved" type="checkbox" v-model="receiptSaved" /><span>I have saved this receipt.</span></label>
+            <button class="claim-link mt-10" :disabled="!receiptSaved" @click="newClaim">Start new claim</button>
+          </details>
         </div>
       </template>
 
@@ -170,6 +188,10 @@
           <div v-if="failed" class="grid grid-cols-1 gap-24 md:grid-cols-2">
             <button class="w-full button button--outline-success" @click="cancel">Close</button>
             <button class="w-full button button--success" @click="tryAgain">Try again</button>
+          </div>
+          <div v-else-if="progress.stage === 'received'" class="grid grid-cols-1 gap-24 md:grid-cols-2">
+            <button class="w-full button button--outline-success" @click="copyReceipt">Copy receipt</button>
+            <button class="w-full button button--success" @click="cancel">Close</button>
           </div>
           <button v-else @click="cancel" class="block w-full mx-auto text-center button button--success md:w-1/2">Close</button>
         </div>
@@ -235,6 +257,8 @@ export default {
       submitting: false,
 
       active: null,
+      receiptNotice: '',
+      receiptSaved: false,
       progress: { stage: 'posted', confirmations: 0, percent: 15 },
       misses: 0,
       failed: false,
@@ -246,7 +270,7 @@ export default {
       xeAddress: [
         validation.required,
         helpers.withMessage(
-          'Enter your new XE address: 64 characters, 0-9 and a-f. An Edge address (xe_...) does not\u00a0work.',
+          'Copy the address from your XE wallet, or choose Create one. An Edge address (xe_...) does not\u00a0work.',
           v => newXeAddressRegexp.test(normaliseXeAddress(v))
         )
       ],
@@ -264,6 +288,10 @@ export default {
   },
   computed: {
     ...mapState(['address', 'balance', 'nextNonce']),
+    receiptText() {
+      if (!this.active) return ''
+      return `XE claim receipt\nReference: ${this.active.ref}\nNetwork: Edge${this.isTestnet ? ' testnet' : ''}\nAmount: ${this.active.amount / 1e6} EDGE\nFrom: ${this.active.sender}\nXE wallet address: ${this.active.xeAddress}\nTransaction: ${this.active.hash}\nStatus: ${this.progress.stage === 'received' ? 'Transfer received. XE approval and delivery are handled separately.' : this.progressTitle}`
+    },
     amountParsed() {
       return parseAmount(this.amount)
     },
@@ -333,7 +361,7 @@ export default {
     },
     cancel() {
       this.stopPolling()
-      if (this.active && (this.failed || this.progress.stage === 'received')) clearActiveClaim(this.active.sender)
+      if (this.active && this.failed) clearActiveClaim(this.active.sender)
       this.reset()
       this.close()
     },
@@ -351,10 +379,27 @@ export default {
       this.submitError = ''
       this.submitting = false
       this.active = null
+      this.receiptNotice = ''
+      this.receiptSaved = false
       this.progress = { stage: 'posted', confirmations: 0, percent: 15 }
       this.misses = 0
       this.failed = false
       this.v$.$reset()
+    },
+    newClaim() {
+      if (!this.receiptSaved) return
+      clearActiveClaim(this.active.sender)
+      this.stopPolling()
+      this.reset()
+    },
+    async copyReceipt() {
+      try {
+        await navigator.clipboard.writeText(this.receiptText)
+        this.receiptNotice = 'Receipt copied. Save it somewhere you can find later.'
+      }
+      catch {
+        this.receiptNotice = 'Could not copy the receipt. Open Claim receipt and select the text to copy it manually.'
+      }
     },
     readyClaim() {
       const fields = [this.v$.xeAddress, this.v$.amount, this.v$.checked]

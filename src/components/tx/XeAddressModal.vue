@@ -21,7 +21,9 @@
             <li v-for="(word, i) in words" :key="i"><span class="xe-words__n">{{ i + 1 }}</span>{{ word }}</li>
           </ol>
           <details class="mt-20">
-            <summary>Advanced: BIP39 passphrase</summary>
+            <summary>Advanced options</summary>
+            <p class="mt-10 text-gray">Standard BIP39 + SLIP-0010 ed25519, m/44'/1'/0'. Coin type 1 is provisional.
+              Wallets made before v2 restore from their hex seed.</p>
             <label for="xe-bip39-passphrase">Optional BIP39 passphrase</label>
             <input id="xe-bip39-passphrase" type="password" autocomplete="off" spellcheck="false" v-model="bip39Passphrase" />
             <label for="xe-bip39-passphrase-confirm">Confirm BIP39 passphrase (must match exactly)</label>
@@ -35,11 +37,9 @@
             <p class="mb-0">
               Anyone with these words controls your $XE. If you lose them, nobody can recover your $XE.
               This wallet does not keep&nbsp;them.
-              The phrase is your only backup; keep any BIP39 passphrase separately.
+              These words are your backup. Keep any optional passphrase separately.
             </p>
           </div>
-          <p class="mt-20 text-gray">Standard BIP39 + SLIP-0010 ed25519, m/44'/1'/0'. Coin type 1 is provisional.
-            Wallets made before v2 restore from their hex seed.</p>
         </div>
       </template>
       <template v-slot:footer>
@@ -98,7 +98,7 @@
 import Modal from '../Modal.vue'
 import { h } from 'vue'
 import { RefreshIcon, ShieldExclamationIcon } from '@heroicons/vue/outline'
-import { newXeAccount, xeAccountFromPhrase, pickCheckPositions } from '../../utils/xe-account'
+import { newXeAccount, pickCheckPositions, xeAccountFromPhrase } from '../../utils/xe-account'
 
 const CHECK_WORDS = 3
 
