@@ -29,7 +29,7 @@ const init = async () => {
     .mount('#app')
 
   app.$router.beforeResolve(to => {
-    if (store.state.locked && to.name !== 'Index') return { name: 'Index' }
+    if (store.state.locked && to.name !== 'Index' && to.name !== 'Connect') return { name: 'Index' }
     return true
   })
 

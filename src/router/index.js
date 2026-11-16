@@ -8,6 +8,11 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
   {
+    path: '/connect',
+    name: 'Connect',
+    component: () => import('@/views/Connect.vue')
+  },
+  {
     path: '/',
     name: 'Index',
     component: Index

@@ -4,6 +4,34 @@
 
 The web wallet of the XE Blockchain.
 
+## Edge Connect
+
+Sites open `/connect` in a popup and exchange Edge Connect v1 messages using
+`postMessage`. The wallet accepts requests only from its opener, shows the
+browser-reported site origin and replies to that exact origin. HTTPS sites and
+HTTP loopback sites are supported. Serve `/connect` without a
+`Cross-Origin-Opener-Policy` header so the opener remains available.
+
+- `edge_requestAccounts`, with `{ network: "mainnet" | "testnet" }`, asks the
+  user to unlock and select an existing account. It returns its address,
+  network, micro-EDGE balance and next nonce, never a key or password.
+- `edge_sendTransaction`, with `{ from, recipient, amount, data?: { memo?, ref? } }`,
+  requires that origin to be connected to `from`. The user reviews and approves
+  each transfer with their password. Addresses must have their canonical case;
+  the positive integer amount is in micro-EDGE; memo and reference each allow
+  at most 64 characters. Other transaction actions are rejected.
+
+Burn transfers require an explicit destruction acknowledgement. The request
+does not prove which XE address its reference pays; the review says so.
+Permission is stored per site origin and network; wallet storage is unchanged.
+Account creation and private-key import stay in the wallet's existing screens.
+
+Closing before submission returns error `4001`. If submission may have occurred,
+error `-32603` includes `uncertain: true` and the locally computed transaction
+`hash`. Callers must retain the claim reference and check that transaction before
+offering another send. A popup that disappears without answering after a send
+request must also be treated as uncertain.
+
 ## System Requirements
 
 - Node.js v16+
