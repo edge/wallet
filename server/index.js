@@ -14,6 +14,11 @@ const html = fs.readFileSync(`${config.www.path}/index.html`, 'utf8')
 
 // Middleware
 app.use(morgan('dev'))
+// No other site may frame the wallet.
+app.use((req, res, next) => {
+  res.set('Content-Security-Policy', "frame-ancestors 'none'")
+  next()
+})
 app.use('/', express.static(config.www.path))
 
 // Return the index page everything
