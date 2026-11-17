@@ -145,8 +145,8 @@
       "seed": "01f5bced59dec48e362f2c45b5de68b9fd6c92c6634f44d6d40aab69056506f0e35524a518034ddc1192e1dacd32c1ed3eaa3c3b131c88ed8e7e54c49a5d0998"
     }
   ],
-  "coin_type": 1,
-  "coin_type_provisional": true,
+  "coin_type": 22597,
+  "coin_type_provisional": false,
   "description": "BIP39 English + SLIP-0010 ed25519. Official Trezor English vectors and both SLIP-0010 ed25519 vector chains, verified by an independent Go reference before production implementation. SLIP public keys include the official 00 prefix; XE public keys are raw 32 bytes.",
   "invalid": [
     {
@@ -259,93 +259,93 @@
   "xe": [
     {
       "account": 0,
-      "address": "294bfbdce14da4c715440065f1e94cbeb8053c63c228d6522b3ec9ab8d82d696",
-      "ed25519_seed": "7d203575d41abdaa7d0159b6a8e485d3093096a5a5aeb9739c626b5717e78624",
+      "address": "0acbb186110f94afd19911a3d8e085c93ddf21180cb5f68f00f700e9e2b878b2",
+      "ed25519_seed": "231b38dece863e6522e8b9aae93c3b7fa516098312ae41b217a91d8e9de27d43",
       "passphrase": "",
-      "path": "m/44'/1'/0'",
+      "path": "m/44'/22597'/0'",
       "phrase": "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon art",
-      "public_key": "9b626614bec79527c8d0176d049ce72ccea9cbb44a80b4b3784edca18dd9b31b"
+      "public_key": "ecdec99fcf1361762c52c4f2ac0c79e28b092540e2c4cf9a4406cf63ddb4d73f"
     },
     {
       "account": 1,
-      "address": "8332fe88470d3fc5280539527154a8b8a1ec0ef89a92972a27daace126a0dc73",
-      "ed25519_seed": "72d309ea3765aed4384ff5bf67bb23b5f91886529ea67195b6333357cc5e8a71",
+      "address": "1059b33138b85d372140795ebf05805e2e2c61502d8c76dad5544d1a229ef69f",
+      "ed25519_seed": "f441e02758c941f55279b056e73bc55d1f2c98d92e926d73e424c2bb9add29b5",
       "passphrase": "",
-      "path": "m/44'/1'/1'",
+      "path": "m/44'/22597'/1'",
       "phrase": "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon art",
-      "public_key": "aa625ed91ccc7a74669b0f1d2d8ec2b02f4fa49ad37f97a64d4c12b4f29f19b9"
+      "public_key": "c3d7230a0fe8ecd7895f66ba880e9bd26b85de46e12cceda1363dbc7b32dd64f"
     },
     {
       "account": 0,
-      "address": "697ab39a01adee1ae662a330a94c08bc894f2c275ed08c01b0abb60be00fc280",
-      "ed25519_seed": "ae60c329be0040aff4398bdc5fa778b84943285f3db253db798dbc965a603f26",
+      "address": "c6509a6e16a9322673bcaf2a5e753a3c97f5f542f675261081cd5bc5d1cc63fb",
+      "ed25519_seed": "db8edb20c8df6642ef07351356ae693b62e1b6e6b0bae35f361b0b065a6f26ae",
       "passphrase": "TREZOR",
-      "path": "m/44'/1'/0'",
+      "path": "m/44'/22597'/0'",
       "phrase": "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon art",
-      "public_key": "d38f0c46069036a0b6b9d0c71d525363074f47287637e4a9e1380b572ed3e6d7"
+      "public_key": "48fab16740b9385a13c9905371a8ceb236d9f199cfb4823f480e1ad6822b6c66"
     },
     {
       "account": 0,
-      "address": "81cbacf91f0905fb0362b0485e8edc7683b4698d3979460c4dc6ffeb5049b758",
-      "ed25519_seed": "aee46d61b83de269c446a04b2beb5ea7ee1ce72207b5e7b8a8a10e642405b680",
+      "address": "67c3a7c135ef477f6d95aa2258fd558a6178cd4fdf9a821e8e869ab5220386b9",
+      "ed25519_seed": "afd6248846e89ef296ad9fc354f15c69ab98e7147693ed639b9a83893faeac61",
       "passphrase": "",
-      "path": "m/44'/1'/0'",
+      "path": "m/44'/22597'/0'",
       "phrase": "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about",
-      "public_key": "a90eb13b090b4d4c31ae87d864c0cd8db25216c90c1ce6fbfd04ddcdc1aa110c"
+      "public_key": "87edbedec3f40fe4212d2fe28b30bcc0f8b577a1eeb1929d589e6c3421a276b8"
     },
     {
       "account": 0,
-      "address": "b7f23581a788c20bf2915c20c3963035cb0bf35ad14d4b8be29e4e356b134e25",
-      "ed25519_seed": "422d3d2244d826fefe6e216316184631339cd209424f72de273aed3339cfa630",
+      "address": "76fc6480ba187eba56eb1c3d1bc9c8ac2c1dd3698b8740797e546bacdef6e357",
+      "ed25519_seed": "9b3e17368b6d05a493ffb86cc3fe4911ceae4bc2f803e6853658c4becb0f5479",
       "passphrase": "",
-      "path": "m/44'/1'/0'",
+      "path": "m/44'/22597'/0'",
       "phrase": "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon address",
-      "public_key": "bb38e7d4fb05fd29d7cedfeaa048b0c734ad2938f93065da0f984a4a0335be9e"
+      "public_key": "7879cb01c109fc566e5c031b78089ea3ddb002d393fd7dd0ec7e9b39c63b5db8"
     },
     {
       "account": 0,
-      "address": "347f9ea90d348ecbb433e04698653def09f952ae38c7dde59beb90ab8aade48b",
-      "ed25519_seed": "c03e5d6a86d247e914cc6026e2a497ca9ac5bdc079526b90eb9503aa0fa24bbf",
+      "address": "59acaa4d27de70e9332a0fb4ced0a9edaaf1fdd04eaa6c9c8cd4e300a7afba8b",
+      "ed25519_seed": "ca032d112c4cb8b15d047f64af287226d971b04c01371bc48d8c1ccaadfd85b8",
       "passphrase": "",
-      "path": "m/44'/1'/0'",
+      "path": "m/44'/22597'/0'",
       "phrase": "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon admit",
-      "public_key": "5af965d221d9402f42f0db502f506722afa90582906c350386bf6e108b324568"
+      "public_key": "1b38c64838c6de9cfc2aa08ca50d4ca0609b3442d89f5c37acf250bce44dc2c5"
     },
     {
       "account": 0,
-      "address": "b64267a13412514eb502f7e7ff2c7eeeb67ed72e7fce48323a0caba4f4617f08",
-      "ed25519_seed": "6edd4467bfbce22d7d75dfa6f27be77c0b93054afdaefe6aac8a2667ac665fff",
+      "address": "09efcd121df09c584e79b5af13c3527fea99cee4cc7b60b765bd0a947433c9b6",
+      "ed25519_seed": "f66b740065a1181a99d79ea555b5091062df0bbf1d2a1c80ecdc614fb01424bf",
       "passphrase": "",
-      "path": "m/44'/1'/0'",
+      "path": "m/44'/22597'/0'",
       "phrase": "current atom you one bridge donkey joy ghost misery museum control roast fresh session wage route error rocket hello random happy broom pact prize",
-      "public_key": "baa9f48534fe96d4d96de832ac08bf4cc8809f1a2dc2ff54716ccb3fe296a1df"
+      "public_key": "f1759d1b6ce2c173c3ba971dd88fe497e73724771c7e6cbc6a34e75b7b9fffe0"
     },
     {
       "account": 0,
-      "address": "7a3ca304f157dca1f5d00ae5aef57c07e0883bd86b713f5f12cd939bac321296",
-      "ed25519_seed": "a7f939308aba0135c7e90a1197a3114b2b8b866942668d76fe517401720a0ad2",
+      "address": "2d69184f682c64c4c920783338396828f02da55bf26ed5c7974eac2abf87750c",
+      "ed25519_seed": "174f107fce930fc0ce762cb9ce2a74359bf2540273b4585f5a0460b55f305a4d",
       "passphrase": "",
-      "path": "m/44'/1'/0'",
+      "path": "m/44'/22597'/0'",
       "phrase": "quit possible silent pole same apple ready senior barely hire fruit alone vault sight pink retire glimpse illness you frame long text churn size",
-      "public_key": "c0e3810bfe461dba64fd787f9f606ca650773ec5ed4a6268d3e3020e528e41ce"
+      "public_key": "00b69963008180819b6f28ce153d36a030d0d0ab232f6f95cf227ea840987588"
     },
     {
       "account": 0,
-      "address": "cdc1ba866ddd2a5752c1239178e665bdacab567672d0463fd625fde357045ae4",
-      "ed25519_seed": "18bd53b00e8369b9d71eac8cb036a9aee2b909286dc48ac49c2e09224b3deb8a",
+      "address": "e0eb0d590e7532936ac92508324dd295f7885f91fb6efbef275720b977ea50fa",
+      "ed25519_seed": "e70d5658a5f9e67a15aa19283807aa6fc8982447cb2f179be25c4be238f44076",
       "passphrase": "",
-      "path": "m/44'/1'/0'",
+      "path": "m/44'/22597'/0'",
       "phrase": "addict stock task sea indoor submit hedgehog asthma wool garlic divert idle easy valve shoe toddler credit gaze rival faculty volcano spread negative crack",
-      "public_key": "06830dfabeaf5780b8b8978d8fa1c17d512e1ee493a844761faf94a6a28f92ef"
+      "public_key": "1d15e8851032f1236a0c55b3f73ca7d9aaddeaa924436e6b21e91023f09176ff"
     },
     {
       "account": 2147483647,
-      "address": "8a55e340aefad5ccb7c7294ac3e7fa48d25cdffc3f610a5de2138ad9c18bdd51",
-      "ed25519_seed": "737347d695dfdc418b613daf73c39df18de6968ab34d37b4514c2cbebcdd8c33",
+      "address": "5599900f715962fd95e58a89df8b1dd5f15f71c6d7c3e68f4b8237d879a4f05a",
+      "ed25519_seed": "f225654bf6b1f4da7b956d1c814a1a6496dd59f204e3ebbb001dd06129504b24",
       "passphrase": "café㍍ガバヴァぱばぐゞちぢ十人十色",
-      "path": "m/44'/1'/2147483647'",
+      "path": "m/44'/22597'/2147483647'",
       "phrase": "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon art",
-      "public_key": "58becdcf2c42de4f917ef2307eb15ddb744ad5916347a69c222d2991f81a55af"
+      "public_key": "5dd1dace73667a1a8ef9db3f70c7d74713ddb417311ff568ea894a66f0bb8d96"
     }
   ]
 }

@@ -37,6 +37,8 @@ describe('XE address modal v2', () => {
     const { created } = await mount()
     const phraseWords = words()
     expect(phraseWords).toHaveLength(24)
+    expect(host.textContent).toContain('m/44\'/22597\'/0\'')
+    expect(host.textContent).not.toContain('Coin type 1 is provisional')
     const expected = xeAccountFromPhrase(phraseWords.join(' ')).address
     expect(host.textContent).toContain(expected)
     button('I have written them down').click()

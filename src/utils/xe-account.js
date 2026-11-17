@@ -12,8 +12,8 @@ import { wordlist } from '@scure/bip39/wordlists/english.js'
 import { bytesToHex, concatBytes, utf8ToBytes } from '@noble/hashes/utils.js'
 
 const ACCOUNT_DOMAIN = utf8ToBytes('xe/account/v1')
-// Provisional until XE registers a SLIP-0044 coin type.
-export const RECOVERY_PHRASE_COIN_TYPE = 1
+// XE's coin type on every network: 0x5845, the bytes "XE".
+export const RECOVERY_PHRASE_COIN_TYPE = 22597
 const englishWords = new Set(wordlist)
 
 export class PhraseError extends Error {

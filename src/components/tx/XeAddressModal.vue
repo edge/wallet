@@ -38,8 +38,8 @@
               The phrase is your only backup; keep any BIP39 passphrase separately.
             </p>
           </div>
-          <p class="mt-20 text-gray">Standard BIP39 + SLIP-0010 ed25519, m/44'/1'/0'. Coin type 1 is provisional.
-            Wallets made before v2 restore from their hex seed.</p>
+          <p class="mt-20 text-gray">Standard BIP39 + SLIP-0010 ed25519, m/44'/22597'/0'.
+            Wallets made using coin type 1 or before v2 restore from their hex seed.</p>
         </div>
       </template>
       <template v-slot:footer>
