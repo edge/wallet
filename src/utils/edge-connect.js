@@ -6,9 +6,13 @@ import { utils } from 'ethers'
 
 // Edge Connect v1 bounds from Jakub's wallet handoff.
 const MAX_REQUEST_ID_LENGTH = 200
-const MAX_DATA_LENGTH = 64
 const METHODS = ['edge_requestAccounts', 'edge_sendTransaction']
 const LOOPBACK = ['localhost', '127.0.0.1', '[::1]']
+// The burn page (edge/xe-burn-web) for each wallet build: the only site Edge Connect serves.
+const BURN_SITES = { mainnet: ['https://burn.edge.network'], testnet: ['https://burn.testnet.edge.network'] }
+// The memo and reference the claims service (edge/xe-burn-api) gives every burn claim.
+const CLAIM_MEMO = 'Claim XE'
+const CLAIM_REF = /^[0-9a-f]{64}$/
 export const ERRORS = {
   declined: 4001, notConnected: 4100, unknownMethod: 4200, wrongNetwork: 4900, badParams: -32602, internal: -32603
 }
@@ -29,16 +33,16 @@ export class ConnectError extends Error {
 
 const invalid = message => new ConnectError(ERRORS.badParams, message)
 
-/** HTTPS sites and HTTP loopback origins, as reported by the browser. */
-export function siteHost(origin) {
+/** Whether the browser-reported origin is the network's burn page, or a loopback page on testnet. */
+export function allowedSite(origin, network) {
+  if (BURN_SITES[network].includes(origin)) return true
+  if (network !== 'testnet') return false
   try {
     const url = new URL(origin)
-    if (url.origin !== origin) return null
-    if (url.protocol !== 'https:' && !(url.protocol === 'http:' && LOOPBACK.includes(url.hostname))) return null
-    return url.host
+    return url.origin === origin && ['http:', 'https:'].includes(url.protocol) && LOOPBACK.includes(url.hostname)
   }
   catch {
-    return null
+    return false
   }
 }
 
@@ -54,7 +58,7 @@ function checkAddress(value) {
   }
 }
 
-/** The only transaction data a site may request is a transfer's memo and reference. */
+/** The only transaction a site may request is a burn claim: EDGE to the burn address with the claim's memo and reference. */
 export function validateRequest(method, params, network) {
   if (!METHODS.includes(method)) throw new ConnectError(ERRORS.unknownMethod, `Unknown method: ${String(method).slice(0, 64)}`)
   if (!isObject(params)) throw invalid('params must be an object')
@@ -68,21 +72,13 @@ export function validateRequest(method, params, network) {
   }
   onlyKeys(params, ['from', 'recipient', 'amount', 'data', 'network'])
   checkAddress(params.from)
-  checkAddress(params.recipient)
+  if (params.recipient !== BURN_ADDRESS) throw invalid('params.recipient must be the burn address')
   if (!Number.isSafeInteger(params.amount) || params.amount < 1) throw invalid('params.amount must be a whole number of micro-EDGE, at least 1')
-  const data = {}
-  if (params.data !== undefined) {
-    if (!isObject(params.data)) throw invalid('params.data must be an object')
-    onlyKeys(params.data, ['memo', 'ref'])
-    for (const key of ['memo', 'ref']) {
-      const value = params.data[key]
-      if (value === undefined) continue
-      if (typeof value !== 'string') throw invalid(`params.data.${key} must be a string`)
-      if (value.length > MAX_DATA_LENGTH) throw invalid(`params.data.${key} is longer than ${MAX_DATA_LENGTH} characters`)
-      data[key] = value
-    }
-  }
-  return { from: params.from, recipient: params.recipient, amount: params.amount, data }
+  if (!isObject(params.data)) throw invalid('params.data must be an object')
+  onlyKeys(params.data, ['memo', 'ref'])
+  if (params.data.memo !== CLAIM_MEMO) throw invalid(`params.data.memo must be ${JSON.stringify(CLAIM_MEMO)}`)
+  if (typeof params.data.ref !== 'string' || !CLAIM_REF.test(params.data.ref)) throw invalid('params.data.ref must be 64 lowercase hexadecimal characters')
+  return { from: params.from, recipient: params.recipient, amount: params.amount, data: { memo: params.data.memo, ref: params.data.ref } }
 }
 
 export function checkBalance(amount, balance) {
@@ -99,7 +95,7 @@ function loadSites(network, storage) {
 }
 
 export function saveSite(origin, address, network, storage = window.localStorage) {
-  if (!siteHost(origin)) throw invalid('Invalid site origin')
+  if (!allowedSite(origin, network)) throw invalid('Invalid site origin')
   checkAddress(address)
   const sites = loadSites(network, storage)
   sites[origin] = address
@@ -118,7 +114,7 @@ export function preflight(request, network = walletNetwork(), storage = window.l
 export const exactText = text => JSON.stringify(text).replace(/[\u007f-\uffff]/g, c => `\\u${c.charCodeAt(0).toString(16).padStart(4, '0')}`)
 
 /** One popup request, bound to its opener and the browser-reported origin. */
-export function startSession(win, { onRequest, onBadOrigin } = {}) {
+export function startSession(win, { onRequest, onBadOrigin, network = walletNetwork() } = {}) {
   if (!win.opener) return null
   let request = null
   let answered = false
@@ -153,7 +149,7 @@ export function startSession(win, { onRequest, onBadOrigin } = {}) {
     if (request || event.source !== win.opener) return
     const data = event.data
     if (!isObject(data) || data.type !== 'edge-connect' || data.v !== 1 || data.event !== undefined) return
-    if (!siteHost(event.origin)) {
+    if (!allowedSite(event.origin, network)) {
       answered = true
       win.removeEventListener('message', onMessage)
       if (onBadOrigin) onBadOrigin()
@@ -176,6 +172,9 @@ export function startSession(win, { onRequest, onBadOrigin } = {}) {
   }
   win.addEventListener('message', onMessage)
   win.addEventListener('pagehide', onPageHide)
-  win.opener.postMessage({ type: 'edge-connect', v: 1, event: 'ready' }, '*')
+  // Testnet also serves loopback pages on any port, so its ready message cannot name one origin.
+  for (const target of network === 'testnet' ? ['*'] : BURN_SITES[network]) {
+    win.opener.postMessage({ type: 'edge-connect', v: 1, event: 'ready' }, target)
+  }
   return session
 }

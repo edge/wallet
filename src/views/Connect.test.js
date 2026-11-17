@@ -24,8 +24,9 @@ const PASSWORD = 'local-test-password'
 const KEY = '1'.padStart(64, '0')
 const PUBLIC_KEY = xe.wallet.publicKeyFromPrivateKey(KEY)
 const ADDRESS = xe.wallet.deriveAddress(PUBLIC_KEY)
-const SITE = 'https://burn.test'
+const SITE = 'https://burn.edge.network'
 const TO = 'xe_0000000000000000000000000000000000000000'
+const burn = (from, amount = 1) => ({ from, recipient: TO, amount, data: { memo: 'Claim XE', ref: 'a'.repeat(64) } })
 let app
 let host
 let opener
@@ -44,6 +45,12 @@ const button = text => [...host.querySelectorAll('button')].find(b => b.textCont
 async function press(text) {
   await until(() => button(text) && !button(text).disabled)
   button(text).click()
+}
+async function confirmBurn() {
+  const confirm = host.querySelector('input[type=checkbox]')
+  confirm.checked = true
+  confirm.dispatchEvent(new Event('change', { bubbles: true }))
+  await nextTick()
 }
 async function fill(value) {
   const input = host.querySelector('input[type=password]')
@@ -159,9 +166,10 @@ describe('Edge Connect approval', () => {
     app.unmount()
     host.remove()
     await mount()
-    request('edge_sendTransaction', { from: address, recipient: address, amount: 1 })
+    request('edge_sendTransaction', burn(address))
     await until(() => host.querySelector('input[type=password]'))
     await fill(PASSWORD)
+    await confirmBurn()
     await press('Send')
     await until(answer)
     const recovered = xe.wallet.publicKeyFromSignedMessage(xe.tx.signable(submitted)[1], submitted.signature)
@@ -179,9 +187,7 @@ describe('Edge Connect approval', () => {
     expect(host.textContent).toContain('destroyed')
     await fill(PASSWORD)
     expect(button('Send').disabled).toBe(true)
-    const confirm = host.querySelector('input[type=checkbox]')
-    confirm.checked = true
-    confirm.dispatchEvent(new Event('change', { bubbles: true }))
+    await confirmBurn()
     await press('Send')
     await until(answer)
     expect(submitted).toMatchObject({ sender: ADDRESS, recipient: TO, amount: 5000000, data, nonce: 7 })
@@ -192,9 +198,19 @@ describe('Edge Connect approval', () => {
 
   it('does not sign for an unconnected site', async () => {
     await mount()
-    request('edge_sendTransaction', { from: ADDRESS, recipient: TO, amount: 1 })
+    request('edge_sendTransaction', burn(ADDRESS))
     await until(answer)
     expect(answer().error.code).toBe(4100)
+    expect(submitted).toBe(null)
+  })
+
+  it('refuses a transfer that is not a burn claim without asking for the password', async () => {
+    saveSite(SITE, ADDRESS, walletNetwork())
+    await mount()
+    request('edge_sendTransaction', { ...burn(ADDRESS), recipient: ADDRESS })
+    await until(answer)
+    expect(answer().error.code).toBe(-32602)
+    expect(host.querySelector('input[type=password]')).toBe(null)
     expect(submitted).toBe(null)
   })
 
@@ -205,9 +221,10 @@ describe('Edge Connect approval', () => {
       return null
     })
     await mount()
-    request('edge_sendTransaction', { from: ADDRESS, recipient: ADDRESS, amount: 1 })
+    request('edge_sendTransaction', burn(ADDRESS))
     await until(() => host.querySelector('input[type=password]'))
     await fill(PASSWORD)
+    await confirmBurn()
     await press('Send')
     await until(answer)
     expect(answer().error).toMatchObject({ uncertain: true, hash: xe.tx.hash(submitted).hash })
@@ -220,9 +237,10 @@ describe('Edge Connect approval', () => {
       finishInfo = resolve
     }))
     await mount()
-    request('edge_sendTransaction', { from: ADDRESS, recipient: ADDRESS, amount: 1 })
+    request('edge_sendTransaction', burn(ADDRESS))
     await until(() => host.querySelector('input[type=password]'))
     await fill(PASSWORD)
+    await confirmBurn()
     await press('Send')
     await until(() => finishInfo)
     window.dispatchEvent(new Event('pagehide'))
@@ -239,9 +257,10 @@ describe('Edge Connect approval', () => {
       throw new Error('connection lost')
     })
     await mount()
-    request('edge_sendTransaction', { from: ADDRESS, recipient: ADDRESS, amount: 1 })
+    request('edge_sendTransaction', burn(ADDRESS))
     await until(() => host.querySelector('input[type=password]'))
     await fill(PASSWORD)
+    await confirmBurn()
     await press('Send')
     await until(answer)
     expect(answer().error).toMatchObject({ code: -32603, uncertain: true, hash: xe.tx.hash(submitted).hash })

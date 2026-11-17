@@ -3,10 +3,10 @@
 // that can be found in the LICENSE.md file. All rights reserved.
 
 import * as xe from '@edge/xe-utils'
+import { allowedSite, checkBalance, preflight, saveSite, startSession, validateRequest } from './edge-connect'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { checkBalance, preflight, saveSite, siteHost, startSession, validateRequest } from './edge-connect'
 
-const SITE = 'https://claim.testnet.edge.network'
+const SITE = 'https://burn.testnet.edge.network'
 const FROM = xe.wallet.deriveAddressFromPrivateKey('1'.padStart(64, '0'))
 const TO = 'xe_0000000000000000000000000000000000000000'
 const transfer = () => ({ from: FROM, recipient: TO, amount: 5000000, data: { memo: 'Claim XE', ref: 'a'.repeat(64) } })
@@ -29,21 +29,43 @@ describe('Edge Connect requests', () => {
     expect(() => validateRequest('edge_sendTransaction', { ...transfer(), amount }, 'testnet')).toThrow('whole number')
   })
 
+  it('sends only a burn claim: the burn address, the claim memo and a claim reference', () => {
+    const send = params => () => validateRequest('edge_sendTransaction', params, 'testnet')
+    expect(send({ ...transfer(), recipient: FROM })).toThrow('burn address')
+    expect(send({ ...transfer(), data: undefined })).toThrow('object')
+    for (const memo of [undefined, 1, 'claim xe', 'Claim XE ', 'Send']) {
+      expect(send({ ...transfer(), data: { ...transfer().data, memo } })).toThrow('memo')
+    }
+    for (const ref of [undefined, 1, 'a'.repeat(63), 'a'.repeat(65), 'A'.repeat(64), 'g'.repeat(64)]) {
+      expect(send({ ...transfer(), data: { ...transfer().data, ref } })).toThrow('ref')
+    }
+  })
+
   it('rejects noncanonical addresses, malformed params and overlong text', () => {
     expect(() => validateRequest('edge_sendTransaction', { ...transfer(), from: FROM.toLowerCase() }, 'testnet')).toThrow('checksummed')
     for (const params of [null, [], 1]) expect(() => validateRequest('edge_sendTransaction', params, 'testnet')).toThrow('object')
-    expect(() => validateRequest('edge_sendTransaction', { ...transfer(), data: { ref: 'a'.repeat(65) } }, 'testnet')).toThrow('64')
-    expect(() => validateRequest('edge_sendTransaction', { ...transfer(), data: { memo: 1 } }, 'testnet')).toThrow('string')
     expect(() => checkBalance(2, 1)).toThrow('balance')
     expect(() => checkBalance(1, 1)).not.toThrow()
   })
 
-  it('only accepts HTTPS or loopback origins', () => {
-    expect(siteHost(SITE)).toBe('claim.testnet.edge.network')
-    expect(siteHost('http://localhost:5174')).toBe('localhost:5174')
-    for (const origin of ['null', 'http://claim.testnet.edge.network', 'https://claim.testnet.edge.network/path', 'file:///tmp/a']) {
-      expect(siteHost(origin)).toBe(null)
+  it('accepts only the burn page of its own network, and loopback on testnet', () => {
+    expect(allowedSite('https://burn.edge.network', 'mainnet')).toBe(true)
+    expect(allowedSite(SITE, 'testnet')).toBe(true)
+    for (const origin of ['http://localhost:5174', 'https://127.0.0.1:5174', 'http://[::1]:5174']) {
+      expect(allowedSite(origin, 'testnet')).toBe(true)
+      expect(allowedSite(origin, 'mainnet')).toBe(false)
     }
+    expect(allowedSite(SITE, 'mainnet')).toBe(false)
+    expect(allowedSite('https://burn.edge.network', 'testnet')).toBe(false)
+    for (const origin of ['null', 'http://burn.testnet.edge.network', `${SITE}/path`, `${SITE}.attacker.test`,
+      'https://claim.testnet.edge.network', 'http://localhost.attacker.test', 'file:///tmp/a']) {
+      expect(allowedSite(origin, 'testnet')).toBe(false)
+    }
+  })
+
+  it('refuses to save a permission for another site', () => {
+    expect(() => saveSite('https://attacker.test', FROM, 'testnet')).toThrow('origin')
+    expect(() => saveSite(SITE, FROM, 'mainnet')).toThrow('origin')
   })
 
   it('binds permission to the exact origin, network and address', () => {
@@ -88,7 +110,7 @@ describe('Edge Connect message exchange', () => {
   it('ignores other windows, answers one request and uses the browser-provided origin', () => {
     const { win, replies, request } = windowPair()
     const requests = []
-    const session = startSession(win, { onRequest: r => requests.push(r) })
+    const session = startSession(win, { onRequest: r => requests.push(r), network: 'testnet' })
     expect(replies).toEqual([{ message: { type: 'edge-connect', v: 1, event: 'ready' }, origin: '*' }])
     request({})
     expect(requests).toHaveLength(0)
@@ -104,7 +126,14 @@ describe('Edge Connect message exchange', () => {
     session.stop()
   })
 
-  it('rejects an insecure origin before running a request', () => {
+  it('announces itself only to the mainnet burn page on mainnet', () => {
+    const { win, replies } = windowPair()
+    const session = startSession(win, { onRequest: () => undefined, network: 'mainnet' })
+    expect(replies).toEqual([{ message: { type: 'edge-connect', v: 1, event: 'ready' }, origin: 'https://burn.edge.network' }])
+    session.stop()
+  })
+
+  it.each(['http://attacker.test', 'https://attacker.test', 'http://localhost:5174'])('rejects %s on mainnet before running a request', origin => {
     const { win, request } = windowPair()
     let rejected = false
     let accepted = false
@@ -112,8 +141,8 @@ describe('Edge Connect message exchange', () => {
       accepted = true
     }, onBadOrigin: () => {
       rejected = true
-    } })
-    request(win.opener, 'http://attacker.test')
+    }, network: 'mainnet' })
+    request(win.opener, origin)
     expect(rejected).toBe(true)
     expect(accepted).toBe(false)
     session.stop()
@@ -122,7 +151,7 @@ describe('Edge Connect message exchange', () => {
   it('distinguishes closing before submission from an uncertain submission', () => {
     for (const submitted of [false, true]) {
       const { win, replies, request } = windowPair()
-      const session = startSession(win, { onRequest: () => undefined })
+      const session = startSession(win, { onRequest: () => undefined, network: 'testnet' })
       request()
       if (submitted) session.submitting('b'.repeat(64))
       win.dispatchEvent(new Event('pagehide'))
