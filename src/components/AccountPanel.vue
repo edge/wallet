@@ -24,7 +24,7 @@
             Create Stake
           </button>
         </div>
-        <div v-else class="account-panel__buttons" :class="{'account-panel__buttons--four': claimsOpen}">
+        <div v-else class="account-panel__buttons">
           <button class="w-full button button--success" @click="openSend">
             <span class="w-12 button__icon">
               <ArrowUpIcon/>
@@ -45,19 +45,11 @@
             </span>
             Swap
           </button>
-
-          <button v-if="claimsOpen" class="w-full button button--outline-success" @click="openClaim">
-            <span class="button__icon w-15">
-              <SparklesIcon/>
-            </span>
-            Claim XE
-          </button>
         </div>
       </div>
     </div>
 
     <div class="account-panel__modals">
-      <ClaimModal v-if="claimsOpen" :close="reset" :visible="modal === 'claim'"/>
       <CreateStakeModal :close="reset" :visible="modal === 'createStake'"/>
       <DepositModal :close="reset" :visible="modal === 'deposit'"/>
       <ReceiveModal :close="reset" :visible="modal === 'receive'"/>
@@ -77,7 +69,6 @@
 
 <script>
 import Amount from './Amount.vue'
-import ClaimModal from './tx/ClaimModal.vue'
 import CreateStakeModal from './stakes/CreateStakeModal.vue'
 import DepositModal from './tx/DepositModal.vue'
 import ReceiveModal from './tx/ReceiveModal.vue'
@@ -86,8 +77,7 @@ import SendModal from './tx/SendModal.vue'
 import SwapModal from './tx/SwapModal.vue'
 import WithdrawModal from './tx/WithdrawModal.vue'
 import { mapState } from 'vuex'
-import { ArrowDownIcon, ArrowUpIcon, PlusIcon, SparklesIcon, SwitchHorizontalIcon } from '@heroicons/vue/outline'
-import { claimsEnabled, fetchClaimsInfo } from '../utils/claim'
+import { ArrowDownIcon, ArrowUpIcon, PlusIcon, SwitchHorizontalIcon } from '@heroicons/vue/outline'
 
 export default {
   name: 'AccountPanel',
@@ -96,14 +86,12 @@ export default {
     Amount,
     ArrowDownIcon,
     ArrowUpIcon,
-    ClaimModal,
     CreateStakeModal,
     DepositModal,
     PlusIcon,
     ReceiveModal,
     SellModal,
     SendModal,
-    SparklesIcon,
     SwapModal,
     SwitchHorizontalIcon,
     WithdrawModal
@@ -111,23 +99,10 @@ export default {
   computed: mapState(['address', 'balance', 'usdBalance']),
   data() {
     return {
-      claimsOpen: false,
       modal: ''
     }
   },
-  async mounted() {
-    if (!claimsEnabled()) return
-    try {
-      this.claimsOpen = (await fetchClaimsInfo()).open
-    }
-    catch (err) {
-      console.error('Claims service not available:', err)
-    }
-  },
   methods: {
-    openClaim() {
-      this.modal = 'claim'
-    },
     openCreateStake() {
       this.modal = 'createStake'
     },
@@ -227,10 +202,6 @@ export default {
 
   .account-panel__buttons {
     @apply grid grid-cols-3 mt-0;
-  }
-
-  .account-panel__buttons--four {
-    @apply grid-cols-4;
   }
 
   .account-panel__buttons.staking-buttons {
